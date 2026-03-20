@@ -68,11 +68,11 @@ export default function AboutPage() {
                   615-551-2727
                 </a>
                 <a
-                  href="mailto:joshua.fink@compass.com"
+                  href="mailto:joshua@joshuafink.com"
                   className="flex items-center gap-3 text-black hover:underline font-medium"
                 >
                   <span className="text-[#A0A0A0]">✉️</span>
-                  joshua.fink@compass.com
+                  joshua@joshuafink.com
                 </a>
                 <a
                   href="https://www.compass.com/agents/joshua-fink/"

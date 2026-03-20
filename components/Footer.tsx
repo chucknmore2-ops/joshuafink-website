@@ -60,10 +60,10 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="mailto:joshua.fink@compass.com"
+                  href="mailto:joshua@joshuafink.com"
                   className="hover:text-white transition-colors"
                 >
-                  joshua.fink@compass.com
+                  joshua@joshuafink.com
                 </a>
               </li>
               <li>

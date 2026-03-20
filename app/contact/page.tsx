@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 }
 
 export default function ContactPage() {
-  const mailtoBase = 'mailto:joshua.fink@compass.com'
+  const mailtoBase = 'mailto:joshua@joshuafink.com'
 
   return (
     <div className="bg-white">
@@ -50,10 +50,10 @@ export default function ContactPage() {
                   Email
                 </p>
                 <a
-                  href="mailto:joshua.fink@compass.com"
+                  href="mailto:joshua@joshuafink.com"
                   className="text-base font-semibold text-black hover:underline break-all"
                 >
-                  joshua.fink@compass.com
+                  joshua@joshuafink.com
                 </a>
               </div>
 
