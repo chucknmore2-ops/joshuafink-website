@@ -146,3 +146,5 @@ export const listings: Listing[] = [
     compassUrl: "https://www.compass.com/homedetails/1202-Valarie-Ln-Columbia-TN-38401/SOSRR_pid/",
   },
 ];
+
+export const featuredListings = listings.slice(0, 3);
