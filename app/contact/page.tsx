@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 }
 
 export default function ContactPage() {
-  const mailtoBase = 'mailto:joshua@joshuafink.com'
+  const formspreeUrl = 'https://formspree.io/f/xjgazeqa'
 
   return (
     <div className="bg-white">
@@ -99,8 +99,8 @@ export default function ContactPage() {
             </p>
 
             <form
-              action={mailtoBase}
-              method="get"
+              action={formspreeUrl}
+              method="POST"
               className="space-y-5"
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -194,9 +194,10 @@ export default function ContactPage() {
                 />
               </div>
 
+              <input type="hidden" name="_subject" value="New inquiry from joshuafink.com" />
+              <input type="hidden" name="_next" value="https://joshuafink.com/contact" />
               <p className="text-xs text-[#A0A0A0]">
-                * This form opens your email client with a pre-filled message. For immediate
-                response, call{' '}
+                * Messages go directly to joshua@joshuafink.com. For immediate response, call{' '}
                 <a href="tel:6155512727" className="underline text-black">
                   615-551-2727
                 </a>
