@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
   }
 
   // Get the member's profile to get their URN
-  const profileRes = await fetch('https://api.linkedin.com/v2/me', {
+  const profileRes = await fetch('https://api.linkedin.com/v2/userinfo', {
     headers: { Authorization: `Bearer ${tokenData.access_token}` },
   })
   const profile = await profileRes.json()
