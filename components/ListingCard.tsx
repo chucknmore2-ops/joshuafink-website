@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import type { Listing } from '@/lib/listings'
 
 function formatPrice(price: number): string {
@@ -29,25 +30,35 @@ export default function ListingCard({ listing, featured = false }: Props) {
         featured ? '' : ''
       }`}
     >
-      {/* Image placeholder */}
+      {/* Listing image */}
       <div className="relative bg-[#F5F5F5] aspect-[4/3] overflow-hidden flex items-center justify-center">
-        <div className="text-center text-[#A0A0A0] px-4">
-          <svg
-            className="w-10 h-10 mx-auto mb-2 text-[#D0D0D0]"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M3 9.75L12 3l9 6.75V21H3V9.75z"
-            />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 21V12h6v9" />
-          </svg>
-          <span className="text-xs tracking-wide">View on Compass</span>
-        </div>
+        {listing.imageUrl ? (
+          <Image
+            src={listing.imageUrl}
+            alt={listing.address}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+        ) : (
+          <div className="text-center text-[#A0A0A0] px-4">
+            <svg
+              className="w-10 h-10 mx-auto mb-2 text-[#D0D0D0]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M3 9.75L12 3l9 6.75V21H3V9.75z"
+              />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 21V12h6v9" />
+            </svg>
+            <span className="text-xs tracking-wide">View on Compass</span>
+          </div>
+        )}
 
         {/* Status badge */}
         <span
