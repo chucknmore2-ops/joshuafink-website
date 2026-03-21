@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import ListingCard from '@/components/ListingCard'
-import { featuredListings } from '@/lib/listings'
+import { listings as featuredListings } from '@/lib/listings'
 
 export const metadata: Metadata = {
   title: 'Joshua Fink | Top Realtor in Middle Tennessee | Compass Real Estate',
