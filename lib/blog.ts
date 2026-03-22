@@ -407,6 +407,338 @@ I've been helping buyers and sellers in Brentwood and throughout Middle Tennesse
   },
 ]
 
+  {
+    slug: "spring-hill-tn-homes-for-sale",
+    title: "Spring Hill TN Homes for Sale: Your Complete 2025 Guide",
+    date: "March 22, 2025",
+    excerpt: "Spring Hill is one of Middle Tennessee's fastest-growing cities. Here's everything you need to know about buying a home in Spring Hill, TN in 2025.",
+    content: `
+Spring Hill, Tennessee has transformed from a quiet bedroom community into one of the most sought-after places to live in Middle Tennessee. With major employers, top-rated schools, and a small-town feel just 30 miles south of Nashville, it's no surprise that Spring Hill consistently ranks among the fastest-growing cities in the state.
+
+## Why People Are Moving to Spring Hill
+
+**Location.** Spring Hill sits right off I-65, making it an easy commute to Nashville, Franklin, and Brentwood. For remote workers, it offers space and value without sacrificing access.
+
+**Schools.** Maury County and Williamson County schools both serve Spring Hill depending on your address — both are highly rated and consistently outperform state averages.
+
+**Growth without losing its soul.** Unlike some boomtowns, Spring Hill has managed its growth well. You'll find newer neighborhoods with modern amenities right alongside established communities with mature trees and character.
+
+## What Are Home Prices Like in Spring Hill?
+
+In 2025, Spring Hill home prices typically range from the mid-$300s for starter homes to $700K+ for larger new construction. The sweet spot for most buyers is $400,000–$550,000, where you'll find 3–4 bedroom homes with generous square footage and newer builds.
+
+Compared to Brentwood or Franklin, Spring Hill offers significantly more house for your money — often 30–40% more square footage at the same price point.
+
+## Popular Neighborhoods in Spring Hill
+
+**Benevento** — Newer construction, family-friendly, close to schools and shopping.
+
+**Autumn Ridge** — Established neighborhood with mature landscaping and larger lots.
+
+**Port Royal** — Mix of price points, convenient to I-65 and downtown Spring Hill.
+
+**Harvest Point** — Active adult community for buyers 55+, low-maintenance living.
+
+## What to Expect When Buying in Spring Hill
+
+Spring Hill's market moves fast. Well-priced homes, especially in the $350K–$500K range, often receive multiple offers within days of listing. Here's what gives buyers an edge:
+
+1. **Get pre-approved first.** In this market, sellers won't entertain offers from unqualified buyers.
+2. **Know your must-haves vs. nice-to-haves.** Waiting for the perfect home can mean losing good ones.
+3. **Work with a local agent.** Spring Hill has nuances — which streets are in Williamson vs. Maury County, where new development is planned, which builders have the best reputations.
+
+## Thinking About Selling in Spring Hill?
+
+If you've owned a home in Spring Hill for 3+ years, you've likely built significant equity. The combination of strong demand and limited inventory continues to favor sellers. Proper pricing and professional marketing are the difference between a quick, profitable sale and a listing that sits.
+
+## Ready to Explore Spring Hill?
+
+Whether you're relocating to Middle Tennessee or moving within the area, I'd love to help you find the right home in Spring Hill. As a Compass agent based in Franklin, I work throughout Williamson and Maury counties and know these neighborhoods well.
+
+**Call or text:** (615) 555-0100
+**Email:** joshua@joshuafink.com
+
+Let's find your Spring Hill home.
+    `,
+  },
+  {
+    slug: "sell-my-home-nashville-tn",
+    title: "How to Sell My Home in Nashville TN: A Seller's Guide for 2025",
+    date: "March 22, 2025",
+    excerpt: "Thinking about selling your Nashville home? Here's a step-by-step guide to getting top dollar in today's Middle Tennessee market.",
+    content: `
+Selling your home in Nashville, TN in 2025 is a significant financial decision — and with the right strategy, it can be a very profitable one. This guide walks you through the entire process, from deciding to sell to closing day, with a focus on what actually moves the needle in Middle Tennessee's market.
+
+## Step 1: Know Your Market
+
+Nashville's real estate market remains competitive, but it's more nuanced than it was in 2021–2022. Homes that are priced right and presented well still sell quickly and often above asking. Homes that are overpriced or poorly marketed sit — and sitting kills value.
+
+The first step is understanding what your specific home, in your specific neighborhood, is worth right now. Not what Zillow says. Not what your neighbor sold for two years ago. What comparable homes are selling for in the last 60–90 days.
+
+## Step 2: Choose the Right Agent
+
+This is the single most important decision you'll make. The right agent doesn't just put a sign in the yard — they:
+
+- Conduct a precise comparative market analysis (CMA)
+- Advise on repairs and improvements with the best ROI
+- Stage the home or connect you with a professional stager
+- Hire a professional photographer (non-negotiable in 2025)
+- Market across MLS, Zillow, Realtor.com, social media, and their network
+- Negotiate aggressively on your behalf
+
+The wrong agent costs you money. Interview at least two or three.
+
+## Step 3: Prepare Your Home
+
+Before listing, focus on these high-ROI improvements:
+
+**Always worth doing:**
+- Deep clean and declutter every room
+- Fresh neutral paint throughout
+- Professional photography and video
+- Landscaping and curb appeal
+
+**Usually worth doing:**
+- Minor kitchen updates (hardware, faucets, light fixtures)
+- Bathroom refresh (caulk, grout, fixtures)
+- Carpet cleaning or replacement if worn
+
+**Rarely worth doing:**
+- Full kitchen or bathroom remodel
+- Major structural repairs beyond what's required by contract
+
+## Step 4: Price It Right
+
+Overpricing is the #1 mistake sellers make. A home priced 5% too high will sit, require price reductions, and ultimately sell for less than if it had been priced correctly from day one.
+
+The right price is based on data — recent comparable sales, current active competition, and honest condition assessment. Your agent should walk you through this in detail.
+
+## Step 5: Market Aggressively
+
+In 2025, great marketing means:
+- Professional photos and video (including drone if applicable)
+- MLS listing with compelling copy
+- Zillow Premier Agent placement
+- Facebook and Instagram targeted ads
+- Email blast to buyer network
+- Open house first weekend
+
+## Step 6: Review Offers and Negotiate
+
+Price matters, but so do terms. The best offer isn't always the highest number — it's the combination of price, financing strength, closing timeline, and contingencies that nets you the most with the least risk.
+
+## Step 7: Navigate Inspection and Closing
+
+Most deals have a home inspection. Be prepared for repair requests — your agent will help you decide what to fix, what to credit, and what to push back on. From contract to close typically takes 30–45 days in Middle Tennessee.
+
+## What's Your Nashville Home Worth?
+
+I offer free, no-obligation home valuations for Nashville and Middle Tennessee homeowners. Whether you're thinking about selling now or just want to know where you stand, I'll give you a straight answer based on real data.
+
+**Call or text:** (615) 555-0100
+**Email:** joshua@joshuafink.com
+    `,
+  },
+  {
+    slug: "williamson-county-real-estate-2025",
+    title: "Williamson County Real Estate: Why It's Still the #1 Place to Buy Near Nashville",
+    date: "March 22, 2025",
+    excerpt: "Williamson County consistently ranks among the best places to live in Tennessee. Here's what makes it special and what buyers need to know in 2025.",
+    content: `
+Williamson County, Tennessee is regularly ranked among the best counties to live in the United States — and for good reason. Excellent schools, low crime, strong job growth, and a high quality of life have made Franklin, Brentwood, Spring Hill, and Nolensville among the most desirable addresses in the entire Southeast.
+
+If you're considering buying a home near Nashville, Williamson County deserves your serious attention. Here's everything you need to know.
+
+## Why Williamson County Stands Apart
+
+**Schools.** Williamson County Schools is one of the top-performing school districts in Tennessee and consistently ranks in the top tier nationally. For families, this alone drives demand and protects long-term property values.
+
+**Safety.** Crime rates in Williamson County are well below state and national averages. Communities like Brentwood and Franklin are routinely cited as among the safest cities in Tennessee.
+
+**Economy.** Williamson County is home to major corporate headquarters including Nissan North America, Mars Petcare, and numerous healthcare and tech companies. Job diversity means economic resilience.
+
+**Quality of life.** From the restaurants and boutiques of downtown Franklin to the trails of Bowie Nature Park, Williamson County offers genuine lifestyle amenities that attract and retain residents.
+
+## Williamson County Cities at a Glance
+
+### Franklin
+The crown jewel of Williamson County. Historic downtown, outstanding schools, and a thriving local economy. Home prices range from the $400s to well over $2M. Downtown Franklin properties command a premium and rarely sit on the market.
+
+### Brentwood
+Prestigious and polished. Brentwood offers larger lots, mature neighborhoods, and proximity to Nashville without feeling urban. Entry point around $600K, with luxury properties well into the millions.
+
+### Spring Hill
+The value play. Newer construction, strong growth, and home prices starting in the mid-$300s. Part of Spring Hill falls in Maury County — an important detail for school district purposes.
+
+### Nolensville
+Small-town charm with strong school ratings. Nolensville has grown rapidly over the past decade and offers a tight-knit community feel. Prices typically range from $450K–$800K.
+
+### Thompson's Station
+Newer and growing. Thompson's Station offers affordability relative to Franklin and Brentwood, with easy I-65 access. Popular with young families and buyers priced out of other Williamson County markets.
+
+## Is Now a Good Time to Buy in Williamson County?
+
+The short answer: yes — if you plan to stay 5+ years.
+
+Williamson County has appreciated steadily over the long term and continued demand from both in-state and out-of-state buyers supports prices. While the frenzied pace of 2021–2022 has moderated, well-priced homes in desirable neighborhoods still move quickly.
+
+Waiting for prices to drop significantly is a risky strategy in a county with structural supply constraints and persistent demand drivers.
+
+## Working With a Williamson County Real Estate Agent
+
+The best Williamson County agents know the micro-market nuances — which streets are in which school zones, where new development is planned, which builders have the strongest reputations, and how to write a competitive offer without overpaying.
+
+As a Compass agent based in Franklin, I specialize in helping buyers and sellers throughout Williamson County navigate this market with confidence.
+
+**Ready to explore Williamson County?**
+
+**Call or text:** (615) 555-0100
+**Email:** joshua@joshuafink.com
+    `,
+  },
+  {
+    slug: "investment-property-nashville-tn",
+    title: "Investment Property in Nashville TN: What Investors Need to Know in 2025",
+    date: "March 22, 2025",
+    excerpt: "Nashville remains one of the top real estate investment markets in the country. Here's how to find, analyze, and profit from investment properties in Middle Tennessee.",
+    content: `
+Nashville has earned its reputation as one of the best real estate investment markets in the United States. Strong population growth, a diversified economy, no state income tax, and persistent housing demand create the kind of environment where real estate investors thrive.
+
+Whether you're looking for your first investment property or expanding an existing portfolio, here's what you need to know about investing in Nashville real estate in 2025.
+
+## Why Nashville for Real Estate Investment?
+
+**Population growth.** Middle Tennessee continues to attract thousands of new residents every year from higher cost-of-living states like California, Illinois, and New York. More residents means more demand for housing — both purchase and rental.
+
+**No state income tax.** Tennessee has no personal income tax, which means more of your rental income stays in your pocket compared to most other states.
+
+**Strong rental demand.** Nashville's thriving job market — healthcare, tech, tourism, corporate — keeps demand for quality rental housing high. Vacancy rates remain low by national standards.
+
+**Appreciation.** While no market appreciates in a straight line, Nashville's long-term appreciation trend is strong. Investors who bought even 5–7 years ago have seen substantial equity growth.
+
+## Types of Investment Properties in Nashville
+
+### Fix-and-Flip
+Buy distressed or undervalued properties, renovate, and sell for profit. Nashville's market has slowed slightly from peak flip margins but remains viable for investors who can buy right and manage renovation costs. Target properties with strong ARV (After Repair Value) and realistic repair budgets.
+
+Key metrics for Nashville flips:
+- Target 20–25% gross margin after all costs
+- Watch holding costs — carrying a property 6 months adds up fast
+- Emerging neighborhoods: areas within 5–10 miles of downtown with older housing stock
+
+### Long-Term Rental (Buy and Hold)
+Purchase a property and rent it out for steady monthly income and long-term appreciation. In Nashville proper, single-family homes and small multifamily properties (duplexes, triplexes) are the most common buy-and-hold vehicles.
+
+Target 1% rule as a starting point (monthly rent ≥ 1% of purchase price), though Nashville's appreciation story often justifies going below this threshold in desirable areas.
+
+### Short-Term Rental (Airbnb/VRBO)
+Nashville is a premier short-term rental market thanks to bachelorette parties, concerts, and tourism. However, Nashville Metro has implemented STR regulations — verify zoning and permitting requirements before purchasing with STR intent.
+
+## How to Analyze a Nashville Investment Property
+
+Before making any offer, run the numbers:
+
+1. **ARV** (After Repair Value) — what comparable renovated homes are selling for nearby
+2. **Repair costs** — get a contractor walk-through before going under contract
+3. **Holding costs** — financing, taxes, insurance, utilities during renovation
+4. **Selling costs** — agent commissions, closing costs (~8–10% of sale price)
+5. **Profit** — what's left after everything
+
+The 70% rule: don't pay more than 70% of ARV minus repair costs. It's a rough guide but keeps you out of trouble.
+
+## Where to Find Investment Deals in Nashville
+
+- **MLS listings** — yes, deals still exist on MLS, especially longer days-on-market properties
+- **Foreclosure auctions** — Tennessee is a non-judicial foreclosure state; courthouse steps sales happen regularly
+- **Off-market/direct mail** — motivated sellers who haven't listed yet
+- **Wholesalers** — connect with local wholesalers who source distressed properties
+
+## Working With an Investment-Focused Real Estate Agent
+
+Not all agents understand investment property. You need someone who can run ARV comps, understands renovation costs, knows which neighborhoods are trending, and can move fast when a deal presents itself.
+
+As both a Compass agent and active fix-and-flip investor in Middle Tennessee, I bring real investor perspective — not just agent perspective — to every deal.
+
+**Looking for investment properties in Nashville or Middle Tennessee?**
+
+**Call or text:** (615) 555-0100
+**Email:** joshua@joshuafink.com
+    `,
+  },
+  {
+    slug: "moving-to-franklin-tn",
+    title: "Moving to Franklin TN: Everything You Need to Know Before You Relocate",
+    date: "March 22, 2025",
+    excerpt: "Relocating to Franklin, Tennessee? Here's an honest, comprehensive guide to living in one of the South's most beloved small cities.",
+    content: `
+Franklin, Tennessee consistently earns its place on "best places to live" lists — and if you're considering a move here, you're in good company. Thousands of families, professionals, and retirees relocate to Franklin every year. Here's what you actually need to know before you make the move.
+
+## What Makes Franklin Special
+
+Franklin isn't just a suburb of Nashville. It's a destination in its own right — a city with genuine character, a storied history, and a quality of life that's genuinely hard to find.
+
+**Downtown Franklin** is one of the best small-city downtowns in the South. A walkable main street lined with locally-owned restaurants, boutiques, coffee shops, and bars. Regular events, live music, and a community that actually shows up for itself.
+
+**History.** Franklin was the site of one of the Civil War's bloodiest battles in 1864. The Carter House and Carnton are world-class historic sites right in the heart of town. This history gives Franklin a depth and sense of place that newer communities simply don't have.
+
+**Parks and outdoors.** The Harpeth River winds through the area, offering kayaking, fishing, and scenic walks. Pinkerton Park, Jim Warren Park, and miles of greenway trails give residents plenty of room to breathe.
+
+## The Real Estate Market in Franklin
+
+Franklin's real estate market reflects its desirability. Here's a realistic snapshot for 2025:
+
+- **Entry-level** (condos, townhomes, smaller SFH): $400K–$550K
+- **Mid-range** (3–4 bed single family): $550K–$900K
+- **Luxury and historic**: $900K–$3M+
+- **Downtown/walkable**: Premium pricing, limited inventory
+
+The market is competitive but not irrational. Well-priced homes in good condition move quickly. Overpriced homes sit.
+
+## Neighborhoods to Know
+
+**Downtown Franklin / Historic District** — Premium. Walkable. Waiting lists for the best properties. Historic homes mixed with newer infill construction.
+
+**Westhaven** — Master-planned community with a town center, pool, golf course, and events calendar. Popular with families relocating from out of state. Prices from $600K into the millions.
+
+**Ladd Park** — Established, tree-lined neighborhood with a strong community feel. Mix of sizes and price points.
+
+**Fieldstone Farms** — One of Franklin's most established family neighborhoods. Great schools, reasonable prices (for Franklin), strong community.
+
+**Sullivan Farms / Falcon Creek** — More affordable entry into Franklin, single-family homes in the $400K–$600K range.
+
+## Schools in Franklin
+
+Franklin is served by Williamson County Schools, one of the top-ranked public school districts in Tennessee. Schools like Franklin High School, Independence High School, and Battle Ground Academy (private) are consistently excellent.
+
+If schools are a priority — and for most families they are — your agent should verify which school zone applies to any specific address before you make an offer.
+
+## Cost of Living in Franklin
+
+Franklin is not cheap — but it's not Manhattan either. Here's the realistic picture:
+
+- **Property taxes:** Williamson County rates are reasonable, typically 0.7–0.9% of assessed value annually
+- **No state income tax:** Tennessee has no personal income tax, which offsets housing costs for many transplants
+- **Groceries, dining, services:** Moderate. Not NYC or SF prices.
+- **Utilities:** Typical for the South — hot summers mean higher electric bills June–September
+
+## Tips for Relocating Buyers
+
+1. **Visit before you commit.** Franklin has great bones, but different parts of town feel very different. Spend a weekend exploring neighborhoods before deciding where to focus your search.
+2. **Work with a local agent.** School zones, flood plains, HOA nuances, planned developments — local knowledge matters here.
+3. **Be ready to move.** Good homes in Franklin don't last. Have your financing ready and your decision criteria clear.
+4. **Consider the commute.** I-65 into Nashville can be brutal during peak hours. If you're commuting daily, factor that in.
+
+## Ready to Make the Move?
+
+I help families relocating to Franklin and the greater Williamson County area find the right home in the right neighborhood — without wasting time or money. As a Franklin-based Compass agent, I know this market from the inside.
+
+**Call or text:** (615) 555-0100
+**Email:** joshua@joshuafink.com
+
+Let's find your Franklin home.
+    `,
+  },
+
 export function getPostBySlug(slug: string): BlogPost | undefined {
   return blogPosts.find((post) => post.slug === slug)
 }
