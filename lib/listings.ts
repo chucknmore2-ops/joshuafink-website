@@ -12,6 +12,7 @@ export interface Listing {
   acres?: number;
   status: string;
   note?: string;
+  imageUrl?: string;
   compassUrl: string;
 }
 
