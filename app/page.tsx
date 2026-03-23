@@ -64,6 +64,12 @@ export default function HomePage() {
                 View My Listings
               </Link>
               <Link
+                href="/sell"
+                className="inline-flex items-center justify-center bg-[#C0392B] text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-[#A93226] transition-colors"
+              >
+                Get a Free Home Valuation
+              </Link>
+              <Link
                 href="/contact"
                 className="inline-flex items-center justify-center border-2 border-white text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-white hover:text-black transition-colors"
               >
@@ -119,6 +125,41 @@ export default function HomePage() {
             >
               View All Listings →
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── SELL CTA ── */}
+      <section className="bg-black text-white py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-4">
+                Thinking About Selling?
+              </p>
+              <h2 className="text-4xl sm:text-5xl font-black tracking-tight leading-tight mb-6">
+                Find Out What Your<br />Home Is Worth.
+              </h2>
+              <p className="text-[#A0A0A0] text-base leading-relaxed max-w-lg">
+                Get a free, no-obligation home valuation from Joshua. Real comps, real numbers —
+                not an algorithm. Most sellers are surprised by what their home is worth in
+                today&apos;s Middle Tennessee market.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-4 lg:justify-end">
+              <Link
+                href="/sell"
+                className="inline-flex items-center justify-center bg-white text-black text-sm font-bold px-10 py-5 tracking-wide hover:bg-[#E8E8E8] transition-colors"
+              >
+                Get My Free Valuation →
+              </Link>
+              <a
+                href="tel:6155512727"
+                className="inline-flex items-center justify-center border border-white text-white text-sm font-bold px-10 py-5 tracking-wide hover:bg-white hover:text-black transition-colors"
+              >
+                Call 615-551-2727
+              </a>
+            </div>
           </div>
         </div>
       </section>
