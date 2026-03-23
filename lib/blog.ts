@@ -405,8 +405,6 @@ An experienced local agent will help you avoid costly mistakes, whether that's m
 I've been helping buyers and sellers in Brentwood and throughout Middle Tennessee for over 13 years. If you're thinking about buying or selling in Brentwood, I'd welcome the conversation. Reach out and let's talk about what you're looking to accomplish.
     `.trim(),
   },
-]
-
   {
     slug: "spring-hill-tn-homes-for-sale",
     title: "Spring Hill TN Homes for Sale: Your Complete 2025 Guide",
@@ -738,6 +736,7 @@ I help families relocating to Franklin and the greater Williamson County area fi
 Let's find your Franklin home.
     `,
   },
+]
 
 export function getPostBySlug(slug: string): BlogPost | undefined {
   return blogPosts.find((post) => post.slug === slug)
