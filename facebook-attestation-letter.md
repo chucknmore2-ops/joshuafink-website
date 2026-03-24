@@ -25,12 +25,12 @@ My name is Joshua Fink. I am a licensed real estate agent and Affiliate Broker o
 
 - **Page Name:** Joshua Fink Group
 - **Page URL:** https://www.facebook.com/JoshuaFinkGroup
-- **Page ID:** [INSERT PAGE ID — found at facebook.com/[pagename]/about or in Meta Business Suite]
+- **Page ID:** 100064076493905
 
 **Requester's Facebook Profile Information:**
 
 - **Facebook Profile URL:** https://www.facebook.com/joshua.fink.731
-- **Facebook User ID:** [INSERT — found at facebook.com/settings → Your Facebook information → Access your information]
+- **Facebook User ID:** 7620436736970676208
 - **Associated Email Address:** jgfink67@yahoo.com
 
 ---

@@ -42,16 +42,37 @@ function parseListingsFromText(text) {
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
 
-    // Look for Compass homedetails links
+    // Look for Compass homedetails links (absolute or relative)
     if (line.includes('/homedetails/') || line.includes('compass.com/homedetails')) {
-      // Extract URL
-      const urlMatch = line.match(/\(?(https?:\/\/(?:www\.)?compass\.com\/homedetails\/[^\s\)]+)\)?/);
-      if (!urlMatch) continue;
-
-      const compassUrl = urlMatch[1].replace(/\/$/, '') + '/';
+      // Extract URL — support both absolute and relative paths from markdown extractor
+      let compassUrl;
+      const absMatch = line.match(/\(?(https?:\/\/(?:www\.)?compass\.com\/homedetails\/[^\s\)\]]+)\)?/);
+      const relMatch = line.match(/\(?(\/homedetails\/[^\s\)\]]+)\)?/);
+      if (absMatch) {
+        compassUrl = absMatch[1].replace(/\/$/, '') + '/';
+      } else if (relMatch) {
+        compassUrl = 'https://www.compass.com' + relMatch[1].replace(/\/$/, '') + '/';
+      } else {
+        continue;
+      }
 
       // Look backwards for address, price, beds, baths, sqft
       let address = '', city = '', price = 0, beds = 0, baths = 0, sqft = 0, status = 'Active';
+
+      // In markdown mode, address+city are embedded in the link text on the current line
+      // e.g. [9209 Duncaster Court, Brentwood, TN 37027](/homedetails/...)
+      const mdLinkText = line.match(/^\[([^\]]+)\]\(/);
+      if (mdLinkText) {
+        const linkText = mdLinkText[1];
+        // Split "9209 Duncaster Court, Brentwood, TN 37027" → address + city
+        const cityMatch = linkText.match(/^(.+?),\s*([A-Za-z\s]+,\s*TN\s*\d{5})$/);
+        if (cityMatch) {
+          address = cityMatch[1].trim();
+          city = cityMatch[2].trim();
+        } else {
+          address = linkText.trim();
+        }
+      }
 
       for (let j = Math.max(0, i - 15); j < i; j++) {
         const l = lines[j];
@@ -82,13 +103,13 @@ function parseListingsFromText(text) {
         else if (/pending/i.test(l)) status = 'Pending';
         else if (/open.*house/i.test(l)) status = l.trim();
 
-        // Address: starts with number, has street type
-        if (/^\d+\s+[A-Za-z]/.test(l) && /Drive|Court|Street|Avenue|Road|Lane|Way|Circle|Place|Boulevard|Blvd|Trace|Square|Bend|Cv|Loop|Dr|Ct|St|Ave|Rd|Ln|Wy|Cir|Pl|Sq/i.test(l)) {
+        // Address: starts with number, has street type (plain text mode fallback)
+        if (!address && /^\d+\s+[A-Za-z]/.test(l) && /Drive|Court|Street|Avenue|Road|Lane|Way|Circle|Place|Boulevard|Blvd|Trace|Square|Bend|Cv|Loop|Dr|Ct|St|Ave|Rd|Ln|Wy|Cir|Pl|Sq/i.test(l)) {
           address = l;
         }
 
-        // City: "Brentwood, TN 37027"
-        if (/^[A-Za-z\s]+,\s*TN\s*\d{5}$/.test(l)) {
+        // City: "Brentwood, TN 37027" (plain text mode fallback)
+        if (!city && /^[A-Za-z\s]+,\s*TN\s*\d{5}$/.test(l)) {
           city = l;
         }
       }
