@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-03-23T12:01:42.322Z
+// AUTO-GENERATED — Last synced: 2026-03-24T12:00:54.376Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — updated automatically by OpenClaw daily cron
 
@@ -12,7 +12,6 @@ export interface Listing {
   acres?: number;
   status: string;
   note?: string;
-  imageUrl?: string;
   compassUrl: string;
 }
 
