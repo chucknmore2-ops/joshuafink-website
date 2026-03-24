@@ -13,6 +13,7 @@ export interface Listing {
   status: string;
   note?: string;
   compassUrl: string;
+  imageUrl?: string;
 }
 
 export const listings: Listing[] = [
