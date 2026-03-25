@@ -10,7 +10,7 @@ export const blogPosts: BlogPost[] = [
   {
     slug: "nashville-real-estate-market-2025",
     title: "Nashville Real Estate Market: What Buyers and Sellers Need to Know in 2025",
-    date: "March 15, 2025",
+    date: "March 15, 2026",
     excerpt:
       "The Nashville real estate market continues to evolve in 2025. Whether you're buying your first home or selling a long-held property, here's what you need to know to navigate today's market with confidence.",
     content: `
@@ -54,7 +54,7 @@ If you have questions about the current market or want a specific analysis of yo
   {
     slug: "best-neighborhoods-brentwood-tn",
     title: "The Best Neighborhoods in Brentwood, TN: A Local's Guide",
-    date: "March 5, 2025",
+    date: "March 5, 2026",
     excerpt:
       "Brentwood consistently ranks among the best places to live in Tennessee. But not all neighborhoods are created equal. Here's an insider look at the communities that stand out — and what makes each one special.",
     content: `
@@ -96,7 +96,7 @@ Brentwood is an incredible place to call home, and the right neighborhood depend
   {
     slug: "how-to-sell-home-fast-middle-tennessee",
     title: "How to Sell Your Home Fast in Middle Tennessee",
-    date: "February 22, 2025",
+    date: "February 22, 2026",
     excerpt:
       "Speed and price don't have to be mutually exclusive. With the right preparation, pricing strategy, and marketing, you can sell your Middle Tennessee home quickly — and for top dollar.",
     content: `
@@ -150,7 +150,7 @@ Selling fast and selling smart aren't competing goals. With the right preparatio
   {
     slug: 'homes-for-sale-columbia-tn',
     title: 'Homes for Sale in Columbia, TN: What Buyers Need to Know in 2025',
-    date: 'March 21, 2025',
+    date: 'March 21, 2026',
     excerpt:
       'Columbia, TN is one of Middle Tennessee\'s fastest-growing cities. Here\'s what buyers need to know about the local market, top neighborhoods, and how to find the best deals.',
     content: `
@@ -194,7 +194,7 @@ Columbia, TN is one of the best opportunities in Middle Tennessee right now — 
   {
     slug: 'homes-for-sale-franklin-tn',
     title: 'Homes for Sale in Franklin, TN: A Complete Buyer\'s Guide',
-    date: 'March 19, 2025',
+    date: 'March 19, 2026',
     excerpt:
       'Franklin, TN consistently ranks among the best places to live in America. Here\'s everything you need to know about buying a home in one of Middle Tennessee\'s most desirable cities.',
     content: `
@@ -238,7 +238,7 @@ Franklin is an exceptional place to put down roots. Whether you're relocating fr
   {
     slug: 'fix-and-flip-nashville-tn',
     title: 'Fix and Flip Investing in Nashville, TN: What Every Investor Needs to Know',
-    date: 'March 17, 2025',
+    date: 'March 17, 2026',
     excerpt:
       'Nashville\'s real estate market offers real opportunities for fix-and-flip investors — but success requires knowing the right neighborhoods, running accurate numbers, and moving fast. Here\'s how.',
     content: `
@@ -293,7 +293,7 @@ If you're serious about investing in Nashville, let's talk. I work with investor
   {
     slug: 'first-time-home-buyer-nashville',
     title: 'First-Time Home Buyer Guide for Nashville, TN',
-    date: 'March 14, 2025',
+    date: 'March 14, 2026',
     excerpt:
       'Buying your first home in Nashville is exciting — and competitive. This guide walks you through every step, from getting pre-approved to closing day, so you can buy with confidence.',
     content: `
@@ -356,7 +356,7 @@ Buying your first home is a milestone. Done right, it's one of the best financia
   {
     slug: 'real-estate-agent-brentwood-tn',
     title: 'How to Choose a Real Estate Agent in Brentwood, TN',
-    date: 'March 12, 2025',
+    date: 'March 12, 2026',
     excerpt:
       'Choosing the right real estate agent in Brentwood can mean the difference between a smooth transaction and a stressful one. Here\'s what to look for — and the questions to ask.',
     content: `
@@ -408,7 +408,7 @@ I've been helping buyers and sellers in Brentwood and throughout Middle Tennesse
   {
     slug: "spring-hill-tn-homes-for-sale",
     title: "Spring Hill TN Homes for Sale: Your Complete 2025 Guide",
-    date: "March 22, 2025",
+    date: "March 22, 2026",
     excerpt: "Spring Hill is one of Middle Tennessee's fastest-growing cities. Here's everything you need to know about buying a home in Spring Hill, TN in 2025.",
     content: `
 Spring Hill, Tennessee has transformed from a quiet bedroom community into one of the most sought-after places to live in Middle Tennessee. With major employers, top-rated schools, and a small-town feel just 30 miles south of Nashville, it's no surprise that Spring Hill consistently ranks among the fastest-growing cities in the state.
@@ -462,7 +462,7 @@ Let's find your Spring Hill home.
   {
     slug: "sell-my-home-nashville-tn",
     title: "How to Sell My Home in Nashville TN: A Seller's Guide for 2025",
-    date: "March 22, 2025",
+    date: "March 22, 2026",
     excerpt: "Thinking about selling your Nashville home? Here's a step-by-step guide to getting top dollar in today's Middle Tennessee market.",
     content: `
 Selling your home in Nashville, TN in 2025 is a significant financial decision — and with the right strategy, it can be a very profitable one. This guide walks you through the entire process, from deciding to sell to closing day, with a focus on what actually moves the needle in Middle Tennessee's market.
@@ -540,7 +540,7 @@ I offer free, no-obligation home valuations for Nashville and Middle Tennessee h
   {
     slug: "williamson-county-real-estate-2025",
     title: "Williamson County Real Estate: Why It's Still the #1 Place to Buy Near Nashville",
-    date: "March 22, 2025",
+    date: "March 22, 2026",
     excerpt: "Williamson County consistently ranks among the best places to live in Tennessee. Here's what makes it special and what buyers need to know in 2025.",
     content: `
 Williamson County, Tennessee is regularly ranked among the best counties to live in the United States — and for good reason. Excellent schools, low crime, strong job growth, and a high quality of life have made Franklin, Brentwood, Spring Hill, and Nolensville among the most desirable addresses in the entire Southeast.
@@ -597,7 +597,7 @@ As a Compass agent based in Franklin, I specialize in helping buyers and sellers
   {
     slug: "investment-property-nashville-tn",
     title: "Investment Property in Nashville TN: What Investors Need to Know in 2025",
-    date: "March 22, 2025",
+    date: "March 22, 2026",
     excerpt: "Nashville remains one of the top real estate investment markets in the country. Here's how to find, analyze, and profit from investment properties in Middle Tennessee.",
     content: `
 Nashville has earned its reputation as one of the best real estate investment markets in the United States. Strong population growth, a diversified economy, no state income tax, and persistent housing demand create the kind of environment where real estate investors thrive.
@@ -666,7 +666,7 @@ As both a Compass agent and active fix-and-flip investor in Middle Tennessee, I 
   {
     slug: "moving-to-franklin-tn",
     title: "Moving to Franklin TN: Everything You Need to Know Before You Relocate",
-    date: "March 22, 2025",
+    date: "March 22, 2026",
     excerpt: "Relocating to Franklin, Tennessee? Here's an honest, comprehensive guide to living in one of the South's most beloved small cities.",
     content: `
 Franklin, Tennessee consistently earns its place on "best places to live" lists — and if you're considering a move here, you're in good company. Thousands of families, professionals, and retirees relocate to Franklin every year. Here's what you actually need to know before you make the move.
@@ -739,7 +739,7 @@ Let's find your Franklin home.
   {
     slug: "living-in-franklin-tn-guide",
     title: "Living in Franklin, TN: Schools, Growth & Real Estate Guide [2025]",
-    date: "March 25, 2025",
+    date: "March 25, 2026",
     excerpt: "Thinking about moving to Franklin, TN? Explore schools, population growth, home prices, neighborhoods, and local development trends in this 2025 real estate guide.",
     content: `
 If you're considering a move in Middle Tennessee, Franklin keeps showing up for a reason. Buyers looking at Nashville often end up touring homes here because it offers a different balance of schools, space, commute, and long-term upside. For some, it's about getting more house for the money. For others, it's about neighborhood feel, school options, or a clearer lifestyle fit for the next 5-10 years. Either way, understanding Franklin at a local level — not just through national ranking lists — can help you make a smarter move.
@@ -829,7 +829,7 @@ If you want a custom game plan for Franklin — including school-zone targeting,
   {
     slug: "living-in-brentwood-tn-guide",
     title: "Living in Brentwood, TN: Schools, Growth & Real Estate Guide [2025]",
-    date: "March 25, 2025",
+    date: "March 25, 2026",
     excerpt: "Thinking about moving to Brentwood, TN? Explore schools, population growth, home prices, neighborhoods, and local development trends in this 2025 real estate guide.",
     content: `
 If you're considering a move in Middle Tennessee, Brentwood keeps showing up for a reason. Buyers looking at Nashville often end up touring homes here because it offers a different balance of schools, space, commute, and long-term upside. For some, it's about getting more house for the money. For others, it's about neighborhood feel, school options, or a clearer lifestyle fit for the next 5-10 years. Either way, understanding Brentwood at a local level — not just through national ranking lists — can help you make a smarter move.
@@ -919,7 +919,7 @@ If you want a custom game plan for Brentwood — including school-zone targeting
   {
     slug: "living-in-spring-hill-tn-guide",
     title: "Living in Spring Hill, TN: Schools, Growth & Real Estate Guide [2025]",
-    date: "March 25, 2025",
+    date: "March 25, 2026",
     excerpt: "Thinking about moving to Spring Hill, TN? Explore schools, population growth, home prices, neighborhoods, and local development trends in this 2025 real estate guide.",
     content: `
 If you're considering a move in Middle Tennessee, Spring Hill keeps showing up for a reason. Buyers looking at Nashville often end up touring homes here because it offers a different balance of schools, space, commute, and long-term upside. For some, it's about getting more house for the money. For others, it's about neighborhood feel, school options, or a clearer lifestyle fit for the next 5-10 years. Either way, understanding Spring Hill at a local level — not just through national ranking lists — can help you make a smarter move.
@@ -1009,7 +1009,7 @@ If you want a custom game plan for Spring Hill — including school-zone targeti
   {
     slug: "living-in-nolensville-tn-guide",
     title: "Living in Nolensville, TN: Schools, Growth & Real Estate Guide [2025]",
-    date: "March 25, 2025",
+    date: "March 25, 2026",
     excerpt: "Thinking about moving to Nolensville, TN? Explore schools, population growth, home prices, neighborhoods, and local development trends in this 2025 real estate guide.",
     content: `
 If you're considering a move in Middle Tennessee, Nolensville keeps showing up for a reason. Buyers looking at Nashville often end up touring homes here because it offers a different balance of schools, space, commute, and long-term upside. For some, it's about getting more house for the money. For others, it's about neighborhood feel, school options, or a clearer lifestyle fit for the next 5-10 years. Either way, understanding Nolensville at a local level — not just through national ranking lists — can help you make a smarter move.
@@ -1099,7 +1099,7 @@ If you want a custom game plan for Nolensville — including school-zone targeti
   {
     slug: "living-in-thompsons-station-tn-guide",
     title: "Living in Thompson's Station, TN: Schools, Growth & Real Estate Guide [2025]",
-    date: "March 25, 2025",
+    date: "March 25, 2026",
     excerpt: "Thinking about moving to Thompson's Station, TN? Explore schools, population growth, home prices, neighborhoods, and local development trends in this 2025 real estate guide.",
     content: `
 If you're considering a move in Middle Tennessee, Thompson's Station keeps showing up for a reason. Buyers looking at Nashville often end up touring homes here because it offers a different balance of schools, space, commute, and long-term upside. For some, it's about getting more house for the money. For others, it's about neighborhood feel, school options, or a clearer lifestyle fit for the next 5-10 years. Either way, understanding Thompson's Station at a local level — not just through national ranking lists — can help you make a smarter move.
@@ -1189,7 +1189,7 @@ If you want a custom game plan for Thompson's Station — including school-zone 
   {
     slug: "living-in-murfreesboro-tn-guide",
     title: "Living in Murfreesboro, TN: Schools, Growth & Real Estate Guide [2025]",
-    date: "March 25, 2025",
+    date: "March 25, 2026",
     excerpt: "Thinking about moving to Murfreesboro, TN? Explore schools, population growth, home prices, neighborhoods, and local development trends in this 2025 real estate guide.",
     content: `
 If you're considering a move in Middle Tennessee, Murfreesboro keeps showing up for a reason. Buyers looking at Nashville often end up touring homes here because it offers a different balance of schools, space, commute, and long-term upside. For some, it's about getting more house for the money. For others, it's about neighborhood feel, school options, or a clearer lifestyle fit for the next 5-10 years. Either way, understanding Murfreesboro at a local level — not just through national ranking lists — can help you make a smarter move.
@@ -1279,7 +1279,7 @@ If you want a custom game plan for Murfreesboro — including school-zone target
   {
     slug: "living-in-columbia-tn-guide",
     title: "Living in Columbia, TN: Schools, Growth & Real Estate Guide [2025]",
-    date: "March 25, 2025",
+    date: "March 25, 2026",
     excerpt: "Thinking about moving to Columbia, TN? Explore schools, population growth, home prices, neighborhoods, and local development trends in this 2025 real estate guide.",
     content: `
 If you're considering a move in Middle Tennessee, Columbia keeps showing up for a reason. Buyers looking at Nashville often end up touring homes here because it offers a different balance of schools, space, commute, and long-term upside. For some, it's about getting more house for the money. For others, it's about neighborhood feel, school options, or a clearer lifestyle fit for the next 5-10 years. Either way, understanding Columbia at a local level — not just through national ranking lists — can help you make a smarter move.
@@ -1369,7 +1369,7 @@ If you want a custom game plan for Columbia — including school-zone targeting,
   {
     slug: "living-in-mount-juliet-tn-guide",
     title: "Living in Mount Juliet, TN: Schools, Growth & Real Estate Guide [2025]",
-    date: "March 25, 2025",
+    date: "March 25, 2026",
     excerpt: "Thinking about moving to Mount Juliet, TN? Explore schools, population growth, home prices, neighborhoods, and local development trends in this 2025 real estate guide.",
     content: `
 If you're considering a move in Middle Tennessee, Mount Juliet keeps showing up for a reason. Buyers looking at Nashville often end up touring homes here because it offers a different balance of schools, space, commute, and long-term upside. For some, it's about getting more house for the money. For others, it's about neighborhood feel, school options, or a clearer lifestyle fit for the next 5-10 years. Either way, understanding Mount Juliet at a local level — not just through national ranking lists — can help you make a smarter move.
@@ -1459,7 +1459,7 @@ If you want a custom game plan for Mount Juliet — including school-zone target
   {
     slug: "living-in-hendersonville-tn-guide",
     title: "Living in Hendersonville, TN: Schools, Growth & Real Estate Guide [2025]",
-    date: "March 25, 2025",
+    date: "March 25, 2026",
     excerpt: "Thinking about moving to Hendersonville, TN? Explore schools, population growth, home prices, neighborhoods, and local development trends in this 2025 real estate guide.",
     content: `
 If you're considering a move in Middle Tennessee, Hendersonville keeps showing up for a reason. Buyers looking at Nashville often end up touring homes here because it offers a different balance of schools, space, commute, and long-term upside. For some, it's about getting more house for the money. For others, it's about neighborhood feel, school options, or a clearer lifestyle fit for the next 5-10 years. Either way, understanding Hendersonville at a local level — not just through national ranking lists — can help you make a smarter move.
@@ -1549,7 +1549,7 @@ If you want a custom game plan for Hendersonville — including school-zone targ
   {
     slug: "living-in-smyrna-tn-guide",
     title: "Living in Smyrna, TN: Schools, Growth & Real Estate Guide [2025]",
-    date: "March 25, 2025",
+    date: "March 25, 2026",
     excerpt: "Thinking about moving to Smyrna, TN? Explore schools, population growth, home prices, neighborhoods, and local development trends in this 2025 real estate guide.",
     content: `
 If you're considering a move in Middle Tennessee, Smyrna keeps showing up for a reason. Buyers looking at Nashville often end up touring homes here because it offers a different balance of schools, space, commute, and long-term upside. For some, it's about getting more house for the money. For others, it's about neighborhood feel, school options, or a clearer lifestyle fit for the next 5-10 years. Either way, understanding Smyrna at a local level — not just through national ranking lists — can help you make a smarter move.

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const SENDGRID_KEY = process.env.SENDGRID_API_KEY!
-const SLACK_TOKEN = process.env.SLACK_BOT_TOKEN!
+const SENDGRID_KEY = process.env.SENDGRID_API_KEY
+const SLACK_TOKEN = process.env.SLACK_BOT_TOKEN
 const SLACK_CHANNEL = 'C0APH84LFG8' // #joshpersonal
 const FROM_EMAIL = 'leads@joshuafink.com'
 const TO_EMAIL = 'joshua@joshuafink.com'
@@ -126,6 +126,14 @@ async function forwardToJoshua(lead: Record<string, string>) {
 }
 
 export async function POST(req: NextRequest) {
+  if (!process.env.SENDGRID_API_KEY || !process.env.SLACK_BOT_TOKEN) {
+    console.error('Missing env vars: SENDGRID_API_KEY or SLACK_BOT_TOKEN')
+    return NextResponse.json(
+      { error: 'Configuration error — contact joshua@joshuafink.com directly' },
+      { status: 500 }
+    )
+  }
+
   try {
     const body = await req.json().catch(() => null)
     const form = body || Object.fromEntries((await req.formData()).entries())

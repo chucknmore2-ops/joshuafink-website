@@ -59,7 +59,8 @@ async function scrapeListings() {
         const beds = parseInt(bedsEl?.textContent?.match(/\d+/)?.[0] || '0');
         const baths = parseFloat(bathsEl?.textContent?.match(/[\d.]+/)?.[0] || '0');
         const sqft = parseInt(sqftEl?.textContent?.replace(/[^0-9]/g, '') || '0');
-        const compassUrl = linkEl ? 'https://www.compass.com' + linkEl.getAttribute('href') : '';
+        const href = linkEl?.getAttribute('href') || '';
+        const compassUrl = href ? `https://www.compass.com${href}` : '';
         const status = statusEl?.textContent?.trim() || 'Active';
 
         if (address && price > 0) {
@@ -98,14 +99,32 @@ async function scrapeListings() {
             Object.values(obj).forEach(v => found.push(...findListings(v, depth + 1)));
             return found;
           };
-          found.push(...findListings(data));
-          results.push(...found);
+          const foundListings = findListings(data);
+          results.push(...foundListings);
         }
       } catch (e) {}
     }
 
     return results;
   });
+
+  for (const listing of listings) {
+    if (!listing.compassUrl) {
+      listing.imageUrl = '';
+      continue;
+    }
+
+    const listingPage = await context.newPage();
+    try {
+      await listingPage.goto(listing.compassUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+      const ogImage = await listingPage.getAttribute('meta[property="og:image"]', 'content');
+      listing.imageUrl = ogImage || '';
+    } catch (e) {
+      listing.imageUrl = '';
+    } finally {
+      await listingPage.close();
+    }
+  }
 
   await browser.close();
   return listings;
@@ -124,6 +143,7 @@ function generateListingsTs(listings) {
     if (l.sqft) parts.push(`    sqft: ${l.sqft}`);
     parts.push(`    status: ${JSON.stringify(l.status)}`);
     parts.push(`    compassUrl: ${JSON.stringify(l.compassUrl)}`);
+    if (l.imageUrl) parts.push(`    imageUrl: ${JSON.stringify(l.imageUrl)}`);
     return `  {\n${parts.join(',\n')},\n  }`;
   }).join(',\n');
 
@@ -142,6 +162,7 @@ export interface Listing {
   status: string;
   note?: string;
   compassUrl: string;
+  imageUrl?: string;
 }
 
 export const listings: Listing[] = [
