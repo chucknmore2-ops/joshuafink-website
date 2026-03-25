@@ -14,6 +14,13 @@ export type Suburb = {
   schemaCity: string
   schemaState: string
   schemaZip: string
+  // Buyer-side data
+  buyerDescription?: string
+  buyerWhyBullets?: string[]
+  buyerFaqs?: { q: string; a: string }[]
+  topNeighborhoods?: string[]
+  schoolDistrict?: string
+  commuteNote?: string
 }
 
 export const suburbs: Record<string, Suburb> = {
@@ -55,6 +62,21 @@ export const suburbs: Record<string, Suburb> = {
     schemaCity: 'Franklin',
     schemaState: 'TN',
     schemaZip: '37064',
+    buyerDescription: 'Franklin is one of the most competitive buyer markets in the Southeast — and for good reason. Top-rated schools, a thriving downtown, and strong appreciation make it a perennial target for buyers relocating from major metros. The 2026 median price sits at $650,000, with the most desirable neighborhoods — Cool Springs, Westhaven, Fieldstone Farms — moving fast. If you\'re buying in Franklin, preparation is everything: pre-approval before you tour, a local agent who knows which streets command a premium, and the ability to move decisively when the right home hits.',
+    buyerWhyBullets: [
+      'Off-market access: Joshua\'s Compass network surfaces Coming Soon and pocket listings before they hit Zillow — giving you first-look advantage in a market where good homes disappear quickly.',
+      'Neighborhood-level intelligence: Franklin spans dozens of distinct subdivisions. Joshua knows which offer the best resale value, which are zoned to the highest-rated schools, and which have HOA restrictions that matter to your lifestyle.',
+      'Negotiation in a seller\'s market: When you\'re competing against multiple offers, your agent\'s strategy is the differentiator. Joshua\'s offer structuring and escalation clause expertise consistently wins deals at or below asking.',
+    ],
+    buyerFaqs: [
+      { q: 'What is the average home price in Franklin, TN in 2026?', a: 'The median home price in Franklin is approximately $650,000. Entry-level homes in outer neighborhoods start around $450K; luxury properties in Westhaven or Governors Club run $1M+. The sweet spot for most buyers is $550K–$800K.' },
+      { q: 'How competitive is the Franklin buyer market?', a: 'Very competitive. Well-priced homes in Franklin\'s top areas routinely receive multiple offers within days. Coming in with a clean pre-approval, flexible closing date, and strong earnest money significantly improves your position.' },
+      { q: 'What are the best neighborhoods to buy in Franklin, TN?', a: 'It depends on your priorities. Westhaven offers walkability and community amenities. Fieldstone Farms balances price and location. Cool Springs is ideal for proximity to employment and retail. Joshua will match you to the right neighborhood based on budget, lifestyle, and investment goals.' },
+      { q: 'How long does it take to buy a home in Franklin?', a: 'From active search to closing, most buyers are in their new home within 60–90 days. The search phase varies widely — competitive buyers who are pre-approved and decisive often find something in 2–4 weeks. Closing itself typically takes 30–45 days after contract.' },
+    ],
+    topNeighborhoods: ['Westhaven', 'Fieldstone Farms', 'Cool Springs', 'Crockett Park', 'Ladd Park'],
+    schoolDistrict: 'Williamson County Schools',
+    commuteNote: '20 min to downtown Nashville via I-65',
   },
 
   'brentwood-tn': {
@@ -95,6 +117,21 @@ export const suburbs: Record<string, Suburb> = {
     schemaCity: 'Brentwood',
     schemaState: 'TN',
     schemaZip: '37027',
+    buyerDescription: 'Brentwood sets the standard for luxury suburban living in Middle Tennessee. With a median price near $900,000, it attracts executives, physicians, and families who want exceptional schools, large lots, and a safe, established community. Inventory here is always limited — serious buyers need a pre-approval in hand and an agent with relationships. Homes in Governors Club, Otter Creek, and Annandale rarely last more than a few weeks. If Brentwood is your target, working with a local expert who can surface off-market opportunities is the edge that makes the difference.',
+    buyerWhyBullets: [
+      'Luxury market expertise: Joshua understands the nuances of Brentwood\'s premium subdivisions — HOA rules, lot premiums, and which streets hold value best. You\'re not just buying a home, you\'re making a $900K+ investment decision.',
+      'Compass Private Exclusives: Joshua has access to Compass\'s exclusive off-market listings, giving Brentwood buyers first access to properties that never reach public portals.',
+      'Relocation concierge: Many Brentwood buyers are corporate relocations. Joshua coordinates with relo companies, handles tight timelines, and makes the process seamless even when you\'re moving from out of state.',
+    ],
+    buyerFaqs: [
+      { q: 'What is the average home price in Brentwood, TN in 2026?', a: 'The median home price in Brentwood is approximately $900,000. Entry-level homes in Brentwood start around $650K; luxury estates in Governors Club or custom builds run $2M+.' },
+      { q: 'What are the top neighborhoods to buy in Brentwood?', a: 'Governors Club for gated luxury and golf. Otter Creek for established tree-lined streets. Annandale for newer construction in the heart of Brentwood. Each offers a distinct lifestyle — Joshua can help you find the right fit.' },
+      { q: 'Are Brentwood schools as good as advertised?', a: 'Yes. Brentwood Academy, Ravenwood High School, and the broader Williamson County school system consistently rank among the top in Tennessee and nationally. School assignment is a major value driver and Joshua factors it into every buyer consultation.' },
+      { q: 'How do I compete in Brentwood\'s luxury market?', a: 'Preparation is everything. Have your financing tight (pre-approval or proof of funds), know your must-haves vs. nice-to-haves, and be ready to move when the right home appears. Joshua\'s off-market network also means you can find homes before the competition does.' },
+    ],
+    topNeighborhoods: ['Governors Club', 'Otter Creek', 'Annandale', 'Brentwood Hills', 'Murray Lane'],
+    schoolDistrict: 'Williamson County Schools',
+    commuteNote: '15 min to downtown Nashville via I-65',
   },
 
   'spring-hill-tn': {
@@ -135,6 +172,21 @@ export const suburbs: Record<string, Suburb> = {
     schemaCity: 'Spring Hill',
     schemaState: 'TN',
     schemaZip: '37174',
+    buyerDescription: 'Spring Hill is the smart buyer\'s play in 2026 — Williamson County schools, new construction communities, and a price point that still makes sense. With a median around $450,000, it\'s the most accessible entry into the Nashville suburban market. Buyers love the new neighborhoods, growing restaurant and retail scene, and the I-65 corridor that puts you in downtown Nashville in under 30 minutes. Competition is real here — Spring Hill attracts first-time buyers, move-up families, and out-of-state relocators in equal measure.',
+    buyerWhyBullets: [
+      'New construction navigation: Spring Hill has dozens of active builder communities. Joshua knows which builders deliver quality, which floor plans hold resale value, and how to negotiate upgrades and lot premiums that builders rarely advertise.',
+      'School zone precision: The Williamson/Maury County line runs through Spring Hill — and it matters. Joshua will confirm your exact school assignment before you make an offer, not after.',
+      'First-time buyer guidance: Many Spring Hill buyers are purchasing their first home. Joshua walks you through every step — inspection, negotiation, closing — with no surprises and no pressure.',
+    ],
+    buyerFaqs: [
+      { q: 'What is the average home price in Spring Hill, TN in 2026?', a: 'The median home price in Spring Hill is approximately $450,000. Entry-level new construction starts around $380K; larger homes with premium lots run $550K–$650K.' },
+      { q: 'Should I buy new construction or resale in Spring Hill?', a: 'Both have advantages. New construction offers warranties, modern layouts, and customization — but builder timelines can be long and lots are often small. Resale homes offer established landscaping, larger lots, and faster move-in. Joshua can walk you through both options side-by-side.' },
+      { q: 'Which part of Spring Hill is in Williamson County schools?', a: 'The northern portion of Spring Hill (ZIP 37174) is generally Williamson County Schools; southern sections may fall under Maury County. This distinction can affect home values by $20K–$40K. Joshua verifies school assignment for every home before you tour.' },
+      { q: 'Is Spring Hill a good investment?', a: 'Spring Hill has seen 5%+ annual appreciation in recent years and continues to attract new employers and residents. It remains one of the best value-to-appreciation opportunities in Middle Tennessee.' },
+    ],
+    topNeighborhoods: ['Autumn Ridge', 'Bridgemore Village', 'Kedron Village', 'Tollgate Village', 'Port Royal Place'],
+    schoolDistrict: 'Williamson County Schools (north) / Maury County (south)',
+    commuteNote: '30 min to downtown Nashville via I-65',
   },
 
   'nolensville-tn': {
@@ -175,6 +227,21 @@ export const suburbs: Record<string, Suburb> = {
     schemaCity: 'Nolensville',
     schemaState: 'TN',
     schemaZip: '37135',
+    buyerDescription: 'Nolensville offers something increasingly rare in Middle Tennessee: small-town charm inside Williamson County. With a median price around $580,000, it sits between Franklin and Spring Hill in both price and character. Buyers are drawn to the established neighborhoods, top-tier schools, charming downtown, and the tight-knit community feel that larger suburbs can\'t replicate. Homes move fast here — averaging just 22 days on market — so buyers need to be pre-approved and decisive.',
+    buyerWhyBullets: [
+      'Hyperlocal subdivision knowledge: Nolensville has distinct neighborhoods — Bent Creek, Scales Farmstead, Benington — each with different price points and community feel. Joshua knows them all intimately and will match you to the right one.',
+      'Speed advantage: Nolensville homes sell quickly. Joshua sets up instant MLS alerts and can typically get you into a showing within hours of a new listing hitting the market.',
+      'Community connection: Nolensville is a small town — and Joshua is plugged into it. Off-market deals, coming-soon properties, and word-of-mouth opportunities come through relationships, not just the MLS.',
+    ],
+    buyerFaqs: [
+      { q: 'What is the average home price in Nolensville, TN in 2026?', a: 'The median home price in Nolensville is approximately $580,000, with price per square foot around $228. Larger homes in premium subdivisions regularly exceed $700K.' },
+      { q: 'How competitive is the Nolensville housing market?', a: 'Very competitive. With only 22 average days on market, desirable homes often receive multiple offers. Having your financing ready and a decisive mindset is critical. Joshua will help you build offers that win without overpaying.' },
+      { q: 'What are the best neighborhoods in Nolensville for families?', a: 'Bent Creek and Scales Farmstead are popular for families with strong community amenities and top school assignments. Benington offers newer construction at a slight premium. Joshua will show you options based on your budget and priorities.' },
+      { q: 'Is Nolensville still growing?', a: 'Yes, but more slowly than Spring Hill or Thompson\'s Station. That controlled growth is actually a selling point — Nolensville has managed development carefully to preserve its character, which supports long-term value.' },
+    ],
+    topNeighborhoods: ['Bent Creek', 'Scales Farmstead', 'Benington', 'Winterset Woods', 'Nolen Mill'],
+    schoolDistrict: 'Williamson County Schools',
+    commuteNote: '25 min to downtown Nashville via Nolensville Pike',
   },
 
   'thompsons-station-tn': {
@@ -215,6 +282,21 @@ export const suburbs: Record<string, Suburb> = {
     schemaCity: "Thompson's Station",
     schemaState: 'TN',
     schemaZip: '37179',
+    buyerDescription: "Thompson's Station is Williamson County's best-kept secret for buyers who want space and schools without the Franklin price tag. At a median of $420,000, it's the most affordable Williamson County entry point — and it's appreciating faster than anywhere else in the area at nearly 6% year-over-year. Many homes sit on half-acre to multi-acre lots, offering privacy that's impossible to find in denser suburbs. If you're a buyer who wants land, quality schools, and long-term upside, this is the market to be in.",
+    buyerWhyBullets: [
+      "Value play with upside: Thompson's Station offers the lowest price-per-square-foot in Williamson County while delivering the same school district as Franklin and Brentwood. Joshua helps buyers understand exactly what they're getting and why the appreciation trajectory is compelling.",
+      'Land expertise: Evaluating acreage, well/septic systems, and rural property nuances requires specialized knowledge. Joshua has hands-on experience with Thompson\'s Station\'s larger-lot inventory and can guide you through inspections and due diligence.',
+      "Growth timing: Development is moving south along I-65. Buyers who get into Thompson's Station now are ahead of the curve — Joshua can show you which areas are positioned for the most upside as infrastructure catches up.",
+    ],
+    buyerFaqs: [
+      { q: "What is the average home price in Thompson's Station, TN in 2026?", a: "The median home price is approximately $420,000 — the most affordable Williamson County option. Entry-level homes start around $350K; larger properties on acreage run $500K–$700K+" },
+      { q: "Is Thompson's Station a good place to buy?", a: "For buyers seeking space, schools, and value, it's one of the best opportunities in Middle Tennessee right now. Nearly 6% year-over-year appreciation, Williamson County schools, and a rural character that's increasingly scarce." },
+      { q: "What should I know about buying a home with a well and septic in Thompson's Station?", a: "Many homes use private well and septic. Before closing, Joshua recommends a septic inspection and water quality test. These aren't dealbreakers — they're standard — but knowing their condition protects you from post-closing surprises." },
+      { q: "How far is Thompson's Station from Nashville?", a: "About 35–40 minutes from downtown Nashville via I-65, depending on traffic. Many buyers find it a reasonable commute given the price and space advantages. Franklin is only 10–15 minutes north." },
+    ],
+    topNeighborhoods: ['Bridgewater', 'Tollgate', 'Laurelbrook', 'Southbrooke', 'Rural acreage tracts'],
+    schoolDistrict: 'Williamson County Schools',
+    commuteNote: '35 min to downtown Nashville via I-65',
   },
 }
 
