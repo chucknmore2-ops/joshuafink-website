@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-03-24T12:00:54.376Z
+// AUTO-GENERATED — Last synced: 2026-03-25T12:01:10.805Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — updated automatically by OpenClaw daily cron
 
@@ -13,7 +13,6 @@ export interface Listing {
   status: string;
   note?: string;
   compassUrl: string;
-  imageUrl?: string;
 }
 
 export const listings: Listing[] = [
