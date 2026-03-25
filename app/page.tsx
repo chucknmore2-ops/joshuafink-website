@@ -52,28 +52,31 @@ export default function HomePage() {
               Fink
             </h1>
 
-            <p className="text-lg sm:text-xl text-[#E8E8E8] font-medium mb-10 tracking-wide">
-              Affiliate Broker &nbsp;|&nbsp; Middle Tennessee
+            <p className="text-lg sm:text-xl text-[#E8E8E8] font-medium mb-3 tracking-wide">
+              Affiliate Broker &nbsp;|&nbsp; Compass Real Estate &nbsp;|&nbsp; Middle Tennessee
+            </p>
+            <p className="text-base text-[#A0A0A0] mb-10 max-w-md leading-relaxed">
+              Selling your home? Get a free, no-obligation market valuation — real comps, real numbers, same day.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
-                href="/listings"
-                className="inline-flex items-center justify-center bg-white text-black text-sm font-bold px-8 py-4 tracking-wide hover:bg-[#E8E8E8] transition-colors"
-              >
-                View My Listings
-              </Link>
-              <Link
                 href="/sell"
                 className="inline-flex items-center justify-center bg-[#C0392B] text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-[#A93226] transition-colors"
               >
-                Get a Free Home Valuation
+                What&apos;s My Home Worth?
               </Link>
               <Link
-                href="/contact"
+                href="/cash-offer"
+                className="inline-flex items-center justify-center bg-white text-black text-sm font-bold px-8 py-4 tracking-wide hover:bg-[#E8E8E8] transition-colors"
+              >
+                Get a Cash Offer
+              </Link>
+              <Link
+                href="/listings"
                 className="inline-flex items-center justify-center border-2 border-white text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-white hover:text-black transition-colors"
               >
-                Contact Me
+                View Listings
               </Link>
             </div>
           </div>

@@ -49,7 +49,7 @@ const steps = [
 ]
 
 export default function CashOfferPage() {
-  const formspreeUrl = 'https://formspree.io/f/xjgazeqa'
+  const formspreeUrl = '/api/contact'
 
   return (
     <div className="bg-white">
@@ -91,9 +91,9 @@ export default function CashOfferPage() {
               </h2>
 
               <form action={formspreeUrl} method="POST" className="space-y-4">
-                <input type="hidden" name="_subject" value="🏚️ Cash Offer Request — joshuafink.com/cash-offer" />
-                <input type="hidden" name="lead_type" value="cash_offer" />
-                <input type="hidden" name="_next" value="https://joshuafink.com/cash-offer" />
+                <input type="hidden" name="lead_type" value="sell" />
+                <input type="hidden" name="subject" value="sell" />
+                <input type="hidden" name="source" value="cash-offer" />
 
                 <div>
                   <input

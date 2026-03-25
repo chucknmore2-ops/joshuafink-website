@@ -44,7 +44,7 @@ export default async function SuburbPage({ params }: Props) {
   const suburb = getSuburb(slug)
   if (!suburb) notFound()
 
-  const formspreeUrl = 'https://formspree.io/f/xjgazeqa'
+  const formspreeUrl = '/api/contact'
 
   const schemaOrg = {
     '@context': 'https://schema.org',
@@ -305,10 +305,9 @@ export default async function SuburbPage({ params }: Props) {
               </p>
               <form action={formspreeUrl} method="POST" className="space-y-5">
                 {/* Hidden fields */}
-                <input type="hidden" name="_subject" value={`🏡 New Seller Lead — ${suburb.displayName} — joshuafink.com`} />
-                <input type="hidden" name="lead_type" value="seller" />
+                <input type="hidden" name="lead_type" value="sell" />
+                <input type="hidden" name="subject" value="sell" />
                 <input type="hidden" name="suburb" value={suburb.name} />
-                <input type="hidden" name="_next" value={`https://joshuafink.com/sell/${slug}`} />
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>

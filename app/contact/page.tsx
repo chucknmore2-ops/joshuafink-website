@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 }
 
 export default function ContactPage() {
-  const formspreeUrl = 'https://formspree.io/f/xjgazeqa'
+  const formspreeUrl = '/api/contact'
 
   return (
     <div className="bg-white">
@@ -194,8 +194,7 @@ export default function ContactPage() {
                 />
               </div>
 
-              <input type="hidden" name="_subject" value="New inquiry from joshuafink.com" />
-              <input type="hidden" name="_next" value="https://joshuafink.com/contact" />
+              <input type="hidden" name="source" value="contact-page" />
               <p className="text-xs text-[#A0A0A0]">
                 * Messages go directly to joshua@joshuafink.com. For immediate response, call{' '}
                 <a href="tel:6155512727" className="underline text-black">
