@@ -5,6 +5,7 @@ const SLACK_TOKEN = process.env.SLACK_BOT_TOKEN!
 const SLACK_CHANNEL = 'C0APH84LFG8' // #joshpersonal
 const FROM_EMAIL = 'leads@joshuafink.com'
 const TO_EMAIL = 'joshua@joshuafink.com'
+const N8N_BASE = process.env.N8N_WEBHOOK_BASE || 'http://localhost:5678/webhook'
 
 async function sendSlack(lead: Record<string, string>) {
   const typeEmoji: Record<string, string> = {
@@ -136,11 +137,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    // Fire all three in parallel
+    // Trigger drip sequence based on lead type
+    const isSeller = ['sell', 'seller'].includes(lead.subject || lead.lead_type || '')
+    const drip = isSeller ? 'seller-lead' : 'buyer-lead'
+    const triggerDrip = fetch(`${N8N_BASE}/${drip}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(lead),
+    }).catch(() => null) // non-blocking, best-effort
+
+    // Fire all in parallel
     await Promise.allSettled([
       sendSlack(lead),
       sendAutoReply(lead),
       forwardToJoshua(lead),
+      triggerDrip,
     ])
 
     return NextResponse.json({ ok: true })
