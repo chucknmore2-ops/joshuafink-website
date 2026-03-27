@@ -1,7 +1,18 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['www.compass.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'www.compass.com',
+        pathname: '/m/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'compass.com',
+        pathname: '/**',
+      },
+    ],
   },
 }
 

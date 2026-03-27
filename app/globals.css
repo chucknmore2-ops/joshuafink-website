@@ -20,6 +20,44 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* ── Kalshi-style pill buttons ── */
+@layer components {
+  .btn-pill-primary {
+    @apply inline-flex items-center justify-center bg-black text-white text-sm font-semibold
+           px-6 py-2.5 rounded-full tracking-wide
+           transition-all duration-200 ease-out
+           hover:bg-neutral-800 hover:shadow-md active:scale-[0.98];
+  }
+
+  .btn-pill-outline {
+    @apply inline-flex items-center justify-center border border-black text-black text-sm font-semibold
+           px-6 py-2.5 rounded-full tracking-wide
+           transition-all duration-200 ease-out
+           hover:bg-black hover:text-white hover:shadow-md active:scale-[0.98];
+  }
+
+  .btn-pill-white {
+    @apply inline-flex items-center justify-center bg-white text-black text-sm font-semibold
+           px-6 py-2.5 rounded-full tracking-wide
+           transition-all duration-200 ease-out
+           hover:bg-neutral-100 hover:shadow-md active:scale-[0.98];
+  }
+
+  .btn-pill-ghost-white {
+    @apply inline-flex items-center justify-center border border-white text-white text-sm font-semibold
+           px-6 py-2.5 rounded-full tracking-wide
+           transition-all duration-200 ease-out
+           hover:bg-white hover:text-black active:scale-[0.98];
+  }
+
+  /* Card with hover lift */
+  .card-lift {
+    @apply border border-neutral-200 bg-white rounded-2xl
+           transition-all duration-200 ease-out
+           hover:shadow-xl hover:-translate-y-1;
+  }
+}
+
 /* Prose styles for blog content */
 .prose-content h2 {
   font-size: 1.375rem;

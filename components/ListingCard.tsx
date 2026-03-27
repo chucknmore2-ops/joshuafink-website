@@ -14,8 +14,8 @@ function formatPrice(price: number): string {
 
 function statusColor(status: string): string {
   if (status === 'Active') return 'bg-black text-white'
-  if (status.startsWith('Open House')) return 'bg-[#1a1a1a] text-white'
-  return 'bg-[#E8E8E8] text-[#444]'
+  if (status.startsWith('Open House')) return 'bg-neutral-900 text-white'
+  return 'bg-neutral-100 text-neutral-600'
 }
 
 interface Props {
@@ -23,27 +23,24 @@ interface Props {
   featured?: boolean
 }
 
-export default function ListingCard({ listing, featured = false }: Props) {
+export default function ListingCard({ listing }: Props) {
   return (
-    <article
-      className={`group border border-[#E8E8E8] bg-white flex flex-col transition-shadow hover:shadow-lg ${
-        featured ? '' : ''
-      }`}
-    >
+    <article className="group border border-neutral-200 bg-white rounded-2xl flex flex-col overflow-hidden transition-all duration-200 ease-out hover:shadow-xl hover:-translate-y-1">
       {/* Listing image */}
-      <div className="relative bg-[#F5F5F5] aspect-[4/3] overflow-hidden flex items-center justify-center">
+      <div className="relative bg-neutral-100 aspect-[4/3] overflow-hidden flex items-center justify-center">
         {listing.imageUrl ? (
           <Image
             src={listing.imageUrl}
             alt={listing.address}
             fill
+            unoptimized
             className="object-cover group-hover:scale-105 transition-transform duration-300"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         ) : (
-          <div className="text-center text-[#A0A0A0] px-4">
+          <div className="text-center text-neutral-400 px-4">
             <svg
-              className="w-10 h-10 mx-auto mb-2 text-[#D0D0D0]"
+              className="w-10 h-10 mx-auto mb-2 text-neutral-300"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -62,7 +59,7 @@ export default function ListingCard({ listing, featured = false }: Props) {
 
         {/* Status badge */}
         <span
-          className={`absolute top-3 left-3 text-xs font-semibold px-2.5 py-1 tracking-wide ${statusColor(
+          className={`absolute top-3 left-3 text-xs font-semibold px-3 py-1 rounded-full tracking-wide ${statusColor(
             listing.status
           )}`}
         >
@@ -77,13 +74,13 @@ export default function ListingCard({ listing, featured = false }: Props) {
             {formatPrice(listing.price)}
           </p>
           <p className="text-sm font-semibold text-black mt-1">{listing.address}</p>
-          <p className="text-xs text-[#6B6B6B] mt-0.5">{listing.city}</p>
+          <p className="text-xs text-neutral-500 mt-0.5">{listing.city}</p>
         </div>
 
         {listing.note ? (
-          <p className="text-sm text-[#6B6B6B] mb-4">{listing.note}</p>
+          <p className="text-sm text-neutral-500 mb-4">{listing.note}</p>
         ) : (
-          <div className="flex items-center gap-4 text-xs text-[#6B6B6B] mb-4">
+          <div className="flex items-center gap-4 text-xs text-neutral-500 mb-4">
             {listing.beds !== undefined && (
               <span>
                 <strong className="text-black font-semibold">{listing.beds}</strong> bd
@@ -114,7 +111,7 @@ export default function ListingCard({ listing, featured = false }: Props) {
           href={listing.compassUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-auto text-center text-sm font-semibold border border-black text-black py-2.5 tracking-wide hover:bg-black hover:text-white transition-colors"
+          className="mt-auto text-center text-sm font-semibold border border-black text-black py-2.5 rounded-full tracking-wide transition-all duration-200 hover:bg-black hover:text-white"
         >
           View on Compass →
         </a>

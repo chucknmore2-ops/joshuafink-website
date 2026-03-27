@@ -115,7 +115,7 @@ async function forwardToJoshua(lead: Record<string, string>) {
     body: JSON.stringify({
       personalizations: [{ to: [{ email: TO_EMAIL, name: 'Joshua Fink' }] }],
       from: { email: FROM_EMAIL, name: 'joshuafink.com Lead' },
-      reply_to: { email: lead.email, name: lead.name },
+      ...(lead.email ? { reply_to: { email: lead.email, name: lead.name } } : {}),
       subject: `🏡 New Lead: ${lead.name || 'Unknown'} — ${lead.suburb || lead.subject || 'joshuafink.com'}`,
       content: [{
         type: 'text/html',
@@ -141,8 +141,12 @@ export async function POST(req: NextRequest) {
       Object.entries(form).map(([k, v]) => [k, String(v)])
     ) as Record<string, string>
 
-    if (!lead.email || !lead.name) {
+    if (!lead.name) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    }
+    // email is optional for cash-offer leads (phone-only submissions)
+    if (!lead.email) {
+      lead.email = ''
     }
 
     // Trigger drip sequence based on lead type
@@ -154,13 +158,14 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify(lead),
     }).catch(() => null) // non-blocking, best-effort
 
-    // Fire all in parallel
-    await Promise.allSettled([
+    // Fire all in parallel (auto-reply only if we have an email)
+    const tasks = [
       sendSlack(lead),
-      sendAutoReply(lead),
       forwardToJoshua(lead),
       triggerDrip,
-    ])
+    ]
+    if (lead.email) tasks.push(sendAutoReply(lead))
+    await Promise.allSettled(tasks)
 
     return NextResponse.json({ ok: true })
   } catch (err) {

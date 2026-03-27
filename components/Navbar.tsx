@@ -18,7 +18,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-[#E8E8E8]">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-neutral-200">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex-shrink-0">
@@ -28,15 +28,15 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-7">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className={`text-sm font-medium tracking-wide transition-colors hover:text-black ${
+              className={`text-sm font-medium tracking-wide transition-colors duration-150 hover:text-black ${
                 pathname === link.href
                   ? 'text-black border-b-2 border-black pb-0.5'
-                  : 'text-[#6B6B6B]'
+                  : 'text-neutral-500'
               }`}
             >
               {link.label}
@@ -44,11 +44,20 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* CTA + hamburger */}
-        <div className="flex items-center gap-4">
+        {/* CTAs + hamburger */}
+        <div className="flex items-center gap-3">
+          {/* Cash Offer — primary pill CTA, visible on all screens ≥ sm */}
+          <Link
+            href="/cash-offer"
+            className="hidden sm:inline-flex items-center bg-black text-white text-sm font-semibold px-5 py-2 rounded-full tracking-wide transition-all duration-200 hover:bg-neutral-800 hover:shadow-md active:scale-[0.98]"
+          >
+            Cash Offer
+          </Link>
+
+          {/* Call Now — outline pill, desktop only */}
           <a
             href="tel:6155512727"
-            className="hidden sm:inline-flex items-center bg-black text-white text-sm font-semibold px-5 py-2.5 tracking-wide hover:bg-[#222] transition-colors"
+            className="hidden md:inline-flex items-center border border-neutral-300 text-black text-sm font-semibold px-5 py-2 rounded-full tracking-wide transition-all duration-200 hover:border-black hover:shadow-sm active:scale-[0.98]"
           >
             Call Now
           </a>
@@ -84,25 +93,34 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden bg-white border-t border-[#E8E8E8] px-4 pb-4 pt-2">
+        <div className="md:hidden bg-white border-t border-neutral-200 px-4 pb-4 pt-2">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               onClick={() => setMenuOpen(false)}
-              className={`block py-3 text-sm font-medium border-b border-[#E8E8E8] last:border-0 ${
-                pathname === link.href ? 'text-black' : 'text-[#6B6B6B]'
+              className={`block py-3 text-sm font-medium border-b border-neutral-100 last:border-0 ${
+                pathname === link.href ? 'text-black' : 'text-neutral-500'
               }`}
             >
               {link.label}
             </Link>
           ))}
-          <a
-            href="tel:6155512727"
-            className="mt-4 block text-center bg-black text-white text-sm font-semibold px-5 py-3 tracking-wide"
-          >
-            Call Now — 615-551-2727
-          </a>
+          <div className="mt-4 flex flex-col gap-3">
+            <Link
+              href="/cash-offer"
+              onClick={() => setMenuOpen(false)}
+              className="block text-center bg-black text-white text-sm font-semibold px-5 py-3 rounded-full tracking-wide transition-all duration-200 hover:bg-neutral-800"
+            >
+              Get a Cash Offer
+            </Link>
+            <a
+              href="tel:6155512727"
+              className="block text-center border border-neutral-300 text-black text-sm font-semibold px-5 py-3 rounded-full tracking-wide transition-all duration-200 hover:border-black"
+            >
+              Call 615-551-2727
+            </a>
+          </div>
         </div>
       )}
     </header>

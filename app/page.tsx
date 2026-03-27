@@ -52,29 +52,29 @@ export default function HomePage() {
               Fink
             </h1>
 
-            <p className="text-lg sm:text-xl text-[#E8E8E8] font-medium mb-3 tracking-wide">
+            <p className="text-lg sm:text-xl text-neutral-200 font-medium mb-3 tracking-wide">
               Affiliate Broker &nbsp;|&nbsp; Compass Real Estate &nbsp;|&nbsp; Middle Tennessee
             </p>
-            <p className="text-base text-[#A0A0A0] mb-10 max-w-md leading-relaxed">
+            <p className="text-base text-neutral-400 mb-10 max-w-md leading-relaxed">
               Selling your home? Get a free, no-obligation market valuation — real comps, real numbers, same day.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row flex-wrap gap-3">
               <Link
                 href="/sell"
-                className="inline-flex items-center justify-center bg-[#C0392B] text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-[#A93226] transition-colors"
+                className="inline-flex items-center justify-center bg-white text-black text-sm font-bold px-7 py-3 rounded-full tracking-wide transition-all duration-200 hover:bg-neutral-100 hover:shadow-lg active:scale-[0.98]"
               >
                 What&apos;s My Home Worth?
               </Link>
               <Link
                 href="/cash-offer"
-                className="inline-flex items-center justify-center bg-white text-black text-sm font-bold px-8 py-4 tracking-wide hover:bg-[#E8E8E8] transition-colors"
+                className="inline-flex items-center justify-center bg-transparent border-2 border-white text-white text-sm font-bold px-7 py-3 rounded-full tracking-wide transition-all duration-200 hover:bg-white hover:text-black active:scale-[0.98]"
               >
                 Get a Cash Offer
               </Link>
               <Link
                 href="/listings"
-                className="inline-flex items-center justify-center border-2 border-white text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-white hover:text-black transition-colors"
+                className="inline-flex items-center justify-center border border-white/40 text-white/80 text-sm font-semibold px-7 py-3 rounded-full tracking-wide transition-all duration-200 hover:border-white hover:text-white active:scale-[0.98]"
               >
                 View Listings
               </Link>
@@ -84,13 +84,13 @@ export default function HomePage() {
       </section>
 
       {/* ── STATS BAR ── */}
-      <section className="bg-[#E8E8E8]">
+      <section className="bg-neutral-100 border-b border-neutral-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-[#D0D0D0]">
+          <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-neutral-200">
             {stats.map((stat) => (
               <div key={stat.label} className="py-8 px-6 text-center">
                 <p className="text-4xl font-black text-black mb-1">{stat.value}</p>
-                <p className="text-sm text-[#6B6B6B] font-medium tracking-wide">{stat.label}</p>
+                <p className="text-sm text-neutral-500 font-medium tracking-wide">{stat.label}</p>
               </div>
             ))}
           </div>
@@ -102,7 +102,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between mb-10">
             <div>
-              <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-2">
+              <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-2">
                 Current Listings
               </p>
               <h2 className="text-4xl font-black text-black tracking-tight">Featured Homes</h2>
@@ -137,28 +137,28 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-4">
+              <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-4">
                 Thinking About Selling?
               </p>
               <h2 className="text-4xl sm:text-5xl font-black tracking-tight leading-tight mb-6">
                 Find Out What Your<br />Home Is Worth.
               </h2>
-              <p className="text-[#A0A0A0] text-base leading-relaxed max-w-lg">
+              <p className="text-neutral-400 text-base leading-relaxed max-w-lg">
                 Get a free, no-obligation home valuation from Joshua. Real comps, real numbers —
                 not an algorithm. Most sellers are surprised by what their home is worth in
                 today&apos;s Middle Tennessee market.
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-4 lg:justify-end">
+            <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-3 lg:justify-end">
               <Link
                 href="/sell"
-                className="inline-flex items-center justify-center bg-white text-black text-sm font-bold px-10 py-5 tracking-wide hover:bg-[#E8E8E8] transition-colors"
+                className="inline-flex items-center justify-center bg-white text-black text-sm font-bold px-8 py-4 rounded-full tracking-wide transition-all duration-200 hover:bg-neutral-100 hover:shadow-lg active:scale-[0.98]"
               >
                 Get My Free Valuation →
               </Link>
               <a
                 href="tel:6155512727"
-                className="inline-flex items-center justify-center border border-white text-white text-sm font-bold px-10 py-5 tracking-wide hover:bg-white hover:text-black transition-colors"
+                className="inline-flex items-center justify-center border border-neutral-600 text-white text-sm font-bold px-8 py-4 rounded-full tracking-wide transition-all duration-200 hover:border-white hover:bg-white/10 active:scale-[0.98]"
               >
                 Call 615-551-2727
               </a>
@@ -168,31 +168,31 @@ export default function HomePage() {
       </section>
 
       {/* ── ABOUT TEASER ── */}
-      <section className="bg-[#F5F5F5] py-20">
+      <section className="bg-neutral-50 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
-            <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-4">
+            <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-4">
               About Joshua
             </p>
             <h2 className="text-4xl font-black text-black tracking-tight mb-6">
               Committed to Closing Deals
             </h2>
-            <p className="text-lg text-[#444] leading-relaxed mb-8">
+            <p className="text-lg text-neutral-600 leading-relaxed mb-8">
               With over 13 years of experience and 100+ homes sold annually, Joshua Fink is one of
               Middle Tennessee&apos;s most trusted Affiliate Brokers. A Diamond &amp; Titan Award winner
               who puts every client&apos;s goals first — and donates a portion of every commission to the
               Children&apos;s Miracle Network.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
                 href="/about"
-                className="inline-flex items-center justify-center bg-black text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-[#222] transition-colors"
+                className="inline-flex items-center justify-center bg-black text-white text-sm font-bold px-8 py-3 rounded-full tracking-wide transition-all duration-200 hover:bg-neutral-800 hover:shadow-md active:scale-[0.98]"
               >
                 Learn More About Joshua
               </Link>
               <a
                 href="tel:6155512727"
-                className="inline-flex items-center justify-center border-2 border-black text-black text-sm font-bold px-8 py-4 tracking-wide hover:bg-black hover:text-white transition-colors"
+                className="inline-flex items-center justify-center border-2 border-black text-black text-sm font-bold px-8 py-3 rounded-full tracking-wide transition-all duration-200 hover:bg-black hover:text-white active:scale-[0.98]"
               >
                 Call 615-551-2727
               </a>
