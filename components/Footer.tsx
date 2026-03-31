@@ -83,7 +83,7 @@ export default function Footer() {
             </h3>
             <div className="flex items-center gap-4">
               <a
-                href="https://www.facebook.com/joshuafinkgroup"
+                href="https://www.facebook.com/profile.php?id=100064076493905"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook"

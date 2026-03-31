@@ -50,6 +50,9 @@ export default function HomePage() {
               Joshua
               <br />
               Fink
+              <span className="block text-lg sm:text-xl font-medium tracking-wide text-neutral-400 mt-3">
+                Top Real Estate Agent in Nashville &amp; Middle Tennessee
+              </span>
             </h1>
 
             <p className="text-lg sm:text-xl text-neutral-200 font-medium mb-3 tracking-wide">
@@ -260,27 +263,27 @@ export default function HomePage() {
             {[
               {
                 title: '13+ Years Experience',
-                body: 'Joshua has navigated every market cycle in Middle Tennessee, from high-velocity seller markets to strategic buyer windows. That experience helps you make decisions with confidence from pricing through closing.',
+                body: 'Since 2012, Joshua has navigated every market cycle Middle Tennessee has thrown at buyers and sellers—from the post-recession recovery through the 2021-2022 bidding war frenzy to today\'s normalized market. That experience means he knows when to push, when to wait, and how to structure offers that win without overpaying. Over 1,000+ transactions closed across Davidson, Williamson, Maury, Rutherford, and Sumner counties. Every deal teaches something, and Joshua has 13 years of lessons working directly for your outcome.',
               },
               {
                 title: '100+ Homes Sold Annually',
-                body: 'High volume means more real-time data and sharper negotiation instincts. Joshua sees what is actually working in today\'s market and applies it directly to your transaction.',
+                body: 'Volume matters because it means Joshua is in the market every single day, not occasionally. He sees new inventory before it hits Zillow, knows which neighborhoods are heating up before broad reports confirm it, and has relationships with listing agents across Middle Tennessee that translate into better access and stronger negotiations for his clients. High volume also means a proven operating system: professional photography, strategic pricing, aggressive marketing distribution, disciplined follow-up, and consistent outcomes for both sellers and buyers.',
               },
               {
                 title: 'Diamond & Titan Award Winner',
-                body: 'These awards reflect consistent top-tier performance, not one good year. Clients trust Joshua for execution, communication, and results when stakes are highest.',
+                body: 'These aren\'t participation trophies. The Diamond and Titan Awards recognize top-performing agents in the Compass network based on closed volume and client satisfaction. Fewer than 5% of agents earn these distinctions. For buyers and sellers, working with an award-winning agent means you\'re getting someone whose track record has been independently validated, not self-reported. Results matter when real money is on the line, and Joshua\'s production, consistency, and client outcomes place him among the strongest-performing agents in Tennessee.',
               },
               {
                 title: 'Compass Technology Platform',
-                body: 'From Compass Private Exclusives to data-driven pricing tools and modern marketing distribution, Joshua leverages best-in-class tech to position your home and attract qualified buyers faster.',
+                body: 'Compass isn\'t just a brokerage, it\'s a technology company. Joshua\'s clients get access to Compass Coming Soon for pre-market listings before MLS exposure, Compass Concierge for fronted funds on strategic home improvements before selling, and AI-powered market analytics that surface pricing opportunities many agents miss. The Compass network spans 30,000+ agents nationwide, giving Joshua\'s listings visibility to qualified buyers relocating from major metros across the country. That blend of platform, reach, and execution creates a measurable edge.',
               },
               {
                 title: "Children's Miracle Network Partner",
-                body: 'A portion of every closing supports Children\'s Miracle Network. Your move creates meaningful local impact while you work with an agent who leads with service and integrity.',
+                body: 'Joshua donates a portion of every commission to the Children\'s Miracle Network, supporting Vanderbilt Children\'s Hospital right here in Nashville. Since partnering with CMN, he\'s helped fund critical pediatric care, medical equipment, and research that supports families throughout Middle Tennessee. This isn\'t a marketing gimmick or one-time campaign; it\'s an ongoing commitment built into how he does business. When you work with Joshua, your transaction does more than close a deal, it contributes directly to children\'s healthcare in your local community.',
               },
               {
                 title: 'Free Same-Day Home Valuations',
-                body: 'Get a no-obligation valuation based on recent comps and neighborhood-level trends. You get clear numbers quickly, so you can plan your next move without guesswork.',
+                body: 'No algorithms. No Zestimate guesswork. Joshua pulls actual sold comps within roughly a half-mile of your address, then adjusts for condition, lot size, school zone, upgrades, and recent market shifts to deliver a defensible number you can make real decisions with—usually within a few hours. Whether you\'re considering selling next week or next year, understanding your home\'s true market value is the foundation for timing, pricing, and planning. It\'s free, same-day in most cases, and comes with zero obligation.',
               },
             ].map((item) => (
               <div key={item.title} className="rounded-2xl border border-white/15 bg-white/5 p-6">
