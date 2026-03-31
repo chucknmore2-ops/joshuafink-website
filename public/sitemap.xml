@@ -42,6 +42,11 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+  <url>
+    <loc>https://www.joshuafink.com/llms.txt</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
 
   <!-- Sell pages (high priority — seller lead focus) -->
   <url>
@@ -89,6 +94,31 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
+  <url>
+    <loc>https://www.joshuafink.com/sell/columbia-tn</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.joshuafink.com/sell/mount-juliet-tn</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.joshuafink.com/sell/lebanon-tn</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.joshuafink.com/sell/smyrna-tn</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.joshuafink.com/sell/la-vergne-tn</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
 
   <!-- Buy pages -->
   <url>
@@ -133,6 +163,31 @@
   </url>
   <url>
     <loc>https://www.joshuafink.com/buy/thompsons-station-tn</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.joshuafink.com/buy/columbia-tn</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.joshuafink.com/buy/mount-juliet-tn</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.joshuafink.com/buy/lebanon-tn</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.joshuafink.com/buy/smyrna-tn</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.joshuafink.com/buy/la-vergne-tn</loc>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
@@ -200,6 +255,56 @@
   </url>
   <url>
     <loc>https://www.joshuafink.com/blog/moving-to-franklin-tn</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.joshuafink.com/blog/living-in-franklin-tn-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.joshuafink.com/blog/living-in-brentwood-tn-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.joshuafink.com/blog/living-in-spring-hill-tn-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.joshuafink.com/blog/living-in-nolensville-tn-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.joshuafink.com/blog/living-in-thompsons-station-tn-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.joshuafink.com/blog/living-in-murfreesboro-tn-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.joshuafink.com/blog/living-in-columbia-tn-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.joshuafink.com/blog/living-in-mount-juliet-tn-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.joshuafink.com/blog/living-in-hendersonville-tn-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.joshuafink.com/blog/living-in-smyrna-tn-guide</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

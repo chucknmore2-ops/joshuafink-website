@@ -81,16 +81,9 @@ function renderContent(content: string) {
         </ul>
       )
     } else if (line.trim() !== '') {
-      // Parse inline bold within paragraph
-      const parts = line.split(/(\*\*[^*]+\*\*)/)
       elements.push(
         <p key={key++} className="text-[#333] leading-relaxed mb-4">
-          {parts.map((part, idx) => {
-            if (part.startsWith('**') && part.endsWith('**')) {
-              return <strong key={idx} className="text-black font-semibold">{part.slice(2, -2)}</strong>
-            }
-            return part
-          })}
+          {parseInlineMarkdown(line)}
         </p>
       )
     }
