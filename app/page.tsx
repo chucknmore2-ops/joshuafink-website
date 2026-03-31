@@ -200,6 +200,97 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ── NEIGHBORHOODS ── */}
+      <section className="bg-white py-20 border-t border-neutral-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mb-10">
+            <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
+              Your Neighborhood Expert
+            </p>
+            <h2 className="text-4xl font-black text-black tracking-tight mb-4">
+              Hyperlocal Insight Across Middle Tennessee
+            </h2>
+            <p className="text-neutral-600 leading-relaxed">
+              Joshua combines on-the-ground neighborhood expertise with Compass market data to help
+              buyers and sellers make smarter moves. Explore local guides for pricing trends,
+              school zones, commute patterns, and where opportunity is strongest right now.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[
+              ['franklin-tn', 'Franklin, TN'],
+              ['brentwood-tn', 'Brentwood, TN'],
+              ['spring-hill-tn', 'Spring Hill, TN'],
+              ['nolensville-tn', 'Nolensville, TN'],
+              ['thompsons-station-tn', "Thompson's Station, TN"],
+              ['nashville-tn', 'Nashville, TN'],
+              ['murfreesboro-tn', 'Murfreesboro, TN'],
+              ['gallatin-tn', 'Gallatin, TN'],
+              ['hendersonville-tn', 'Hendersonville, TN'],
+              ['columbia-tn', 'Columbia, TN'],
+              ['mount-juliet-tn', 'Mount Juliet, TN'],
+              ['lebanon-tn', 'Lebanon, TN'],
+              ['smyrna-tn', 'Smyrna, TN'],
+              ['la-vergne-tn', 'La Vergne, TN'],
+            ].map(([slug, label]) => (
+              <Link
+                key={slug}
+                href={`/buy/${slug}`}
+                className="rounded-2xl border border-neutral-200 bg-white px-5 py-4 text-sm font-semibold text-black transition-all duration-200 hover:bg-black hover:text-white hover:border-black"
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── WHY JOSHUA ── */}
+      <section className="bg-black text-white py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mb-10">
+            <p className="text-xs font-semibold tracking-widest text-neutral-500 uppercase mb-3">
+              Why Joshua Fink
+            </p>
+            <h2 className="text-4xl font-black tracking-tight">Proven Local Advantage</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              {
+                title: '13+ Years Experience',
+                body: 'Joshua has navigated every market cycle in Middle Tennessee, from high-velocity seller markets to strategic buyer windows. That experience helps you make decisions with confidence from pricing through closing.',
+              },
+              {
+                title: '100+ Homes Sold Annually',
+                body: 'High volume means more real-time data and sharper negotiation instincts. Joshua sees what is actually working in today\'s market and applies it directly to your transaction.',
+              },
+              {
+                title: 'Diamond & Titan Award Winner',
+                body: 'These awards reflect consistent top-tier performance, not one good year. Clients trust Joshua for execution, communication, and results when stakes are highest.',
+              },
+              {
+                title: 'Compass Technology Platform',
+                body: 'From Compass Private Exclusives to data-driven pricing tools and modern marketing distribution, Joshua leverages best-in-class tech to position your home and attract qualified buyers faster.',
+              },
+              {
+                title: "Children's Miracle Network Partner",
+                body: 'A portion of every closing supports Children\'s Miracle Network. Your move creates meaningful local impact while you work with an agent who leads with service and integrity.',
+              },
+              {
+                title: 'Free Same-Day Home Valuations',
+                body: 'Get a no-obligation valuation based on recent comps and neighborhood-level trends. You get clear numbers quickly, so you can plan your next move without guesswork.',
+              },
+            ].map((item) => (
+              <div key={item.title} className="rounded-2xl border border-white/15 bg-white/5 p-6">
+                <h3 className="text-lg font-bold mb-3">{item.title}</h3>
+                <p className="text-sm text-neutral-300 leading-relaxed">{item.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </>
   )
 }

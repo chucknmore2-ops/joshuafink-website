@@ -24,8 +24,39 @@ function StarRating({ rating }: { rating: number }) {
 }
 
 export default function ReviewsPage() {
+  const reviewsSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'RealEstateAgent',
+    name: 'Joshua Fink Group',
+    url: 'https://joshuafink.com',
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: reviewStats.rating,
+      reviewCount: reviewStats.total,
+      bestRating: 5,
+      worstRating: 1,
+    },
+    review: reviews.map((review) => ({
+      '@type': 'Review',
+      author: {
+        '@type': 'Person',
+        name: review.reviewer,
+      },
+      datePublished: review.date,
+      reviewRating: {
+        '@type': 'Rating',
+        ratingValue: review.rating,
+      },
+      reviewBody: review.text,
+    })),
+  }
+
   return (
     <div className="bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewsSchema) }}
+      />
       {/* Header */}
       <div className="bg-black text-white py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">

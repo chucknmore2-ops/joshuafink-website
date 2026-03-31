@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import Script from 'next/script'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
@@ -35,42 +34,99 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col font-inter">
-        {/*
-          ─────────────────────────────────────────────────────────────
-          META PIXEL — Joshua: replace PIXEL_ID_HERE with your real
-          Pixel ID from Meta Business Suite → Events Manager.
-          Steps: business.facebook.com → Events Manager → Data Sources
-          → Add → Web → Copy the numeric Pixel ID (e.g. 1234567890123).
-          ─────────────────────────────────────────────────────────────
-        */}
-        <Script
-          id="meta-pixel"
-          strategy="afterInteractive"
+        <script
+          type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: `
-              !function(f,b,e,v,n,t,s)
-              {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-              n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-              if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-              n.queue=[];t=b.createElement(e);t.async=!0;
-              t.src=v;s=b.getElementsByTagName(e)[0];
-              s.parentNode.insertBefore(t,s)}(window, document,'script',
-              'https://connect.facebook.net/en_US/fbevents.js');
-              fbq('init', 'PIXEL_ID_HERE');
-              fbq('track', 'PageView');
-            `,
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'RealEstateAgent',
+              name: 'Joshua Fink Group',
+              description:
+                'Joshua Fink is a top-producing Affiliate Broker at Compass Real Estate serving Nashville, Brentwood, Franklin, and all of Middle Tennessee. 13+ years of experience, 100+ homes sold annually.',
+              url: 'https://joshuafink.com',
+              telephone: '+1-615-551-2727',
+              email: 'joshua@joshuafink.com',
+              image: 'https://joshuafink.com/headshot.jpg',
+              address: {
+                '@type': 'PostalAddress',
+                addressLocality: 'Nashville',
+                addressRegion: 'TN',
+                addressCountry: 'US',
+              },
+              areaServed: {
+                '@type': 'GeoCircle',
+                geoMidpoint: {
+                  '@type': 'GeoCoordinates',
+                  latitude: 36.1627,
+                  longitude: -86.7816,
+                },
+                geoRadius: '48280',
+              },
+              parentOrganization: {
+                '@type': 'RealEstateAgent',
+                name: 'Compass Real Estate',
+              },
+              sameAs: [
+                'https://www.facebook.com/joshuafinkgroup',
+                'https://www.instagram.com/joshuafinkgroup',
+                'https://www.linkedin.com/in/joshuafinkgroup/',
+                'https://x.com/JoshuaFinkGroup',
+                'https://www.compass.com/agents/joshua-fink/',
+              ],
+              openingHoursSpecification: [
+                {
+                  '@type': 'OpeningHoursSpecification',
+                  dayOfWeek: [
+                    'Monday',
+                    'Tuesday',
+                    'Wednesday',
+                    'Thursday',
+                    'Friday',
+                    'Saturday',
+                  ],
+                  opens: '00:00',
+                  closes: '23:59',
+                },
+              ],
+              priceRange: '$$',
+            }),
           }}
         />
-        <noscript>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            height="1"
-            width="1"
-            style={{ display: 'none' }}
-            src="https://www.facebook.com/tr?id=PIXEL_ID_HERE&ev=PageView&noscript=1"
-            alt=""
-          />
-        </noscript>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Person',
+              name: 'Joshua Fink',
+              jobTitle: 'Affiliate Broker',
+              worksFor: {
+                '@type': 'Organization',
+                name: 'Compass Real Estate',
+              },
+              url: 'https://joshuafink.com',
+              telephone: '+1-615-551-2727',
+              email: 'joshua@joshuafink.com',
+              knowsAbout: [
+                'Real Estate',
+                'Nashville Real Estate Market',
+                'Middle Tennessee Properties',
+                'Investment Properties',
+                'Fix and Flip',
+                'Home Buying',
+                'Home Selling',
+              ],
+              sameAs: [
+                'https://www.facebook.com/joshuafinkgroup',
+                'https://www.instagram.com/joshuafinkgroup',
+                'https://www.linkedin.com/in/joshuafinkgroup/',
+                'https://x.com/JoshuaFinkGroup',
+                'https://www.compass.com/agents/joshua-fink/',
+              ],
+            }),
+          }}
+        />
+        {/* Meta Pixel: add real Pixel ID here when available */}
         <Navbar />
         <main className="flex-1 pt-16">{children}</main>
         <Footer />

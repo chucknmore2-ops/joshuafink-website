@@ -20,6 +20,31 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
+function parseInlineMarkdown(text: string) {
+  const tokens = text.split(/(\*\*[^*]+\*\*|\[[^\]]+\]\([^\)]+\))/g)
+
+  return tokens.map((token, idx) => {
+    if (token.startsWith('**') && token.endsWith('**')) {
+      return (
+        <strong key={idx} className="text-black font-semibold">
+          {token.slice(2, -2)}
+        </strong>
+      )
+    }
+
+    const linkMatch = token.match(/^\[([^\]]+)\]\(([^\)]+)\)$/)
+    if (linkMatch) {
+      return (
+        <Link key={idx} href={linkMatch[2]} className="text-black underline hover:no-underline">
+          {linkMatch[1]}
+        </Link>
+      )
+    }
+
+    return token
+  })
+}
+
 function renderContent(content: string) {
   const lines = content.split('\n')
   const elements: React.ReactNode[] = []
@@ -50,7 +75,7 @@ function renderContent(content: string) {
         <ul key={key++} className="list-disc pl-6 mb-4 space-y-1 text-[#333]">
           {items.map((item, idx) => (
             <li key={idx} className="leading-relaxed">
-              {item.replace(/\*\*(.*?)\*\*/g, '$1')}
+              {parseInlineMarkdown(item)}
             </li>
           ))}
         </ul>

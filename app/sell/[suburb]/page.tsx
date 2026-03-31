@@ -45,6 +45,7 @@ export default async function SuburbPage({ params }: Props) {
   if (!suburb) notFound()
 
   const formspreeUrl = '/api/contact'
+  const faqs = suburb.faqs
 
   const schemaOrg = {
     '@context': 'https://schema.org',
@@ -89,12 +90,29 @@ export default async function SuburbPage({ params }: Props) {
     ],
   }
 
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.a,
+      },
+    })),
+  }
+
   return (
     <>
       {/* JSON-LD Schema */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       <div className="bg-white">
@@ -431,7 +449,7 @@ export default async function SuburbPage({ params }: Props) {
               {suburb.name} Home Selling FAQ
             </h2>
             <div className="space-y-6">
-              {suburb.faqs.map((faq, i) => (
+              {faqs.map((faq, i) => (
                 <div key={i} className="bg-white p-8 border-l-4" style={{ borderColor: '#0A1628' }}>
                   <h3 className="text-base font-black text-black mb-3">{faq.q}</h3>
                   <p className="text-sm text-[#6B6B6B] leading-relaxed">{faq.a}</p>

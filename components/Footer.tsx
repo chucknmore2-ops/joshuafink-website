@@ -77,6 +77,58 @@ export default function Footer() {
                 </a>
               </li>
             </ul>
+
+            <h3 className="text-xs font-semibold tracking-widest uppercase text-[#A0A0A0] mt-6 mb-4">
+              Follow
+            </h3>
+            <div className="flex items-center gap-4">
+              <a
+                href="https://www.facebook.com/joshuafinkgroup"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+                className="text-[#A0A0A0] hover:text-white transition-colors"
+              >
+                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
+                  <path d="M13.5 22v-8h2.7l.4-3h-3.1V9.1c0-.9.3-1.6 1.6-1.6h1.7V4.8c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.5-4 4.3V11H8v3h2.4v8h3.1z" />
+                </svg>
+              </a>
+              <a
+                href="https://www.instagram.com/joshuafinkgroup"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="text-[#A0A0A0] hover:text-white transition-colors"
+              >
+                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden="true">
+                  <rect x="3" y="3" width="18" height="18" rx="5" ry="5" stroke="currentColor" strokeWidth="2" />
+                  <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="2" />
+                  <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" />
+                </svg>
+              </a>
+              <a
+                href="https://www.linkedin.com/in/joshuafinkgroup/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+                className="text-[#A0A0A0] hover:text-white transition-colors"
+              >
+                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
+                  <path d="M6.9 8.6A1.9 1.9 0 1 1 6.9 4.8a1.9 1.9 0 0 1 0 3.8zM5.3 9.9h3.1V20H5.3V9.9zm5 0h3v1.4h.1c.4-.8 1.5-1.7 3-1.7 3.2 0 3.8 2.1 3.8 4.9V20h-3.1v-4.8c0-1.1 0-2.6-1.6-2.6s-1.8 1.2-1.8 2.5V20h-3.1V9.9z" />
+                </svg>
+              </a>
+              <a
+                href="https://x.com/JoshuaFinkGroup"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="X"
+                className="text-[#A0A0A0] hover:text-white transition-colors"
+              >
+                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
+                  <path d="M18.9 3H22l-6.8 7.7L23 21h-6.2l-4.8-6.3L6.4 21H3.3l7.3-8.3L1 3h6.4l4.3 5.7L18.9 3zm-1.1 16h1.7L6.5 4.9H4.6L17.8 19z" />
+                </svg>
+              </a>
+            </div>
           </div>
         </div>
 
