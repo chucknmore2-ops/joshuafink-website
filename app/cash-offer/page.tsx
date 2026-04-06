@@ -2,9 +2,14 @@ import type { Metadata } from 'next'
 import CashOfferForm from './CashOfferForm'
 
 export const metadata: Metadata = {
-  title: 'Get a Cash Offer for Your Home | We Buy Houses Nashville TN',
+  title: 'Sell My House Fast Nashville | Cash Offer in 24 Hours | Joshua Fink',
   description:
-    'Sell your house fast for cash in Nashville, Franklin, Brentwood, Spring Hill, Columbia, and all of Middle Tennessee. Any condition, any situation. Fair cash offer in 24 hours. Close in 7 days.',
+    'Sell your house fast for cash in Nashville, Franklin, Brentwood, Spring Hill, Columbia, and all of Middle Tennessee. Any condition, any situation. Fair cash offer in 24 hours. Close in 7 days. No repairs, no commissions, no fees.',
+  keywords:
+    'sell my house fast Nashville,cash home buyer Nashville,we buy houses Nashville TN,sell house as-is Nashville,cash offer for home Nashville,sell house fast Franklin TN,cash home buyer Middle Tennessee,sell my house fast Murfreesboro,we buy houses Brentwood TN',
+  alternates: {
+    canonical: 'https://joshuafink.com/cash-offer',
+  },
   openGraph: {
     title: 'We Buy Houses Nashville — Cash Offer in 24 Hours',
     description:
@@ -201,6 +206,95 @@ export default function CashOfferPage() {
           </div>
         </div>
       </div>
+
+      {/* FAQ — SEO content */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3 text-center">
+          Common Questions
+        </p>
+        <h2 className="text-4xl font-black text-black tracking-tight mb-14 text-center">
+          Frequently Asked Questions
+        </h2>
+        <div className="space-y-8">
+          {[
+            {
+              q: 'How does selling my house for cash work in Nashville?',
+              a: 'It\'s simple: fill out our form or call us, and we\'ll review your property and make a fair, no-obligation cash offer within 24 hours. If you accept, you pick the closing date — as fast as 7 days. We handle all the paperwork and pay all closing costs. You walk away with cash.',
+            },
+            {
+              q: 'What types of properties do you buy?',
+              a: 'We buy houses in any condition across Middle Tennessee — homes needing major repairs, fire or water damage, code violations, hoarder houses, tenant-occupied properties, inherited homes, and more. If it has an address, we\'ll make an offer.',
+            },
+            {
+              q: 'Are there any fees or commissions?',
+              a: 'Zero. No agent commissions, no closing costs, no hidden fees. The cash offer you receive is the amount you walk away with. We cover all closing costs.',
+            },
+            {
+              q: 'How fast can you close?',
+              a: 'As fast as 7 days. Most cash closings happen within 2-3 weeks, but we work on your timeline. Need to close fast? We can. Need more time? No problem.',
+            },
+            {
+              q: 'Do I need to make repairs before selling?',
+              a: 'No. We buy houses completely as-is. No cleaning, no repairs, no staging, no showings. Leave what you don\'t want — we\'ll handle it.',
+            },
+            {
+              q: 'How is your cash offer different from other "we buy houses" companies?',
+              a: 'Joshua Fink is a licensed Affiliate Broker with Compass Real Estate — not an anonymous LLC. With 13+ years in Middle Tennessee and 100+ homes bought annually, you\'re dealing with a real professional who answers his own phone, not a call center.',
+            },
+            {
+              q: 'What areas do you serve?',
+              a: 'All of Middle Tennessee including Nashville, Franklin, Brentwood, Spring Hill, Columbia, Murfreesboro, Gallatin, Hendersonville, Mount Juliet, Lebanon, Smyrna, La Vergne, Nolensville, Thompson\'s Station, and surrounding areas.',
+            },
+          ].map((faq) => (
+            <div key={faq.q} className="border-b border-neutral-200 pb-6">
+              <h3 className="text-lg font-black text-black mb-2">{faq.q}</h3>
+              <p className="text-sm text-neutral-500 leading-relaxed">{faq.a}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* FAQ Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: [
+              { '@type': 'Question', name: 'How does selling my house for cash work in Nashville?', acceptedAnswer: { '@type': 'Answer', text: 'Fill out our form or call us, and we\'ll make a fair, no-obligation cash offer within 24 hours. If you accept, you pick the closing date — as fast as 7 days. We handle all paperwork and pay all closing costs.' } },
+              { '@type': 'Question', name: 'What types of properties do you buy?', acceptedAnswer: { '@type': 'Answer', text: 'We buy houses in any condition across Middle Tennessee — homes needing major repairs, fire or water damage, code violations, hoarder houses, tenant-occupied properties, inherited homes, and more.' } },
+              { '@type': 'Question', name: 'Are there any fees or commissions?', acceptedAnswer: { '@type': 'Answer', text: 'Zero. No agent commissions, no closing costs, no hidden fees. We cover all closing costs.' } },
+              { '@type': 'Question', name: 'How fast can you close?', acceptedAnswer: { '@type': 'Answer', text: 'As fast as 7 days. Most cash closings happen within 2-3 weeks, but we work on your timeline.' } },
+              { '@type': 'Question', name: 'Do I need to make repairs before selling?', acceptedAnswer: { '@type': 'Answer', text: 'No. We buy houses completely as-is. No cleaning, no repairs, no staging, no showings.' } },
+              { '@type': 'Question', name: 'What areas do you serve?', acceptedAnswer: { '@type': 'Answer', text: 'All of Middle Tennessee including Nashville, Franklin, Brentwood, Spring Hill, Columbia, Murfreesboro, Gallatin, Hendersonville, Mount Juliet, Lebanon, Smyrna, and surrounding areas.' } },
+            ],
+          }),
+        }}
+      />
+
+      {/* Service Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Service',
+            name: 'Cash Home Buying — Nashville & Middle Tennessee',
+            provider: {
+              '@type': 'RealEstateAgent',
+              name: 'Joshua Fink Group',
+              url: 'https://joshuafink.com',
+            },
+            description: 'We buy houses for cash in any condition across Middle Tennessee. Fair offer in 24 hours, close in as little as 7 days. No repairs, no commissions, no fees.',
+            areaServed: {
+              '@type': 'State',
+              name: 'Tennessee',
+            },
+            serviceType: 'Cash Home Buying',
+          }),
+        }}
+      />
 
       {/* Bottom CTA */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">

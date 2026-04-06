@@ -158,11 +158,31 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify(lead),
     }).catch(() => null) // non-blocking, best-effort
 
+    // Push cash-offer leads to Google Sheet + Monday.com (non-blocking)
+    const isCashOffer = lead.source === 'cash-offer'
+    const pushSheet = isCashOffer
+      ? fetch(`${N8N_BASE}/cash-offer-sheet`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(lead),
+        }).catch(() => null)
+      : Promise.resolve()
+
+    const pushMonday = isCashOffer
+      ? fetch(`${N8N_BASE}/cash-offer-monday`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(lead),
+        }).catch(() => null)
+      : Promise.resolve()
+
     // Fire all in parallel (auto-reply only if we have an email)
     const tasks = [
       sendSlack(lead),
       forwardToJoshua(lead),
       triggerDrip,
+      pushSheet,
+      pushMonday,
     ]
     if (lead.email) tasks.push(sendAutoReply(lead))
     await Promise.allSettled(tasks)

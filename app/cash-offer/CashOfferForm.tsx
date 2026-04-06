@@ -26,6 +26,16 @@ export default function CashOfferForm() {
       if (res.ok) {
         setState('success')
         form.reset()
+        // Fire Google Ads + GA4 conversion event
+        if (typeof window !== 'undefined' && (window as any).gtag) {
+          ;(window as any).gtag('event', 'generate_lead', {
+            event_category: 'cash_offer',
+            event_label: data.property_address || 'unknown',
+            value: 1,
+          })
+          // Google Ads conversion — replace AW-XXXXXXXXX/XXXXXXXXX with real conversion ID
+          // ;(window as any).gtag('event', 'conversion', { send_to: 'AW-XXXXXXXXX/XXXXXXXXX' })
+        }
       } else {
         const json = await res.json().catch(() => ({}))
         setErrorMsg(json.error || 'Something went wrong. Please try again.')
