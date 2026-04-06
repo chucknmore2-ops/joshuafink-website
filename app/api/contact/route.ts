@@ -6,6 +6,7 @@ const SLACK_CHANNEL = 'C0APH84LFG8' // #joshpersonal
 const FROM_EMAIL = 'leads@joshuafink.com'
 const TO_EMAIL = 'joshua@joshuafink.com'
 const N8N_BASE = process.env.N8N_WEBHOOK_BASE || 'http://localhost:5678/webhook'
+const CASH_OFFER_BASE = process.env.CASH_OFFER_WEBHOOK_BASE || 'http://localhost:5679/webhook'
 
 async function sendSlack(lead: Record<string, string>) {
   const typeEmoji: Record<string, string> = {
@@ -160,16 +161,9 @@ export async function POST(req: NextRequest) {
 
     // Push cash-offer leads to Google Sheet + Monday.com (non-blocking)
     const isCashOffer = lead.source === 'cash-offer'
-    const pushSheet = isCashOffer
-      ? fetch(`${N8N_BASE}/cash-offer-sheet`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(lead),
-        }).catch(() => null)
-      : Promise.resolve()
-
-    const pushMonday = isCashOffer
-      ? fetch(`${N8N_BASE}/cash-offer-monday`, {
+    // Push to both Sheet + Monday in one call (local webhook)
+    const pushCashOffer = isCashOffer
+      ? fetch(`${CASH_OFFER_BASE}/cash-offer`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(lead),
@@ -181,8 +175,7 @@ export async function POST(req: NextRequest) {
       sendSlack(lead),
       forwardToJoshua(lead),
       triggerDrip,
-      pushSheet,
-      pushMonday,
+      pushCashOffer,
     ]
     if (lead.email) tasks.push(sendAutoReply(lead))
     await Promise.allSettled(tasks)
