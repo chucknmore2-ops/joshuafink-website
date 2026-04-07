@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     template: '%s | Joshua Fink | Compass Real Estate',
   },
   description:
-    'Joshua Fink is a top-producing Affiliate Broker at Compass Real Estate in Middle Tennessee. 13+ years of experience, 100+ homes sold annually, Diamond & Titan Award winner.',
+    'Joshua Fink is a top-producing Affiliate Broker at Compass Real Estate in Middle Tennessee. 17+ years of experience, 100+ homes sold annually, Diamond & Titan Award winner.',
   metadataBase: new URL('https://joshuafink.com'),
   alternates: {
     canonical: '/',
@@ -64,7 +64,7 @@ export default function RootLayout({
               '@type': 'RealEstateAgent',
               name: 'Joshua Fink Group',
               description:
-                'Joshua Fink is a top-producing Affiliate Broker at Compass Real Estate serving Nashville, Brentwood, Franklin, and all of Middle Tennessee. 13+ years of experience, 100+ homes sold annually.',
+                'Joshua Fink is a top-producing Affiliate Broker at Compass Real Estate serving Nashville, Brentwood, Franklin, and all of Middle Tennessee. 17+ years of experience, 100+ homes sold annually.',
               url: 'https://joshuafink.com',
               telephone: '+1-615-551-2727',
               email: 'joshua@joshuafink.com',

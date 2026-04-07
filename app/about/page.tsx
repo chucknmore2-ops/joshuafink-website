@@ -5,7 +5,7 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'About Joshua Fink',
   description:
-    'Learn about Joshua Fink — Affiliate Broker at Compass Real Estate with 13+ years of experience, 100+ homes sold annually, and multiple top-producer awards in Middle Tennessee.',
+    'Learn about Joshua Fink — Affiliate Broker at Compass Real Estate with 17+ years of experience, 100+ homes sold annually, and multiple top-producer awards in Middle Tennessee.',
 }
 
 const specialties = [
@@ -121,7 +121,7 @@ export default function AboutPage() {
             {/* Stats */}
             <div className="mt-10 grid grid-cols-3 gap-4 border-y border-[#E8E8E8] py-8">
               {[
-                { val: '13+', label: 'Years Experience' },
+                { val: '17+', label: 'Years Experience' },
                 { val: '100+', label: 'Homes / Year' },
                 { val: '3+', label: 'Major Awards' },
               ].map((s) => (

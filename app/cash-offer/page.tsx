@@ -193,7 +193,7 @@ export default function CashOfferPage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-neutral-200">
             {[
-              { value: '13+', label: 'Years in Middle TN' },
+              { value: '17+', label: 'Years in Middle TN' },
               { value: '100+', label: 'Homes Bought Annually' },
               { value: '7 Days', label: 'Fastest Close' },
               { value: '$0', label: 'Fees or Commissions' },
@@ -239,7 +239,7 @@ export default function CashOfferPage() {
             },
             {
               q: 'How is your cash offer different from other "we buy houses" companies?',
-              a: 'Joshua Fink is a licensed Affiliate Broker with Compass Real Estate — not an anonymous LLC. With 13+ years in Middle Tennessee and 100+ homes bought annually, you\'re dealing with a real professional who answers his own phone, not a call center.',
+              a: 'Joshua Fink is a licensed Affiliate Broker with Compass Real Estate — not an anonymous LLC. With 17+ years in Middle Tennessee and 100+ homes bought annually, you\'re dealing with a real professional who answers his own phone, not a call center.',
             },
             {
               q: 'What areas do you serve?',

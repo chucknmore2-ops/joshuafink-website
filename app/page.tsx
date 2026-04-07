@@ -7,11 +7,11 @@ import { listings as featuredListings } from '@/lib/listings'
 export const metadata: Metadata = {
   title: 'Joshua Fink | Top Realtor in Middle Tennessee | Compass Real Estate',
   description:
-    'Joshua Fink — Affiliate Broker at Compass Real Estate serving Nashville, Brentwood, Franklin and all of Middle Tennessee. 13+ years of experience, 100+ homes sold annually.',
+    'Joshua Fink — Affiliate Broker at Compass Real Estate serving Nashville, Brentwood, Franklin and all of Middle Tennessee. 17+ years of experience, 100+ homes sold annually.',
 }
 
 const stats = [
-  { value: '13+', label: 'Years Experience' },
+  { value: '17+', label: 'Years Experience' },
   { value: '100+', label: 'Homes Sold Annually' },
   { value: '★', label: 'Diamond & Titan Award Winner' },
 ]
@@ -262,7 +262,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               {
-                title: '13+ Years Experience',
+                title: '17+ Years Experience',
                 body: 'Since 2012, Joshua has navigated every market cycle Middle Tennessee has thrown at buyers and sellers—from the post-recession recovery through the 2021-2022 bidding war frenzy to today\'s normalized market. That experience means he knows when to push, when to wait, and how to structure offers that win without overpaying. Over 1,000+ transactions closed across Davidson, Williamson, Maury, Rutherford, and Sumner counties. Every deal teaches something, and Joshua has 13 years of lessons working directly for your outcome.',
               },
               {

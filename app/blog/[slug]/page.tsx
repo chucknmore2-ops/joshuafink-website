@@ -135,7 +135,7 @@ export default function BlogPostPage({ params }: Props) {
             </p>
             <h3 className="text-xl font-black text-black mb-2">Joshua Fink</h3>
             <p className="text-sm text-[#444] leading-relaxed mb-5">
-              Affiliate Broker at Compass Real Estate with 13+ years of experience and 100+ homes
+              Affiliate Broker at Compass Real Estate with 17+ years of experience and 100+ homes
               sold annually across Middle Tennessee. Diamond &amp; Titan Award winner.
             </p>
             <div className="flex flex-col sm:flex-row gap-3">

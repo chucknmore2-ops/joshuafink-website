@@ -86,7 +86,7 @@ export default function ReviewsPage() {
               <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-2">Total Reviews</p>
             </div>
             <div>
-              <p className="text-5xl font-black text-black">13+</p>
+              <p className="text-5xl font-black text-black">17+</p>
               <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-2">Years Experience</p>
             </div>
           </div>

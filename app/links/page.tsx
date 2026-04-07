@@ -68,7 +68,7 @@ export default function LinksPage() {
             Affiliate Broker · Compass Real Estate
           </p>
           <p className="text-xs mt-1 text-center" style={{ color: '#A0A0A0' }}>
-            Middle Tennessee · 13+ Years · 100+ Homes/Year
+            Middle Tennessee · 17+ Years · 100+ Homes/Year
           </p>
 
           {/* Compass branding */}
