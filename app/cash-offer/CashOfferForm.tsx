@@ -82,6 +82,11 @@ export default function CashOfferForm() {
         <input type="hidden" name="lead_type" value="sell" />
         <input type="hidden" name="subject" value="sell" />
         <input type="hidden" name="source" value="cash-offer" />
+        {/* Honeypot — invisible to humans, bots auto-fill it */}
+        <input type="text" name="website" autoComplete="off" tabIndex={-1} aria-hidden="true"
+          style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, width: 0 }} />
+        {/* Timestamp to detect instant bot submissions */}
+        <input type="hidden" name="_loaded" value={Date.now().toString()} />
 
         <div>
           <input
@@ -92,6 +97,8 @@ export default function CashOfferForm() {
         <div>
           <input
             type="tel" name="phone" required placeholder="Your Phone Number *"
+            pattern="[\d\s\-\(\)\+]{7,}"
+            title="Please enter a valid phone number"
             className="w-full border border-neutral-200 rounded-xl px-4 py-3 text-sm text-black placeholder-neutral-400 focus:outline-none focus:border-black transition-colors duration-150"
           />
         </div>

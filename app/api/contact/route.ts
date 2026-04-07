@@ -7,6 +7,77 @@ const FROM_EMAIL = 'leads@joshuafink.com'
 const TO_EMAIL = 'joshua@joshuafink.com'
 const N8N_BASE = process.env.N8N_WEBHOOK_BASE || 'http://localhost:5678/webhook'
 const CASH_OFFER_BASE = process.env.CASH_OFFER_WEBHOOK_BASE || 'http://localhost:5679/webhook'
+const MONDAY_TOKEN = process.env.MONDAY_API_TOKEN || ''
+const MONDAY_BOARD = process.env.MONDAY_BOARD_ID || ''
+const MONDAY_GROUP_CASH = 'group_mm25pmwg' // Cash Offer Leads group
+
+// ---------------------------------------------------------------------------
+// Spam detection
+// ---------------------------------------------------------------------------
+
+const DISPOSABLE_DOMAINS = new Set([
+  'mailinator.com', 'guerrillamail.com', 'tempmail.com', 'throwaway.email',
+  'yopmail.com', 'sharklasers.com', 'guerrillamailblock.com', 'grr.la',
+  'dispostable.com', 'maildrop.cc', 'trashmail.com', 'fakeinbox.com',
+  'temp-mail.org', '10minutemail.com', 'getnada.com', 'emailondeck.com',
+  'mohmal.com', 'mailnesia.com', 'tmail.ws', 'tmpmail.net', 'tmpmail.org',
+  'bupmail.com', 'mailcatch.com', 'mintemail.com', 'tempr.email',
+  'discard.email', 'mailnull.com', 'spamgourmet.com', 'jetable.org',
+])
+
+function isSpam(lead: Record<string, string>): { spam: boolean; reason: string } {
+  // Honeypot filled → bot
+  if (lead.website && lead.website.trim() !== '') {
+    return { spam: true, reason: 'honeypot' }
+  }
+
+  // Form submitted too fast (< 3 seconds)
+  const loaded = parseInt(lead._loaded || '0', 10)
+  if (loaded > 0 && Date.now() - loaded < 3000) {
+    return { spam: true, reason: 'too_fast' }
+  }
+
+  // Phone: too short, all repeated, or sequential
+  const phone = (lead.phone || '').replace(/\D/g, '')
+  if (phone.length > 0 && phone.length < 7) {
+    return { spam: true, reason: 'phone_too_short' }
+  }
+  if (/^(\d)\1{6,}$/.test(phone)) {
+    return { spam: true, reason: 'phone_repeated' }
+  }
+  if (/^0?1234567890?$/.test(phone) || /^9876543210?$/.test(phone)) {
+    return { spam: true, reason: 'phone_sequential' }
+  }
+
+  // Disposable email
+  if (lead.email) {
+    const domain = lead.email.split('@')[1]?.toLowerCase()
+    if (domain && DISPOSABLE_DOMAINS.has(domain)) {
+      return { spam: true, reason: 'disposable_email' }
+    }
+  }
+
+  // URLs in name or address fields
+  if (/https?:\/\//i.test(lead.name || '') || /https?:\/\//i.test(lead.property_address || '')) {
+    return { spam: true, reason: 'url_in_field' }
+  }
+
+  // Name too short
+  if ((lead.name || '').trim().length < 2) {
+    return { spam: true, reason: 'name_too_short' }
+  }
+
+  // Address too short (for cash-offer leads)
+  if (lead.source === 'cash-offer' && (lead.property_address || '').trim().length < 5) {
+    return { spam: true, reason: 'address_too_short' }
+  }
+
+  return { spam: false, reason: '' }
+}
+
+// ---------------------------------------------------------------------------
+// Slack notification
+// ---------------------------------------------------------------------------
 
 async function sendSlack(lead: Record<string, string>) {
   const typeEmoji: Record<string, string> = {
@@ -35,6 +106,7 @@ async function sendSlack(lead: Record<string, string>) {
             { type: 'mrkdwn', text: `*Email:*\n${lead.email || '—'}` },
             { type: 'mrkdwn', text: `*Type:*\n${lead.subject || lead.lead_type || '—'}` },
             ...(lead.property_address ? [{ type: 'mrkdwn', text: `*Property:*\n${lead.property_address}` }] : []),
+            ...(lead.situation ? [{ type: 'mrkdwn', text: `*Situation:*\n${lead.situation}` }] : []),
             ...(lead.timeline ? [{ type: 'mrkdwn', text: `*Timeline:*\n${lead.timeline}` }] : []),
           ],
         },
@@ -46,13 +118,17 @@ async function sendSlack(lead: Record<string, string>) {
           type: 'actions',
           elements: [
             { type: 'button', text: { type: 'plain_text', text: '📞 Call' }, url: `tel:${(lead.phone || '').replace(/\D/g, '')}`, style: 'primary' },
-            { type: 'button', text: { type: 'plain_text', text: '✉️ Email' }, url: `mailto:${lead.email}` },
+            ...(lead.email ? [{ type: 'button', text: { type: 'plain_text', text: '✉️ Email' }, url: `mailto:${lead.email}` }] : []),
           ],
         },
       ],
     }),
   })
 }
+
+// ---------------------------------------------------------------------------
+// Email: auto-reply to lead
+// ---------------------------------------------------------------------------
 
 async function sendAutoReply(lead: Record<string, string>) {
   const firstName = (lead.name || 'there').split(' ')[0]
@@ -104,9 +180,13 @@ async function sendAutoReply(lead: Record<string, string>) {
   })
 }
 
+// ---------------------------------------------------------------------------
+// Email: forward lead details to Joshua
+// ---------------------------------------------------------------------------
+
 async function forwardToJoshua(lead: Record<string, string>) {
   const lines = Object.entries(lead)
-    .filter(([k]) => !k.startsWith('_'))
+    .filter(([k]) => !k.startsWith('_') && k !== 'website')
     .map(([k, v]) => `<tr><td style="padding:6px 12px;color:#666;font-size:13px;width:140px;vertical-align:top;">${k}</td><td style="padding:6px 12px;font-size:13px;">${v}</td></tr>`)
     .join('')
 
@@ -125,6 +205,85 @@ async function forwardToJoshua(lead: Record<string, string>) {
     }),
   })
 }
+
+// ---------------------------------------------------------------------------
+// Monday.com CRM — direct API (works from Vercel, no local webhook needed)
+// ---------------------------------------------------------------------------
+
+async function pushToMonday(lead: Record<string, string>) {
+  if (!MONDAY_TOKEN || !MONDAY_BOARD) {
+    console.log('Monday.com: skipping — MONDAY_API_TOKEN or MONDAY_BOARD_ID not set')
+    return
+  }
+
+  const name = lead.name || 'Unknown'
+  const addr = lead.property_address || ''
+  const itemName = addr ? `${name} — ${addr}` : name
+  const escapedName = itemName.replace(/"/g, '\\"').replace(/\n/g, ' ')
+
+  const isCashOffer = lead.source === 'cash-offer' || ['sell', 'seller'].includes(lead.subject || lead.lead_type || '')
+  const groupId = isCashOffer ? MONDAY_GROUP_CASH : 'new_group'
+
+  // Try to set column values; fall back to name-only if column IDs don't match
+  const columnValues: Record<string, unknown> = {}
+  if (lead.phone) columnValues['phone'] = { phone: lead.phone.replace(/\D/g, ''), countryShortName: 'US' }
+  if (lead.email) columnValues['email'] = { email: lead.email, text: lead.email }
+  if (lead.property_address) columnValues['text'] = lead.property_address
+  if (lead.situation) columnValues['status'] = { label: lead.situation }
+
+  const headers = {
+    Authorization: MONDAY_TOKEN,
+    'Content-Type': 'application/json',
+    'API-Version': '2024-10',
+  }
+
+  try {
+    // Attempt with column values
+    const queryFull = `mutation {
+      create_item(
+        board_id: ${MONDAY_BOARD}
+        group_id: "${groupId}"
+        item_name: "${escapedName}"
+        column_values: ${JSON.stringify(JSON.stringify(columnValues))}
+      ) { id }
+    }`
+
+    const res = await fetch('https://api.monday.com/v2', {
+      method: 'POST', headers, body: JSON.stringify({ query: queryFull }),
+    })
+    const data = await res.json()
+
+    if (data?.data?.create_item?.id) {
+      console.log(`Monday.com: created item ${data.data.create_item.id} for ${name}`)
+      return
+    }
+
+    // Fallback: create without column values
+    console.log('Monday.com: column values failed, trying basic:', data?.errors || data)
+    const queryBasic = `mutation {
+      create_item(
+        board_id: ${MONDAY_BOARD}
+        group_id: "${groupId}"
+        item_name: "${escapedName}"
+      ) { id }
+    }`
+    const res2 = await fetch('https://api.monday.com/v2', {
+      method: 'POST', headers, body: JSON.stringify({ query: queryBasic }),
+    })
+    const data2 = await res2.json()
+    if (data2?.data?.create_item?.id) {
+      console.log(`Monday.com: created item (basic) ${data2.data.create_item.id} for ${name}`)
+    } else {
+      console.error('Monday.com: both attempts failed:', data2)
+    }
+  } catch (err) {
+    console.error('Monday.com push error:', err)
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Main handler
+// ---------------------------------------------------------------------------
 
 export async function POST(req: NextRequest) {
   if (!process.env.SENDGRID_API_KEY || !process.env.SLACK_BOT_TOKEN) {
@@ -145,39 +304,51 @@ export async function POST(req: NextRequest) {
     if (!lead.name) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
-    // email is optional for cash-offer leads (phone-only submissions)
     if (!lead.email) {
       lead.email = ''
     }
 
-    // Trigger drip sequence based on lead type
+    // ---------- Spam check ----------
+    const spamCheck = isSpam(lead)
+    if (spamCheck.spam) {
+      console.log(`SPAM blocked: reason=${spamCheck.reason}, name=${lead.name}, phone=${lead.phone}, email=${lead.email}`)
+      // Return success so bots don't retry, but silently drop
+      return NextResponse.json({ ok: true })
+    }
+
+    // ---------- Fire all integrations in parallel ----------
+    const isCashOffer = lead.source === 'cash-offer'
+    const tasks: Promise<unknown>[] = [
+      sendSlack(lead),
+      forwardToJoshua(lead),
+      pushToMonday(lead), // Direct API — works on Vercel
+    ]
+
+    // Auto-reply only if email provided
+    if (lead.email) tasks.push(sendAutoReply(lead))
+
+    // Drip sequence (best-effort, n8n may not be reachable from Vercel)
     const isSeller = ['sell', 'seller'].includes(lead.subject || lead.lead_type || '')
     const drip = isSeller ? 'seller-lead' : 'buyer-lead'
-    const triggerDrip = fetch(`${N8N_BASE}/${drip}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(lead),
-    }).catch(() => null) // non-blocking, best-effort
+    tasks.push(
+      fetch(`${N8N_BASE}/${drip}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(lead),
+      }).then(() => undefined).catch(() => undefined)
+    )
 
-    // Push cash-offer leads to Google Sheet + Monday.com (non-blocking)
-    const isCashOffer = lead.source === 'cash-offer'
-    // Push to both Sheet + Monday in one call (local webhook)
-    const pushCashOffer = isCashOffer
-      ? fetch(`${CASH_OFFER_BASE}/cash-offer`, {
+    // Also push to local webhook for Google Sheet (best-effort)
+    if (isCashOffer) {
+      tasks.push(
+        fetch(`${CASH_OFFER_BASE}/cash-offer`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(lead),
-        }).catch(() => null)
-      : Promise.resolve()
+        }).then(() => undefined).catch(() => undefined)
+      )
+    }
 
-    // Fire all in parallel (auto-reply only if we have an email)
-    const tasks = [
-      sendSlack(lead),
-      forwardToJoshua(lead),
-      triggerDrip,
-      pushCashOffer,
-    ]
-    if (lead.email) tasks.push(sendAutoReply(lead))
     await Promise.allSettled(tasks)
 
     return NextResponse.json({ ok: true })
