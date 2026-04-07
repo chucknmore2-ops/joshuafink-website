@@ -15,6 +15,7 @@ function formatPrice(price: number): string {
 function statusColor(status: string): string {
   if (status === 'Active') return 'bg-black text-white'
   if (status.startsWith('Open House')) return 'bg-neutral-900 text-white'
+  if (status === 'Sold') return 'bg-red-600 text-white'
   return 'bg-neutral-100 text-neutral-600'
 }
 

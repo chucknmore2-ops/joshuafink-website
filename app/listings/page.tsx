@@ -1,17 +1,20 @@
 import type { Metadata } from 'next'
 import ListingCard from '@/components/ListingCard'
 import { listings } from '@/lib/listings'
+import { soldListings } from '@/lib/sold-listings'
 
 export const metadata: Metadata = {
-  title: 'Current Listings',
+  title: 'Listings — Active & Recently Sold | Joshua Fink | Compass Nashville',
   description:
-    'Browse Joshua Fink\'s active listings in Nashville, Brentwood, Franklin, and across Middle Tennessee. Find your next home today.',
+    'Browse Joshua Fink\'s active listings and recently sold homes in Nashville, Brentwood, Franklin, and across Middle Tennessee.',
 }
 
 export default function ListingsPage() {
   const activeCount = listings.filter(
     (l) => l.status === 'Active' || l.status.startsWith('Active') || l.status.startsWith('Open')
   ).length
+
+  const soldTotal = soldListings.reduce((sum, l) => sum + l.price, 0)
 
   return (
     <div className="bg-white">
@@ -21,18 +24,19 @@ export default function ListingsPage() {
           <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
             Joshua Fink · Compass Real Estate
           </p>
-          <h1 className="text-5xl font-black tracking-tight mb-4">Current Listings</h1>
+          <h1 className="text-5xl font-black tracking-tight mb-4">Listings</h1>
           <p className="text-[#A0A0A0] text-lg">
-            {activeCount} active {activeCount === 1 ? 'listing' : 'listings'} across Middle Tennessee
+            {activeCount} active {activeCount === 1 ? 'listing' : 'listings'} · {soldListings.length} recently sold across Middle Tennessee
           </p>
         </div>
       </div>
 
-      {/* Grid */}
+      {/* Active Listings */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <h2 className="text-3xl font-black text-black mb-8 tracking-tight">Active Listings</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {listings.map((listing) => (
-            <ListingCard key={listing.address} listing={listing} />
+            <ListingCard key={listing.compassUrl} listing={listing} />
           ))}
         </div>
 
@@ -60,6 +64,25 @@ export default function ListingsPage() {
             </a>
           </div>
         </div>
+
+        {/* Recently Sold */}
+        {soldListings.length > 0 && (
+          <div className="mt-20">
+            <div className="flex items-end justify-between mb-8">
+              <div>
+                <h2 className="text-3xl font-black text-black tracking-tight">Recently Sold</h2>
+                <p className="text-[#6B6B6B] mt-1">
+                  ${(soldTotal / 1_000_000).toFixed(1)}M+ in closed transactions
+                </p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {soldListings.map((listing) => (
+                <ListingCard key={listing.compassUrl + listing.price} listing={listing} />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

@@ -22,7 +22,7 @@ export const reviews: Review[] = [
     text: "Josh is very patient, strategic and extremely knowledgeable of the area — he understood what we wanted and helped us find our perfect home. Josh made himself fully available throughout the entire process and was always just a phone call away.",
   },
   {
-    reviewer: "Anthony Contaldo",
+    reviewer: "Anthony C.",
     date: "January 2024",
     rating: 5,
     transaction: "Sold a home",
@@ -36,14 +36,14 @@ export const reviews: Review[] = [
     text: "Josh was great. Knows the area like the back of his hand. He creatively finds deals and opportunities that are not always listed. He's a prompt and clear communicator. He made the process very smooth and easy.",
   },
   {
-    reviewer: "Joseph A. Cortez",
+    reviewer: "Joseph C.",
     date: "November 2021",
     rating: 5,
     transaction: "Bought a home in Brentwood, TN",
     text: "Josh is an incredible Real Estate Professional. He has an incredible amount of local knowledge and professional expertise. Josh is extremely knowledgeable about the market and always had the right answers. Highly recommend!",
   },
   {
-    reviewer: "Adam Smith",
+    reviewer: "Adam S.",
     date: "November 2021",
     rating: 5,
     transaction: "Bought a home in Brentwood, TN",
