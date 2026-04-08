@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 
@@ -22,9 +23,14 @@ export default function Navbar() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex-shrink-0">
-          <span className="text-black font-black text-xl tracking-[0.2em] uppercase select-none">
-            COMPASS
-          </span>
+          <Image
+            src="/compass-logo-black.png"
+            alt="Compass Real Estate"
+            width={140}
+            height={34}
+            className="h-8 w-auto"
+            priority
+          />
         </Link>
 
         {/* Desktop nav */}
