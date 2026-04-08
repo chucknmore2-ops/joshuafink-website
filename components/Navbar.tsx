@@ -26,9 +26,9 @@ export default function Navbar() {
           <Image
             src="/compass-logo-black.png"
             alt="Compass Real Estate"
-            width={140}
-            height={34}
-            className="h-8 w-auto"
+            width={200}
+            height={48}
+            className="h-10 w-auto"
             priority
           />
         </Link>

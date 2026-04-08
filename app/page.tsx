@@ -22,7 +22,7 @@ export default function HomePage() {
       {/* ── HERO ── */}
       <section className="relative bg-black min-h-[92vh] flex items-center overflow-hidden">
         {/* Background texture */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-black/30 z-10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent z-10" />
 
         {/* Headshot — right side */}
         <div className="absolute right-0 top-0 bottom-0 w-full md:w-1/2 z-0">
@@ -31,11 +31,11 @@ export default function HomePage() {
               src="/headshot.jpg"
               alt="Joshua Fink — Affiliate Broker, Compass Real Estate"
               fill
-              className="object-cover object-top opacity-85 md:opacity-90"
+              className="object-cover object-top opacity-90 md:opacity-100"
               priority
               sizes="(max-width: 768px) 100vw, 50vw"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent md:via-black/10" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/20 to-transparent md:via-transparent" />
           </div>
         </div>
 
