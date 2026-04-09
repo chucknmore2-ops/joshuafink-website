@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-04-07T12:45:25.172Z
+// AUTO-GENERATED — Last synced: 2026-04-09T12:00:29.726Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -79,15 +79,6 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/223-Hampton-Rd-Columbia-TN-38401/SWL6H_pid/",
     imageUrl: "https://www.compass.com/m/da754d65aa2efabe22a3aad7c2e1bee2047c8a92_img_1_08c93/1024x768.webp",
-  },
-  {
-    address: "634 N 5th St",
-    city: "Nashville, TN 37207",
-    price: 324500,
-    sqft: 1364,
-    status: "Active",
-    compassUrl: "https://www.compass.com/homedetails/634-N-5th-St-Nashville-TN-37207/OG1G5_pid/",
-    imageUrl: "https://www.compass.com/m/4cf2f127470ade580264f05fefa5a40ce4bc6d5b_img_1_796e0/1024x768.webp",
   },
   {
     address: "131 Lakeside Dr",
