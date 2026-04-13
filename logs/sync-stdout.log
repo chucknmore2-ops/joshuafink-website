@@ -1,0 +1,136 @@
+[sync-all] Thu Apr  9 07:00:04 CDT 2026 — Starting listing sync
+[fetch-images] Launching browser...
+[fetch-images] Found 9 listing cards
+  ✅ 9209 Duncaster Ct — $2,699,000 — has photo
+  ✅ 159 N Berwick Ln — $1,224,900 — has photo
+  ✅ 6612 Fox Hollow Rd — $999,500 — has photo
+  ✅ 2420 Pafford Dr — $549,900 — has photo
+  ✅ 107 Garwood Dr — $449,900 — has photo
+  ✅ 511 Wanda Dr — $419,900 — has photo
+  ✅ 223 Hampton Rd — $324,900 — has photo
+  ✅ 131 Lakeside Dr — $269,900 — has photo
+  ✅ 1202 Valarie Ln — $114,900 — has photo
+
+[fetch-images] ✅ Written 9 listings with photos to lib/listings.ts
+[main bf9e921] fix: restore listing photos from Compass [4/9/2026]
+ Committer: ChuckNMore <chucknmore@ChuckNMoresMini.localdomain>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 1 file changed, 1 insertion(+), 10 deletions(-)
+[fetch-images] ✅ Pushed to GitHub — Vercel will auto-deploy.
+[fetch-sold] Launching browser...
+[fetch-sold] Found 18 sold cards on page
+  🏠 9293 Fordham Dr — $5,650,000
+  🏠 1523 TellCroft Dr — $3,685,000
+  🏠 9242 Lehigh Dr — $3,500,000
+  🏠 9451 Appleton Ct — $2,250,000
+  🏠 9526 Elgin Way — $2,150,000
+  🏠 833 Highgrove Cir — $1,975,000
+  🏠 9208 Duncaster Ct — $1,960,000
+  🏠 9509 Garrett Park Pl — $1,623,500
+  🏠 1858 Traditions Cir — $1,600,660
+  🏠 9499 Stillbrook Trce — $1,599,000
+  🏠 1901 New Bristol Ln — $1,550,000
+  🏠 7544 Sutcliff Dr — $1,401,326
+  🏠 9499 Stillbrook Trce — $1,340,000
+  🏠 805 S 17th St — $1,325,000
+  🏠 9407 Green Hill Cir — $1,299,000
+  🏠 111 Battlefield Dr — $1,100,000
+  🏠 1743 Stillwater Cir — $1,100,000
+  🏠 8117 Hilldale Dr — $1,100,000
+
+[fetch-sold] ✅ Written 18 sold listings to lib/sold-listings.ts
+[main 79f60ba] chore: bi-weekly listing sync from Compass [2026-04-09]
+ Committer: ChuckNMore <chucknmore@ChuckNMoresMini.localdomain>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 1 file changed, 13 insertions(+), 13 deletions(-)
+[sync-all] Thu Apr  9 07:01:35 CDT 2026 — Done
+[sync-all] Mon Apr 13 07:00:02 CDT 2026 — Starting listing sync
+[fetch-images] Launching browser...
+[fetch-images] Found 9 listing cards
+  ✅ 9209 Duncaster Ct — $2,699,000 — has photo
+  ✅ 159 N Berwick Ln — $1,224,900 — has photo
+  ✅ 6612 Fox Hollow Rd — $999,500 — has photo
+  ✅ 2420 Pafford Dr — $549,900 — has photo
+  ✅ 107 Garwood Dr — $449,900 — has photo
+  ✅ 511 Wanda Dr — $419,900 — has photo
+  ✅ 223 Hampton Rd — $324,900 — has photo
+  ✅ 131 Lakeside Dr — $269,900 — has photo
+  ✅ 1202 Valarie Ln — $114,900 — has photo
+
+[fetch-images] ✅ Written 9 listings with photos to lib/listings.ts
+[main b30ea07] fix: restore listing photos from Compass [4/13/2026]
+ Committer: ChuckNMore <chucknmore@ChuckNMoresMini.localdomain>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+[fetch-images] ✅ Pushed to GitHub — Vercel will auto-deploy.
+[fetch-sold] Launching browser...
+[fetch-sold] Found 18 sold cards on page
+  🏠 9293 Fordham Dr — $5,650,000
+  🏠 1523 TellCroft Dr — $3,685,000
+  🏠 9242 Lehigh Dr — $3,500,000
+  🏠 9451 Appleton Ct — $2,250,000
+  🏠 9526 Elgin Way — $2,150,000
+  🏠 833 Highgrove Cir — $1,975,000
+  🏠 9208 Duncaster Ct — $1,960,000
+  🏠 9509 Garrett Park Pl — $1,623,500
+  🏠 1858 Traditions Cir — $1,600,660
+  🏠 9499 Stillbrook Trce — $1,599,000
+  🏠 1901 New Bristol Ln — $1,550,000
+  🏠 7544 Sutcliff Dr — $1,401,326
+  🏠 9499 Stillbrook Trce — $1,340,000
+  🏠 805 S 17th St — $1,325,000
+  🏠 9407 Green Hill Cir — $1,299,000
+  🏠 8117 Hilldale Dr — $1,100,000
+  🏠 1743 Stillwater Cir — $1,100,000
+  🏠 111 Battlefield Dr — $1,100,000
+
+[fetch-sold] ✅ Written 18 sold listings to lib/sold-listings.ts
+[main 162303f] chore: bi-weekly listing sync from Compass [2026-04-13]
+ Committer: ChuckNMore <chucknmore@ChuckNMoresMini.localdomain>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 1 file changed, 15 insertions(+), 15 deletions(-)
+[sync-all] Mon Apr 13 07:01:34 CDT 2026 — Done

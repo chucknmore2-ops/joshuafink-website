@@ -1,0 +1,58 @@
+Traceback (most recent call last):
+  File "/Users/chucknmore/projects/joshuafink-website/content_engine/run_daily.py", line 9, in <module>
+    from main import load_config, run_batch
+  File "/Users/chucknmore/projects/joshuafink-website/content_engine/main.py", line 13, in <module>
+    import yaml
+ModuleNotFoundError: No module named 'yaml'
+2026-04-10 05:00:00,731 [INFO] jfg-content-engine: Processing: first time home buyer programs Nashville TN
+2026-04-10 05:00:01,709 [INFO] jfg-content-engine: Research: 5 sources, 180 words brief
+2026-04-10 05:00:56,993 [WARNING] engine.writer: Article only 742 words (min 800), retry 1/2
+2026-04-10 05:02:05,362 [INFO] engine.writer: Final word count for 'first time home buyer programs Nashville TN': 968
+2026-04-10 05:02:05,364 [INFO] jfg-content-engine: Written: First Time Home Buyer Programs Nashville TN: Expert Guidance from a Local Affiliate Broker (968 words)
+2026-04-10 05:02:15,559 [INFO] jfg-content-engine: Quality: 7.5 (readability: 11.8)
+2026-04-10 05:02:15,562 [INFO] engine.publisher: Saved: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/first-time-home-buyer-programs-nashville-tn-expert-guidance-from-a-local-affiliate-broker.md (score: 7.5)
+2026-04-10 05:02:15,564 [INFO] jfg-content-engine: ✅ Published draft: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/first-time-home-buyer-programs-nashville-tn-expert-guidance-from-a-local-affiliate-broker.md
+2026-04-10 05:02:15,565 [INFO] jfg-content-engine: Processing: best neighborhoods in Nashville for young professionals
+2026-04-10 05:02:16,451 [INFO] jfg-content-engine: Research: 5 sources, 254 words brief
+2026-04-10 05:03:11,505 [WARNING] engine.writer: Article only 781 words (min 800), retry 1/2
+2026-04-10 05:04:42,983 [INFO] engine.writer: Final word count for 'best neighborhoods in Nashville for young professionals': 1314
+2026-04-10 05:04:42,984 [INFO] jfg-content-engine: Written: **The Best Neighborhoods in Nashville for Young Professionals: Expert Insights from a Local Affiliate Broker** (1314 words)
+2026-04-10 05:04:52,897 [INFO] jfg-content-engine: Quality: 7.5 (readability: 11.2)
+2026-04-10 05:04:52,899 [INFO] engine.publisher: Saved: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/the-best-neighborhoods-in-nashville-for-young-professionals-expert-insights-from-a-local-affiliate-broker.md (score: 7.5)
+2026-04-10 05:04:52,901 [INFO] jfg-content-engine: ✅ Published draft: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/the-best-neighborhoods-in-nashville-for-young-professionals-expert-insights-from-a-local-affiliate-broker.md
+2026-04-10 05:04:52,902 [INFO] jfg-content-engine: Processing: Nashville TN relocation guide 2026
+2026-04-10 05:04:53,786 [INFO] jfg-content-engine: Research: 5 sources, 187 words brief
+2026-04-10 05:05:48,351 [WARNING] engine.writer: Article only 778 words (min 800), retry 1/2
+2026-04-10 05:06:44,178 [WARNING] engine.writer: Article only 744 words (min 800), retry 2/2
+2026-04-10 05:07:40,825 [INFO] engine.writer: Final word count for 'Nashville TN relocation guide 2026': 759
+2026-04-10 05:07:40,825 [INFO] jfg-content-engine: Written: **The Ultimate Guide to Relocating to Nashville: A Comprehensive Resource for Moving to Music City** (759 words)
+2026-04-10 05:07:53,733 [WARNING] engine.quality_check: Quality check LLM failed: Invalid control character at: line 9 column 148 (char 258), using defaults
+2026-04-10 05:07:53,735 [INFO] jfg-content-engine: Quality: 5.0 (readability: 10.9)
+2026-04-10 05:07:53,737 [INFO] engine.publisher: Saved: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/the-ultimate-guide-to-relocating-to-nashville-a-comprehensive-resource-for-moving-to-music-city.md (score: 5.0)
+2026-04-10 05:07:53,738 [INFO] jfg-content-engine: ❌ Rejected (score 5.0 < 7.0): /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/the-ultimate-guide-to-relocating-to-nashville-a-comprehensive-resource-for-moving-to-music-city.md
+2026-04-10 05:07:53,739 [INFO] jfg-content-engine: Batch complete. Written: 3 | Stats: {'drafted': 8, 'queued': 54, 'rejected': 1, 'writing': 1, 'total_articles': 0}
+2026-04-13 05:00:01,588 [INFO] jfg-content-engine: Processing: Nashville TN property tax rates by county
+2026-04-13 05:00:02,887 [INFO] jfg-content-engine: Research: 5 sources, 198 words brief
+2026-04-13 05:01:20,916 [WARNING] engine.writer: Article only 589 words (min 800), retry 1/2
+2026-04-13 05:03:57,327 [INFO] engine.writer: Final word count for 'Nashville TN property tax rates by county': 841
+2026-04-13 05:03:57,328 [INFO] jfg-content-engine: Written: Nashville TN Property Tax Rates by County: A Comprehensive Guide (841 words)
+2026-04-13 05:04:17,967 [INFO] jfg-content-engine: Quality: 7.5 (readability: 10.3)
+2026-04-13 05:04:17,969 [INFO] engine.publisher: Saved: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/nashville-tn-property-tax-rates-by-county-a-comprehensive-guide.md (score: 7.5)
+2026-04-13 05:04:17,971 [INFO] jfg-content-engine: ✅ Published draft: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/nashville-tn-property-tax-rates-by-county-a-comprehensive-guide.md
+2026-04-13 05:04:17,972 [INFO] jfg-content-engine: Processing: how to sell your home fast in Nashville
+2026-04-13 05:04:18,836 [INFO] jfg-content-engine: Research: 5 sources, 189 words brief
+2026-04-13 05:05:53,723 [WARNING] engine.writer: Article only 722 words (min 800), retry 1/2
+2026-04-13 05:08:20,596 [INFO] engine.writer: Final word count for 'how to sell your home fast in Nashville': 1139
+2026-04-13 05:08:20,597 [INFO] jfg-content-engine: Written: **How to Sell Your Home Fast in Nashville: A Comprehensive Guide** (1139 words)
+2026-04-13 05:08:42,665 [INFO] jfg-content-engine: Quality: 7.5 (readability: 11.0)
+2026-04-13 05:08:42,667 [INFO] engine.publisher: Saved: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/how-to-sell-your-home-fast-in-nashville-a-comprehensive-guide.md (score: 7.5)
+2026-04-13 05:08:42,669 [INFO] jfg-content-engine: ✅ Published draft: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/how-to-sell-your-home-fast-in-nashville-a-comprehensive-guide.md
+2026-04-13 05:08:42,671 [INFO] jfg-content-engine: Processing: best time to sell a house in Nashville TN
+2026-04-13 05:08:43,488 [INFO] jfg-content-engine: Research: 5 sources, 191 words brief
+2026-04-13 05:10:20,152 [WARNING] engine.writer: Article only 661 words (min 800), retry 1/2
+2026-04-13 05:12:35,128 [INFO] engine.writer: Final word count for 'best time to sell a house in Nashville TN': 867
+2026-04-13 05:12:35,129 [INFO] jfg-content-engine: Written: **The Best Time to Sell a House in Nashville, TN: A Local Expert's Guide** (867 words)
+2026-04-13 05:12:56,969 [INFO] jfg-content-engine: Quality: 7.5 (readability: 11.5)
+2026-04-13 05:12:56,972 [INFO] engine.publisher: Saved: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/the-best-time-to-sell-a-house-in-nashville-tn-a-local-expert-s-guide.md (score: 7.5)
+2026-04-13 05:12:56,974 [INFO] jfg-content-engine: ✅ Published draft: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/the-best-time-to-sell-a-house-in-nashville-tn-a-local-expert-s-guide.md
+2026-04-13 05:12:56,975 [INFO] jfg-content-engine: Batch complete. Written: 3 | Stats: {'drafted': 20, 'queued': 42, 'rejected': 1, 'writing': 1, 'total_articles': 0}

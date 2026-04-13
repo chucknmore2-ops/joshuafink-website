@@ -1,0 +1,75 @@
+2026-04-11 02:30:06,028 [INFO] jfg-content-engine: Processing: buying a home in Nolensville TN
+2026-04-11 02:30:06,897 [INFO] jfg-content-engine: Research: 5 sources, 141 words brief
+2026-04-11 02:30:52,708 [WARNING] engine.writer: Article only 583 words (min 800), retry 1/2
+2026-04-11 02:32:00,013 [INFO] engine.writer: Final word count for 'buying a home in Nolensville TN': 908
+2026-04-11 02:32:00,014 [INFO] jfg-content-engine: Written: **Buying a Home in Nolensville, TN: A Comprehensive Guide** (908 words)
+2026-04-11 02:32:11,410 [INFO] jfg-content-engine: Quality: 7.5 (readability: 11.3)
+2026-04-11 02:32:11,412 [INFO] engine.publisher: Saved: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/buying-a-home-in-nolensville-tn-a-comprehensive-guide.md (score: 7.5)
+2026-04-11 02:32:11,414 [INFO] jfg-content-engine: ✅ Published draft: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/buying-a-home-in-nolensville-tn-a-comprehensive-guide.md
+2026-04-11 02:32:11,416 [INFO] jfg-content-engine: Processing: best neighborhoods in Murfreesboro TN for families
+2026-04-11 02:32:12,308 [INFO] jfg-content-engine: Research: 5 sources, 204 words brief
+2026-04-11 02:33:03,572 [WARNING] engine.writer: Article only 757 words (min 800), retry 1/2
+2026-04-11 02:34:24,256 [INFO] engine.writer: Final word count for 'best neighborhoods in Murfreesboro TN for families': 1136
+2026-04-11 02:34:24,257 [INFO] jfg-content-engine: Written: #The Best Neighborhoods in Murfreesboro, TN for Families: A Local Expert's Guide (1136 words)
+2026-04-11 02:34:33,953 [INFO] jfg-content-engine: Quality: 7.5 (readability: 18.7)
+2026-04-11 02:34:33,955 [INFO] engine.publisher: Saved: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/the-best-neighborhoods-in-murfreesboro-tn-for-families-a-local-expert-s-guide.md (score: 7.5)
+2026-04-11 02:34:33,957 [INFO] jfg-content-engine: ✅ Published draft: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/the-best-neighborhoods-in-murfreesboro-tn-for-families-a-local-expert-s-guide.md
+2026-04-11 02:34:33,959 [INFO] jfg-content-engine: Processing: is now a good time to buy a house in Nashville
+2026-04-11 02:34:34,872 [INFO] jfg-content-engine: Research: 5 sources, 183 words brief
+2026-04-11 02:35:14,419 [WARNING] engine.writer: Article only 567 words (min 800), retry 1/2
+2026-04-11 02:36:22,271 [INFO] engine.writer: Final word count for 'is now a good time to buy a house in Nashville': 976
+2026-04-11 02:36:22,271 [INFO] jfg-content-engine: Written: Is Now a Good Time to Buy a House in Nashville? (976 words)
+2026-04-11 02:36:32,210 [INFO] jfg-content-engine: Quality: 7.5 (readability: 9.7)
+2026-04-11 02:36:32,212 [INFO] engine.publisher: Saved: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/is-now-a-good-time-to-buy-a-house-in-nashville.md (score: 7.5)
+2026-04-11 02:36:32,214 [INFO] jfg-content-engine: ✅ Published draft: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/is-now-a-good-time-to-buy-a-house-in-nashville.md
+2026-04-11 02:36:32,215 [INFO] jfg-content-engine: Batch complete. Written: 3 | Stats: {'drafted': 11, 'queued': 51, 'rejected': 1, 'writing': 1, 'total_articles': 0}
+2026-04-12 02:30:00,253 [INFO] jfg-content-engine: Processing: Nashville TN cost of living vs Austin TX
+2026-04-12 02:30:01,077 [INFO] jfg-content-engine: Research: 5 sources, 142 words brief
+2026-04-12 02:30:48,422 [WARNING] engine.writer: Article only 559 words (min 800), retry 1/2
+2026-04-12 02:31:55,446 [INFO] engine.writer: Final word count for 'Nashville TN cost of living vs Austin TX': 860
+2026-04-12 02:31:55,447 [INFO] jfg-content-engine: Written: Nashville TN Cost of Living vs Austin TX: The Surprising Truth Revealed (860 words)
+2026-04-12 02:32:08,174 [INFO] jfg-content-engine: Quality: 7.5 (readability: 9.8)
+2026-04-12 02:32:08,177 [INFO] engine.publisher: Saved: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/nashville-tn-cost-of-living-vs-austin-tx-the-surprising-truth-revealed.md (score: 7.5)
+2026-04-12 02:32:08,179 [INFO] jfg-content-engine: ✅ Published draft: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/nashville-tn-cost-of-living-vs-austin-tx-the-surprising-truth-revealed.md
+2026-04-12 02:32:08,181 [INFO] jfg-content-engine: Processing: what to know before moving to Nashville TN
+2026-04-12 02:32:08,987 [INFO] jfg-content-engine: Research: 5 sources, 211 words brief
+2026-04-12 02:33:00,979 [WARNING] engine.writer: Article only 717 words (min 800), retry 1/2
+2026-04-12 02:34:23,597 [INFO] engine.writer: Final word count for 'what to know before moving to Nashville TN': 1124
+2026-04-12 02:34:23,598 [INFO] jfg-content-engine: Written: **What to Know Before Moving to Nashville, TN: A Comprehensive Guide** (1124 words)
+2026-04-12 02:34:33,234 [INFO] jfg-content-engine: Quality: 7.5 (readability: 13.3)
+2026-04-12 02:34:33,236 [INFO] engine.publisher: Saved: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/what-to-know-before-moving-to-nashville-tn-a-comprehensive-guide.md (score: 7.5)
+2026-04-12 02:34:33,238 [INFO] jfg-content-engine: ✅ Published draft: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/what-to-know-before-moving-to-nashville-tn-a-comprehensive-guide.md
+2026-04-12 02:34:33,240 [INFO] jfg-content-engine: Processing: buying a new construction home in Franklin TN
+2026-04-12 02:34:34,107 [INFO] jfg-content-engine: Research: 5 sources, 159 words brief
+2026-04-12 02:35:25,865 [WARNING] engine.writer: Article only 758 words (min 800), retry 1/2
+2026-04-12 02:36:39,907 [INFO] engine.writer: Final word count for 'buying a new construction home in Franklin TN': 988
+2026-04-12 02:36:39,908 [INFO] jfg-content-engine: Written: **Buying a New Construction Home in Franklin, TN: A Comprehensive Guide for Home Buyers and Investors** (988 words)
+2026-04-12 02:36:49,511 [INFO] jfg-content-engine: Quality: 7.5 (readability: 10.4)
+2026-04-12 02:36:49,513 [INFO] engine.publisher: Saved: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/buying-a-new-construction-home-in-franklin-tn-a-comprehensive-guide-for-home-buyers-and-investors.md (score: 7.5)
+2026-04-12 02:36:49,515 [INFO] jfg-content-engine: ✅ Published draft: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/buying-a-new-construction-home-in-franklin-tn-a-comprehensive-guide-for-home-buyers-and-investors.md
+2026-04-12 02:36:49,516 [INFO] jfg-content-engine: Batch complete. Written: 3 | Stats: {'drafted': 14, 'queued': 48, 'rejected': 1, 'writing': 1, 'total_articles': 0}
+2026-04-13 02:30:01,648 [INFO] jfg-content-engine: Processing: Nashville suburbs with best schools
+2026-04-13 02:30:02,609 [INFO] jfg-content-engine: Research: 5 sources, 292 words brief
+2026-04-13 02:30:54,130 [WARNING] engine.writer: Article only 648 words (min 800), retry 1/2
+2026-04-13 02:32:11,547 [INFO] engine.writer: Final word count for 'Nashville suburbs with best schools': 1050
+2026-04-13 02:32:11,548 [INFO] jfg-content-engine: Written: Nashville Suburbs with Best Schools: A Comprehensive Guide for Families and Home Buyers (1050 words)
+2026-04-13 02:32:22,163 [INFO] jfg-content-engine: Quality: 7.5 (readability: 9.9)
+2026-04-13 02:32:22,166 [INFO] engine.publisher: Saved: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/nashville-suburbs-with-best-schools-a-comprehensive-guide-for-families-and-home-buyers.md (score: 7.5)
+2026-04-13 02:32:22,168 [INFO] jfg-content-engine: ✅ Published draft: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/nashville-suburbs-with-best-schools-a-comprehensive-guide-for-families-and-home-buyers.md
+2026-04-13 02:32:22,169 [INFO] jfg-content-engine: Processing: how much house can I afford in Nashville
+2026-04-13 02:32:23,060 [INFO] jfg-content-engine: Research: 5 sources, 187 words brief
+2026-04-13 02:33:01,172 [WARNING] engine.writer: Article only 509 words (min 800), retry 1/2
+2026-04-13 02:34:10,752 [INFO] engine.writer: Final word count for 'how much house can I afford in Nashville': 950
+2026-04-13 02:34:10,753 [INFO] jfg-content-engine: Written: **How Much House Can I Afford in Nashville?** (950 words)
+2026-04-13 02:34:20,901 [INFO] jfg-content-engine: Quality: 7.5 (readability: 9.5)
+2026-04-13 02:34:20,903 [INFO] engine.publisher: Saved: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/how-much-house-can-i-afford-in-nashville.md (score: 7.5)
+2026-04-13 02:34:20,905 [INFO] jfg-content-engine: ✅ Published draft: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/how-much-house-can-i-afford-in-nashville.md
+2026-04-13 02:34:20,906 [INFO] jfg-content-engine: Processing: best gated communities in Brentwood TN
+2026-04-13 02:34:21,871 [INFO] jfg-content-engine: Research: 5 sources, 181 words brief
+2026-04-13 02:35:14,112 [WARNING] engine.writer: Article only 692 words (min 800), retry 1/2
+2026-04-13 02:36:40,814 [INFO] engine.writer: Final word count for 'best gated communities in Brentwood TN': 1121
+2026-04-13 02:36:40,815 [INFO] jfg-content-engine: Written: **The Best Gated Communities in Brentwood, TN: A Local Expert's Guide** (1121 words)
+2026-04-13 02:36:51,533 [INFO] jfg-content-engine: Quality: 7.5 (readability: 11.8)
+2026-04-13 02:36:51,536 [INFO] engine.publisher: Saved: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/the-best-gated-communities-in-brentwood-tn-a-local-expert-s-guide.md (score: 7.5)
+2026-04-13 02:36:51,538 [INFO] jfg-content-engine: ✅ Published draft: /Users/chucknmore/projects/joshuafink-website/content_engine/output/drafts/the-best-gated-communities-in-brentwood-tn-a-local-expert-s-guide.md
+2026-04-13 02:36:51,539 [INFO] jfg-content-engine: Batch complete. Written: 3 | Stats: {'drafted': 17, 'queued': 45, 'rejected': 1, 'writing': 1, 'total_articles': 0}

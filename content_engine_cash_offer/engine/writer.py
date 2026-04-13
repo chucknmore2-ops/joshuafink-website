@@ -1,4 +1,4 @@
-"""Article writer using local Ollama — tailored for joshuafink.com."""
+"""Article writer using local Ollama — cash offer SEO content for joshuafink.com."""
 
 import logging
 import requests
@@ -16,35 +16,35 @@ def write_article(keyword: str, research: dict, config: dict, model: str = "llam
         timeout = config.get('ollama', {}).get('timeout', timeout)
 
     site = config.get("site", {})
-    audience = site.get("audience", "Nashville-area home buyers and sellers")
-    tone = site.get("tone", "Authoritative, direct, data-driven")
+    audience = site.get("audience", "Nashville-area homeowners considering selling for cash")
+    tone = site.get("tone", "Empathetic but direct, no-pressure, locally expert")
     agent_name = site.get("agent_name", "Joshua Fink")
     phone = site.get("phone", "615-551-2727")
-    email = site.get("email", "joshua@joshuafink.com")
     links = site.get("internal_links", {})
     brief = research.get("brief", "")
 
-    prompt = f"""Write a comprehensive, SEO-optimized blog post about "{keyword}" for a Nashville real estate website.
+    prompt = f"""Write a comprehensive, SEO-optimized blog post about "{keyword}" for a Nashville cash home buyer website.
 
-Author: {agent_name}, Affiliate Broker at Compass Real Estate
+Author: {agent_name}, Joshua Fink Group
 Target audience: {audience}
 Tone: {tone}
-Word count: 1200-1500 words
+Word count: 1000-1400 words
 
 Research context:
 {brief[:2000]}
 
 Requirements:
-- Start with a compelling hook that addresses the reader's core question
+- Start with an empathetic hook that addresses the reader's situation (they may be stressed, overwhelmed, or in a tough spot)
 - Use H2 and H3 headers for clear structure (markdown format)
-- Include actionable, specific advice — not generic filler
+- Explain how cash offers work and why they benefit the seller in this situation
 - Reference specific Nashville suburbs and neighborhoods where relevant
-- Include real data points (median prices, school ratings, growth stats) from the research
-- Add internal links naturally using markdown: [listings]({links.get('listings', '/listings')}), [contact]({links.get('contact', '/contact')}), [cash offer]({links.get('cash_offer', '/cash-offer')}), [sell your home]({links.get('sell', '/sell')})
-- End with a CTA: "Thinking about buying/selling in [relevant area]? Call or text {agent_name} at {phone} or visit joshuafink.com"
-- Write in first person as {agent_name} — confident, experienced, locally expert
+- Include real data points from the research when available
+- Add internal links naturally: [cash offer]({links.get('cash_offer', '/cash-offer')}), [contact us]({links.get('contact', '/contact')})
+- End with CTA: "Need a fast cash offer? Joshua Fink can close in as little as 14 days. Get your free, no-obligation offer today. [Get Your Cash Offer]({links.get('cash_offer', '/cash-offer')})"
+- Write in first person as {agent_name} — empathetic, experienced, no-pressure
 - NO AI-sounding phrases like "in today's world", "it's important to note", "navigating the landscape"
 - Optimize for the keyword "{keyword}" naturally
+- Address common objections: "Will I get a fair price?", "Is this a scam?", "How fast can you close?"
 
 Write the full article in markdown. Start with # title."""
 
