@@ -30,9 +30,6 @@ export const metadata: Metadata = {
   description:
     'Joshua Fink is a top-producing Affiliate Broker at Compass Real Estate in Middle Tennessee. 17+ years of experience, 100+ homes sold annually, Diamond & Titan Award winner.',
   metadataBase: new URL('https://joshuafink.com'),
-  alternates: {
-    canonical: '/',
-  },
   keywords: [
     'Joshua Fink',
     'Compass Real Estate',
@@ -46,6 +43,14 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     siteName: 'Joshua Fink | Compass Real Estate',
+  },
+  alternates: {
+    canonical: '/',
+    types: {
+      // RSS autodiscovery — lets Feedly / NetNewsWire / LinkedIn RSS
+      // feeders find /blog/rss.xml without a manual pointer.
+      'application/rss+xml': '/blog/rss.xml',
+    },
   },
 }
 
