@@ -49,33 +49,35 @@ You need a refresh_token with the `https://www.googleapis.com/auth/business.mana
 1. Create a Google Cloud project (if you don't have one): console.cloud.google.com → **New project** → "joshuafink-gbp"
 2. Enable **Google My Business API** + **My Business Business Information API** + **My Business Account Management API**
 3. APIs & Services → **Credentials** → **Create Credentials** → **OAuth 2.0 Client ID** → Application type: Desktop → Name: "joshuafink-gbp". Copy the client ID + secret into Vercel as `GBP_CLIENT_ID` / `GBP_CLIENT_SECRET`.
-4. Get a refresh token. Easiest path using the Python helper that already ships with this repo:
+4. **One-shot auth + Vercel env printer** — this repo ships a helper that does steps 4+5 for you. It uses your existing OAuth client file at `~/.openclaw/credentials/google-business-oauth.json`, runs the loopback OAuth flow in your browser, saves a fresh refresh_token, discovers your account + location IDs, and prints all 5 Vercel env var values ready to paste.
 
    ```bash
-   # From project root, one-time on Chuck's local machine:
-   pip install google-auth google-auth-oauthlib google-api-python-client
-   python scripts/google_business_auth.py  # or whatever the auth helper is named
+   pip install google-auth google-auth-oauthlib requests
+   python scripts/google_business_auth.py
    ```
 
-   Or use [Google's OAuth Playground](https://developers.google.com/oauthplayground):
-   - Settings gear → "Use your own OAuth credentials" → paste client ID + secret
-   - Left panel → scroll to "Google My Business API" → select `business.manage`
-   - Authorize, then "Exchange authorization code for tokens"
-   - Copy the **refresh_token** value → Vercel `GBP_REFRESH_TOKEN`
+   Output looks like:
+   ```
+   ============================================================
+     Vercel env vars — paste these into Settings → Environment Variables
+   ============================================================
+   GBP_CLIENT_ID=165423...
+   GBP_CLIENT_SECRET=GOCSPX-...
+   GBP_REFRESH_TOKEN=1//01X...
+   GBP_ACCOUNT_ID=accounts/123456789012345
+   GBP_LOCATION_ID=accounts/123456789012345/locations/987654321
+   ============================================================
+   ```
 
-5. Find your account + location IDs:
+5. **Publish your OAuth app** (one-time, avoids the 7-day refresh-token expiry). Google Cloud Console → APIs & Services → **OAuth consent screen** → **Publish App**. No verification needed as long as you only use internal scopes.
 
+6. Paste the 5 env vars into Vercel → Settings → Environment Variables (check all three environments), **Redeploy**, then test:
    ```bash
-   # With a valid access_token:
-   curl -H "Authorization: Bearer $ACCESS_TOKEN" https://mybusinessaccountmanagement.googleapis.com/v1/accounts
-   # Copy accounts[0].name → GBP_ACCOUNT_ID
-
-   curl -H "Authorization: Bearer $ACCESS_TOKEN" \
-     "https://mybusinessbusinessinformation.googleapis.com/v1/${GBP_ACCOUNT_ID}/locations?readMask=name,title"
-   # Copy locations[0].name → GBP_LOCATION_ID
+   curl -H "Authorization: Bearer $CRON_SECRET" https://joshuafink.com/api/cron/gbp-post
    ```
+   Expected: `{"posted": true, "week": N, "rotator": 0..4, ...}` and a new post visible in the GBP panel on Google search within ~15 min.
 
-6. Trigger a test post from Vercel → your project → **Deployments** → **/** → **Functions** tab → `/api/cron/gbp-post` → "Run" (or manually: `curl -H "Authorization: Bearer $CRON_SECRET" https://joshuafink.com/api/cron/gbp-post`). Expected: `{"posted": true, "week": N, "rotator": 0..4, ...}`.
+   > **If the refresh token expires again:** just re-run `python scripts/google_business_auth.py` — it prints fresh values.
 
 ### 3. LinkedIn — OAuth flow (one-time, repeat every ~60 days)
 
