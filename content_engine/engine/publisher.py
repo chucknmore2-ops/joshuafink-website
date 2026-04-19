@@ -28,15 +28,21 @@ def _escape_ts(s: str) -> str:
 def save_article(article: dict, quality: dict, keyword_row: dict, config: dict) -> tuple:
     article_id = str(uuid.uuid4())[:8]
     score = quality.get("overall", 0)
+    local_fail = bool(quality.get("local_fail"))
     min_score = config.get("engine", {}).get("min_quality_score", 7.0)
     reject_score = config.get("engine", {}).get("reject_score", 5.0)
 
-    if score >= min_score:
-        subdir = config.get("output", {}).get("drafts_dir", "output/drafts")
-    elif score < reject_score:
+    # Local-gate failures (banned phrases / uniqueness / compliance) are HARD
+    # rejects — they do not go to drafts regardless of LLM score.
+    if local_fail or score < reject_score:
         subdir = config.get("output", {}).get("rejected_dir", "output/rejected")
+        status = "rejected"
+    elif score >= min_score:
+        subdir = config.get("output", {}).get("drafts_dir", "output/drafts")
+        status = "draft"
     else:
         subdir = config.get("output", {}).get("drafts_dir", "output/drafts")
+        status = "draft-borderline"
 
     out_dir = os.path.join(BASE_DIR, subdir)
     os.makedirs(out_dir, exist_ok=True)
@@ -55,6 +61,10 @@ def save_article(article: dict, quality: dict, keyword_row: dict, config: dict) 
 
     # Save markdown version
     md_path = os.path.join(out_dir, f"{slug}.md")
+    banned_hits = quality.get("banned_phrases_found") or []
+    uniq = quality.get("uniqueness_score", 0.0)
+    compliance_required = bool(article.get("compliance_required"))
+    compliance_ok = quality.get("compliance_ok", True)
     frontmatter = f"""---
 title: "{title}"
 keyword: "{article['keyword']}"
@@ -62,13 +72,17 @@ slug: "{slug}"
 word_count: {article['word_count']}
 quality_score: {score}
 readability_score: {quality.get('readability_score', 0)}
+uniqueness_score: {uniq}
+banned_phrases_found: {json.dumps(banned_hits)}
+compliance_required: {str(compliance_required).lower()}
+compliance_ok: {str(compliance_ok).lower()}
 article_id: "{article_id}"
 created: "{datetime.utcnow().isoformat()}"
-status: "{'draft' if score >= min_score else 'rejected'}"
+status: "{status}"
 ---
 
 """
-    with open(md_path, "w") as f:
+    with open(md_path, "w", encoding="utf-8") as f:
         f.write(frontmatter + article["content"])
 
     # Save TS blog entry snippet (ready to paste into lib/blog.ts)
@@ -82,8 +96,11 @@ status: "{'draft' if score >= min_score else 'rejected'}"
 {_escape_ts(body)}
     `.trim(),
   }},"""
-    with open(ts_path, "w") as f:
+    with open(ts_path, "w", encoding="utf-8") as f:
         f.write(ts_entry)
 
-    log.info(f"Saved: {md_path} (score: {score})")
+    log.info(
+        "Saved: %s (score: %s, status: %s, uniqueness: %.2f, banned: %d)",
+        md_path, score, status, uniq, len(banned_hits),
+    )
     return article_id, md_path
