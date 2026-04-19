@@ -1,0 +1,73 @@
+name: Instant IndexNow on content change
+
+# Triggers the /api/cron/indexnow endpoint immediately after Vercel deploys a
+# change to blog/listing/suburb data. Today the nightly cron catches content
+# changes within 24 hours; this workflow shortens that to ~5 minutes so new
+# blog posts + listings reach Bing / Yandex within the same day.
+#
+# REQUIRED GitHub repo secret:
+#   CRON_SECRET — must match the value in Vercel project env. Set at:
+#   github.com/chucknmore2-ops/joshuafink-website/settings/secrets/actions
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'lib/blog.ts'
+      - 'lib/listings.ts'
+      - 'lib/suburbs.ts'
+      - 'lib/sold-listings.ts'
+      - 'lib/reviews.ts'
+      - 'app/blog/**'
+      - 'app/buy/**'
+      - 'app/sell/**'
+      - 'public/sitemap.xml'
+      - 'app/sitemap.ts'
+  workflow_dispatch: # manual trigger from the Actions UI
+
+permissions:
+  contents: read
+
+jobs:
+  ping-indexnow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Wait for Vercel deploy
+        # Vercel typically deploys in 60–90s for this static site. Give 3 min
+        # headroom so the freshly-changed content is served before we ping
+        # IndexNow (otherwise Bing crawls stale HTML).
+        run: sleep 180
+
+      - name: Trigger IndexNow submission
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$CRON_SECRET" ]; then
+            echo "ERROR: CRON_SECRET not set in repo secrets"
+            echo "Add it at github.com/chucknmore2-ops/joshuafink-website/settings/secrets/actions"
+            exit 1
+          fi
+
+          # Retry up to 3 times with backoff in case Vercel deploy is slow
+          for attempt in 1 2 3; do
+            echo "IndexNow submission attempt $attempt…"
+            response=$(curl -sS -w "\n%{http_code}" \
+              -H "Authorization: Bearer $CRON_SECRET" \
+              "https://joshuafink.com/api/cron/indexnow")
+            status=$(echo "$response" | tail -1)
+            body=$(echo "$response" | sed '$d')
+
+            if [ "$status" = "200" ]; then
+              echo "IndexNow ping succeeded."
+              echo "$body"
+              exit 0
+            fi
+
+            echo "attempt $attempt returned $status; body:"
+            echo "$body"
+            [ "$attempt" -lt 3 ] && sleep 30
+          done
+
+          echo "IndexNow ping failed after 3 attempts"
+          exit 1
