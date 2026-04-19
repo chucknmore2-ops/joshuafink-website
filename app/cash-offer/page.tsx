@@ -1,5 +1,8 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import CashOfferForm from './CashOfferForm'
+import TrustBadges from '@/components/TrustBadges'
+import ReviewStrip from '@/components/ReviewStrip'
 
 export const metadata: Metadata = {
   title: 'Sell My House Fast Nashville | Cash Offer in 24 Hours | Joshua Fink',
@@ -54,6 +57,71 @@ const steps = [
   },
 ]
 
+const faqs = [
+  {
+    q: 'How does selling my house for cash work in Nashville?',
+    a: "It's simple: fill out our form or call us, and we'll review your property and make a fair, no-obligation cash offer within 24 hours. If you accept, you pick the closing date — as fast as 7 days. We handle all the paperwork and pay all closing costs. You walk away with cash.",
+  },
+  {
+    q: 'What types of properties do you buy?',
+    a: "We buy houses in any condition across Middle Tennessee — homes needing major repairs, fire or water damage, code violations, hoarder houses, tenant-occupied properties, inherited homes, and more. If it has an address, we'll make an offer.",
+  },
+  {
+    q: 'Will I get full market value for my house?',
+    a: "An investor cash offer is typically 70–85% of after-repair market value. You trade a portion of retail price for speed, certainty, and zero repairs. For many sellers in distressed, inherited, or time-sensitive situations, that trade is worth it. If you want full market value and can wait 30–90 days, Joshua can also list your home traditionally — ask and we'll walk through both paths so you choose what fits.",
+  },
+  {
+    q: 'Are there any fees or commissions?',
+    a: 'Zero. No agent commissions, no closing costs, no hidden fees. The cash offer you receive is the amount you walk away with. We cover all closing costs.',
+  },
+  {
+    q: 'How fast can you close?',
+    a: 'As fast as 7 days. Most cash closings happen within 2–3 weeks, but we work on your timeline. Cash closings skip the three biggest delays in traditional sales: there is no lender approval (and therefore no appraisal contingency), no buyer-financing fall-through, and no inspection-negotiation back-and-forth because we are buying as-is. A Tennessee title attorney coordinates the payoff, clears title, and schedules closing — typically within the same week once you accept the offer. Need to close fast? We can. Need more time? No problem.',
+  },
+  {
+    q: 'Do I need to make repairs before selling?',
+    a: "No. We buy houses completely as-is. No cleaning, no repairs, no staging, no showings. Leave what you don't want — we'll handle it.",
+  },
+  {
+    q: 'What if my house has liens, back taxes, or code violations?',
+    a: 'Not a problem. We handle title issues, back property taxes, IRS liens, HOA liens, code violations, and probate complications all the time. The closing attorney coordinates payoffs and clears title — you just show up and sign.',
+  },
+  {
+    q: 'Do I need to be out on the day of closing, or can I stay for a while?',
+    a: "Flexible. We can do same-day possession if that's what you need, or you can stay 1–30 days post-closing via a standard rent-back agreement if you need time to move. Tell us what works — we'll build the timeline around you.",
+  },
+  {
+    q: 'How is this different from Opendoor, Offerpad, or national iBuyers?',
+    a: "Three differences: (1) Joshua lives and works in Middle Tennessee, so the offer is based on real local comps, not a national algorithm. (2) No service fees — iBuyers charge 5–14%. (3) You're dealing with a licensed Tennessee Affiliate Broker directly, not a faceless company. iBuyers also often refuse homes with repairs, occupancy issues, or liens — we don't.",
+  },
+  {
+    q: 'Is Joshua buying the house himself, or passing the deal to another investor?',
+    a: "You will always know exactly who is buying your house before you sign — no anonymous LLCs, no surprises. Depending on the property and situation, Joshua may act as principal buyer himself or partner with a vetted local investor. Joshua's status as a licensed Tennessee Affiliate Broker is fully disclosed in writing at offer time in accordance with Tennessee Real Estate Commission rules, so the buyer's identity and Joshua's role in the transaction are clear on the first page of the contract.",
+  },
+  {
+    q: 'What if I still owe money on my mortgage?',
+    a: "No problem — the closing attorney pays off your mortgage at closing from the cash-offer proceeds. You only net the equity. If you're upside-down (owe more than the home is worth), we can still explore options including a short sale — Joshua has negotiated these with most major Tennessee lenders.",
+  },
+  {
+    q: 'What areas do you serve?',
+    a: "All of Middle Tennessee including Nashville, Franklin, Brentwood, Spring Hill, Columbia, Murfreesboro, Gallatin, Hendersonville, Mount Juliet, Lebanon, Smyrna, La Vergne, Nolensville, Thompson's Station, and surrounding areas.",
+  },
+]
+
+const suburbCTAs: Array<[slug: string, label: string]> = [
+  ['nashville-tn', 'Nashville'],
+  ['franklin-tn', 'Franklin'],
+  ['brentwood-tn', 'Brentwood'],
+  ['spring-hill-tn', 'Spring Hill'],
+  ['murfreesboro-tn', 'Murfreesboro'],
+  ['columbia-tn', 'Columbia'],
+  ['hendersonville-tn', 'Hendersonville'],
+  ['mount-juliet-tn', 'Mount Juliet'],
+]
+
+const sellerReviewFilter = (r: { transaction: string }) =>
+  /\bsold\b|\bsell\b|bought and sold/i.test(r.transaction)
+
 export default function CashOfferPage() {
   return (
     <div className="bg-white">
@@ -63,26 +131,29 @@ export default function CashOfferPage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
-            {/* Left — copy */}
+            {/* Left — copy + trust badges */}
             <div>
               <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-4">
                 Middle Tennessee Cash Home Buyers
               </p>
-              <h1 className="text-5xl sm:text-6xl font-black tracking-tight leading-[1.05] mb-6">
+              <h1 className="text-5xl sm:text-6xl font-black tracking-tight leading-[1.05] mb-6 font-display">
                 We Buy Houses.<br />
-                <span className="text-neutral-400">Any Condition.</span><br />
+                <span className="italic text-neutral-400">Any Condition.</span><br />
                 Any Situation.
               </h1>
-              <p className="text-neutral-400 text-lg leading-relaxed mb-4">
+              <p className="text-neutral-300 text-lg leading-relaxed mb-6">
                 Fair cash offer in <strong className="text-white">24 hours</strong>. Close in as little as <strong className="text-white">7 days</strong>. No repairs, no commissions, no showings, no hassle.
               </p>
               <a
                 href="tel:6155512727"
-                className="inline-flex items-center gap-3 bg-white text-black text-xl font-black px-8 py-4 rounded-full tracking-wide transition-all duration-200 hover:bg-neutral-100 hover:shadow-lg active:scale-[0.98] mt-2"
+                className="inline-flex items-center gap-3 bg-brand-crimson text-white text-xl font-black px-8 py-4 rounded-full tracking-wide transition-all duration-200 hover:bg-brand-crimson-dark hover:shadow-2xl hover:-translate-y-0.5 active:scale-[0.98] mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                aria-label="Call Joshua at 615-551-2727"
               >
-                📞 615-551-2727
+                <span aria-hidden="true">📞</span> 615-551-2727
               </a>
-              <p className="text-neutral-500 text-sm mt-3">Call or text anytime — Joshua answers.</p>
+              <p className="text-neutral-400 text-sm mt-3 mb-8">Call or text anytime — Joshua answers.</p>
+
+              <TrustBadges variant="dark" />
             </div>
 
             {/* Right — inline form (client component) */}
@@ -97,13 +168,13 @@ export default function CashOfferPage() {
           <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3 text-center">
             We Buy in Any Situation
           </p>
-          <h2 className="text-3xl font-black text-black text-center tracking-tight mb-10">
-            Whatever You&apos;re Going Through — We Can Help
+          <h2 className="text-3xl sm:text-4xl font-black text-black text-center tracking-tight mb-10">
+            Whatever You&apos;re Going Through — <span className="font-display italic font-semibold">We Can Help</span>
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {situations.map((s) => (
               <div key={s.label} className="bg-white border border-neutral-200 rounded-2xl p-6 text-center transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5">
-                <span className="text-3xl block mb-3">{s.icon}</span>
+                <span className="text-3xl block mb-3" aria-hidden="true">{s.icon}</span>
                 <p className="text-sm font-black text-black">{s.label}</p>
               </div>
             ))}
@@ -111,13 +182,16 @@ export default function CashOfferPage() {
         </div>
       </div>
 
+      {/* Social proof — seller reviews */}
+      <ReviewStrip variant="light" limit={3} filter={sellerReviewFilter} />
+
       {/* How it works */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
           Simple Process
         </p>
-        <h2 className="text-4xl font-black text-black tracking-tight mb-14">
-          How It Works
+        <h2 className="text-4xl sm:text-5xl font-black text-black tracking-tight mb-14">
+          How It <span className="font-display italic font-semibold">Works</span>
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {steps.map((step) => (
@@ -126,7 +200,7 @@ export default function CashOfferPage() {
                 Step {step.num}
               </p>
               <h3 className="text-lg font-black text-black mb-3">{step.title}</h3>
-              <p className="text-sm text-neutral-500 leading-relaxed">{step.body}</p>
+              <p className="text-sm text-neutral-600 leading-relaxed">{step.body}</p>
             </div>
           ))}
         </div>
@@ -138,8 +212,8 @@ export default function CashOfferPage() {
           <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3 text-center">
             The Numbers
           </p>
-          <h2 className="text-4xl font-black tracking-tight text-center mb-14">
-            Traditional Sale vs. Cash Offer
+          <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-center mb-14">
+            Traditional Sale vs. <span className="font-display italic font-semibold">Cash Offer</span>
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
 
@@ -165,7 +239,7 @@ export default function CashOfferPage() {
             </div>
 
             {/* Cash offer */}
-            <div className="border border-white rounded-2xl p-8">
+            <div className="border-2 border-brand-crimson rounded-2xl p-8 bg-gradient-to-b from-white/5 to-transparent">
               <h3 className="text-lg font-black mb-6 text-white uppercase tracking-widest">Joshua&apos;s Cash Offer</h3>
               <div className="space-y-4">
                 {[
@@ -188,7 +262,7 @@ export default function CashOfferPage() {
         </div>
       </div>
 
-      {/* Trust signals */}
+      {/* Trust signals (quick stats) */}
       <div className="py-16 px-4 sm:px-6 lg:px-8 border-b border-neutral-200">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-neutral-200">
@@ -207,68 +281,69 @@ export default function CashOfferPage() {
         </div>
       </div>
 
-      {/* FAQ — SEO content */}
+      {/* Suburb callouts */}
+      <div className="bg-neutral-50 py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="max-w-3xl mb-8">
+            <p className="text-xs font-semibold tracking-widest text-neutral-500 uppercase mb-3">
+              Sell in Your Neighborhood
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-black mb-3">
+              Serving every suburb across <span className="font-display italic font-semibold">Middle Tennessee</span>
+            </h2>
+            <p className="text-neutral-600 leading-relaxed">
+              Offers are priced off real local comps — not a national algorithm. Tap your area below for a neighborhood-specific seller&apos;s guide.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            {suburbCTAs.map(([slug, label]) => (
+              <Link
+                key={slug}
+                href={`/sell/${slug}`}
+                className="rounded-2xl border border-neutral-200 bg-white px-5 py-4 text-sm font-semibold text-black transition-all duration-200 hover:bg-black hover:text-white hover:border-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+              >
+                Sell My House Fast in {label}, TN <span aria-hidden="true">→</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* FAQ — SEO content (12 Q&A) */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3 text-center">
           Common Questions
         </p>
-        <h2 className="text-4xl font-black text-black tracking-tight mb-14 text-center">
-          Frequently Asked Questions
+        <h2 className="text-4xl sm:text-5xl font-black text-black tracking-tight mb-14 text-center">
+          Frequently Asked <span className="font-display italic font-semibold">Questions</span>
         </h2>
         <div className="space-y-8">
-          {[
-            {
-              q: 'How does selling my house for cash work in Nashville?',
-              a: 'It\'s simple: fill out our form or call us, and we\'ll review your property and make a fair, no-obligation cash offer within 24 hours. If you accept, you pick the closing date — as fast as 7 days. We handle all the paperwork and pay all closing costs. You walk away with cash.',
-            },
-            {
-              q: 'What types of properties do you buy?',
-              a: 'We buy houses in any condition across Middle Tennessee — homes needing major repairs, fire or water damage, code violations, hoarder houses, tenant-occupied properties, inherited homes, and more. If it has an address, we\'ll make an offer.',
-            },
-            {
-              q: 'Are there any fees or commissions?',
-              a: 'Zero. No agent commissions, no closing costs, no hidden fees. The cash offer you receive is the amount you walk away with. We cover all closing costs.',
-            },
-            {
-              q: 'How fast can you close?',
-              a: 'As fast as 7 days. Most cash closings happen within 2-3 weeks, but we work on your timeline. Need to close fast? We can. Need more time? No problem.',
-            },
-            {
-              q: 'Do I need to make repairs before selling?',
-              a: 'No. We buy houses completely as-is. No cleaning, no repairs, no staging, no showings. Leave what you don\'t want — we\'ll handle it.',
-            },
-            {
-              q: 'How is your cash offer different from other "we buy houses" companies?',
-              a: 'Joshua Fink is a licensed Affiliate Broker with Compass Real Estate — not an anonymous LLC. With 17+ years in Middle Tennessee and 100+ homes bought annually, you\'re dealing with a real professional who answers his own phone, not a call center.',
-            },
-            {
-              q: 'What areas do you serve?',
-              a: 'All of Middle Tennessee including Nashville, Franklin, Brentwood, Spring Hill, Columbia, Murfreesboro, Gallatin, Hendersonville, Mount Juliet, Lebanon, Smyrna, La Vergne, Nolensville, Thompson\'s Station, and surrounding areas.',
-            },
-          ].map((faq) => (
+          {faqs.map((faq) => (
             <div key={faq.q} className="border-b border-neutral-200 pb-6">
               <h3 className="text-lg font-black text-black mb-2">{faq.q}</h3>
-              <p className="text-sm text-neutral-500 leading-relaxed">{faq.a}</p>
+              <p className="text-sm text-neutral-600 leading-relaxed">{faq.a}</p>
             </div>
           ))}
         </div>
+
+        <p className="text-xs text-neutral-500 mt-10 pt-6 border-t border-neutral-200 leading-relaxed">
+          <strong>Disclosure:</strong> Joshua Fink is a licensed Tennessee Affiliate Broker with Compass Real Estate and may act as a principal (owner) in a cash-offer transaction or partner with a local investor. Joshua&apos;s status as a licensed broker is disclosed in writing at offer time in accordance with Tennessee Real Estate Commission rules. Cash offers are typically 70–85% of after-repair market value; this tradeoff is made explicit so you can choose between speed and retail price.
+        </p>
       </div>
 
-      {/* FAQ Schema */}
+      {/* FAQ Schema (matches visible content) */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'FAQPage',
-            mainEntity: [
-              { '@type': 'Question', name: 'How does selling my house for cash work in Nashville?', acceptedAnswer: { '@type': 'Answer', text: 'Fill out our form or call us, and we\'ll make a fair, no-obligation cash offer within 24 hours. If you accept, you pick the closing date — as fast as 7 days. We handle all paperwork and pay all closing costs.' } },
-              { '@type': 'Question', name: 'What types of properties do you buy?', acceptedAnswer: { '@type': 'Answer', text: 'We buy houses in any condition across Middle Tennessee — homes needing major repairs, fire or water damage, code violations, hoarder houses, tenant-occupied properties, inherited homes, and more.' } },
-              { '@type': 'Question', name: 'Are there any fees or commissions?', acceptedAnswer: { '@type': 'Answer', text: 'Zero. No agent commissions, no closing costs, no hidden fees. We cover all closing costs.' } },
-              { '@type': 'Question', name: 'How fast can you close?', acceptedAnswer: { '@type': 'Answer', text: 'As fast as 7 days. Most cash closings happen within 2-3 weeks, but we work on your timeline.' } },
-              { '@type': 'Question', name: 'Do I need to make repairs before selling?', acceptedAnswer: { '@type': 'Answer', text: 'No. We buy houses completely as-is. No cleaning, no repairs, no staging, no showings.' } },
-              { '@type': 'Question', name: 'What areas do you serve?', acceptedAnswer: { '@type': 'Answer', text: 'All of Middle Tennessee including Nashville, Franklin, Brentwood, Spring Hill, Columbia, Murfreesboro, Gallatin, Hendersonville, Mount Juliet, Lebanon, Smyrna, and surrounding areas.' } },
-            ],
+            mainEntity: faqs.map((f) => ({
+              '@type': 'Question',
+              name: f.q,
+              acceptedAnswer: { '@type': 'Answer', text: f.a },
+            })),
           }),
         }}
       />
@@ -281,17 +356,38 @@ export default function CashOfferPage() {
             '@context': 'https://schema.org',
             '@type': 'Service',
             name: 'Cash Home Buying — Nashville & Middle Tennessee',
+            url: 'https://joshuafink.com/cash-offer',
+            mainEntityOfPage: 'https://joshuafink.com/cash-offer',
             provider: {
               '@type': 'RealEstateAgent',
               name: 'Joshua Fink Group',
               url: 'https://joshuafink.com',
+              telephone: '+1-615-551-2727',
             },
-            description: 'We buy houses for cash in any condition across Middle Tennessee. Fair offer in 24 hours, close in as little as 7 days. No repairs, no commissions, no fees.',
-            areaServed: {
-              '@type': 'State',
-              name: 'Tennessee',
-            },
+            description:
+              'We buy houses for cash in any condition across Middle Tennessee. Fair offer in 24 hours, close in as little as 7 days. No repairs, no commissions, no fees.',
+            areaServed: [
+              { '@type': 'City', name: 'Nashville', containedInPlace: { '@type': 'State', name: 'Tennessee' } },
+              { '@type': 'City', name: 'Franklin', containedInPlace: { '@type': 'State', name: 'Tennessee' } },
+              { '@type': 'City', name: 'Brentwood', containedInPlace: { '@type': 'State', name: 'Tennessee' } },
+              { '@type': 'City', name: 'Spring Hill', containedInPlace: { '@type': 'State', name: 'Tennessee' } },
+              { '@type': 'City', name: 'Murfreesboro', containedInPlace: { '@type': 'State', name: 'Tennessee' } },
+              { '@type': 'City', name: 'Columbia', containedInPlace: { '@type': 'State', name: 'Tennessee' } },
+              { '@type': 'City', name: 'Hendersonville', containedInPlace: { '@type': 'State', name: 'Tennessee' } },
+              { '@type': 'City', name: 'Mount Juliet', containedInPlace: { '@type': 'State', name: 'Tennessee' } },
+              { '@type': 'State', name: 'Tennessee' },
+            ],
             serviceType: 'Cash Home Buying',
+            offers: {
+              '@type': 'Offer',
+              priceSpecification: {
+                '@type': 'PriceSpecification',
+                price: '0',
+                priceCurrency: 'USD',
+                description: 'Zero fees or commissions — closing costs covered',
+              },
+              availability: 'https://schema.org/InStock',
+            },
           }),
         }}
       />
@@ -301,27 +397,28 @@ export default function CashOfferPage() {
         <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-4">
           Ready to Get Started?
         </p>
-        <h2 className="text-4xl font-black text-black tracking-tight mb-4">
-          Get Your Cash Offer Today
+        <h2 className="text-4xl sm:text-5xl font-black text-black tracking-tight mb-4">
+          Get Your Cash Offer <span className="font-display italic font-semibold">Today</span>
         </h2>
-        <p className="text-neutral-500 text-base mb-10 max-w-xl mx-auto">
+        <p className="text-neutral-600 text-base mb-10 max-w-xl mx-auto">
           No pressure. No obligation. Just a fair offer and a straight answer within 24 hours.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <a
             href="tel:6155512727"
-            className="inline-flex items-center justify-center bg-black text-white text-base font-black px-10 py-4 rounded-full tracking-wide transition-all duration-200 hover:bg-neutral-800 hover:shadow-lg active:scale-[0.98]"
+            className="inline-flex items-center justify-center bg-black text-white text-base font-black px-10 py-4 rounded-full tracking-wide transition-all duration-200 hover:bg-neutral-800 hover:shadow-lg active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+            aria-label="Call Joshua at 615-551-2727"
           >
-            📞 Call 615-551-2727
+            <span aria-hidden="true">📞</span>&nbsp;Call 615-551-2727
           </a>
           <a
             href="#cash-offer-form"
-            className="inline-flex items-center justify-center border-2 border-black text-black text-base font-black px-10 py-4 rounded-full tracking-wide transition-all duration-200 hover:bg-black hover:text-white active:scale-[0.98]"
+            className="inline-flex items-center justify-center border-2 border-black text-black text-base font-black px-10 py-4 rounded-full tracking-wide transition-all duration-200 hover:bg-black hover:text-white active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
           >
-            Get My Cash Offer →
+            Get My Cash Offer <span aria-hidden="true">→</span>
           </a>
         </div>
-        <p className="text-neutral-400 text-sm mt-6">
+        <p className="text-neutral-500 text-sm mt-6">
           Serving Nashville · Franklin · Brentwood · Spring Hill · Columbia · Murfreesboro · and all of Middle Tennessee
         </p>
       </div>
