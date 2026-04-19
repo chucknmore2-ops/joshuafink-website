@@ -162,6 +162,37 @@ function isoWeekNumber(d: Date = new Date()): number {
   return Math.ceil(((+date - +yearStart) / 86400000 + 1) / 7)
 }
 
+// ── Retry helper for Google APIs (429-aware) ──────────────────────────
+//
+// Google Business Profile has a default per-minute quota of ~1 req/min on
+// new projects. A single cron run does ~3 calls (token refresh + post),
+// so on cold-start days we can collide with the quota. Retry with linear
+// backoff at 30s + 60s — caps total wait at ~90s, comfortably inside
+// the Vercel Pro 60s function timeout for the second attempt and stays
+// under the 5min Vercel cron timeout overall.
+//
+// On Vercel Hobby (10s timeout), the second attempt won't get a chance
+// — that's a known constraint and the operator should upgrade or live
+// with the safety-net nightly retry implicit in next Tuesday's run.
+async function fetchWithBackoff(
+  url: string,
+  init: RequestInit,
+  context: string,
+): Promise<Response> {
+  const waits = [0, 30_000, 60_000]
+  let lastRes: Response | null = null
+  for (let i = 0; i < waits.length; i++) {
+    if (waits[i] > 0) {
+      console.warn(`[gbp-post] ${context} 429 — waiting ${waits[i] / 1000}s before retry ${i + 1}`)
+      await new Promise((r) => setTimeout(r, waits[i]))
+    }
+    const res = await fetch(url, init)
+    if (res.status !== 429) return res
+    lastRes = res
+  }
+  return lastRes!
+}
+
 // ── Google OAuth refresh_token → access_token ─────────────────────────
 
 async function refreshAccessToken(): Promise<string> {
@@ -171,16 +202,20 @@ async function refreshAccessToken(): Promise<string> {
   if (!clientId || !clientSecret || !refreshToken) {
     throw new Error('GBP_CLIENT_ID, GBP_CLIENT_SECRET, GBP_REFRESH_TOKEN must all be set')
   }
-  const res = await fetch(GOOGLE_TOKEN_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      client_id: clientId,
-      client_secret: clientSecret,
-      refresh_token: refreshToken,
-      grant_type: 'refresh_token',
-    }),
-  })
+  const res = await fetchWithBackoff(
+    GOOGLE_TOKEN_URL,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        client_id: clientId,
+        client_secret: clientSecret,
+        refresh_token: refreshToken,
+        grant_type: 'refresh_token',
+      }),
+    },
+    'oauth-refresh',
+  )
   if (!res.ok) {
     // Log status only; do NOT embed the response body (may contain diagnostic
     // context that shouldn't land in centralized logs).
@@ -242,14 +277,18 @@ export async function GET(request: Request) {
   if (post.cta) payload.callToAction = post.cta
 
   try {
-    const res = await fetch(GBP_POSTS_API(locationId), {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
+    const res = await fetchWithBackoff(
+      GBP_POSTS_API(locationId),
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
       },
-      body: JSON.stringify(payload),
-    })
+      'gbp-post-create',
+    )
     if (!res.ok) {
       // Don't log the raw upstream body — GBP error responses can include
       // account identifiers, validation context, and request IDs. Log the
