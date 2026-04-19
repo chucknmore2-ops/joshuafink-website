@@ -1,7 +1,26 @@
 import type { Metadata } from 'next'
+import { Inter, Playfair_Display } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+
+// Self-host Google Fonts via next/font — eliminates the render-blocking
+// CSS @import, preloads the required subsets, and exposes CSS variables
+// (--font-inter, --font-display) consumed by tailwind.config.ts.
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800', '900'],
+  variable: '--font-inter',
+  display: 'swap',
+})
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800', '900'],
+  style: ['normal', 'italic'],
+  variable: '--font-display',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: {
@@ -36,7 +55,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
       <head>
         {/* Google Analytics — only renders when NEXT_PUBLIC_GA_ID matches the
             GA4 measurement ID pattern (G-XXXXXXXXXX). Hard-fails any malformed
@@ -56,7 +75,7 @@ export default function RootLayout({
           )
         })()}
       </head>
-      <body className="min-h-screen flex flex-col font-inter">
+      <body className="min-h-screen flex flex-col font-sans">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
