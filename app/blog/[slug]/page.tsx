@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { getPostBySlug, getAllSlugs, blogPosts, type BlogPost } from '@/lib/blog'
+import { getPostBySlug, getAllSlugs, getRelatedPosts, type BlogPost } from '@/lib/blog'
 
 interface Props {
   params: { slug: string }
@@ -209,7 +209,7 @@ export default function BlogPostPage({ params }: Props) {
   const post = getPostBySlug(params.slug)
   if (!post) notFound()
 
-  const otherPosts = blogPosts.filter((p) => p.slug !== params.slug).slice(0, 2)
+  const otherPosts = getRelatedPosts(params.slug, 3)
   const { blogPosting, breadcrumb } = buildJsonLd(post)
   const modifiedDifferent = post.dateModified && post.dateModified !== post.date
 
@@ -322,9 +322,9 @@ export default function BlogPostPage({ params }: Props) {
         {otherPosts.length > 0 && (
           <div className="mt-12">
             <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-6">
-              More Articles
+              Related Articles
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               {otherPosts.map((p) => (
                 <Link
                   key={p.slug}
