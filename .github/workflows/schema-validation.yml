@@ -1,0 +1,67 @@
+name: Schema Validation
+
+# Extracts every application/ld+json script from the production-built pages
+# and asserts that @type-required fields are present. Catches regressions
+# like "accidentally removed publisher from BlogPosting" or "dangling @id"
+# before they reach Google's Rich Results crawl.
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'app/**'
+      - 'lib/**'
+      - 'scripts/validate-schema.mjs'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Next.js
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+
+      - name: Start server
+        run: |
+          npm run start &
+          echo $! > .server.pid
+          # Wait up to 60s for the server to respond
+          for i in $(seq 1 60); do
+            if curl -fs http://localhost:3000/ >/dev/null 2>&1; then
+              echo "server ready after ${i}s"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "server failed to start within 60s" >&2
+          exit 1
+
+      - name: Validate JSON-LD across key pages
+        env:
+          BASE_URL: http://localhost:3000
+        run: node scripts/validate-schema.mjs
+
+      - name: Stop server
+        if: always()
+        run: |
+          if [ -f .server.pid ]; then
+            kill $(cat .server.pid) 2>/dev/null || true
+          fi
