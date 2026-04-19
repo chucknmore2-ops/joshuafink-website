@@ -4,6 +4,14 @@
     {
       "path": "/api/cron/indexnow",
       "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/gbp-post",
+      "schedule": "0 14 * * 2"
+    },
+    {
+      "path": "/api/cron/linkedin-post",
+      "schedule": "0 14 * * 4"
     }
   ]
 }
