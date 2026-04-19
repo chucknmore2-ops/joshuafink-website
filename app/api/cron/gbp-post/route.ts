@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { listings } from '@/lib/listings'
 import { blogPosts } from '@/lib/blog'
 import { reviews } from '@/lib/reviews'
+import { withUtm } from '@/lib/utm'
 
 export const dynamic = 'force-dynamic'
 
@@ -57,9 +58,18 @@ function buildListingPost(): PreparedPost {
     `#MiddleTennessee #JoshuaFinkGroup #Compass`
   return {
     summary,
-    cta: { actionType: 'LEARN_MORE', url: l.compassUrl || `${SITE}/listings` },
+    cta: {
+      actionType: 'LEARN_MORE',
+      url: l.compassUrl || withUtm(`${SITE}/listings`, gbpUtm('listing')),
+    },
   }
 }
+
+const gbpUtm = (campaign: string) => ({
+  source: 'gbp' as const,
+  medium: 'auto' as const,
+  campaign: `gbp-${campaign}`,
+})
 
 function buildMarketUpdatePost(): PreparedPost {
   const suburbs = [
@@ -78,7 +88,10 @@ function buildMarketUpdatePost(): PreparedPost {
       `• Avg. days on market: ${s.dom}\n\n` +
       `Thinking about selling in ${s.name}? Get a free, no-obligation valuation from Joshua Fink at Compass. ${PHONE} or joshuafink.com.\n\n` +
       `#${s.name.replace(/\s+/g, '')}TN #NashvilleRealEstate #JoshuaFinkGroup`,
-    cta: { actionType: 'LEARN_MORE', url: `${SITE}/sell/${s.slug}` },
+    cta: {
+      actionType: 'LEARN_MORE',
+      url: withUtm(`${SITE}/sell/${s.slug}`, { ...gbpUtm('market-update'), content: s.slug }),
+    },
   }
 }
 
@@ -107,7 +120,10 @@ function buildTipPost(): PreparedPost {
     },
   ]
   const t = tips[isoWeekNumber() % tips.length]
-  return { summary: t.summary, cta: { actionType: 'LEARN_MORE', url: t.url } }
+  return {
+    summary: t.summary,
+    cta: { actionType: 'LEARN_MORE', url: withUtm(t.url, gbpUtm('tip')) },
+  }
 }
 
 function buildReviewPost(): PreparedPost {
@@ -135,7 +151,13 @@ function buildLatestBlogPost(): PreparedPost {
     `${p.title}\n\n` +
     `${p.excerpt.slice(0, 240)}${p.excerpt.length > 240 ? '…' : ''}\n\n` +
     `Read: ${SITE}/blog/${p.slug}`
-  return { summary, cta: { actionType: 'LEARN_MORE', url: `${SITE}/blog/${p.slug}` } }
+  return {
+    summary,
+    cta: {
+      actionType: 'LEARN_MORE',
+      url: withUtm(`${SITE}/blog/${p.slug}`, { ...gbpUtm('latest-blog'), content: p.slug }),
+    },
+  }
 }
 
 function pickPost(weekMod: number): PreparedPost {
