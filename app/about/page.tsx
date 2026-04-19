@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import { reviews, reviewStats } from '@/lib/reviews'
 
 export const metadata: Metadata = {
   title: 'About Joshua Fink',
@@ -22,9 +23,59 @@ const awards = [
   { name: 'Top Producing Agent of the Year', desc: 'Recognized annually for outstanding results' },
 ]
 
+function isoReviewDate(human: string): string | undefined {
+  // reviews.ts dates look like "July 2024" or "January 2024" — parse to ISO.
+  const d = new Date(`1 ${human}`)
+  if (isNaN(d.getTime())) return undefined
+  return d.toISOString().slice(0, 10)
+}
+
+function buildProfileSchema() {
+  const reviewNodes = reviews.slice(0, 10).map((r) => ({
+    '@type': 'Review',
+    reviewRating: {
+      '@type': 'Rating',
+      ratingValue: r.rating,
+      bestRating: 5,
+      worstRating: 1,
+    },
+    author: { '@type': 'Person', name: r.reviewer },
+    datePublished: isoReviewDate(r.date),
+    reviewBody: r.text,
+    itemReviewed: { '@id': 'https://joshuafink.com/#joshua-fink' },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Zillow',
+      url: reviewStats.zillowUrl,
+    },
+  }))
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    mainEntity: {
+      '@type': 'Person',
+      '@id': 'https://joshuafink.com/#joshua-fink',
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: reviewStats.rating.toFixed(1),
+        reviewCount: reviewStats.total,
+        bestRating: 5,
+        worstRating: 1,
+      },
+      review: reviewNodes,
+    },
+  }
+}
+
 export default function AboutPage() {
+  const schema = buildProfileSchema()
   return (
     <div className="bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      />
       {/* Page header */}
       <div className="bg-black text-white py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">

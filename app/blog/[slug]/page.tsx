@@ -183,6 +183,13 @@ function buildJsonLd(post: BlogPost) {
           url: post.coverImage.startsWith('http') ? post.coverImage : `${SITE_URL}${post.coverImage}`,
         }
       : { '@type': 'ImageObject', url: PUBLISHER_LOGO },
+    // SpeakableSpecification — tells Google Assistant + Alexa which parts of
+    // the page are safe to read aloud for voice search answers. The title
+    // (h1) + the first paragraph of body content are the natural target.
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['h1', 'article p:first-of-type', 'article h2 + p'],
+    },
   }
 
   const breadcrumb = {
