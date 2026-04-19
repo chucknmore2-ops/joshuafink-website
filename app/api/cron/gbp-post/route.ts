@@ -182,11 +182,14 @@ async function refreshAccessToken(): Promise<string> {
     }),
   })
   if (!res.ok) {
-    throw new Error(`Google OAuth refresh failed: ${res.status} ${await res.text().catch(() => '')}`)
+    // Log status only; do NOT embed the response body (may contain diagnostic
+    // context that shouldn't land in centralized logs).
+    console.error('[gbp-post] google oauth refresh non-2xx', res.status)
+    throw new Error(`google_oauth_refresh_status_${res.status}`)
   }
   const data = (await res.json()) as { access_token?: string }
   if (!data.access_token) {
-    throw new Error('Google OAuth refresh response missing access_token')
+    throw new Error('google_oauth_missing_access_token')
   }
   return data.access_token
 }
@@ -218,9 +221,12 @@ export async function GET(request: Request) {
   try {
     accessToken = await refreshAccessToken()
   } catch (err) {
-    console.error('[gbp-post] token refresh failed', err)
+    // Server-side: structured error for debugging.
+    console.error('[gbp-post] token refresh failed', (err as Error).message)
+    // Response body: opaque — callers with CRON_SECRET shouldn't see
+    // upstream auth details either.
     return NextResponse.json(
-      { error: 'gbp token refresh failed', detail: String(err) },
+      { error: 'gbp token refresh failed' },
       { status: 502 },
     )
   }
@@ -245,8 +251,15 @@ export async function GET(request: Request) {
       body: JSON.stringify(payload),
     })
     if (!res.ok) {
-      const body = await res.text().catch(() => '')
-      console.error('[gbp-post] upstream error', res.status, body)
+      // Don't log the raw upstream body — GBP error responses can include
+      // account identifiers, validation context, and request IDs. Log the
+      // status + first 100 chars of any error code field only, stripped of
+      // potentially sensitive substrings.
+      const bodySnippet = await res
+        .text()
+        .then((t) => t.slice(0, 100).replace(/[^\w\s.:,\-]/g, ''))
+        .catch(() => '')
+      console.error('[gbp-post] upstream error', res.status, bodySnippet)
       return NextResponse.json(
         { error: 'gbp upstream returned non-2xx', upstreamStatus: res.status },
         { status: 502 },

@@ -156,8 +156,14 @@ export async function GET(request: Request) {
       body: JSON.stringify(body),
     })
     if (!res.ok) {
-      const detail = await res.text().catch(() => '')
-      console.error('[linkedin-post] upstream error', res.status, detail)
+      // Don't log the raw upstream body — LinkedIn error responses include
+      // request IDs, account URNs, and sometimes user metadata. Log status
+      // only plus a sanitized snippet of any error code string.
+      const bodySnippet = await res
+        .text()
+        .then((t) => t.slice(0, 100).replace(/[^\w\s.:,\-]/g, ''))
+        .catch(() => '')
+      console.error('[linkedin-post] upstream error', res.status, bodySnippet)
       return NextResponse.json(
         {
           error: 'linkedin upstream returned non-2xx',
