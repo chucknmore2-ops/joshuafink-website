@@ -38,22 +38,23 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Google Analytics — replace G-XXXXXXXXXX with your real GA4 Measurement ID */}
-        {process.env.NEXT_PUBLIC_GA_ID && (
-          <>
-            <script async src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`} />
-            <script
-              dangerouslySetInnerHTML={{
-                __html: `
-                  window.dataLayer = window.dataLayer || [];
-                  function gtag(){dataLayer.push(arguments);}
-                  gtag('js', new Date());
-                  gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}');
-                `,
-              }}
-            />
-          </>
-        )}
+        {/* Google Analytics — only renders when NEXT_PUBLIC_GA_ID matches the
+            GA4 measurement ID pattern (G-XXXXXXXXXX). Hard-fails any malformed
+            or hostile value before it reaches dangerouslySetInnerHTML. */}
+        {(() => {
+          const gaId = process.env.NEXT_PUBLIC_GA_ID
+          if (!gaId || !/^G-[A-Z0-9]{4,20}$/.test(gaId)) return null
+          return (
+            <>
+              <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} />
+              <script
+                dangerouslySetInnerHTML={{
+                  __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${gaId}');`,
+                }}
+              />
+            </>
+          )
+        })()}
       </head>
       <body className="min-h-screen flex flex-col font-inter">
         <script
@@ -61,89 +62,100 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               '@context': 'https://schema.org',
-              '@type': 'RealEstateAgent',
-              name: 'Joshua Fink Group',
-              description:
-                'Joshua Fink is a top-producing Affiliate Broker at Compass Real Estate serving Nashville, Brentwood, Franklin, and all of Middle Tennessee. 17+ years of experience, 100+ homes sold annually.',
-              url: 'https://joshuafink.com',
-              telephone: '+1-615-551-2727',
-              email: 'joshua@joshuafink.com',
-              image: 'https://joshuafink.com/headshot.jpg',
-              address: {
-                '@type': 'PostalAddress',
-                addressLocality: 'Nashville',
-                addressRegion: 'TN',
-                addressCountry: 'US',
-              },
-              areaServed: {
-                '@type': 'GeoCircle',
-                geoMidpoint: {
-                  '@type': 'GeoCoordinates',
-                  latitude: 36.1627,
-                  longitude: -86.7816,
-                },
-                geoRadius: '48280',
-              },
-              parentOrganization: {
-                '@type': 'RealEstateAgent',
-                name: 'Compass Real Estate',
-              },
-              sameAs: [
-                'https://www.facebook.com/profile.php?id=100064076493905',
-                'https://www.instagram.com/joshuafinkgroup',
-                'https://www.linkedin.com/in/joshuafinkgroup/',
-                'https://x.com/JoshuaFinkGroup',
-                'https://www.compass.com/agents/joshua-fink/',
-              ],
-              openingHoursSpecification: [
+              '@graph': [
                 {
-                  '@type': 'OpeningHoursSpecification',
-                  dayOfWeek: [
-                    'Monday',
-                    'Tuesday',
-                    'Wednesday',
-                    'Thursday',
-                    'Friday',
-                    'Saturday',
+                  '@type': 'RealEstateAgent',
+                  '@id': 'https://joshuafink.com/#agent',
+                  name: 'Joshua Fink Group',
+                  description:
+                    'Joshua Fink is a top-producing Affiliate Broker at Compass Real Estate serving Nashville, Brentwood, Franklin, and all of Middle Tennessee. 17+ years of experience, 100+ homes sold annually.',
+                  url: 'https://joshuafink.com',
+                  telephone: '+1-615-551-2727',
+                  email: 'joshua@joshuafink.com',
+                  image: 'https://joshuafink.com/headshot.jpg',
+                  logo: 'https://joshuafink.com/compass-logo-black.png',
+                  address: {
+                    '@type': 'PostalAddress',
+                    addressLocality: 'Nashville',
+                    addressRegion: 'TN',
+                    addressCountry: 'US',
+                  },
+                  areaServed: {
+                    '@type': 'GeoCircle',
+                    geoMidpoint: {
+                      '@type': 'GeoCoordinates',
+                      latitude: 36.1627,
+                      longitude: -86.7816,
+                    },
+                    geoRadius: '48280',
+                  },
+                  employee: { '@id': 'https://joshuafink.com/#joshua-fink' },
+                  parentOrganization: {
+                    '@type': 'RealEstateAgent',
+                    name: 'Compass Real Estate',
+                    url: 'https://www.compass.com',
+                  },
+                  sameAs: [
+                    'https://www.facebook.com/profile.php?id=100064076493905',
+                    'https://www.instagram.com/joshuafinkgroup',
+                    'https://www.linkedin.com/in/joshuafinkgroup/',
+                    'https://x.com/JoshuaFinkGroup',
+                    'https://www.compass.com/agents/joshua-fink/',
+                    'https://www.zillow.com/profile/JoshuaFinkGroup',
                   ],
-                  opens: '00:00',
-                  closes: '23:59',
+                  priceRange: '$$',
                 },
-              ],
-              priceRange: '$$',
-            }),
-          }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'Person',
-              name: 'Joshua Fink',
-              jobTitle: 'Affiliate Broker',
-              worksFor: {
-                '@type': 'Organization',
-                name: 'Compass Real Estate',
-              },
-              url: 'https://joshuafink.com',
-              telephone: '+1-615-551-2727',
-              email: 'joshua@joshuafink.com',
-              knowsAbout: [
-                'Real Estate',
-                'Nashville Real Estate Market',
-                'Middle Tennessee Properties',
-                'Investment Properties',
-                'Fix and Flip',
-                'Home Buying',
-                'Home Selling',
-              ],
-              sameAs: [
-                'https://www.facebook.com/profile.php?id=100064076493905',
-                'https://www.instagram.com/joshuafinkgroup',
-                'https://www.linkedin.com/in/joshuafinkgroup/',
-                'https://x.com/JoshuaFinkGroup',
-                'https://www.compass.com/agents/joshua-fink/',
+                {
+                  '@type': 'Person',
+                  '@id': 'https://joshuafink.com/#joshua-fink',
+                  name: 'Joshua Fink',
+                  jobTitle: 'Affiliate Broker',
+                  worksFor: { '@id': 'https://joshuafink.com/#agent' },
+                  url: 'https://joshuafink.com/about',
+                  telephone: '+1-615-551-2727',
+                  email: 'joshua@joshuafink.com',
+                  image: 'https://joshuafink.com/headshot.jpg',
+                  hasCredential: [
+                    {
+                      '@type': 'EducationalOccupationalCredential',
+                      name: 'Tennessee Real Estate Commission — Affiliate Broker License',
+                      credentialCategory: 'license',
+                      recognizedBy: {
+                        '@type': 'GovernmentOrganization',
+                        name: 'Tennessee Real Estate Commission',
+                        url: 'https://www.tn.gov/commerce/regboards/trec.html',
+                      },
+                    },
+                  ],
+                  award: ['Compass Diamond Award', 'Compass Titan Award'],
+                  knowsAbout: [
+                    'Real Estate',
+                    'Nashville Real Estate Market',
+                    'Middle Tennessee Properties',
+                    'Investment Properties',
+                    'Fix and Flip',
+                    'Home Buying',
+                    'Home Selling',
+                  ],
+                  sameAs: [
+                    'https://www.facebook.com/profile.php?id=100064076493905',
+                    'https://www.instagram.com/joshuafinkgroup',
+                    'https://www.linkedin.com/in/joshuafinkgroup/',
+                    'https://x.com/JoshuaFinkGroup',
+                    'https://www.compass.com/agents/joshua-fink/',
+                    'https://www.zillow.com/profile/JoshuaFinkGroup',
+                  ],
+                },
+                {
+                  '@type': 'WebSite',
+                  '@id': 'https://joshuafink.com/#website',
+                  url: 'https://joshuafink.com',
+                  name: 'Joshua Fink | Compass Real Estate',
+                  description:
+                    'Real estate in Middle Tennessee — listings, market insights, cash offers, and neighborhood guides.',
+                  publisher: { '@id': 'https://joshuafink.com/#agent' },
+                  inLanguage: 'en-US',
+                },
               ],
             }),
           }}
