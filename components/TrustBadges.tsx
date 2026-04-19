@@ -3,7 +3,7 @@ import { reviewStats } from '@/lib/reviews'
 type Variant = 'light' | 'dark'
 
 const badges = [
-  { label: 'Licensed TN Affiliate Broker', sub: 'Tennessee Real Estate Commission' },
+  { label: 'Licensed TN Affiliate Broker', sub: 'TREC License #351484' },
   { label: '17+ Years in Middle TN', sub: 'Since 2008' },
   { label: `${reviewStats.total}+ Five-Star Reviews`, sub: `${reviewStats.rating.toFixed(1)} avg rating` },
   { label: 'Compass Real Estate', sub: 'Diamond & Titan Award' },
