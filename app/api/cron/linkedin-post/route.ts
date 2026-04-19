@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { blogPosts } from '@/lib/blog'
 import { listings } from '@/lib/listings'
+import { withUtm } from '@/lib/utm'
 
 export const dynamic = 'force-dynamic'
 
@@ -46,7 +47,12 @@ function buildFromLatestBlog(): PostPayload | null {
     (a, b) => +new Date(b.date) - +new Date(a.date),
   )
   const p = sorted[0]
-  const url = `${SITE}/blog/${p.slug}`
+  const url = withUtm(`${SITE}/blog/${p.slug}`, {
+    source: 'linkedin',
+    medium: 'auto',
+    campaign: 'blog-syndication',
+    content: p.slug,
+  })
   const text =
     `${p.title}\n\n` +
     `${p.excerpt.slice(0, 280)}${p.excerpt.length > 280 ? '…' : ''}\n\n` +
