@@ -1,22 +1,67 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { getPostBySlug, getAllSlugs, blogPosts } from '@/lib/blog'
+import { getPostBySlug, getAllSlugs, blogPosts, type BlogPost } from '@/lib/blog'
 
 interface Props {
   params: { slug: string }
 }
 
+const SITE_URL = 'https://joshuafink.com'
+const AUTHOR_NAME = 'Joshua Fink'
+const AUTHOR_URL = `${SITE_URL}/about`
+const PUBLISHER_LOGO = `${SITE_URL}/compass-logo-black.png`
+
 export async function generateStaticParams() {
   return getAllSlugs().map((slug) => ({ slug }))
 }
 
+function isoDate(human: string): string | undefined {
+  const d = new Date(human)
+  if (isNaN(d.getTime())) return undefined
+  return d.toISOString()
+}
+
+function wordCount(content: string): number {
+  return content
+    .replace(/\[[^\]]+\]\([^)]+\)/g, ' ')
+    .replace(/[#*_`>-]/g, ' ')
+    .split(/\s+/)
+    .filter(Boolean).length
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = getPostBySlug(params.slug)
-  if (!post) return {}
+  if (!post) return { title: 'Post Not Found' }
+  const canonical = `${SITE_URL}/blog/${post.slug}`
+  const publishedIso = isoDate(post.date)
+  const modifiedIso = post.dateModified ? isoDate(post.dateModified) : publishedIso
   return {
     title: post.title,
     description: post.excerpt,
+    alternates: { canonical },
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+      type: 'article',
+      url: canonical,
+      siteName: 'Joshua Fink | Compass Real Estate',
+      publishedTime: publishedIso,
+      modifiedTime: modifiedIso,
+      authors: [AUTHOR_URL],
+      images: post.coverImage
+        ? [{ url: post.coverImage.startsWith('http') ? post.coverImage : `${SITE_URL}${post.coverImage}` }]
+        : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.excerpt,
+      images: post.coverImage
+        ? [post.coverImage.startsWith('http') ? post.coverImage : `${SITE_URL}${post.coverImage}`]
+        : undefined,
+    },
+    authors: [{ name: AUTHOR_NAME, url: AUTHOR_URL }],
   }
 }
 
@@ -65,7 +110,6 @@ function renderContent(content: string) {
         </p>
       )
     } else if (line.startsWith('- ')) {
-      // Collect list items
       const items: string[] = [line.replace('- ', '')]
       while (i + 1 < lines.length && lines[i + 1].startsWith('- ')) {
         i++
@@ -92,32 +136,127 @@ function renderContent(content: string) {
   return elements
 }
 
+function buildJsonLd(post: BlogPost) {
+  const canonical = `${SITE_URL}/blog/${post.slug}`
+  const publishedIso = isoDate(post.date)
+  const modifiedIso = post.dateModified ? isoDate(post.dateModified) : publishedIso
+
+  const blogPosting: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    '@id': `${canonical}#article`,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+    headline: post.title,
+    description: post.excerpt,
+    url: canonical,
+    wordCount: wordCount(post.content),
+    keywords: post.category ? [post.category] : undefined,
+    articleSection: post.category,
+    inLanguage: 'en-US',
+    isAccessibleForFree: true,
+    datePublished: publishedIso,
+    dateModified: modifiedIso,
+    author: {
+      '@type': 'Person',
+      '@id': `${SITE_URL}#joshua-fink`,
+      name: AUTHOR_NAME,
+      url: AUTHOR_URL,
+      jobTitle: 'Affiliate Broker',
+      worksFor: { '@type': 'Organization', name: 'Compass Real Estate' },
+      sameAs: [
+        'https://www.compass.com/agents/joshua-fink/',
+        'https://www.linkedin.com/in/joshuafinkgroup/',
+        'https://www.facebook.com/profile.php?id=100064076493905',
+        'https://www.instagram.com/joshuafinkgroup',
+        'https://x.com/JoshuaFinkGroup',
+      ],
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Joshua Fink Group',
+      url: SITE_URL,
+      logo: { '@type': 'ImageObject', url: PUBLISHER_LOGO },
+    },
+    image: post.coverImage
+      ? {
+          '@type': 'ImageObject',
+          url: post.coverImage.startsWith('http') ? post.coverImage : `${SITE_URL}${post.coverImage}`,
+        }
+      : { '@type': 'ImageObject', url: PUBLISHER_LOGO },
+  }
+
+  const breadcrumb = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog` },
+      { '@type': 'ListItem', position: 3, name: post.title, item: canonical },
+    ],
+  }
+
+  return { blogPosting, breadcrumb }
+}
+
 export default function BlogPostPage({ params }: Props) {
   const post = getPostBySlug(params.slug)
   if (!post) notFound()
 
   const otherPosts = blogPosts.filter((p) => p.slug !== params.slug).slice(0, 2)
+  const { blogPosting, breadcrumb } = buildJsonLd(post)
+  const modifiedDifferent = post.dateModified && post.dateModified !== post.date
 
   return (
     <div className="bg-white">
       {/* Header */}
       <div className="bg-black text-white py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
-          <Link
-            href="/blog"
-            className="text-xs text-[#A0A0A0] hover:text-white transition-colors tracking-widest uppercase font-semibold mb-6 inline-block"
-          >
-            ← Back to Blog
-          </Link>
+          {/* Visual breadcrumb */}
+          <nav aria-label="Breadcrumb" className="mb-6">
+            <ol className="flex items-center gap-2 text-xs text-[#A0A0A0] tracking-widest uppercase font-semibold">
+              <li>
+                <Link href="/" className="hover:text-white transition-colors">
+                  Home
+                </Link>
+              </li>
+              <li aria-hidden="true">·</li>
+              <li>
+                <Link href="/blog" className="hover:text-white transition-colors">
+                  Blog
+                </Link>
+              </li>
+            </ol>
+          </nav>
+
+          {post.category && (
+            <p className="text-xs font-semibold tracking-widest text-brand-crimson uppercase mb-3">
+              {post.category}
+            </p>
+          )}
           <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-4">
-            {post.date}
+            Published <time dateTime={isoDate(post.date)}>{post.date}</time>
+            {modifiedDifferent && post.dateModified && (
+              <>
+                {' · Updated '}
+                <time dateTime={isoDate(post.dateModified)}>{post.dateModified}</time>
+              </>
+            )}
           </p>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black leading-tight">{post.title}</h1>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black leading-tight font-display">
+            {post.title}
+          </h1>
           <p className="mt-4 text-[#A0A0A0] text-lg leading-relaxed">{post.excerpt}</p>
           <div className="mt-6 flex items-center gap-3">
             <div>
-              <p className="text-sm font-semibold text-white">Joshua Fink</p>
-              <p className="text-xs text-[#A0A0A0]">Affiliate Broker · Compass Real Estate</p>
+              <p className="text-sm font-semibold text-white">
+                By{' '}
+                <Link href={AUTHOR_URL} className="underline underline-offset-4 hover:no-underline">
+                  Joshua Fink
+                </Link>
+              </p>
+              <p className="text-xs text-[#A0A0A0]">
+                Affiliate Broker · Compass Real Estate · Middle Tennessee
+              </p>
             </div>
           </div>
         </div>
@@ -127,27 +266,44 @@ export default function BlogPostPage({ params }: Props) {
       <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
         <div className="text-base">{renderContent(post.content)}</div>
 
+        {/* Compliance disclosure (only rendered when the post requires it) */}
+        {post.disclosure && (
+          <aside
+            role="note"
+            aria-label="Broker disclosure"
+            className="mt-10 border-l-4 border-brand-crimson bg-neutral-50 p-6 rounded-r-lg"
+          >
+            <p className="text-xs font-semibold tracking-widest text-neutral-500 uppercase mb-2">
+              Disclosure
+            </p>
+            <p className="text-sm text-neutral-700 leading-relaxed">{post.disclosure}</p>
+          </aside>
+        )}
+
         {/* Author CTA */}
         <div className="mt-14 border-t border-[#E8E8E8] pt-10">
-          <div className="bg-[#F5F5F5] p-8">
+          <div className="bg-[#F5F5F5] p-8 rounded-2xl">
             <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-2">
               About the Author
             </p>
             <h3 className="text-xl font-black text-black mb-2">Joshua Fink</h3>
             <p className="text-sm text-[#444] leading-relaxed mb-5">
               Affiliate Broker at Compass Real Estate with 17+ years of experience and 100+ homes
-              sold annually across Middle Tennessee. Diamond &amp; Titan Award winner.
+              sold annually across Middle Tennessee. Diamond &amp; Titan Award winner. Licensed
+              with the Tennessee Real Estate Commission. Partner to the Children&apos;s Miracle
+              Network supporting Vanderbilt Children&apos;s Hospital.
             </p>
             <div className="flex flex-col sm:flex-row gap-3">
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center bg-black text-white text-sm font-bold px-6 py-3 tracking-wide hover:bg-[#222] transition-colors"
+                className="inline-flex items-center justify-center bg-black text-white text-sm font-bold px-6 py-3 rounded-full tracking-wide hover:bg-[#222] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
               >
                 Contact Joshua
               </Link>
               <a
                 href="tel:6155512727"
-                className="inline-flex items-center justify-center border border-black text-black text-sm font-bold px-6 py-3 tracking-wide hover:bg-black hover:text-white transition-colors"
+                className="inline-flex items-center justify-center border border-black text-black text-sm font-bold px-6 py-3 rounded-full tracking-wide hover:bg-black hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+                aria-label="Call Joshua at 615-551-2727"
               >
                 615-551-2727
               </a>
@@ -166,7 +322,7 @@ export default function BlogPostPage({ params }: Props) {
                 <Link
                   key={p.slug}
                   href={`/blog/${p.slug}`}
-                  className="border border-[#E8E8E8] p-5 hover:shadow-md transition-shadow group"
+                  className="border border-[#E8E8E8] p-5 rounded-2xl hover:shadow-md transition-shadow group"
                 >
                   <p className="text-xs text-[#A0A0A0] mb-2">{p.date}</p>
                   <p className="text-sm font-bold text-black leading-snug group-hover:underline">
@@ -178,6 +334,16 @@ export default function BlogPostPage({ params }: Props) {
           </div>
         )}
       </article>
+
+      {/* BlogPosting + BreadcrumbList JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPosting) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
     </div>
   )
 }

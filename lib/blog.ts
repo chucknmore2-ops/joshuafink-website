@@ -1,8 +1,20 @@
 export interface BlogPost {
   slug: string
   title: string
+  /** Human-readable publish date (e.g. "March 15, 2026"). Parsed to ISO for schema. */
   date: string
+  /** Human-readable last-modified date. Falls back to `date` in schema. */
+  dateModified?: string
   excerpt: string
+  /** Editorial category displayed in UI + used for schema.articleSection. */
+  category?: string
+  /** Optional cover image. Relative path or absolute URL. */
+  coverImage?: string
+  /** Compliance/disclosure block rendered as an aside. Required for posts where
+   *  Joshua may act as principal buyer (TREC rules) or makes legal/tax claims. */
+  disclosure?: string
+  /** Editorial audit tier from the 2026-04-19 content quality review. */
+  auditTier?: 'keep' | 'fix' | 'rewrite' | 'delete'
   content: string
 }
 
@@ -100,7 +112,7 @@ Brentwood is an incredible place to call home, and the right neighborhood depend
     excerpt:
       "Speed and price don't have to be mutually exclusive. With the right preparation, pricing strategy, and marketing, you can sell your Middle Tennessee home quickly — and for top dollar.",
     content: `
-Selling a home quickly without leaving money on the table is one of the most common goals I hear from clients. The good news: in Middle Tennessee's market, it's absolutely achievable with the right approach. After more than 13 years and hundreds of transactions, here's exactly what I've seen work.
+Selling a home quickly without leaving money on the table is one of the most common goals I hear from clients. The good news: in Middle Tennessee's market, it's absolutely achievable with the right approach. After more than 17 years and hundreds of transactions, here's exactly what I've seen work.
 
 ## Start with Honest Preparation
 
@@ -242,7 +254,7 @@ Franklin is an exceptional place to put down roots. Whether you're relocating fr
     excerpt:
       'Nashville\'s real estate market offers real opportunities for fix-and-flip investors — but success requires knowing the right neighborhoods, running accurate numbers, and moving fast. Here\'s how.',
     content: `
-[Nashville](/buy/nashville-tn) has long been one of the top markets for real estate investors, and fix-and-flip investing remains a viable strategy in 2025 — if you know what you're doing. After more than 13 years in Middle Tennessee real estate, I've worked with investors at every level, from first-time flippers to seasoned operators running multiple projects simultaneously.
+[Nashville](/buy/nashville-tn) has long been one of the top markets for real estate investors, and fix-and-flip investing remains a viable strategy in 2025 — if you know what you're doing. After more than 17 years in Middle Tennessee real estate, I've worked with investors at every level, from first-time flippers to seasoned operators running multiple projects simultaneously.
 
 ## Why Nashville Still Works for Flippers
 
@@ -402,7 +414,7 @@ Tennessee real estate contracts have specific provisions and timelines that diff
 
 An experienced local agent will help you avoid costly mistakes, whether that's missing a contract deadline, accepting terms that put you at risk, or simply leaving money on the table.
 
-I've been helping buyers and sellers in Brentwood and throughout Middle Tennessee for over 13 years. If you're thinking about buying or selling in Brentwood, I'd welcome the conversation. Reach out and let's talk about what you're looking to accomplish.
+I've been helping buyers and sellers in Brentwood and throughout Middle Tennessee for over 17 years. If you're thinking about buying or selling in Brentwood, I'd welcome the conversation. Reach out and let's talk about what you're looking to accomplish.
     `.trim(),
   },
   {
@@ -789,7 +801,7 @@ The Franklin housing market is currently sitting around $840,000 median sale pri
 - Move-up inventory has improved versus peak frenzy years, giving buyers more negotiating room on terms.
 - New construction remains a major factor in several neighborhoods, but lot premiums and builder incentives vary widely.
 
-For buyers in 2025, strategy matters more than speed alone. Winning offers are not always the highest number — they are the cleanest combination of price, timing, inspection posture, and financing confidence. For sellers, preparation is the edge: pre-listing repairs, thoughtful staging, and realistic pricing are separating "sits" from "sells.
+For buyers in 2025, strategy matters more than speed alone. Winning offers are not always the highest number — they are the cleanest combination of price, timing, inspection posture, and financing confidence. For sellers, preparation is the edge: pre-listing repairs, thoughtful staging, and realistic pricing are what separate the homes that sit from the ones that sell.
 
 ## Local News & Development
 
@@ -879,7 +891,7 @@ The Brentwood housing market is currently sitting around ~$1.2M median sale pric
 - Move-up inventory has improved versus peak frenzy years, giving buyers more negotiating room on terms.
 - New construction remains a major factor in several neighborhoods, but lot premiums and builder incentives vary widely.
 
-For buyers in 2025, strategy matters more than speed alone. Winning offers are not always the highest number — they are the cleanest combination of price, timing, inspection posture, and financing confidence. For sellers, preparation is the edge: pre-listing repairs, thoughtful staging, and realistic pricing are separating "sits" from "sells.
+For buyers in 2025, strategy matters more than speed alone. Winning offers are not always the highest number — they are the cleanest combination of price, timing, inspection posture, and financing confidence. For sellers, preparation is the edge: pre-listing repairs, thoughtful staging, and realistic pricing are what separate the homes that sit from the ones that sell.
 
 ## Local News & Development
 
@@ -969,7 +981,7 @@ The Spring Hill housing market is currently sitting around about $530,000 median
 - Move-up inventory has improved versus peak frenzy years, giving buyers more negotiating room on terms.
 - New construction remains a major factor in several neighborhoods, but lot premiums and builder incentives vary widely.
 
-For buyers in 2025, strategy matters more than speed alone. Winning offers are not always the highest number — they are the cleanest combination of price, timing, inspection posture, and financing confidence. For sellers, preparation is the edge: pre-listing repairs, thoughtful staging, and realistic pricing are separating "sits" from "sells.
+For buyers in 2025, strategy matters more than speed alone. Winning offers are not always the highest number — they are the cleanest combination of price, timing, inspection posture, and financing confidence. For sellers, preparation is the edge: pre-listing repairs, thoughtful staging, and realistic pricing are what separate the homes that sit from the ones that sell.
 
 ## Local News & Development
 
@@ -1022,7 +1034,7 @@ From an agent's perspective, one of the biggest advantages is optionality. You c
 
 ## Schools
 
-Schools are a major reason families prioritize Nolensville. Williamson County Schools; Nolensville High, Mill Creek Middle, Sunset Middle (zoned areas), and highly sought-after elementary options are core demand drivers.
+Schools are a major reason families prioritize Nolensville. Williamson County Schools serve the town: Nolensville Elementary, Mill Creek Elementary, Mill Creek Middle, and Nolensville High are the core assignment zones. Boundaries shift with new construction, so always verify current zoning directly with Williamson County Schools before writing an offer.
 
 A few practical notes for buyers:
 
@@ -1059,7 +1071,7 @@ The Nolensville housing market is currently sitting around about $808,000 median
 - Move-up inventory has improved versus peak frenzy years, giving buyers more negotiating room on terms.
 - New construction remains a major factor in several neighborhoods, but lot premiums and builder incentives vary widely.
 
-For buyers in 2025, strategy matters more than speed alone. Winning offers are not always the highest number — they are the cleanest combination of price, timing, inspection posture, and financing confidence. For sellers, preparation is the edge: pre-listing repairs, thoughtful staging, and realistic pricing are separating "sits" from "sells.
+For buyers in 2025, strategy matters more than speed alone. Winning offers are not always the highest number — they are the cleanest combination of price, timing, inspection posture, and financing confidence. For sellers, preparation is the edge: pre-listing repairs, thoughtful staging, and realistic pricing are what separate the homes that sit from the ones that sell.
 
 ## Local News & Development
 
@@ -1149,7 +1161,7 @@ The Thompson's Station housing market is currently sitting around about $803,000
 - Move-up inventory has improved versus peak frenzy years, giving buyers more negotiating room on terms.
 - New construction remains a major factor in several neighborhoods, but lot premiums and builder incentives vary widely.
 
-For buyers in 2025, strategy matters more than speed alone. Winning offers are not always the highest number — they are the cleanest combination of price, timing, inspection posture, and financing confidence. For sellers, preparation is the edge: pre-listing repairs, thoughtful staging, and realistic pricing are separating "sits" from "sells.
+For buyers in 2025, strategy matters more than speed alone. Winning offers are not always the highest number — they are the cleanest combination of price, timing, inspection posture, and financing confidence. For sellers, preparation is the edge: pre-listing repairs, thoughtful staging, and realistic pricing are what separate the homes that sit from the ones that sell.
 
 ## Local News & Development
 
@@ -1239,7 +1251,7 @@ The Murfreesboro housing market is currently sitting around about $427,000 media
 - Move-up inventory has improved versus peak frenzy years, giving buyers more negotiating room on terms.
 - New construction remains a major factor in several neighborhoods, but lot premiums and builder incentives vary widely.
 
-For buyers in 2025, strategy matters more than speed alone. Winning offers are not always the highest number — they are the cleanest combination of price, timing, inspection posture, and financing confidence. For sellers, preparation is the edge: pre-listing repairs, thoughtful staging, and realistic pricing are separating "sits" from "sells.
+For buyers in 2025, strategy matters more than speed alone. Winning offers are not always the highest number — they are the cleanest combination of price, timing, inspection posture, and financing confidence. For sellers, preparation is the edge: pre-listing repairs, thoughtful staging, and realistic pricing are what separate the homes that sit from the ones that sell.
 
 ## Local News & Development
 
@@ -1329,7 +1341,7 @@ The Columbia housing market is currently sitting around about $333,000 median sa
 - Move-up inventory has improved versus peak frenzy years, giving buyers more negotiating room on terms.
 - New construction remains a major factor in several neighborhoods, but lot premiums and builder incentives vary widely.
 
-For buyers in 2025, strategy matters more than speed alone. Winning offers are not always the highest number — they are the cleanest combination of price, timing, inspection posture, and financing confidence. For sellers, preparation is the edge: pre-listing repairs, thoughtful staging, and realistic pricing are separating "sits" from "sells.
+For buyers in 2025, strategy matters more than speed alone. Winning offers are not always the highest number — they are the cleanest combination of price, timing, inspection posture, and financing confidence. For sellers, preparation is the edge: pre-listing repairs, thoughtful staging, and realistic pricing are what separate the homes that sit from the ones that sell.
 
 ## Local News & Development
 
@@ -1419,7 +1431,7 @@ The Mount Juliet housing market is currently sitting around about $550,000 media
 - Move-up inventory has improved versus peak frenzy years, giving buyers more negotiating room on terms.
 - New construction remains a major factor in several neighborhoods, but lot premiums and builder incentives vary widely.
 
-For buyers in 2025, strategy matters more than speed alone. Winning offers are not always the highest number — they are the cleanest combination of price, timing, inspection posture, and financing confidence. For sellers, preparation is the edge: pre-listing repairs, thoughtful staging, and realistic pricing are separating "sits" from "sells.
+For buyers in 2025, strategy matters more than speed alone. Winning offers are not always the highest number — they are the cleanest combination of price, timing, inspection posture, and financing confidence. For sellers, preparation is the edge: pre-listing repairs, thoughtful staging, and realistic pricing are what separate the homes that sit from the ones that sell.
 
 ## Local News & Development
 
@@ -1492,7 +1504,7 @@ The takeaway: growth in Hendersonville is not just a one-year spike. It's tied t
 
 ## Cost of Living
 
-Compared with Nashville proper (roughly a $474,000 median sale price in recent Redfin data), Hendersonville is can run above Nashville median for newer/lake-adjacent inventory, with a broad range from entry-level to executive homes. At a practical level, monthly ownership costs depend on more than purchase price:
+Compared with Nashville proper (roughly a $474,000 median sale price in recent Redfin data), Hendersonville can run above the Nashville median for newer and lake-adjacent inventory, with a broad range from entry-level to executive homes. At a practical level, monthly ownership costs depend on more than purchase price:
 
 - Property taxes and county assessment differences
 - HOA dues in master-planned communities
@@ -1509,7 +1521,7 @@ The Hendersonville housing market is currently sitting around about $595,000 med
 - Move-up inventory has improved versus peak frenzy years, giving buyers more negotiating room on terms.
 - New construction remains a major factor in several neighborhoods, but lot premiums and builder incentives vary widely.
 
-For buyers in 2025, strategy matters more than speed alone. Winning offers are not always the highest number — they are the cleanest combination of price, timing, inspection posture, and financing confidence. For sellers, preparation is the edge: pre-listing repairs, thoughtful staging, and realistic pricing are separating "sits" from "sells.
+For buyers in 2025, strategy matters more than speed alone. Winning offers are not always the highest number — they are the cleanest combination of price, timing, inspection posture, and financing confidence. For sellers, preparation is the edge: pre-listing repairs, thoughtful staging, and realistic pricing are what separate the homes that sit from the ones that sell.
 
 ## Local News & Development
 
@@ -1599,7 +1611,7 @@ The Smyrna housing market is currently sitting around about $425,000 median sale
 - Move-up inventory has improved versus peak frenzy years, giving buyers more negotiating room on terms.
 - New construction remains a major factor in several neighborhoods, but lot premiums and builder incentives vary widely.
 
-For buyers in 2025, strategy matters more than speed alone. Winning offers are not always the highest number — they are the cleanest combination of price, timing, inspection posture, and financing confidence. For sellers, preparation is the edge: pre-listing repairs, thoughtful staging, and realistic pricing are separating "sits" from "sells.
+For buyers in 2025, strategy matters more than speed alone. Winning offers are not always the highest number — they are the cleanest combination of price, timing, inspection posture, and financing confidence. For sellers, preparation is the edge: pre-listing repairs, thoughtful staging, and realistic pricing are what separate the homes that sit from the ones that sell.
 
 ## Local News & Development
 
@@ -1845,6 +1857,10 @@ Joshua Fink buys homes for cash throughout Nashville and Middle Tennessee. If yo
     slug: "we-buy-houses-nashville-how-it-works",
     title: "We Buy Houses Nashville — How Cash Offers Actually Work",
     date: "April 6, 2026",
+    dateModified: "April 19, 2026",
+    category: "Selling",
+    auditTier: "fix",
+    disclosure: "Joshua Fink is a licensed Tennessee Affiliate Broker with Compass Real Estate (Tennessee Real Estate Commission). In cash-offer transactions Joshua may act as a principal buyer or partner with a vetted local investor; his licensee status and role in each transaction are disclosed in writing at offer time as required under TREC Rule 1260-02-.12 and TCA \u00a7 62-13-403. Cash offers are typically 70\u201385% of after-repair market value \u2014 the tradeoff is speed, certainty, and zero repairs, disclosed up-front so sellers can choose knowingly.",
     excerpt: "Curious how 'we buy houses' companies work in Nashville? Here's an honest breakdown — what's legit, what to watch out for, and how to get a fair deal.",
     content: `
 You've seen the signs. "We Buy Houses." "Cash for Your Home." "Sell Fast, No Fees." They're on bandit signs, Facebook ads, and Google results. But how do these companies actually work? And more importantly — are they legit?
@@ -1881,7 +1897,7 @@ Many "cash buyer" companies are actually **wholesalers** — they put your home 
 Joshua Fink is a licensed Affiliate Broker with Compass Real Estate in Tennessee. That means:
 - We're held to legal and ethical standards that unlicensed investors aren't
 - We have access to accurate market data to ensure fair offers
-- We have a reputation to protect — 13+ years in Middle Tennessee, 100+ homes annually
+- We have a reputation to protect — 17+ years in Middle Tennessee, 100+ homes annually
 
 ### We Cover All Closing Costs
 You pay $0 in commissions and $0 in closing costs. The offer you accept is the amount you receive.
@@ -2016,3 +2032,36 @@ export function getPostBySlug(slug: string): BlogPost | undefined {
 export function getAllSlugs(): string[] {
   return blogPosts.map((post) => post.slug)
 }
+
+/**
+ * Slugs flagged "rewrite" in the 2026-04-19 content quality audit.
+ *
+ * These posts share a templated "Living in [City]" structure generated by an
+ * earlier Ollama prompt that leaked scaffolding into published copy. They stay
+ * published to preserve any existing backlinks, but the Phase 5 content-engine
+ * pass consumes this list to regenerate each post with hardened prompts
+ * (uniqueness gate, banned-phrase list, required local-specificity markers).
+ * Do not remove entries without a 301 plan in next.config.mjs.
+ */
+export const rewriteTierSlugs = [
+  'living-in-franklin-tn-guide',
+  'living-in-brentwood-tn-guide',
+  'living-in-spring-hill-tn-guide',
+  'living-in-nolensville-tn-guide',
+  'living-in-thompsons-station-tn-guide',
+  'living-in-murfreesboro-tn-guide',
+  'living-in-columbia-tn-guide',
+  'living-in-mount-juliet-tn-guide',
+  'living-in-hendersonville-tn-guide',
+  'living-in-smyrna-tn-guide',
+] as const
+
+/** Audit tier for a post: explicit field if set, else derived from
+ *  `rewriteTierSlugs`, else "keep". */
+export function getAuditTier(slug: string): NonNullable<BlogPost['auditTier']> {
+  const post = getPostBySlug(slug)
+  if (post?.auditTier) return post.auditTier
+  if ((rewriteTierSlugs as readonly string[]).includes(slug)) return 'rewrite'
+  return 'keep'
+}
+
