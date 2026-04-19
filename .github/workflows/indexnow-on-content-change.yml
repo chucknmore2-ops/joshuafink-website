@@ -49,12 +49,18 @@ jobs:
             exit 1
           fi
 
+          # Use the canonical www hostname directly. The apex joshuafink.com
+          # 307-redirects to www, and curl drops the Authorization header
+          # across redirects by default — hitting the apex causes 307 ->
+          # unauthenticated request. Also pass -L as belt-and-suspenders.
+          CRON_URL="https://www.joshuafink.com/api/cron/indexnow"
+
           # Retry up to 3 times with backoff in case Vercel deploy is slow
           for attempt in 1 2 3; do
             echo "IndexNow submission attempt $attempt…"
-            response=$(curl -sS -w "\n%{http_code}" \
+            response=$(curl -sSL -w "\n%{http_code}" \
               -H "Authorization: Bearer $CRON_SECRET" \
-              "https://joshuafink.com/api/cron/indexnow")
+              "$CRON_URL")
             status=$(echo "$response" | tail -1)
             body=$(echo "$response" | sed '$d')
 
