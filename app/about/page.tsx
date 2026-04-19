@@ -157,7 +157,7 @@ export default function AboutPage() {
                 to close deals.
               </p>
               <p>
-                Joshua Fink has over 13 years of experience and averages 100+ homes personally sold
+                Joshua Fink has over 17 years of experience and averages 100+ homes personally sold
                 each year. Joshua has been honored with a multitude of awards including Diamond and
                 Titan Awards as well as Top Producing Agent of the Year.
               </p>
