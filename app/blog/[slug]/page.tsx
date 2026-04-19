@@ -49,17 +49,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       publishedTime: publishedIso,
       modifiedTime: modifiedIso,
       authors: [AUTHOR_URL],
-      images: post.coverImage
-        ? [{ url: post.coverImage.startsWith('http') ? post.coverImage : `${SITE_URL}${post.coverImage}` }]
-        : undefined,
+      // og:image auto-injected by app/blog/[slug]/opengraph-image.tsx —
+      // don't set here or we'd emit two og:image tags.
     },
     twitter: {
       card: 'summary_large_image',
       title: post.title,
       description: post.excerpt,
-      images: post.coverImage
-        ? [post.coverImage.startsWith('http') ? post.coverImage : `${SITE_URL}${post.coverImage}`]
-        : undefined,
+      // twitter:image pulls from the same opengraph-image.tsx route.
     },
     authors: [{ name: AUTHOR_NAME, url: AUTHOR_URL }],
   }
