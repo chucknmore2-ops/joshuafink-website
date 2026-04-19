@@ -30,6 +30,12 @@ function wordCount(content: string): number {
     .filter(Boolean).length
 }
 
+// Average adult silent reading speed ~225 wpm (Brysbaert 2019). Round
+// up so a 220-word post still shows "1 min read" rather than "0".
+function readingTimeMinutes(content: string): number {
+  return Math.max(1, Math.ceil(wordCount(content) / 225))
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = getPostBySlug(params.slug)
   if (!post) return { title: 'Post Not Found' }
@@ -153,6 +159,7 @@ function buildJsonLd(post: BlogPost) {
     isAccessibleForFree: true,
     datePublished: publishedIso,
     dateModified: modifiedIso,
+    timeRequired: `PT${readingTimeMinutes(post.content)}M`,
     author: {
       '@type': 'Person',
       '@id': `${SITE_URL}#joshua-fink`,
@@ -245,6 +252,7 @@ export default function BlogPostPage({ params }: Props) {
                 <time dateTime={isoDate(post.dateModified)}>{post.dateModified}</time>
               </>
             )}
+            {' · '}{readingTimeMinutes(post.content)} min read
           </p>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black leading-tight font-display">
             {post.title}
