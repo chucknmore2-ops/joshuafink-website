@@ -7,9 +7,11 @@ const FROM_EMAIL = 'leads@joshuafink.com'
 const TO_EMAIL = 'joshua@joshuafink.com'
 const N8N_BASE = process.env.N8N_WEBHOOK_BASE || 'http://localhost:5678/webhook'
 const CASH_OFFER_BASE = process.env.CASH_OFFER_WEBHOOK_BASE || 'http://localhost:5679/webhook'
+const BUYER_LEAD_WEBHOOK_BASE = process.env.BUYER_LEAD_WEBHOOK_BASE || 'http://localhost:5680'
 const MONDAY_TOKEN = process.env.MONDAY_API_TOKEN || ''
 const MONDAY_BOARD = process.env.MONDAY_BOARD_ID || ''
 const MONDAY_GROUP_CASH = 'group_mm25pmwg' // Cash Offer Leads group
+const MONDAY_GROUP_BUYER = 'group_mm2cjyk0' // Buyer Leads group
 
 // ---------------------------------------------------------------------------
 // Spam detection
@@ -70,6 +72,37 @@ function isSpam(lead: Record<string, string>): { spam: boolean; reason: string }
   // Address too short (for cash-offer leads)
   if (lead.source === 'cash-offer' && (lead.property_address || '').trim().length < 5) {
     return { spam: true, reason: 'address_too_short' }
+  }
+
+  // Random-string name: no spaces, mixed upper/lower, no real vowel structure
+  // Real names have spaces (First Last) or are short single words
+  const name = (lead.name || '').trim()
+  if (name.length > 10 && !name.includes(' ')) {
+    // Long single-token name with mixed case + digits = likely bot
+    const hasDigits = /\d/.test(name)
+    const hasMixedCase = name !== name.toLowerCase() && name !== name.toUpperCase()
+    if (hasDigits || (hasMixedCase && name.length > 14)) {
+      return { spam: true, reason: 'random_name' }
+    }
+  }
+
+  // Heavily dotted gmail: bots use x.x.x.x@gmail.com pattern (4+ dots before @)
+  if (lead.email) {
+    const localPart = lead.email.split('@')[0] || ''
+    const domain = lead.email.split('@')[1]?.toLowerCase() || ''
+    const dotCount = (localPart.match(/\./g) || []).length
+    if (domain === 'gmail.com' && dotCount >= 4) {
+      return { spam: true, reason: 'dotted_gmail_bot' }
+    }
+  }
+
+  // Random body: no spaces or spaces < 2 (gibberish string)
+  const body = (lead.body || '').trim()
+  if (body.length > 10) {
+    const wordCount = body.split(/\s+/).filter(Boolean).length
+    if (wordCount < 3) {
+      return { spam: true, reason: 'gibberish_body' }
+    }
   }
 
   return { spam: false, reason: '' }
@@ -221,8 +254,10 @@ async function pushToMonday(lead: Record<string, string>) {
   const itemName = addr ? `${name} — ${addr}` : name
   const escapedName = itemName.replace(/"/g, '\\"').replace(/\n/g, ' ')
 
-  const isCashOffer = lead.source === 'cash-offer' || ['sell', 'seller'].includes(lead.subject || lead.lead_type || '')
-  const groupId = isCashOffer ? MONDAY_GROUP_CASH : 'new_group'
+  const leadType = (lead.subject || lead.lead_type || '').toLowerCase()
+  const isCashOffer = lead.source === 'cash-offer' || ['sell', 'seller'].includes(leadType)
+  const isBuyerLead = ['buy', 'both', 'invest', 'rent', 'other', 'buyer'].includes(leadType)
+  const groupId = isCashOffer ? MONDAY_GROUP_CASH : (isBuyerLead ? MONDAY_GROUP_BUYER : MONDAY_GROUP_BUYER)
 
   // Try to set column values; fall back to name-only if column IDs don't match
   const columnValues: Record<string, unknown> = {}
@@ -317,7 +352,9 @@ export async function POST(req: NextRequest) {
     }
 
     // ---------- Fire all integrations in parallel ----------
-    const isCashOffer = lead.source === 'cash-offer'
+    const leadType = (lead.subject || lead.lead_type || '').toLowerCase()
+    const isCashOffer = lead.source === 'cash-offer' || ['sell', 'seller'].includes(leadType)
+    const isBuyerLead = ['buy', 'both', 'invest', 'rent', 'other', 'buyer'].includes(leadType)
     const tasks: Promise<unknown>[] = [
       sendSlack(lead),
       forwardToJoshua(lead),
@@ -328,7 +365,7 @@ export async function POST(req: NextRequest) {
     if (lead.email) tasks.push(sendAutoReply(lead))
 
     // Drip sequence (best-effort, n8n may not be reachable from Vercel)
-    const isSeller = ['sell', 'seller'].includes(lead.subject || lead.lead_type || '')
+    const isSeller = ['sell', 'seller'].includes(leadType)
     const drip = isSeller ? 'seller-lead' : 'buyer-lead'
     tasks.push(
       fetch(`${N8N_BASE}/${drip}`, {
@@ -345,6 +382,23 @@ export async function POST(req: NextRequest) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(lead),
+        }).then(() => undefined).catch(() => undefined)
+      )
+    }
+
+    if (isBuyerLead) {
+      tasks.push(
+        fetch(`${BUYER_LEAD_WEBHOOK_BASE}/buyer-lead`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: lead.name || '',
+            phone: lead.phone || '',
+            email: lead.email || '',
+            subject: lead.subject || lead.lead_type || '',
+            body: lead.body || '',
+            source: lead.source || 'joshuafink.com',
+          }),
         }).then(() => undefined).catch(() => undefined)
       )
     }
