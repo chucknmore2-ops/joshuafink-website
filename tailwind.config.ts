@@ -26,8 +26,12 @@ const config: Config = {
         },
       },
       fontFamily: {
-        inter: ['Inter', 'sans-serif'],
-        display: ['"Playfair Display"', 'Georgia', 'serif'],
+        // Backed by next/font/google CSS variables declared in app/layout.tsx.
+        // The `sans` override makes plain utility classes (font-sans) pick up
+        // Inter automatically; `inter` + `display` remain as explicit tokens.
+        sans: ['var(--font-inter)', 'Inter', 'system-ui', 'sans-serif'],
+        inter: ['var(--font-inter)', 'Inter', 'sans-serif'],
+        display: ['var(--font-display)', '"Playfair Display"', 'Georgia', 'serif'],
       },
       keyframes: {
         'ken-burns': {
