@@ -41,13 +41,19 @@ npm start
 
 ---
 
-## Adding Joshua's Headshot
+## Home Page Hero
+
+The home page uses `components/CinematicHero.tsx` — a rotating, listings-forward hero that pulls imagery and addresses from `lib/listings.ts`. It auto-rotates every 6.5 seconds, pauses on hover/focus, and respects `prefers-reduced-motion`.
+
+To change which listings are featured, reorder `lib/listings.ts` — the hero uses the first 5 entries that have `imageUrl`. To swap the headline or copy, edit `components/CinematicHero.tsx` directly.
+
+## Updating Joshua's Headshot (About page)
+
+The headshot still appears on the **About page** and in Schema.org metadata:
 
 1. Get a high-quality photo of Joshua (recommended: portrait orientation, at least 800×1000px)
 2. Name it `headshot.jpg`
 3. Replace `public/headshot.jpg` with the new file
-
-The image appears in the **hero section** on the home page and the **About page**. It's optimized automatically by Next.js `Image` component.
 
 ---
 
