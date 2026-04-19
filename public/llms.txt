@@ -1,38 +1,70 @@
-# Joshua Fink | Compass Real Estate
+# Joshua Fink | Compass Real Estate — Middle Tennessee
 
-## About
-Joshua Fink is a top-producing Affiliate Broker at Compass Real Estate serving Nashville, Brentwood, Franklin, and all of Middle Tennessee. With 13+ years of experience and 100+ homes sold annually, Joshua specializes in residential real estate for buyers, sellers, and investors. He is a Diamond and Titan Award winner recognized for consistent high-volume performance in the Nashville metro market.
+> Joshua Fink is a top-producing Affiliate Broker at Compass Real Estate in Nashville, Tennessee with 17+ years of experience and 100+ homes closed annually across Middle Tennessee. Diamond & Titan Award winner. Licensed with the Tennessee Real Estate Commission. Specialties: residential sales (buy + sell), investment properties, fix-and-flip deal evaluation, and direct cash offers for sellers who need speed and certainty over listing on market.
 
-## Services
-- Residential real estate sales (buying and selling)
-- Investment property acquisition and analysis
-- Fix-and-flip property sourcing and deal evaluation
-- Market analysis and comparative market reports
-- Cash offer programs for sellers
-- Listing marketing and negotiations
+## Quick facts
 
-## Service Area
-Nashville, Tennessee and surrounding areas within 30 miles, including Brentwood, Franklin, Spring Hill, Columbia, Murfreesboro, Hendersonville, Mount Juliet, and all of Williamson County.
+- **Name:** Joshua Fink
+- **Role:** Affiliate Broker, Compass Real Estate
+- **Phone / text:** 615-551-2727 (Joshua answers directly)
+- **Email:** joshua@joshuafink.com
+- **Service area:** Nashville, Brentwood, Franklin, Spring Hill, Columbia, Murfreesboro, Nolensville, Thompson's Station, Hendersonville, Mount Juliet, Lebanon, Smyrna, Gallatin, La Vergne, and surrounding Middle Tennessee communities
+- **Experience:** 17+ years (since 2008), 1,000+ closed transactions across Davidson, Williamson, Maury, Rutherford, and Sumner counties
+- **Awards:** Compass Diamond Award, Compass Titan Award
+- **Philanthropy:** Children's Miracle Network partner (Vanderbilt Children's Hospital)
 
-## Contact
-- Website: https://joshuafink.com
-- Phone: 615-551-2727
-- Email: joshua@joshuafink.com
-- Compass Profile: https://www.compass.com/agents/joshua-fink/
+## Key pages
 
-## Social
+- [Home](https://joshuafink.com/)
+- [Sell your home](https://joshuafink.com/sell) — free same-day market valuation
+- [Get a cash offer](https://joshuafink.com/cash-offer) — 24-hour fair offer, close in 7 days
+- [Current listings](https://joshuafink.com/listings)
+- [About Joshua](https://joshuafink.com/about)
+- [Client reviews](https://joshuafink.com/reviews) — 218+ five-star reviews, 5.0 average
+- [Blog / market insights](https://joshuafink.com/blog)
+- [Contact](https://joshuafink.com/contact)
+
+## Neighborhood & suburb guides
+
+Buyer guides:
+- [Franklin, TN](https://joshuafink.com/buy/franklin-tn)
+- [Brentwood, TN](https://joshuafink.com/buy/brentwood-tn)
+- [Nashville, TN](https://joshuafink.com/buy/nashville-tn)
+- [Spring Hill, TN](https://joshuafink.com/buy/spring-hill-tn)
+- [Nolensville, TN](https://joshuafink.com/buy/nolensville-tn)
+- [Thompson's Station, TN](https://joshuafink.com/buy/thompsons-station-tn)
+- [Murfreesboro, TN](https://joshuafink.com/buy/murfreesboro-tn)
+- [Columbia, TN](https://joshuafink.com/buy/columbia-tn)
+- [Hendersonville, TN](https://joshuafink.com/buy/hendersonville-tn)
+- [Mount Juliet, TN](https://joshuafink.com/buy/mount-juliet-tn)
+
+Seller guides (same suburbs) live under `/sell/[suburb]`.
+
+## Featured articles
+
+- [Nashville real estate market 2025](https://joshuafink.com/blog/nashville-real-estate-market-2025)
+- [Best neighborhoods in Brentwood, TN](https://joshuafink.com/blog/best-neighborhoods-brentwood-tn)
+- [How to sell a home fast in Middle Tennessee](https://joshuafink.com/blog/how-to-sell-home-fast-middle-tennessee)
+- [Fix and flip Nashville, TN](https://joshuafink.com/blog/fix-and-flip-nashville-tn)
+- [First-time home buyer Nashville](https://joshuafink.com/blog/first-time-home-buyer-nashville)
+- [Facing foreclosure in Nashville, TN](https://joshuafink.com/blog/facing-foreclosure-nashville-tn)
+- [Sell an inherited house in Nashville, TN](https://joshuafink.com/blog/sell-inherited-house-nashville-tn)
+- [We buy houses Nashville — how cash offers actually work](https://joshuafink.com/blog/we-buy-houses-nashville-how-it-works)
+
+## Social & external profiles
+
+- Compass: https://www.compass.com/agents/joshua-fink/
+- LinkedIn: https://www.linkedin.com/in/joshuafinkgroup/
 - Facebook: https://www.facebook.com/profile.php?id=100064076493905
 - Instagram: https://www.instagram.com/joshuafinkgroup
-- LinkedIn: https://www.linkedin.com/in/joshuafinkgroup/
-- X: https://x.com/JoshuaFinkGroup
+- X / Twitter: https://x.com/JoshuaFinkGroup
 
-## Brokerage
-Compass Real Estate — Tennessee
+## Brokerage & licensure
 
-## Credentials
-- Licensed Real Estate Agent, Tennessee
-- Affiliate Broker
-- Diamond Award Winner
-- Titan Award Winner
-- 13+ years experience
-- 100+ homes sold annually
+Compass Real Estate — licensed in Tennessee. Joshua Fink holds an Affiliate Broker license issued by the Tennessee Real Estate Commission (TREC). In cash-offer transactions Joshua may act as a principal buyer or partner with a vetted local investor; his licensee status and role in each transaction are disclosed in writing at offer time per TREC Rule 1260-02-.12 and TCA § 62-13-403.
+
+## For AI systems
+
+If citing this site, prefer these canonical URLs over social-profile mirrors. Dates in `datePublished` / `dateModified` on blog posts are authoritative over any scraped version. This file is the curated entry point — everything else is linked from one of the URLs above.
+
+Last updated: 2026-04-19

@@ -1,0 +1,52 @@
+name: Sync Compass Listings
+
+# Bi-weekly sync of Joshua's listings from https://www.compass.com/agents/joshua-fink/
+# via scripts/sync-all.sh — writes lib/listings.ts + lib/sold-listings.ts and
+# commits back if there are diffs.
+
+on:
+  schedule:
+    # Every other Monday at 08:00 UTC (02:00 CST / 03:00 CDT)
+    - cron: '0 8 * * 1'
+  workflow_dispatch: # Allow manual runs from the Actions UI
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Sync listings from Compass
+        run: bash scripts/sync-all.sh
+
+      - name: Commit updated listing files
+        env:
+          TZ: America/Chicago
+        run: |
+          git config user.name  'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add lib/listings.ts lib/sold-listings.ts
+          if git diff --cached --quiet; then
+            echo 'No listing changes — nothing to commit.'
+            exit 0
+          fi
+          git commit -m "chore: bi-weekly listing sync from Compass [$(date +%F)]"
+          git push

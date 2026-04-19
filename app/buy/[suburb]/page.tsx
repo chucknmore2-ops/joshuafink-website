@@ -92,6 +92,30 @@ export default async function BuySuburbPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://joshuafink.com' },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'Listings',
+                item: 'https://joshuafink.com/listings',
+              },
+              {
+                '@type': 'ListItem',
+                position: 3,
+                name: `Buy in ${suburb.displayName}`,
+                item: `https://joshuafink.com/buy/${suburb.slug}`,
+              },
+            ],
+          }),
+        }}
+      />
 
       <div className="bg-white">
 
