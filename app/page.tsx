@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import Image from 'next/image'
 import ListingCard from '@/components/ListingCard'
+import CinematicHero from '@/components/CinematicHero'
 import { listings as featuredListings } from '@/lib/listings'
 
 export const metadata: Metadata = {
@@ -19,72 +19,8 @@ const stats = [
 export default function HomePage() {
   return (
     <>
-      {/* ── HERO ── */}
-      <section className="relative bg-black min-h-[92vh] flex items-center overflow-hidden">
-        {/* Background texture */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent z-10" />
-
-        {/* Headshot — right side */}
-        <div className="absolute right-0 top-0 bottom-0 w-full md:w-1/2 z-0">
-          <div className="w-full h-full relative">
-            <Image
-              src="/headshot.jpg"
-              alt="Joshua Fink — Affiliate Broker, Compass Real Estate"
-              fill
-              className="object-cover object-top opacity-90 md:opacity-100"
-              priority
-              sizes="(max-width: 768px) 100vw, 50vw"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/20 to-transparent md:via-transparent" />
-          </div>
-        </div>
-
-        {/* Hero content */}
-        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20">
-          <div className="max-w-xl">
-            <p className="text-white font-black text-base tracking-[0.3em] uppercase mb-6 opacity-80">
-              COMPASS
-            </p>
-
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-none tracking-tight mb-4">
-              Joshua
-              <br />
-              Fink
-              <span className="block text-lg sm:text-xl font-medium tracking-wide text-neutral-400 mt-3">
-                Top Real Estate Agent in Nashville &amp; Middle Tennessee
-              </span>
-            </h1>
-
-            <p className="text-lg sm:text-xl text-neutral-200 font-medium mb-3 tracking-wide">
-              Affiliate Broker &nbsp;|&nbsp; Compass Real Estate &nbsp;|&nbsp; Middle Tennessee
-            </p>
-            <p className="text-base text-neutral-400 mb-10 max-w-md leading-relaxed">
-              Selling your home? Get a free, no-obligation market valuation — real comps, real numbers, same day.
-            </p>
-
-            <div className="flex flex-col sm:flex-row flex-wrap gap-3">
-              <Link
-                href="/sell"
-                className="inline-flex items-center justify-center bg-white text-black text-sm font-bold px-7 py-3 rounded-full tracking-wide transition-all duration-200 hover:bg-neutral-100 hover:shadow-lg active:scale-[0.98]"
-              >
-                What&apos;s My Home Worth?
-              </Link>
-              <Link
-                href="/cash-offer"
-                className="inline-flex items-center justify-center bg-transparent border-2 border-white text-white text-sm font-bold px-7 py-3 rounded-full tracking-wide transition-all duration-200 hover:bg-white hover:text-black active:scale-[0.98]"
-              >
-                Get a Cash Offer
-              </Link>
-              <Link
-                href="/listings"
-                className="inline-flex items-center justify-center border border-white/40 text-white/80 text-sm font-semibold px-7 py-3 rounded-full tracking-wide transition-all duration-200 hover:border-white hover:text-white active:scale-[0.98]"
-              >
-                View Listings
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* ── HERO ── cinematic, listings-forward (replaces headshot hero) */}
+      <CinematicHero listings={featuredListings} />
 
       {/* ── STATS BAR ── */}
       <section className="bg-neutral-100 border-b border-neutral-200">
@@ -108,7 +44,9 @@ export default function HomePage() {
               <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-2">
                 Current Listings
               </p>
-              <h2 className="text-4xl font-black text-black tracking-tight">Featured Homes</h2>
+              <h2 className="text-4xl sm:text-5xl font-black text-black tracking-tight">
+                Featured <span className="font-display italic font-semibold">Homes</span>
+              </h2>
             </div>
             <Link
               href="/listings"
@@ -144,7 +82,8 @@ export default function HomePage() {
                 Thinking About Selling?
               </p>
               <h2 className="text-4xl sm:text-5xl font-black tracking-tight leading-tight mb-6">
-                Find Out What Your<br />Home Is Worth.
+                Find Out What Your<br />
+                <span className="font-display italic font-semibold">Home Is Worth.</span>
               </h2>
               <p className="text-neutral-400 text-base leading-relaxed max-w-lg">
                 Get a free, no-obligation home valuation from Joshua. Real comps, real numbers —
@@ -177,11 +116,11 @@ export default function HomePage() {
             <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-4">
               About Joshua
             </p>
-            <h2 className="text-4xl font-black text-black tracking-tight mb-6">
-              Committed to Closing Deals
+            <h2 className="text-4xl sm:text-5xl font-black text-black tracking-tight mb-6">
+              Committed to <span className="font-display italic font-semibold">Closing Deals</span>
             </h2>
             <p className="text-lg text-neutral-600 leading-relaxed mb-8">
-              With over 13 years of experience and 100+ homes sold annually, Joshua Fink is one of
+              With over 17 years of experience and 100+ homes sold annually, Joshua Fink is one of
               Middle Tennessee&apos;s most trusted Affiliate Brokers. A Diamond &amp; Titan Award winner
               who puts every client&apos;s goals first — and donates a portion of every commission to the
               Children&apos;s Miracle Network.
@@ -211,8 +150,9 @@ export default function HomePage() {
             <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
               Your Neighborhood Expert
             </p>
-            <h2 className="text-4xl font-black text-black tracking-tight mb-4">
-              Hyperlocal Insight Across Middle Tennessee
+            <h2 className="text-4xl sm:text-5xl font-black text-black tracking-tight mb-4">
+              Hyperlocal Insight Across{' '}
+              <span className="font-display italic font-semibold">Middle Tennessee</span>
             </h2>
             <p className="text-neutral-600 leading-relaxed">
               Joshua combines on-the-ground neighborhood expertise with Compass market data to help
@@ -257,13 +197,15 @@ export default function HomePage() {
             <p className="text-xs font-semibold tracking-widest text-neutral-500 uppercase mb-3">
               Why Joshua Fink
             </p>
-            <h2 className="text-4xl font-black tracking-tight">Proven Local Advantage</h2>
+            <h2 className="text-4xl sm:text-5xl font-black tracking-tight">
+              Proven <span className="font-display italic font-semibold">Local Advantage</span>
+            </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               {
                 title: '17+ Years Experience',
-                body: 'Since 2012, Joshua has navigated every market cycle Middle Tennessee has thrown at buyers and sellers—from the post-recession recovery through the 2021-2022 bidding war frenzy to today\'s normalized market. That experience means he knows when to push, when to wait, and how to structure offers that win without overpaying. Over 1,000+ transactions closed across Davidson, Williamson, Maury, Rutherford, and Sumner counties. Every deal teaches something, and Joshua has 13 years of lessons working directly for your outcome.',
+                body: 'Since 2008, Joshua has navigated every market cycle Middle Tennessee has thrown at buyers and sellers—from the post-recession recovery through the 2021-2022 bidding war frenzy to today\'s normalized market. That experience means he knows when to push, when to wait, and how to structure offers that win without overpaying. Over 1,000+ transactions closed across Davidson, Williamson, Maury, Rutherford, and Sumner counties. Every deal teaches something, and Joshua has 17+ years of lessons working directly for your outcome.',
               },
               {
                 title: '100+ Homes Sold Annually',
