@@ -52,6 +52,7 @@ export async function GET() {
       linkedinConfigured:
         envConfigured('LINKEDIN_ACCESS_TOKEN') && envConfigured('LINKEDIN_AUTHOR_URN'),
       gaConfigured: envConfigured('NEXT_PUBLIC_GA_ID'),
+      deployHookConfigured: envConfigured('DEPLOY_HOOK_SECRET'),
     },
     schedules: {
       indexnowDaily: '0 2 * * * UTC',
