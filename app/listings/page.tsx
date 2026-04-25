@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import ListingCard from '@/components/ListingCard'
 import { listings } from '@/lib/listings'
 import { soldListings } from '@/lib/sold-listings'
+import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 
 export const metadata: Metadata = {
   title: 'Listings — Active & Recently Sold | Joshua Fink | Compass Nashville',
@@ -16,8 +17,17 @@ export default function ListingsPage() {
 
   const soldTotal = soldListings.reduce((sum, l) => sum + l.price, 0)
 
+  const breadcrumb = buildBreadcrumbSchema([
+    { name: 'Home', href: '/' },
+    { name: 'Listings', href: '/listings' },
+  ])
+
   return (
     <div className="bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
       {/* Page header */}
       <div className="bg-black text-white py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">

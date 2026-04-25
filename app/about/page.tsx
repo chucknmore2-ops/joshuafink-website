@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { reviews, reviewStats } from '@/lib/reviews'
+import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 
 export const metadata: Metadata = {
   title: 'About Joshua Fink',
@@ -124,6 +125,10 @@ function buildProfileSchema() {
 export default function AboutPage() {
   const schema = buildProfileSchema()
   const faqSchema = buildFaqSchema()
+  const breadcrumb = buildBreadcrumbSchema([
+    { name: 'Home', href: '/' },
+    { name: 'About', href: '/about' },
+  ])
   return (
     <div className="bg-white">
       <script
@@ -133,6 +138,10 @@ export default function AboutPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
       {/* Page header */}
       <div className="bg-black text-white py-16 px-4 sm:px-6 lg:px-8">

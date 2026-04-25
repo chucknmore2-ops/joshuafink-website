@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import SellForm from './SellForm'
 import TrustBadges from '@/components/TrustBadges'
+import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 
 export const metadata: Metadata = {
   title: 'Sell Your Home in Nashville | Joshua Fink — Compass Real Estate',
@@ -140,6 +141,10 @@ export default function SellPage() {
     })),
   }
 
+  const breadcrumb = buildBreadcrumbSchema([
+    { name: 'Home', href: '/' },
+    { name: 'Sell', href: '/sell' },
+  ])
   return (
     <div className="bg-white">
       <script
@@ -149,6 +154,10 @@ export default function SellPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(howToLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
 
       {/* Hero */}
