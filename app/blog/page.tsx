@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import BlogCard from '@/components/BlogCard'
 import { blogPosts } from '@/lib/blog'
 
@@ -8,7 +9,17 @@ export const metadata: Metadata = {
     'Insights, tips, and market updates from Joshua Fink — Affiliate Broker at Compass Real Estate in Middle Tennessee. Stay informed about Nashville and Brentwood real estate.',
 }
 
+function getArchiveYears(): number[] {
+  const years = new Set<number>()
+  for (const post of blogPosts) {
+    const d = new Date(post.date)
+    if (!isNaN(d.getTime())) years.add(d.getFullYear())
+  }
+  return Array.from(years).sort((a, b) => b - a)
+}
+
 export default function BlogPage() {
+  const archiveYears = getArchiveYears()
   return (
     <div className="bg-white">
       {/* Page header */}
@@ -48,6 +59,26 @@ export default function BlogPage() {
             Talk to Joshua
           </a>
         </div>
+
+        {/* Archive by year */}
+        {archiveYears.length > 0 && (
+          <div className="mt-16 pt-10 border-t border-[#E8E8E8] text-center">
+            <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-4">
+              Browse the Archive
+            </p>
+            <div className="flex flex-wrap justify-center gap-3">
+              {archiveYears.map((y) => (
+                <Link
+                  key={y}
+                  href={`/blog/archive/${y}`}
+                  className="text-sm font-semibold px-4 py-2 border border-[#E8E8E8] text-[#444] tracking-wide hover:border-black hover:text-black transition-colors"
+                >
+                  {y}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
