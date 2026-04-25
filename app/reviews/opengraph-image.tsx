@@ -92,7 +92,7 @@ export default async function Image() {
               lineHeight: 1.25,
             }}
           >
-            "Going above and beyond is what Josh does."
+            &ldquo;Going above and beyond is what Josh does.&rdquo;
           </div>
         </div>
 
