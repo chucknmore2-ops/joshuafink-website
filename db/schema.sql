@@ -1,6 +1,11 @@
--- joshuafink.com Railway Postgres schema
--- Source of truth for: every social post sent, dedup cooldowns, channel state.
--- Apply via: psql $DATABASE_URL -f db/schema.sql  (idempotent — uses IF NOT EXISTS)
+-- joshuafink.com Railway Postgres schema (DOCUMENTATION)
+--
+-- The autoposter applies the schema at runtime from an INLINED copy in
+-- services/autoposter/src/schema.ts (Railway containers cannot read files
+-- outside the service's Root Directory). If you change the schema here,
+-- mirror the change in schema.ts.
+--
+-- Apply manually if needed: psql $DATABASE_URL -f db/schema.sql  (idempotent)
 
 CREATE TABLE IF NOT EXISTS post_log (
   id              BIGSERIAL PRIMARY KEY,
