@@ -1,5 +1,6 @@
 import { log } from "./log.ts";
 import { pool } from "./db.ts";
+import { applySchema } from "./schema.ts";
 import { runListingSpotlight } from "./jobs/listing-spotlight.ts";
 import { runContentRotator } from "./jobs/content-rotator.ts";
 
@@ -32,6 +33,7 @@ async function main() {
 
   log.info(`Starting job: ${jobName}`);
   try {
+    await applySchema();
     await JOBS[jobName]();
     log.info(`Job complete: ${jobName}`);
   } catch (err) {

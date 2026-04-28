@@ -63,14 +63,9 @@ etc.). Each Railway service points at a different `Root Directory`.
    | `AUTOPOSTER_DRY_RUN`   | `1` for the first deploy                    |
    | `LISTING_COOLDOWN_DAYS`| `7`                                         |
 
-5. **Apply the schema**
-
-   In Railway shell for the `autoposter` service (or local with `DATABASE_URL`
-   pointing at the Railway DB):
-
-   ```bash
-   npm run migrate
-   ```
+5. **Schema** — runs automatically on every job start (idempotent
+   `CREATE TABLE IF NOT EXISTS`). No manual step. If you want to run it
+   standalone for any reason: `npm run migrate`.
 
 6. **Add the 5 cron triggers**
 
