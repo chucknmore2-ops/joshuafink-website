@@ -1,6 +1,3 @@
-import { readFile } from "node:fs/promises";
-import { resolve, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
 import { env } from "./env.ts";
 
 export interface Listing {
@@ -17,11 +14,17 @@ export interface Listing {
   imageUrl?: string;
 }
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
 export async function loadListings(): Promise<Listing[]> {
-  const path = resolve(__dirname, "..", env.listingsTsPath);
-  const source = await readFile(path, "utf8");
+  const res = await fetch(env.listingsUrl, {
+    headers: { "User-Agent": "joshuafink-autoposter/0.1" },
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error(
+      `Failed to fetch listings (${res.status} ${res.statusText}) from ${env.listingsUrl}`
+    );
+  }
+  const source = await res.text();
   return parseListings(source);
 }
 

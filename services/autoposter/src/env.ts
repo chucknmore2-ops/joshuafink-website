@@ -12,5 +12,7 @@ export const env = {
   },
   dryRun: process.env.AUTOPOSTER_DRY_RUN === "1",
   listingCooldownDays: Number(process.env.LISTING_COOLDOWN_DAYS ?? 7),
-  listingsTsPath: process.env.LISTINGS_TS_PATH ?? "../../lib/listings.ts",
+  listingsUrl:
+    process.env.LISTINGS_URL ??
+    "https://raw.githubusercontent.com/chucknmore2-ops/joshuafink-website/main/lib/listings.ts",
 };
