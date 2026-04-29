@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { blogPosts } from '@/lib/blog'
 import { getAllSuburbSlugs } from '@/lib/suburbs'
+import { getAllNeighborhoodSlugs } from '@/lib/neighborhoods'
 
 const SITE = 'https://www.joshuafink.com'
 
@@ -20,6 +21,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE}/cash-offer`, priority: 0.9, changeFrequency: 'monthly', lastModified: now },
     { url: `${SITE}/about`, priority: 0.8, changeFrequency: 'monthly', lastModified: now },
     { url: `${SITE}/blog`, priority: 0.8, changeFrequency: 'weekly', lastModified: now },
+    { url: `${SITE}/neighborhoods`, priority: 0.85, changeFrequency: 'weekly', lastModified: now },
     { url: `${SITE}/reviews`, priority: 0.7, changeFrequency: 'monthly', lastModified: now },
     { url: `${SITE}/contact`, priority: 0.7, changeFrequency: 'monthly', lastModified: now },
   ]
@@ -52,5 +54,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: now,
   }))
 
-  return [...core, ...blog, ...sellSuburbs, ...buySuburbs]
+  // ── Neighborhood guide pages ──────────────────────────────────────
+  const neighborhoodPages: MetadataRoute.Sitemap = getAllNeighborhoodSlugs().map((slug) => ({
+    url: `${SITE}/neighborhoods/${slug}`,
+    priority: 0.8,
+    changeFrequency: 'monthly' as const,
+    lastModified: now,
+  }))
+
+  return [...core, ...blog, ...sellSuburbs, ...buySuburbs, ...neighborhoodPages]
 }
