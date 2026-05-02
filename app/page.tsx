@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import ListingCard from '@/components/ListingCard'
 import CinematicHero from '@/components/CinematicHero'
+import { heroSlides } from '@/lib/hero-slides'
 import { listings as featuredListings } from '@/lib/listings'
 
 export const metadata: Metadata = {
@@ -19,8 +20,8 @@ const stats = [
 export default function HomePage() {
   return (
     <>
-      {/* ── HERO ── cinematic, listings-forward (replaces headshot hero) */}
-      <CinematicHero listings={featuredListings} />
+      {/* ── HERO ── cinematic, curated showcase deck (decoupled from active listings) */}
+      <CinematicHero slides={heroSlides} />
 
       {/* ── STATS BAR ── */}
       <section className="bg-neutral-100 border-b border-neutral-200">

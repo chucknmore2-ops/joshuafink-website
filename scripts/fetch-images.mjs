@@ -35,7 +35,7 @@ async function main() {
       const img = card.querySelector('img[src*="compass.com"]');
       const href = link?.getAttribute('href') || '';
       const url = href.startsWith('http') ? href : 'https://www.compass.com' + href;
-      const imgUrl = (img?.src || '').replace('/480x320.webp', '/1024x768.webp');
+      const imgUrl = (img?.src || '').replace('/480x320.webp', '/2048x1536.webp');
       return { url, imgUrl };
     });
   });
