@@ -3,47 +3,12 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { useEffect, useMemo, useState } from 'react'
-import type { Listing } from '@/lib/listings'
-
-type Slide = {
-  imageUrl: string
-  cityShort: string
-  address: string
-  price: number
-  compassUrl: string
-}
-
-function toSlide(l: Listing): Slide | null {
-  if (!l.imageUrl) return null
-  const cityShort = l.city.split('|')[0].trim().replace(/,\s*TN.*$/i, ', TN')
-  return {
-    imageUrl: l.imageUrl,
-    cityShort,
-    address: l.address,
-    price: l.price,
-    compassUrl: l.compassUrl,
-  }
-}
-
-function usd(n: number) {
-  if (n <= 0) return ''
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(n % 1_000_000 === 0 ? 0 : 2)}M`
-  return `$${Math.round(n / 1000)}k`
-}
+import { useEffect, useState } from 'react'
+import type { HeroSlide } from '@/lib/hero-slides'
 
 const SLIDE_MS = 6500
 
-export default function CinematicHero({ listings }: { listings: Listing[] }) {
-  const slides = useMemo(
-    () =>
-      listings
-        .map(toSlide)
-        .filter((s): s is Slide => s !== null)
-        .slice(0, 5),
-    [listings],
-  )
-
+export default function CinematicHero({ slides }: { slides: HeroSlide[] }) {
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
   const reduceMotion = useReducedMotion()
@@ -68,7 +33,7 @@ export default function CinematicHero({ listings }: { listings: Listing[] }) {
       onFocusCapture={() => setPaused(true)}
       onBlurCapture={() => setPaused(false)}
       aria-roledescription="carousel"
-      aria-label="Featured Middle Tennessee listings"
+      aria-label="Featured Middle Tennessee properties"
     >
       {/* Preload hint for first slide (improves LCP) */}
       {slides[0] && (
@@ -82,12 +47,12 @@ export default function CinematicHero({ listings }: { listings: Listing[] }) {
         />
       )}
 
-      {/* Background stack — crossfading listing imagery */}
+      {/* Background stack — crossfading hero imagery */}
       <div className="absolute inset-0 z-0">
         <AnimatePresence mode="sync">
           {active && (
             <motion.div
-              key={active.compassUrl}
+              key={active.imageUrl}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -97,12 +62,11 @@ export default function CinematicHero({ listings }: { listings: Listing[] }) {
               <div className={reduceMotion ? 'w-full h-full' : 'w-full h-full animate-ken-burns'}>
                 <Image
                   src={active.imageUrl}
-                  alt={`Featured listing: ${active.address} in ${active.cityShort}`}
+                  alt={active.alt}
                   fill
                   priority={index === 0}
                   sizes="100vw"
                   className="object-cover"
-                  unoptimized
                 />
               </div>
             </motion.div>
@@ -174,7 +138,7 @@ export default function CinematicHero({ listings }: { listings: Listing[] }) {
           </Link>
         </motion.div>
 
-        {/* Active listing caption + slide indicators */}
+        {/* Slide caption (status + city, no price) + indicator dots */}
         {active && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -189,33 +153,31 @@ export default function CinematicHero({ listings }: { listings: Listing[] }) {
               aria-atomic="true"
             >
               <p className="text-[10px] sm:text-xs font-semibold tracking-[0.3em] text-white/60 uppercase mb-2">
-                {paused ? 'Paused · Now Showing' : 'Now Showing'}
+                {paused ? 'Paused · Featured Property' : 'Featured Property'}
               </p>
               <Link
-                href={active.compassUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={active.href}
+                target={active.href.startsWith('http') ? '_blank' : undefined}
+                rel={active.href.startsWith('http') ? 'noopener noreferrer' : undefined}
                 className="group inline-flex items-baseline gap-3 flex-wrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-sm"
               >
-                <span className="text-white font-display font-semibold text-lg sm:text-2xl truncate group-hover:underline underline-offset-4">
-                  {active.address}
+                <span className="text-white font-display font-semibold text-lg sm:text-2xl group-hover:underline underline-offset-4">
+                  {active.status}
                 </span>
                 <span className="text-white/75 text-sm sm:text-base">{active.cityShort}</span>
-                {active.price > 0 && (
-                  <span className="text-white font-bold text-sm sm:text-base">
-                    · {usd(active.price)}
-                  </span>
-                )}
+                <span className="text-white/85 text-sm sm:text-base font-medium">
+                  · View details <span aria-hidden="true">→</span>
+                </span>
               </Link>
             </div>
 
-            <div className="flex items-center gap-1 shrink-0" role="tablist" aria-label="Select featured listing">
+            <div className="flex items-center gap-1 shrink-0" role="tablist" aria-label="Select featured property">
               {slides.map((slide, i) => (
                 <button
-                  key={slide.compassUrl}
+                  key={slide.imageUrl}
                   type="button"
                   role="tab"
-                  aria-label={`Show listing ${i + 1} of ${slides.length}: ${slide.address}`}
+                  aria-label={`Show property ${i + 1} of ${slides.length}`}
                   aria-selected={i === index}
                   aria-current={i === index ? 'true' : undefined}
                   onClick={() => setIndex(i)}

@@ -24,11 +24,11 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex-shrink-0">
           <Image
-            src="/compass-logo-black-trimmed.png"
+            src="/compass-re-logo-black.png"
             alt="Compass Real Estate"
-            width={620}
-            height={130}
-            className="h-8 w-auto md:h-10"
+            width={988}
+            height={108}
+            className="h-7 w-auto md:h-9"
             priority
           />
         </Link>
