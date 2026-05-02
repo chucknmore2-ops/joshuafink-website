@@ -9,6 +9,7 @@ Three Vercel Cron jobs + one GitHub Actions job run on a schedule for joshuafink
 | IndexNow submission | Vercel Cron | `0 2 * * *` (daily) | 9pm daily | `CRON_SECRET` |
 | Google Business Profile post | Vercel Cron | `0 14 * * 2` (Tue) | 9am Tuesdays | `CRON_SECRET`, `GBP_*` (5 vars) |
 | LinkedIn post | Vercel Cron | `0 14 * * 4` (Thu) | 9am Thursdays | `CRON_SECRET`, `LINKEDIN_*` (2 vars) |
+| Instagram post | Vercel Cron | `0 14 * * 3` (Wed) | 9am Wednesdays | `CRON_SECRET`, `IG_BUSINESS_ACCOUNT_ID`, `IG_ACCESS_TOKEN` |
 | Compass listings sync | GitHub Actions | `0 8 * * 1` (Mon) | 3am Mondays | None (uses Playwright against public page) |
 
 ## Vercel env vars
@@ -28,6 +29,8 @@ LINKEDIN_CLIENT_SECRET   = <from LinkedIn Developer app>
 LINKEDIN_REDIRECT_URI    = https://joshuafink.com/api/linkedin/callback
 LINKEDIN_ACCESS_TOKEN    = <from /api/linkedin/callback response>
 LINKEDIN_AUTHOR_URN      = urn:li:person:XXXXXXXX (from /api/linkedin/callback response)
+IG_BUSINESS_ACCOUNT_ID   = <17-digit IG Business account ID, from Meta Business Suite>
+IG_ACCESS_TOKEN          = <Page access token w/ instagram_basic + instagram_content_publish scopes>
 ```
 
 ---

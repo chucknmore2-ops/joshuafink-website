@@ -51,7 +51,7 @@ export default function ChannelHealth() {
       channel: "Instagram",
       emoji: "📷",
       configured: false,
-      detail: "Pending Business/Creator account confirmation",
+      detail: "Cron live (Wed 9am CT) — awaiting IG_BUSINESS_ACCOUNT_ID + IG_ACCESS_TOKEN env vars",
     },
     {
       channel: "YouTube",
