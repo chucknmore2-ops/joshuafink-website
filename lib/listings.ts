@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-04-30T12:00:29.734Z
+// AUTO-GENERATED — Last synced: 2026-05-04T10:06:11.000Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -36,6 +36,15 @@ export const listings: Listing[] = [
     imageUrl: "https://www.compass.com/m/510a18b337189490b7abc84fd410b9c6dab5f40a_img_0_8790c/2048x1536.webp",
   },
   {
+    address: "159 N Berwick Ln",
+    city: "Franklin, TN 37069 | MLS #3127600",
+    price: 1249900,
+    sqft: 4948,
+    status: "Active",
+    compassUrl: "https://www.compass.com/homedetails/159-N-Berwick-Ln-Franklin-TN-37069/SXI63_pid/",
+    imageUrl: "https://www.compass.com/m/097ddd3cbf3fec8078ef4b031792e836914bf522_img_0_ac804/2048x1536.webp",
+  },
+  {
     address: "6612 Fox Hollow Rd",
     city: "Nashville, TN 37205 | MLS #3178177",
     price: 974500,
@@ -69,7 +78,7 @@ export const listings: Listing[] = [
     sqft: 1400,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/511-Wanda-Dr-Nashville-TN-37210/SDYP1_pid/",
-    imageUrl: "https://www.compass.com/m/4e9cb7fc9872c9dbd0b0f820634b2dfa965d3cfe_img_0_e40e3/2048x1536.webp",
+    imageUrl: "https://www.compass.com/m/4e9cb7fc9872c9dbd0b0f820634b2dfa965d3cfe_img_1_17c54/2048x1536.webp",
   },
   {
     address: "223 Hampton Rd",

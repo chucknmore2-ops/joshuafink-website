@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-04-30T12:01:36.150Z
+// AUTO-GENERATED — Last synced: 2026-05-04T10:07:21.196Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-sold.mjs
 
@@ -186,18 +186,6 @@ export const soldListings: Listing[] = [
     imageUrl: "https://www.compass.com/m/c932dca0373ffb58886dd64e8476f130223c250c_img_0_6968c/480x320.webp",
   },
   {
-    address: "111 Battlefield Dr",
-    city: "Franklin, TN 37064",
-    price: 1100000,
-    beds: 33,
-    baths: 33,
-    sqft: 28782878,
-    acres: 0.26,
-    status: "Sold",
-    compassUrl: "https://www.compass.com/homedetails/111-Battlefield-Dr-Franklin-TN-37064/839177487077659985_lid/",
-    imageUrl: "https://www.compass.com/m/2f315db59fec26c674d6967a20a16160dc5cdbf4_img_0_1/480x320.webp",
-  },
-  {
     address: "1743 Stillwater Cir",
     city: "Brentwood, TN 37027",
     price: 1100000,
@@ -208,6 +196,18 @@ export const soldListings: Listing[] = [
     status: "Sold",
     compassUrl: "https://www.compass.com/homedetails/1743-Stillwater-Cir-Brentwood-TN-37027/1191269538326923993_lid/",
     imageUrl: "https://www.compass.com/m/abbef8264e1d5f980bd80224088f3a2b8360c857_img_0_e0986/480x320.webp",
+  },
+  {
+    address: "111 Battlefield Dr",
+    city: "Franklin, TN 37064",
+    price: 1100000,
+    beds: 33,
+    baths: 33,
+    sqft: 28782878,
+    acres: 0.26,
+    status: "Sold",
+    compassUrl: "https://www.compass.com/homedetails/111-Battlefield-Dr-Franklin-TN-37064/839177487077659985_lid/",
+    imageUrl: "https://www.compass.com/m/2f315db59fec26c674d6967a20a16160dc5cdbf4_img_0_1/480x320.webp",
   },
   {
     address: "8117 Hilldale Dr",
