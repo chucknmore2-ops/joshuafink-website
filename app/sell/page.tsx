@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import SellForm from './SellForm'
+import TrustBadges from '@/components/TrustBadges'
 
 export const metadata: Metadata = {
   title: 'Sell Your Home in Nashville | Joshua Fink — Compass Real Estate',
@@ -127,7 +128,10 @@ export default function SellPage() {
             Free home valuation. No obligation. Joshua Fink at Compass has the data, the network,
             and the strategy to sell fast and at top dollar.
           </p>
-          <div className="mt-8 flex flex-col sm:flex-row gap-3">
+          <div className="mt-7">
+            <TrustBadges variant="dark" />
+          </div>
+          <div className="mt-7 flex flex-col sm:flex-row gap-3">
             <a
               href="#seller-form"
               className="inline-flex items-center justify-center bg-white text-black text-sm font-bold px-8 py-3 rounded-full tracking-wide transition-all duration-200 hover:bg-neutral-100 hover:shadow-lg active:scale-[0.98] text-center"
