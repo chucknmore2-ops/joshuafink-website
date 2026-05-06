@@ -34,10 +34,18 @@ export const runtime = 'nodejs'
 //                            When present, route auto-runs Agent 02
 //                            against the activity data and emails the
 //                            AI report instead of the raw prompt.
+//
+// Optional env var for ClickUp delivery:
+//   CLICKUP_API_TOKEN      — pk_... personal token from ClickUp.
+//                            Settings → Apps → API Token → Generate.
+//                            When set, route also creates a task in the
+//                            JFG ClickUp list each week so Chuck can mark
+//                            done / comment / discuss.
 
 const TO_EMAIL = 'chucknmore2@gmail.com'
 const FROM_EMAIL = 'leads@joshuafink.com'
 const SLACK_CHANNEL = 'C0APH84LFG8' // #joshpersonal — same channel as contact-form leads
+const CLICKUP_LIST_ID = '901415978281' // JFG agent-briefing list (workspace 90141200625)
 
 const AGENTS = [
   {
@@ -327,6 +335,55 @@ async function postSlackSummary(activityLine: string): Promise<boolean> {
   }
 }
 
+// ---------------------------------------------------------------------------
+// ClickUp — create a task per weekly briefing so Chuck can mark done / discuss
+// ---------------------------------------------------------------------------
+
+async function createClickUpTask(
+  title: string,
+  markdownDescription: string,
+): Promise<{ ok: boolean; taskId?: string; url?: string; error?: string }> {
+  const token = process.env.CLICKUP_API_TOKEN
+  if (!token) return { ok: false, error: 'no_token' }
+
+  // ClickUp's task description supports markdown when sent via
+  // `markdown_content`. Plain `description` strips formatting on the
+  // API side. Sending both keeps email/Slack in sync as plaintext while
+  // the ClickUp UI renders markdown.
+  try {
+    const res = await fetch(
+      `https://api.clickup.com/api/v2/list/${CLICKUP_LIST_ID}/task`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: token,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: title,
+          markdown_content: markdownDescription,
+          description: markdownDescription,
+          tags: ['agent-briefing', 'autopilot'],
+          notify_all: false,
+        }),
+      },
+    )
+    if (!res.ok) {
+      const snippet = await res
+        .text()
+        .then((t) => t.slice(0, 200).replace(/[^\w\s.:,\-]/g, ''))
+        .catch(() => '')
+      console.error('[agent-briefing] clickup error', res.status, snippet)
+      return { ok: false, error: `upstream_${res.status}` }
+    }
+    const data = (await res.json()) as { id?: string; url?: string }
+    return { ok: true, taskId: data.id, url: data.url }
+  } catch (err) {
+    console.error('[agent-briefing] clickup network', err)
+    return { ok: false, error: 'network' }
+  }
+}
+
 export async function GET(request: Request) {
   const expected = process.env.CRON_SECRET
   if (!expected) {
@@ -362,19 +419,26 @@ export async function GET(request: Request) {
     agent02Report,
   })
   const emailed = await sendEmail(subject, html, markdown)
+  const clickup = await createClickUpTask(subject, markdown)
   const autopilotLine = agent02Report
     ? '🤖 Agent 02 autopilot ran. '
     : autopilotError
       ? `⚠️ Autopilot attempted, error: ${autopilotError}. `
       : ''
+  const clickupLine = clickup.ok && clickup.url
+    ? ` · ClickUp task: ${clickup.url}`
+    : ''
   const slacked = await postSlackSummary(
-    `${autopilotLine}${counts.posted_7d}/7d posted · ${counts.failed_7d} failed · ${counts.dry_run_7d} dry-run`,
+    `${autopilotLine}${counts.posted_7d}/7d posted · ${counts.failed_7d} failed · ${counts.dry_run_7d} dry-run${clickupLine}`,
   )
 
   return NextResponse.json({
     sent: true,
     emailed,
     slacked,
+    clickup: clickup.ok
+      ? { ok: true, taskId: clickup.taskId, url: clickup.url }
+      : { ok: false, error: clickup.error },
     autopilot: agent02Report
       ? 'agent_02_ran'
       : autopilotError

@@ -52,21 +52,32 @@ These prompts will need updates as the business changes. Common edits:
 If the prompt structure itself proves unhelpful in practice, edit
 freely — these are tools, not contracts.
 
-## Autopilot status (Phase 1 active)
+## Autopilot status (Phase 2 active)
 
-A weekly reminder cron (`/api/cron/agent-briefing`, Mon 7am CT) emails
-Chuck a briefing every Monday with last week's autoposter activity
-prefilled into the Agent 02 input section. The other four agents are
-listed as a checklist with notes on what inputs they need.
+A weekly cron (`/api/cron/agent-briefing`, Mon 7am CT) delivers a
+briefing every Monday covering all 5 JFG agents.
 
-Phase 1 is reminder-style only — Chuck still runs each prompt manually
-through Claude Project / custom GPT.
+**Phase 2 active** when `ANTHROPIC_API_KEY` is set in Vercel:
+- Agent 02 (AI Operations Lead) auto-runs on Anthropic with last
+  week's autoposter activity as input. The AI report replaces the
+  checklist body in the email.
+- Other 4 agents stay in reminder mode until their data sources are
+  also auto-pullable (the agents need inputs that live outside our
+  systems — competitor news, strategic context, customer feedback).
 
-**Phase 2 promotion path** (when ready):
-1. Add `ANTHROPIC_API_KEY` in Vercel → Settings → Environment Variables
-   (all 3 environments) → Redeploy production
-2. Extend `app/api/cron/agent-briefing/route.ts` to call Anthropic
-   directly per agent and write reports to `/admin/reports/`
-3. Email switches from raw prompts to report URLs
+**Phase 1 (reminder-only)** is the fallback: when `ANTHROPIC_API_KEY`
+is absent, all 5 agents stay in checklist mode and Chuck runs them
+manually via Claude Project / custom GPT.
 
-The cron is wired so Phase 2 is a route extension, not a re-architecture.
+## Delivery destinations
+
+The weekly cron writes to all of these in parallel — each gracefully
+degrades if its credential is missing:
+
+| Channel | Env var | What lands there |
+|---|---|---|
+| Email | `SENDGRID_API_KEY` | Full markdown briefing to `chucknmore2@gmail.com` |
+| Slack `#joshpersonal` | `SLACK_BOT_TOKEN` | One-line summary with ClickUp task URL |
+| ClickUp | `CLICKUP_API_TOKEN` | Task in JFG list (ID `901415978281`, workspace `90141200625`) — title and full markdown body, tagged `agent-briefing` + `autopilot` |
+
+**To get a ClickUp API token:** ClickUp → top-left avatar → **Settings** → **Apps** → click **Generate** under API Token. Paste into Vercel as `CLICKUP_API_TOKEN` (check all 3 environments) → redeploy.
