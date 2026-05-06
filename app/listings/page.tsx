@@ -6,7 +6,7 @@ import { soldListings } from '@/lib/sold-listings'
 export const metadata: Metadata = {
   title: 'Listings — Active & Recently Sold | Joshua Fink | Compass Nashville',
   description:
-    'Browse Joshua Fink\'s active listings and recently sold homes in Nashville, Brentwood, Franklin, and across Middle Tennessee.',
+    "Active listings and recently sold homes from Joshua Fink at Compass Real Estate — Nashville, Brentwood, Franklin, Spring Hill, Columbia, and across Middle Tennessee. See what's on the market and what's actually closing.",
 }
 
 export default function ListingsPage() {
