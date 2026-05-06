@@ -222,6 +222,138 @@ export const neighborhoods: Record<string, Neighborhood> = {
     schemaState: 'TN',
     compassSearchUrl: COMPASS_AGENT_URL,
   },
+
+  'fieldstone-farms-franklin-tn': {
+    slug: 'fieldstone-farms-franklin-tn',
+    name: 'Fieldstone Farms',
+    city: 'Franklin',
+    citySlug: 'franklin-tn',
+    county: 'Williamson County',
+    metaTitle: 'Fieldstone Farms Neighborhood Guide — Franklin, TN | Joshua Fink',
+    metaDescription:
+      'Fieldstone Farms is one of the largest, most popular family subdivisions in Franklin, TN. Local insight from Compass agent Joshua Fink — homes, schools, HOA, amenities, and pricing.',
+    intro:
+      'Fieldstone Farms is one of the most established and recognizable family subdivisions in Franklin, Tennessee — over 1,200 homes spread across the west side of Franklin near the Mack Hatcher Parkway corridor. If you have ever cut through Liberty Pike or Hillsboro Road and seen the long stone-and-iron entries, you have driven the edge of Fieldstone Farms.',
+    about:
+      "Fieldstone Farms was developed primarily through the late 1990s and 2000s as a large traditional master-planned subdivision rather than a new-urbanism community — meaning conventional residential streets, sidewalks, and a clear residential character with no commercial center inside the community itself. The lots are generally larger than what you'll find in newer Franklin builds, with mature landscaping and tree canopy that newer subdivisions can't match. Architecture is classic Southern traditional with brick fronts, hardiplank sides, and family-sized floor plans typically running 2,500–4,500 square feet. The community is anchored by an active HOA that maintains multiple pools, a clubhouse, tennis courts, walking paths, and a busy social calendar. The location — close to downtown Franklin, Cool Springs, and major commuter routes — has kept it consistently in demand even as newer subdivisions have come online further south.",
+    vibe: 'Large, established family subdivision with mature trees and strong amenities.',
+    priceBand: '$650K – $1.1M',
+    buildYears: 'Late 1990s through mid-2000s, with selected custom infill',
+    hoa: 'Active HOA with annual dues; covers the pools, clubhouse, tennis, common-area landscaping, and community events. Generally considered reasonable for the amenity package.',
+    schoolNotes:
+      'Fieldstone Farms is zoned to Williamson County Schools — typically Johnson Elementary, Freedom Middle, and Franklin High School (zoning can vary by section of the community). Williamson County Schools regularly rank among the strongest in Tennessee, and the zoning is a meaningful piece of the Fieldstone Farms resale story.',
+    amenities: [
+      'Multiple resort-style pools',
+      'Clubhouse with active social programming',
+      'Tennis and pickleball courts',
+      'Walking and jogging paths throughout the community',
+      'Playgrounds and sports fields',
+      'Long-tenured HOA with year-round events',
+    ],
+    homeStyles: [
+      'Southern traditional two-story',
+      'Brick-front with hardiplank sides',
+      'Family-sized 4–5 bedroom floor plans',
+      'Selected ranch and one-story homes on premium lots',
+      'Mature landscaping and established tree canopy',
+    ],
+    whyBullets: [
+      'Mature beats new in this price band: At $650K–$1.1M, Fieldstone Farms gives you bigger lots and mature trees than newer Franklin builds in the same range — both of which appraise and resell well.',
+      'Long-term resident density: Fieldstone Farms is the kind of community where families stay for 10–20 years. That stability shows up in the school feeder pattern, neighborhood feel, and consistent resale demand.',
+      "Location is the cheat code: Fieldstone Farms is genuinely close to downtown Franklin (5–10 min) and Cool Springs employment. Few Franklin subdivisions in this price band match that combination of price, lot size, and commute.",
+    ],
+    faqs: [
+      {
+        q: 'How much do homes in Fieldstone Farms cost in 2026?',
+        a: 'Most resale activity in Fieldstone Farms in 2026 runs between $650,000 and $1.1M, with the bulk in the $750K–$925K range for traditional 4-bedroom family homes. Updated kitchens, finished basements, and premium lots near the pools or on cul-de-sacs push toward the upper end. Joshua can pull current closed comps for any specific street.',
+      },
+      {
+        q: 'What schools are zoned to Fieldstone Farms?',
+        a: 'Fieldstone Farms is generally zoned to Williamson County Schools — most often Johnson Elementary, Freedom Middle, and Franklin High School — though zoning varies by specific section. Always confirm against the current Williamson County Schools zoning map for the exact address before writing an offer.',
+      },
+      {
+        q: 'Does Fieldstone Farms have an HOA, and what does it cover?',
+        a: 'Yes. The HOA collects annual dues and covers multiple pools, the clubhouse, tennis courts, common-area landscaping, and community events. Dues are generally considered reasonable given the amenity package. Joshua will walk through the current dues and any community rules during your tour.',
+      },
+      {
+        q: 'How does Fieldstone Farms compare to McKay\'s Mill or Westhaven?',
+        a: "Fieldstone Farms is more established than McKay's Mill (it's older and has more mature trees) and more traditional than Westhaven (no town center, no walkable retail core, larger conventional lots). Pricing tends to be similar to McKay's Mill and below Westhaven. Buyers prioritizing larger lots, mature landscaping, and a downtown-Franklin commute often choose Fieldstone Farms.",
+      },
+      {
+        q: 'Is Fieldstone Farms a good investment for the long term?',
+        a: 'Historically, yes. Fieldstone Farms has held value strongly through multiple market cycles because of its size, established amenities, school zoning, and location. The community is built out — there are no new construction homes coming online — which keeps inventory tight relative to demand.',
+      },
+    ],
+    schemaCity: 'Franklin',
+    schemaState: 'TN',
+    compassSearchUrl: COMPASS_AGENT_URL,
+  },
+
+  'berry-farms-franklin-tn': {
+    slug: 'berry-farms-franklin-tn',
+    name: 'Berry Farms',
+    city: 'Franklin',
+    citySlug: 'franklin-tn',
+    county: 'Williamson County',
+    metaTitle: 'Berry Farms Neighborhood Guide — Franklin, TN | Joshua Fink',
+    metaDescription:
+      'Berry Farms is the newer mixed-use master-planned community in south Franklin, TN — walkable, modern, and growing fast. Local insight from Compass agent Joshua Fink.',
+    intro:
+      'Berry Farms is the master-planned mixed-use community on the south end of Franklin, Tennessee — a newer community built around walkability, a town center with restaurants and offices, and a wide range of home types from townhomes to custom estates. If you have driven I-65 south of Cool Springs and seen the modern town-center buildings off Goose Creek Bypass, that is Berry Farms.',
+    about:
+      'Berry Farms began development in the early 2010s and is still actively growing — meaning newer construction stock, modern floor plans, and contemporary architecture rather than the brick-front traditional you find in older Franklin subdivisions. The community is intentionally mixed-use: in addition to single-family homes, townhomes, and condos, the Town Center includes restaurants, professional offices, a hotel, and select retail. This is Franklin\'s closest answer to a Westhaven-style walkable lifestyle, on the south side of town. Architecture leans modern farmhouse, transitional contemporary, low-country, and traditional — generally with cleaner, more current finishes than older Franklin stock. Lot sizes vary widely by section, from townhome footprints near the town center to half-acre+ custom homesites further out.',
+    vibe: 'Newer mixed-use master-planned community with a walkable town center.',
+    priceBand: '$550K – $1.8M',
+    buildYears: 'Early 2010s to present (still actively developing)',
+    hoa: 'Active HOA with monthly dues; covers common areas, town-center upkeep, pools, and amenity maintenance. Townhome and condo sub-associations layer in additional dues for exterior maintenance — confirm by section before purchase.',
+    schoolNotes:
+      'Berry Farms is generally zoned to Williamson County Schools — typically Trinity Elementary, Hillsboro Middle, and Independence High School (zoning can vary by section and address). WCS schools rank among the strongest in Tennessee. Always verify the current zoning for the specific home you\'re considering.',
+    amenities: [
+      'Berry Farms Town Center — restaurants, coffee, retail, professional offices',
+      'Community pools',
+      'Walking and biking paths',
+      'Modern playgrounds and parks',
+      'On-site hotel and event space within the town center',
+      'Newer construction with current-spec finishes',
+    ],
+    homeStyles: [
+      'Modern farmhouse with metal-accent roofs',
+      'Transitional contemporary',
+      'Low-country and craftsman influences',
+      'Luxury townhomes near the town center',
+      'Custom estate homes on larger perimeter lots',
+    ],
+    whyBullets: [
+      'Newer stock matters: For buyers relocating from larger metros, Berry Farms offers the newer construction, modern floor plans, and current-spec finishes that older Franklin subdivisions simply don\'t have. That cuts down on first-year update costs.',
+      'Walkability without leaving Franklin: Berry Farms gives you a walkable town center with restaurants and shops — a Westhaven-style lifestyle on the south side of Franklin. For buyers torn between Franklin and Nashville, it\'s a strong middle ground.',
+      'Wide price range under one address: Townhomes start in the $500s; custom estates push past $1.5M. That breadth means Berry Farms works for first-time-in-Franklin buyers and luxury buyers alike — a rare profile for a newer community.',
+    ],
+    faqs: [
+      {
+        q: 'How much do homes in Berry Farms cost in 2026?',
+        a: 'Pricing in Berry Farms runs from roughly the mid-$500s for townhomes and smaller condos near the town center up past $1.8M for custom estates on premium lots. Most single-family activity sits in the $750K–$1.2M range. Because Berry Farms is still actively developing, new-construction pricing can move quickly — Joshua can pull both resale comps and current builder inventory for any block.',
+      },
+      {
+        q: 'What schools are zoned to Berry Farms?',
+        a: 'Berry Farms is generally zoned to Williamson County Schools — most often Trinity Elementary, Hillsboro Middle, and Independence High School — though zoning varies by section. Always confirm against the current Williamson County Schools zoning map for the exact address.',
+      },
+      {
+        q: 'Is Berry Farms still being built out?',
+        a: 'Yes. Berry Farms is an active master-planned community with new sections and home types still coming online as of 2026. That means current new-construction options for buyers willing to wait, but it also means construction activity in some pockets — Joshua can advise on which sections are stable and which are still under active build.',
+      },
+      {
+        q: 'Does Berry Farms have an HOA?',
+        a: 'Yes — an active HOA with monthly dues covering common areas, the town-center maintenance, pools, and amenity programming. Townhome and condo buyers also pay sub-association dues for exterior maintenance. Always confirm both layers of dues for the specific home before closing.',
+      },
+      {
+        q: 'How does Berry Farms compare to Westhaven?',
+        a: 'Both are walkable master-planned communities with a true town center, but Berry Farms is on the south side of Franklin (closer to the I-65 corridor) and is generally newer, while Westhaven is on the west side and more established. Berry Farms tends to skew slightly less expensive than Westhaven for comparable square footage. Buyers prioritizing newer construction and a south-side commute often choose Berry Farms; buyers prioritizing the largest, most mature walkable community in Franklin choose Westhaven.',
+      },
+    ],
+    schemaCity: 'Franklin',
+    schemaState: 'TN',
+    compassSearchUrl: COMPASS_AGENT_URL,
+  },
 }
 
 export function getNeighborhood(slug: string): Neighborhood | undefined {
