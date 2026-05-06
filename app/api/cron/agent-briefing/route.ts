@@ -9,8 +9,8 @@ export const runtime = 'nodejs'
 //
 // Fires every Monday at 7am CT (12:00 UTC). Pulls last 7 days of autoposter
 // activity from /admin Postgres, formats a markdown briefing covering all
-// five JFG agents (see marketing/agent-prompts/), and emails it to Chuck
-// via SendGrid + posts a short summary to #joshpersonal Slack.
+// five JFG agents (see marketing/agent-prompts/), emails it to Chuck via
+// SendGrid, and creates a ClickUp task in the JFG list for tracking.
 //
 // Phase 1 (reminder mode): when ANTHROPIC_API_KEY is NOT set, Chuck gets
 // the prefilled prompt bodies and runs them through a Claude Project /
@@ -26,8 +26,8 @@ export const runtime = 'nodejs'
 // Required env vars (already in Vercel from the contact-form integration):
 //   CRON_SECRET            — bearer auth on /api/cron/*
 //   SENDGRID_API_KEY       — email delivery
-//   SLACK_BOT_TOKEN        — Slack post (optional, gracefully degrades)
 //   DATABASE_URL           — Postgres for autoposter activity (optional)
+//   CLICKUP_API_TOKEN      — ClickUp task creation (optional, gracefully degrades)
 //
 // Optional env var for Phase 2 (autopilot):
 //   ANTHROPIC_API_KEY      — sk-ant-... key from console.anthropic.com.
@@ -44,7 +44,6 @@ export const runtime = 'nodejs'
 
 const TO_EMAIL = 'chucknmore2@gmail.com'
 const FROM_EMAIL = 'leads@joshuafink.com'
-const SLACK_CHANNEL = 'C0APH84LFG8' // #joshpersonal — same channel as contact-form leads
 const CLICKUP_LIST_ID = '901415978281' // JFG agent-briefing list (workspace 90141200625)
 
 const AGENTS = [
@@ -316,25 +315,6 @@ async function runAgent02Autopilot(activitySection: string): Promise<AnthropicRe
   }
 }
 
-async function postSlackSummary(activityLine: string): Promise<boolean> {
-  const token = process.env.SLACK_BOT_TOKEN
-  if (!token) return false
-  try {
-    const res = await fetch('https://slack.com/api/chat.postMessage', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        channel: SLACK_CHANNEL,
-        text: `🤖 Weekly Agent Briefing emailed to Chuck. ${activityLine}`,
-      }),
-    })
-    return res.ok
-  } catch (err) {
-    console.error('[agent-briefing] slack error', err)
-    return false
-  }
-}
-
 // ---------------------------------------------------------------------------
 // ClickUp — create a task per weekly briefing so Chuck can mark done / discuss
 // ---------------------------------------------------------------------------
@@ -420,22 +400,10 @@ export async function GET(request: Request) {
   })
   const emailed = await sendEmail(subject, html, markdown)
   const clickup = await createClickUpTask(subject, markdown)
-  const autopilotLine = agent02Report
-    ? '🤖 Agent 02 autopilot ran. '
-    : autopilotError
-      ? `⚠️ Autopilot attempted, error: ${autopilotError}. `
-      : ''
-  const clickupLine = clickup.ok && clickup.url
-    ? ` · ClickUp task: ${clickup.url}`
-    : ''
-  const slacked = await postSlackSummary(
-    `${autopilotLine}${counts.posted_7d}/7d posted · ${counts.failed_7d} failed · ${counts.dry_run_7d} dry-run${clickupLine}`,
-  )
 
   return NextResponse.json({
     sent: true,
     emailed,
-    slacked,
     clickup: clickup.ok
       ? { ok: true, taskId: clickup.taskId, url: clickup.url }
       : { ok: false, error: clickup.error },
