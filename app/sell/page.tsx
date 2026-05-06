@@ -69,9 +69,50 @@ const reasons = [
   },
 ]
 
+const faqs = [
+  {
+    q: 'How long does it take to sell a home in Middle Tennessee?',
+    a: "It depends on your suburb and price band, but Joshua's listings average 18 days on market versus 30+ for the broader Middle Tennessee MLS. Pricing strategy and Compass-network promotion are the biggest levers.",
+  },
+  {
+    q: 'How do you decide what my home is worth?',
+    a: "Joshua pulls live comps from the past 60–90 days within your subdivision, adjusts for square footage, lot, age, and condition, then layers in current absorption rate (how fast inventory is moving). You get a defensible price range, not a Zestimate.",
+  },
+  {
+    q: 'What does Joshua charge to sell my home?',
+    a: 'Compass commissions are negotiable and depend on the home and scope of service. Joshua will walk you through the full proposal — including what the buyer-side cooperating commission looks like — at the valuation appointment. There is no fee to get the valuation itself.',
+  },
+  {
+    q: 'Can I sell without putting my home on the MLS?',
+    a: 'Yes — Compass Private Exclusives let you market off-market to vetted buyer agents inside Compass before any public listing. It is a good fit if you want privacy, are testing a price point, or are not 100% committed yet.',
+  },
+  {
+    q: "I don't want to do showings. Is there a faster option?",
+    a: "Yes. Joshua also brings investor-direct cash offers for homeowners who want to skip showings, repairs, and contingencies entirely. It is a separate path from a traditional listing — see the cash-offer page for how it works.",
+  },
+  {
+    q: 'Do I need to make repairs or updates before listing?',
+    a: 'Sometimes — sometimes not. Joshua does a walkthrough first and tells you which $1,000 of work returns $5,000 at sale (and which work is wasted money). The goal is the highest net to you, not the prettiest house.',
+  },
+]
+
 export default function SellPage() {
+  const faqLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  }
+
   return (
     <div className="bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+      />
 
       {/* Hero */}
       <div className="bg-black text-white py-20 px-4 sm:px-6 lg:px-8">
@@ -208,6 +249,87 @@ export default function SellPage() {
               Tell Us About Your Home
             </p>
             <SellForm />
+          </div>
+        </div>
+      </div>
+
+      {/* Two ways to sell — traditional vs cash offer */}
+      <div className="bg-neutral-50 border-t border-neutral-200 py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
+            Your Options
+          </p>
+          <h2 className="text-4xl font-black text-black tracking-tight mb-3">
+            Two Ways to Sell.
+          </h2>
+          <p className="text-neutral-600 text-base max-w-2xl mb-12 leading-relaxed">
+            Most sellers come to Joshua for a traditional listing — the path that historically nets
+            the most money. But if speed, certainty, or skipping showings matters more than top
+            dollar, an investor cash offer may be a better fit. Both options start with the same
+            free conversation.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-white border border-neutral-200 rounded-2xl p-8">
+              <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
+                Traditional Listing
+              </p>
+              <h3 className="text-2xl font-black text-black mb-3">List with Joshua</h3>
+              <p className="text-sm text-neutral-600 leading-relaxed mb-6">
+                MLS exposure, Compass-network promotion, professional photos, and the highest
+                expected sale price. Best for sellers who can wait 2–6 weeks and want maximum net.
+              </p>
+              <a
+                href="#seller-form"
+                className="inline-flex items-center justify-center bg-black text-white text-sm font-bold px-6 py-3 rounded-full tracking-wide transition-all duration-200 hover:bg-neutral-800 hover:shadow-md active:scale-[0.98]"
+              >
+                Get My Free Valuation
+              </a>
+            </div>
+            <div className="bg-white border border-neutral-200 rounded-2xl p-8">
+              <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
+                Cash Offer
+              </p>
+              <h3 className="text-2xl font-black text-black mb-3">Skip the Listing</h3>
+              <p className="text-sm text-neutral-600 leading-relaxed mb-6">
+                No showings, no repairs, no contingencies. Joshua taps a vetted investor network
+                for a written cash offer typically within 72 hours. Best for inherited homes,
+                relocations, or distressed properties.
+              </p>
+              <Link
+                href="/cash-offer"
+                className="inline-flex items-center justify-center bg-brand-crimson text-white text-sm font-bold px-6 py-3 rounded-full tracking-wide transition-all duration-200 hover:bg-brand-crimson-dark hover:shadow-md active:scale-[0.98]"
+              >
+                See Cash Offer Process →
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* FAQ */}
+      <div className="bg-white py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-3xl mx-auto">
+          <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
+            Common Questions
+          </p>
+          <h2 className="text-4xl font-black text-black tracking-tight mb-10">
+            Selling, Answered.
+          </h2>
+          <div className="divide-y divide-neutral-200 border-y border-neutral-200">
+            {faqs.map((f, i) => (
+              <details key={i} className="group py-5">
+                <summary className="flex items-center justify-between cursor-pointer list-none">
+                  <span className="text-base sm:text-lg font-semibold text-black pr-6">{f.q}</span>
+                  <span
+                    className="shrink-0 w-6 h-6 rounded-full border border-neutral-300 flex items-center justify-center text-neutral-500 transition-transform duration-200 group-open:rotate-45"
+                    aria-hidden="true"
+                  >
+                    +
+                  </span>
+                </summary>
+                <p className="mt-3 text-sm text-neutral-600 leading-relaxed">{f.a}</p>
+              </details>
+            ))}
           </div>
         </div>
       </div>
