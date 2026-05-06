@@ -51,3 +51,22 @@ These prompts will need updates as the business changes. Common edits:
 
 If the prompt structure itself proves unhelpful in practice, edit
 freely — these are tools, not contracts.
+
+## Autopilot status (Phase 1 active)
+
+A weekly reminder cron (`/api/cron/agent-briefing`, Mon 7am CT) emails
+Chuck a briefing every Monday with last week's autoposter activity
+prefilled into the Agent 02 input section. The other four agents are
+listed as a checklist with notes on what inputs they need.
+
+Phase 1 is reminder-style only — Chuck still runs each prompt manually
+through Claude Project / custom GPT.
+
+**Phase 2 promotion path** (when ready):
+1. Add `ANTHROPIC_API_KEY` in Vercel → Settings → Environment Variables
+   (all 3 environments) → Redeploy production
+2. Extend `app/api/cron/agent-briefing/route.ts` to call Anthropic
+   directly per agent and write reports to `/admin/reports/`
+3. Email switches from raw prompts to report URLs
+
+The cron is wired so Phase 2 is a route extension, not a re-architecture.
