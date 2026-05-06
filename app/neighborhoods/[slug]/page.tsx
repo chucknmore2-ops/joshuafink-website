@@ -1,7 +1,11 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getNeighborhood, getAllNeighborhoodSlugs } from '@/lib/neighborhoods'
+import {
+  getNeighborhood,
+  getAllNeighborhoodSlugs,
+  getRelatedNeighborhoods,
+} from '@/lib/neighborhoods'
 import { getSuburb } from '@/lib/suburbs'
 
 type Props = {
@@ -51,6 +55,7 @@ export default async function NeighborhoodPage({ params }: Props) {
 
   const parentSuburb = getSuburb(n.citySlug)
   const compassUrl = n.compassSearchUrl || 'https://www.compass.com/agents/joshua-fink/'
+  const related = getRelatedNeighborhoods(n.slug, 3)
 
   const placeSchema = {
     '@context': 'https://schema.org',
@@ -358,6 +363,48 @@ export default async function NeighborhoodPage({ params }: Props) {
             ))}
           </div>
         </div>
+
+        {/* Related neighborhoods — internal cross-links between guide pages */}
+        {related.length > 0 && (
+          <div className="bg-white border-t border-neutral-200 py-16 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+              <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
+                Compare With Other Communities
+              </p>
+              <h2 className="text-3xl font-black text-black tracking-tight mb-3">
+                Other neighborhoods Joshua covers
+              </h2>
+              <p className="text-sm text-[#6B6B6B] max-w-2xl mb-10 leading-relaxed">
+                Buyers looking at {n.name} often compare to these other Middle Tennessee
+                communities. Each guide has the same depth — pricing, schools, HOA, and
+                what the lifestyle actually feels like on the ground.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {related.map((r) => (
+                  <Link
+                    key={r.slug}
+                    href={`/neighborhoods/${r.slug}`}
+                    className="group block bg-neutral-50 border border-neutral-200 p-6 transition-all duration-200 hover:bg-white hover:shadow-md hover:-translate-y-0.5"
+                  >
+                    <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-2">
+                      {r.city}, {r.schemaState}
+                    </p>
+                    <h3 className="text-lg font-black text-black mb-2 group-hover:underline">
+                      {r.name}
+                    </h3>
+                    <p className="text-xs text-[#6B6B6B] leading-relaxed mb-4">{r.vibe}</p>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-semibold text-black">{r.priceBand}</span>
+                      <span className="text-[#A0A0A0] group-hover:text-black transition-colors">
+                        Read guide →
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Contact CTA */}
         <div id="contact" className="text-white py-16 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#0A1628' }}>
