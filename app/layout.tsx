@@ -3,6 +3,7 @@ import { Inter, Playfair_Display } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import MobileCallCTA from '@/components/MobileCallCTA'
 
 // Self-host Google Fonts via next/font — eliminates the render-blocking
 // CSS @import, preloads the required subsets, and exposes CSS variables
@@ -186,8 +187,9 @@ export default function RootLayout({
         />
         {/* Meta Pixel: add real Pixel ID here when available */}
         <Navbar />
-        <main className="flex-1 pt-16">{children}</main>
+        <main className="flex-1 pt-16 pb-16 md:pb-0">{children}</main>
         <Footer />
+        <MobileCallCTA />
       </body>
     </html>
   )
