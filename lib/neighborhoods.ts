@@ -763,3 +763,21 @@ export function getAllNeighborhoodSlugs(): string[] {
 export function getNeighborhoodsByCitySlug(citySlug: string): Neighborhood[] {
   return Object.values(neighborhoods).filter((n) => n.citySlug === citySlug)
 }
+
+// Returns up to `limit` related neighborhood guides, preferring same city,
+// then same county, then any other Middle Tennessee guide. Used by the
+// /neighborhoods/[slug] template to surface internal cross-links and
+// distribute link equity between guide pages.
+export function getRelatedNeighborhoods(slug: string, limit = 3): Neighborhood[] {
+  const current = neighborhoods[slug]
+  if (!current) return []
+  const others = Object.values(neighborhoods).filter((n) => n.slug !== slug)
+  const sameCity = others.filter((n) => n.citySlug === current.citySlug)
+  const sameCounty = others.filter(
+    (n) => n.county === current.county && n.citySlug !== current.citySlug,
+  )
+  const rest = others.filter(
+    (n) => n.citySlug !== current.citySlug && n.county !== current.county,
+  )
+  return [...sameCity, ...sameCounty, ...rest].slice(0, limit)
+}
