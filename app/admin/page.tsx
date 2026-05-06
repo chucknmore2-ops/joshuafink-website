@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import {
   activityCounts,
   isDbConfigured,
@@ -13,6 +14,11 @@ import ChannelHealth from "./components/ChannelHealth";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
+
+export const metadata: Metadata = {
+  title: "Admin Dashboard",
+  robots: { index: false, follow: false, nocache: true },
+};
 
 export default async function AdminDashboard() {
   const dbReady = isDbConfigured();
