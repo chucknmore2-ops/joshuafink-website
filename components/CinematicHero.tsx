@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import type { HeroSlide } from '@/lib/hero-slides'
+import TrustBadges from '@/components/TrustBadges'
 
 const SLIDE_MS = 6500
 
@@ -111,6 +112,15 @@ export default function CinematicHero({ slides }: { slides: HeroSlide[] }) {
           <span className="font-semibold text-white">100+ homes sold annually</span>, and a home-field
           advantage in every Nashville suburb.
         </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: reduceMotion ? 0 : 0.7, delay: 0.45 }}
+          className="mb-7"
+        >
+          <TrustBadges variant="dark" />
+        </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 16 }}
