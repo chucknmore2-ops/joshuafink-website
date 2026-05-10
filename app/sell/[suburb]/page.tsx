@@ -327,6 +327,9 @@ export default async function SuburbPage({ params }: Props) {
                     <Link href="/cash-offer" className="block text-sm font-semibold text-black hover:underline">
                       → Request a cash offer instead
                     </Link>
+                    <Link href={`/buy/${slug}`} className="block text-sm font-semibold text-black hover:underline">
+                      → Buying in {suburb.name} too?
+                    </Link>
                     <Link href="/sell" className="block text-sm font-semibold text-black hover:underline">
                       → Back to Seller Hub
                     </Link>

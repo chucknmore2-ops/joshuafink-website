@@ -354,7 +354,7 @@ export default async function BuySuburbPage({ params }: Props) {
                   <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mb-1">Explore</p>
                   <div className="space-y-1">
                     <Link href="/listings" className="block text-sm font-semibold text-black hover:underline">→ View active listings</Link>
-                    <Link href="/sell" className="block text-sm font-semibold text-black hover:underline">→ Also need to sell?</Link>
+                    <Link href={`/sell/${slug}`} className="block text-sm font-semibold text-black hover:underline">→ Selling in {suburb.name}?</Link>
                   </div>
                 </div>
               </div>

@@ -6,9 +6,9 @@ export default function Footer() {
   return (
     <footer className="bg-black text-white mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-10">
           {/* Brand */}
-          <div>
+          <div className="col-span-2 md:col-span-2">
             <span className="text-white font-black text-lg tracking-[0.2em] uppercase">
               COMPASS
             </span>
@@ -17,66 +17,20 @@ export default function Footer() {
               Affiliate Broker | Middle Tennessee<br />
               Compass Real Estate
             </p>
-          </div>
-
-          {/* Links */}
-          <div>
-            <h3 className="text-xs font-semibold tracking-widest uppercase text-[#A0A0A0] mb-4">
-              Navigate
-            </h3>
-            <ul className="space-y-2">
-              {[
-                { href: '/', label: 'Home' },
-                { href: '/listings', label: 'Listings' },
-                { href: '/about', label: 'About' },
-                { href: '/blog', label: 'Blog' },
-                { href: '/contact', label: 'Contact' },
-              ].map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-[#A0A0A0] hover:text-white transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <h3 className="text-xs font-semibold tracking-widest uppercase text-[#A0A0A0] mb-4">
-              Contact
-            </h3>
-            <ul className="space-y-2 text-sm text-[#A0A0A0]">
-              <li>
-                <a
-                  href="tel:6155512727"
-                  className="hover:text-white transition-colors"
-                >
-                  615-551-2727
-                </a>
-              </li>
-              <li>
-                <a
-                  href="mailto:joshua@joshuafink.com"
-                  className="hover:text-white transition-colors"
-                >
-                  joshua@joshuafink.com
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://www.compass.com/agents/joshua-fink/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-white transition-colors"
-                >
-                  Compass Profile →
-                </a>
-              </li>
-            </ul>
+            <div className="mt-5 space-y-2 text-sm">
+              <a
+                href="tel:6155512727"
+                className="block text-[#A0A0A0] hover:text-white transition-colors"
+              >
+                615-551-2727
+              </a>
+              <a
+                href="mailto:joshua@joshuafink.com"
+                className="block text-[#A0A0A0] hover:text-white transition-colors"
+              >
+                joshua@joshuafink.com
+              </a>
+            </div>
 
             <h3 className="text-xs font-semibold tracking-widest uppercase text-[#A0A0A0] mt-6 mb-4">
               Follow
@@ -128,7 +82,92 @@ export default function Footer() {
                   <path d="M18.9 3H22l-6.8 7.7L23 21h-6.2l-4.8-6.3L6.4 21H3.3l7.3-8.3L1 3h6.4l4.3 5.7L18.9 3zm-1.1 16h1.7L6.5 4.9H4.6L17.8 19z" />
                 </svg>
               </a>
+              <a
+                href="https://www.compass.com/agents/joshua-fink/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#A0A0A0] text-xs hover:text-white transition-colors ml-2"
+              >
+                Compass Profile →
+              </a>
             </div>
+          </div>
+
+          {/* For Buyers */}
+          <div>
+            <h3 className="text-xs font-semibold tracking-widest uppercase text-[#A0A0A0] mb-4">
+              For Buyers
+            </h3>
+            <ul className="space-y-2">
+              {[
+                { href: '/listings', label: 'Active Listings' },
+                { href: '/buy/franklin-tn', label: 'Buy in Franklin' },
+                { href: '/buy/brentwood-tn', label: 'Buy in Brentwood' },
+                { href: '/buy/spring-hill-tn', label: 'Buy in Spring Hill' },
+                { href: '/buy/nashville-tn', label: 'Buy in Nashville' },
+                { href: '/neighborhoods', label: 'Neighborhood Guides' },
+              ].map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-[#A0A0A0] hover:text-white transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* For Sellers */}
+          <div>
+            <h3 className="text-xs font-semibold tracking-widest uppercase text-[#A0A0A0] mb-4">
+              For Sellers
+            </h3>
+            <ul className="space-y-2">
+              {[
+                { href: '/sell', label: 'Free Home Valuation' },
+                { href: '/cash-offer', label: 'Cash Offer in 24h' },
+                { href: '/sell/franklin-tn', label: 'Sell in Franklin' },
+                { href: '/sell/brentwood-tn', label: 'Sell in Brentwood' },
+                { href: '/sell/spring-hill-tn', label: 'Sell in Spring Hill' },
+                { href: '/sell/nashville-tn', label: 'Sell in Nashville' },
+              ].map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-[#A0A0A0] hover:text-white transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Company */}
+          <div>
+            <h3 className="text-xs font-semibold tracking-widest uppercase text-[#A0A0A0] mb-4">
+              Company
+            </h3>
+            <ul className="space-y-2">
+              {[
+                { href: '/about', label: 'About Joshua' },
+                { href: '/reviews', label: 'Client Reviews' },
+                { href: '/blog', label: 'Blog' },
+                { href: '/contact', label: 'Contact' },
+                { href: '/privacy', label: 'Privacy Policy' },
+              ].map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-[#A0A0A0] hover:text-white transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
 
