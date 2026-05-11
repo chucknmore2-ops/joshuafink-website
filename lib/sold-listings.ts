@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-05-04T10:07:21.196Z
+// AUTO-GENERATED — Last synced: 2026-05-11T12:01:32.742Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-sold.mjs
 
@@ -186,6 +186,18 @@ export const soldListings: Listing[] = [
     imageUrl: "https://www.compass.com/m/c932dca0373ffb58886dd64e8476f130223c250c_img_0_6968c/480x320.webp",
   },
   {
+    address: "8117 Hilldale Dr",
+    city: "Brentwood, TN 37027",
+    price: 1100000,
+    beds: 44,
+    baths: 33,
+    sqft: 27302730,
+    acres: 1.071,
+    status: "Sold",
+    compassUrl: "https://www.compass.com/homedetails/8117-Hilldale-Dr-Brentwood-TN-37027/1553130529249927305_lid/",
+    imageUrl: "https://www.compass.com/m/f4aa7860e55bb73a771f4ce571e36c1ea6c3c735_img_0_db9ed/480x320.webp",
+  },
+  {
     address: "1743 Stillwater Cir",
     city: "Brentwood, TN 37027",
     price: 1100000,
@@ -208,17 +220,5 @@ export const soldListings: Listing[] = [
     status: "Sold",
     compassUrl: "https://www.compass.com/homedetails/111-Battlefield-Dr-Franklin-TN-37064/839177487077659985_lid/",
     imageUrl: "https://www.compass.com/m/2f315db59fec26c674d6967a20a16160dc5cdbf4_img_0_1/480x320.webp",
-  },
-  {
-    address: "8117 Hilldale Dr",
-    city: "Brentwood, TN 37027",
-    price: 1100000,
-    beds: 44,
-    baths: 33,
-    sqft: 27302730,
-    acres: 1.071,
-    status: "Sold",
-    compassUrl: "https://www.compass.com/homedetails/8117-Hilldale-Dr-Brentwood-TN-37027/1553130529249927305_lid/",
-    imageUrl: "https://www.compass.com/m/f4aa7860e55bb73a771f4ce571e36c1ea6c3c735_img_0_db9ed/480x320.webp",
   }
 ];
