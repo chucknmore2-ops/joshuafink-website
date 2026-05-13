@@ -20,6 +20,83 @@ export interface BlogPost {
 
 export const blogPosts: BlogPost[] = [
   {
+    slug: "may-2026-nashville-market-update",
+    title: "May 2026 Nashville Real Estate Market Update: Where We Stand at the Spring Peak",
+    date: "May 10, 2026",
+    excerpt:
+      "Spring 2026 is the deepest part of Middle Tennessee's selling season, and the patterns I'm seeing across Nashville, Franklin, Brentwood, and Spring Hill are worth a clear-eyed read. Here's where the market actually sits right now — and what it means for your next move.",
+    category: "Market Updates",
+    content: `
+We're past the inflection point of spring 2026. Inventory has expanded from the trough we saw in February, buyers who were sitting out the holiday season are back in the search, and sellers who waited through winter for the spring lift are now competing with fresh inventory on every block. This is the part of the year where the market reveals what it actually is — not what last year's headlines said it was.
+
+Here's an honest read on where we sit right now in Middle Tennessee, what's working for buyers and sellers in May 2026, and what to watch through the early summer.
+
+## The Big Picture: A Real Spring, Not a Frenzy
+
+The 2021–2022 frenzy is genuinely behind us, and 2026's spring market is acting like a normalized version of what real estate used to look like before the pandemic. That doesn't mean it's slow — it just means well-priced homes go quickly, mispriced homes sit, and the headline narrative ("Nashville is hot" / "Nashville is cooling") is too coarse to be useful.
+
+What I'm seeing on the ground:
+
+- **Buyers are back, but they're choosier.** Pre-approval is universal, and buyers are walking through three to five homes before writing — not making blind offers in the parking lot.
+- **Sellers who price right and present well are still getting multiple offers.** Sellers who anchor to a 2022 comp are sitting on the market for 30+ days and dropping price.
+- **The submarkets matter more than the metro.** Williamson County (Franklin, Brentwood, Spring Hill) is moving at a different pace than Nashville's urban core, and Maury County is moving differently again.
+
+If you're consuming Nashville-wide stats from a national publication, you're probably getting an average that doesn't describe your block. Talk to someone who works your specific corridor.
+
+## For Buyers: How to Win in a May 2026 Market
+
+**Get pre-approved before you tour.** This is non-negotiable in 2026. Listing agents won't entertain offers that aren't already cleared by a lender. If you're paying cash, have proof-of-funds ready. If you're financing, get a real underwriter-reviewed pre-approval — not a soft credit check.
+
+**Decide on your non-negotiables before you start.** School zone, commute time, lot privacy, garage count, single-story vs. two-story — pick three things that matter most and judge every home against them. Buyers who try to optimize on ten variables end up paralyzed when the right home shows up.
+
+**Don't overlook the secondary suburbs.** [Spring Hill](/buy/spring-hill-tn), [Nolensville](/buy/nolensville-tn), [Thompson's Station](/buy/thompsons-station-tn), and [Mount Juliet](/buy/mount-juliet-tn) are offering meaningfully better value per square foot than Brentwood or central Franklin, with comparable school zones in many cases. Buyers who looked exclusively at the premium suburbs in 2024 are now finding their best fit one ring out.
+
+**Move fast on the right home — but only the right home.** A well-priced, well-presented home in a strong school zone is still going to multiple offers within a weekend. If you've done the work to know what you want, be ready to write inside 24 hours. But the urgency is for the *right* home, not every home. The market doesn't reward panic-buying anymore.
+
+**Consider rate buy-downs in your offer structure.** Many sellers in 2026 are willing to credit closing costs that buyers can apply to a rate buy-down — sometimes more useful than a $5,000 price reduction. Ask your agent to model both scenarios before you decide what to ask for.
+
+## For Sellers: What's Working in May 2026
+
+**Pricing is the entire game.** I cannot say this clearly enough: the days of testing the market at an aspirational number are over. Overpriced homes sit, accumulate days-on-market stigma, and ultimately sell for less than they would have at a correct list price. The first two weeks of a listing are when buyer attention is at its peak — waste those weeks at the wrong number and you're starting from a deficit.
+
+**Presentation is louder than ever.** With buyers having options again, the difference between a home that gets ten showings the first weekend and one that gets two is almost always presentation. Professional photography, ruthless decluttering, fresh neutral paint where needed, and a deep clean are the highest-ROI investments before listing. They are not optional in 2026.
+
+**Pre-listing inspections are worth considering.** A pre-listing inspection lets you address surprises before a buyer's inspector finds them. It's not always the right move, but for older homes (1990s and earlier) it often saves a deal that would otherwise fall apart at the inspection contingency.
+
+**Timing matters less than you think — but only inside spring.** May through early June is the strongest window for most of Middle Tennessee. After mid-June, family-buyer activity slows as people commit to summer trips and back-to-school planning. If you're listing this season, you want to be live before Memorial Day — not after.
+
+**Concessions are part of the negotiation again.** Closing-cost help, rate buy-downs, and minor repair credits are normal asks in 2026. Build a small buffer into your list price if you want to preserve net while still saying yes to reasonable buyer requests.
+
+## Suburb Spotlight: Where the Action Is Right Now
+
+A few corridors I've been particularly active in over the past 30 days:
+
+- **[Franklin](/buy/franklin-tn) and the Cool Springs sub-markets** — strong demand from out-of-state relocations, particularly from California and Texas. Move-in-ready homes in the $700K–$1.2M band are still going to multiple offers.
+- **[Brentwood](/buy/brentwood-tn) established neighborhoods** — Annandale, Raintree Forest, and the Flagstone/Brenthaven corridor are moving well. Newer Brentwood subdivisions (Taramore, Witherspoon) are taking a touch longer but still trading.
+- **[Spring Hill](/buy/spring-hill-tn) and [Thompson's Station](/buy/thompsons-station-tn)** — the value play of the spring. Buyers priced out of Brentwood/Franklin are landing here and getting more home for the money, with the I-65 commute still very workable.
+- **[Nashville](/buy/nashville-tn) urban core (East, 12 South, Sylvan Park)** — slower than the family suburbs, but lifestyle buyers are active and well-priced inventory still moves.
+- **[Mount Juliet](/buy/mount-juliet-tn) and [Hendersonville](/buy/hendersonville-tn)** — the eastern submarkets are quietly some of the strongest performers in the metro. School zones, commute, and price all line up.
+
+## What I'm Watching Through Summer 2026
+
+Three things I'll be tracking over the next eight weeks:
+
+1. **Whether spring inventory keeps growing.** A normal-functioning market needs sellers willing to list — and 2026 has more sellers than 2024 or 2025 did. If that pattern holds through summer, buyers will have more leverage by August than they have now.
+
+2. **How the suburban premium holds up.** Williamson County has carried a meaningful price premium over Nashville for years. With the secondary suburbs catching up on amenities, that gap may narrow — and buyers who locked in Williamson schools in 2022 may get tested on resale.
+
+3. **Rate movement.** Mortgage rates have been the dominant variable for three years. If they move materially in either direction, the math on every transaction changes.
+
+## The Bottom Line
+
+May 2026 is a real market. Not a frenzy, not a crash — a market where preparation, pricing, and presentation determine outcomes. Buyers who do the work get rewarded. Sellers who do the work get rewarded. The agents and clients who try to wing it are the ones complaining that the market is hard.
+
+If you're thinking about a move in the next 90 days, this is the season to get serious about it. I'm happy to walk through the specifics of your situation — your neighborhood, your timeline, your numbers — and give you an honest read on what makes sense.
+
+Reach out anytime: [615-551-2727](tel:6155512727) or [joshua@joshuafink.com](mailto:joshua@joshuafink.com).
+    `.trim(),
+  },
+  {
     slug: "nashville-real-estate-market-2025",
     title: "Nashville Real Estate Market: What Buyers and Sellers Need to Know in 2025",
     date: "March 15, 2026",
