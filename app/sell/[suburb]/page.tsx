@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getSuburb, getAllSuburbSlugs } from '@/lib/suburbs'
+import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
 
 type Props = {
   params: Promise<{ suburb: string }>
@@ -46,6 +47,7 @@ export default async function SuburbPage({ params }: Props) {
 
   const formspreeUrl = '/api/contact'
   const faqs = suburb.faqs
+  const cityGuides = getNeighborhoodsByCitySlug(slug)
 
   const schemaOrg = {
     '@context': 'https://schema.org',
@@ -262,6 +264,46 @@ export default async function SuburbPage({ params }: Props) {
             </div>
           </div>
         </div>
+
+        {/* Neighborhood Guides — surfaces the same guides /buy/[suburb] uses,
+            framed for sellers ("price by subdivision" rather than buyer discovery) */}
+        {cityGuides.length > 0 && (
+          <div className="bg-white border-t border-[#E8E8E8] py-16 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+              <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
+                Subdivision Pricing
+              </p>
+              <h2 className="text-3xl font-black text-black tracking-tight mb-3">
+                {suburb.name} Subdivision Guides
+              </h2>
+              <p className="text-[#6B6B6B] text-sm leading-relaxed max-w-3xl mb-10">
+                The {suburb.name} market doesn&apos;t price evenly — every subdivision has its
+                own comps, demand curve, and selling story. Read the guides for the neighborhoods
+                most relevant to your home, then ask Joshua for a same-day valuation that uses
+                comps from your exact street.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {cityGuides.map((g) => (
+                  <Link
+                    key={g.slug}
+                    href={`/neighborhoods/${g.slug}`}
+                    className="block border border-[#E8E8E8] p-6 hover:border-black transition-colors bg-white"
+                  >
+                    <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-2">
+                      {g.county}
+                    </p>
+                    <h3 className="text-xl font-black text-black mb-2">{g.name}</h3>
+                    <p className="text-sm text-[#6B6B6B] leading-relaxed mb-4">{g.vibe}</p>
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="font-semibold text-black">{g.priceBand}</span>
+                      <span className="text-[#A0A0A0]">Read guide →</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Why Joshua — Hyperlocal */}
         <div className="bg-[#F5F5F5] py-16 px-4 sm:px-6 lg:px-8">
