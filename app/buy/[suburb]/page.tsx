@@ -328,6 +328,62 @@ export default async function BuySuburbPage({ params }: Props) {
           </div>
         </div>
 
+        {/* Selling first? Two paths to free up your move */}
+        <div className="bg-white border-t border-[#E8E8E8] py-20 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
+              Selling First?
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-black text-black tracking-tight mb-3">
+              Two Paths to Free Up Your Move.
+            </h2>
+            <p className="text-[#6B6B6B] text-base max-w-2xl mb-12 leading-relaxed">
+              Most {suburb.name} buyers are also selling something — a current home, an inherited
+              property, a rental that no longer fits. How you sell that home shapes how fast you
+              can close on the next one. Joshua runs both paths, and the conversation starts the
+              same way.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white border border-[#E8E8E8] p-8">
+                <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
+                  Traditional Listing
+                </p>
+                <h3 className="text-2xl font-black text-black mb-3">List with Joshua</h3>
+                <p className="text-sm text-[#6B6B6B] leading-relaxed mb-6">
+                  MLS exposure, Compass-network promotion, professional photos, and the highest
+                  expected net. Best when you can wait 2–6 weeks for top dollar — and you want
+                  the proceeds working in your {suburb.name} offer.
+                </p>
+                <Link
+                  href="/sell"
+                  className="inline-block text-sm font-bold px-6 py-3 tracking-wide transition-colors text-center"
+                  style={{ backgroundColor: '#0A1628', color: '#FFFFFF' }}
+                >
+                  Get My Free Valuation →
+                </Link>
+              </div>
+              <div className="bg-white border border-[#E8E8E8] p-8">
+                <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
+                  Cash Offer
+                </p>
+                <h3 className="text-2xl font-black text-black mb-3">Skip the Listing</h3>
+                <p className="text-sm text-[#6B6B6B] leading-relaxed mb-6">
+                  No showings, no repairs, no contingencies. Joshua taps a vetted investor network
+                  for a written cash offer typically within 72 hours — useful for inherited homes,
+                  out-of-state moves, or freeing up a non-contingent {suburb.name} offer.
+                </p>
+                <Link
+                  href="/cash-offer"
+                  className="inline-block text-sm font-bold px-6 py-3 tracking-wide transition-colors text-center"
+                  style={{ backgroundColor: '#C41E3A', color: '#FFFFFF' }}
+                >
+                  See Cash Offer Process →
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Buyer Inquiry Form */}
         <div id="buyer-form" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16">
@@ -355,6 +411,7 @@ export default async function BuySuburbPage({ params }: Props) {
                   <div className="space-y-1">
                     <Link href="/listings" className="block text-sm font-semibold text-black hover:underline">→ View active listings</Link>
                     <Link href={`/sell/${slug}`} className="block text-sm font-semibold text-black hover:underline">→ Selling in {suburb.name}?</Link>
+                    <Link href="/cash-offer" className="block text-sm font-semibold text-black hover:underline">→ Want a cash offer instead?</Link>
                   </div>
                 </div>
               </div>
