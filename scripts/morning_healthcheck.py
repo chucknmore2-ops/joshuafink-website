@@ -16,10 +16,11 @@ COVERED (per `lib/admin-schedule.ts`):
   Railway autoposter jobs (FB channel) — listing-spotlight (M/W/F),
     content-market-stats (Tue), content-testimonial (Wed),
     content-tips (Thu), content-engagement (Fri)
-  Vercel cron LinkedIn + GBP — *only if* they end up writing to post_log
-    (today the in-repo route code does not INSERT; if Railway-side jobs
-     never start logging these channels, both surface as NEVER_LOGGED
-     gaps rather than false failures)
+  Vercel cron LinkedIn + GBP — both routes write to post_log on every
+    fire (success and failure) since the lib/admin-db logPost wiring.
+    A channel can still show as NEVER_LOGGED if the route has never
+    fired since post_log existed — that's expected for a freshly-cut
+    branch, not a failure.
   GitHub Actions sync-listings — checked via git mtime of lib/listings.ts
   Public uptime — GET https://joshuafink.com/api/healthcheck
 

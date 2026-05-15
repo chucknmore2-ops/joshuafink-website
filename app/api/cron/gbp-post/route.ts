@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { listings } from '@/lib/listings'
 import { blogPosts } from '@/lib/blog'
 import { reviews } from '@/lib/reviews'
+import { logPost } from '@/lib/admin-db'
 import { withUtm } from '@/lib/utm'
 
 export const dynamic = 'force-dynamic'
@@ -38,9 +39,15 @@ const PHONE = '615-551-2727'
 
 type CTA = { actionType: 'LEARN_MORE' | 'CALL' | 'ORDER' | 'BOOK' | 'SIGN_UP'; url: string }
 
+type GbpPayloadKind = 'listing' | 'market-update' | 'tip' | 'review' | 'blog'
+
 interface PreparedPost {
   summary: string
   cta?: CTA
+  // kind + refKey populate post_log columns so the morning healthcheck can
+  // see freshness per channel and /admin can dedup across reruns.
+  kind: GbpPayloadKind
+  refKey: string
 }
 
 // ── Content builders ──────────────────────────────────────────────────
@@ -62,6 +69,8 @@ function buildListingPost(): PreparedPost {
       actionType: 'LEARN_MORE',
       url: l.compassUrl || withUtm(`${SITE}/listings`, gbpUtm('listing')),
     },
+    kind: 'listing',
+    refKey: l.address.toLowerCase().replace(/[^\w]+/g, '-'),
   }
 }
 
@@ -92,12 +101,15 @@ function buildMarketUpdatePost(): PreparedPost {
       actionType: 'LEARN_MORE',
       url: withUtm(`${SITE}/sell/${s.slug}`, { ...gbpUtm('market-update'), content: s.slug }),
     },
+    kind: 'market-update',
+    refKey: s.slug,
   }
 }
 
 function buildTipPost(): PreparedPost {
   const tips = [
     {
+      slug: 'buyer-preapproval',
       summary:
         `💡 Buyer Tip — Pre-approval matters more than price.\n\n` +
         `In Middle Tennessee's market, a strong pre-approval letter beats an all-cash "maybe." Sellers choose buyers who can actually close. Get pre-approved before you start touring.\n\n` +
@@ -105,6 +117,7 @@ function buildTipPost(): PreparedPost {
       url: `${SITE}/buy/franklin-tn`,
     },
     {
+      slug: 'seller-price-day-one',
       summary:
         `💡 Seller Tip — Price right on day one.\n\n` +
         `Listings that test the market at an inflated number sit, go stale, and ultimately sell for less. Work with an agent who pulls real comps within a half-mile and prices strategically from day one.\n\n` +
@@ -112,6 +125,7 @@ function buildTipPost(): PreparedPost {
       url: `${SITE}/sell`,
     },
     {
+      slug: 'investor-70-percent-rule',
       summary:
         `💡 Investor Tip — The 70% rule still works in Nashville.\n\n` +
         `ARV × 0.70 − repairs = your max buy price for a fix-and-flip. Zips 37206, 37115, 37013 still have deals for investors who move fast.\n\n` +
@@ -123,6 +137,8 @@ function buildTipPost(): PreparedPost {
   return {
     summary: t.summary,
     cta: { actionType: 'LEARN_MORE', url: withUtm(t.url, gbpUtm('tip')) },
+    kind: 'tip',
+    refKey: t.slug,
   }
 }
 
@@ -136,6 +152,8 @@ function buildReviewPost(): PreparedPost {
       `Ready to buy or sell in Middle Tennessee? ${PHONE}.\n\n` +
       `#ClientReview #NashvilleRealEstate #JoshuaFinkGroup #5Stars`,
     cta: { actionType: 'CALL', url: `tel:${PHONE.replace(/-/g, '')}` },
+    kind: 'review',
+    refKey: r.reviewer.toLowerCase().replace(/[^\w]+/g, '-'),
   }
 }
 
@@ -157,6 +175,8 @@ function buildLatestBlogPost(): PreparedPost {
       actionType: 'LEARN_MORE',
       url: withUtm(`${SITE}/blog/${p.slug}`, { ...gbpUtm('latest-blog'), content: p.slug }),
     },
+    kind: 'blog',
+    refKey: p.slug,
   }
 }
 
@@ -321,12 +341,33 @@ export async function GET(request: Request) {
         .then((t) => t.slice(0, 100).replace(/[^\w\s.:,\-]/g, ''))
         .catch(() => '')
       console.error('[gbp-post] upstream error', res.status, bodySnippet)
+      await logPost({
+        channel: 'gbp',
+        jobName: 'gbp-post',
+        payloadKind: post.kind,
+        refKey: post.refKey,
+        messagePreview: post.summary.slice(0, 200),
+        link: post.cta?.url ?? null,
+        externalPostId: null,
+        status: 'failed',
+        errorMessage: `upstream ${res.status} ${bodySnippet}`.slice(0, 500),
+      })
       return NextResponse.json(
         { error: 'gbp upstream returned non-2xx', upstreamStatus: res.status },
         { status: 502 },
       )
     }
     const data = (await res.json()) as { name?: string }
+    await logPost({
+      channel: 'gbp',
+      jobName: 'gbp-post',
+      payloadKind: post.kind,
+      refKey: post.refKey,
+      messagePreview: post.summary.slice(0, 200),
+      link: post.cta?.url ?? null,
+      externalPostId: data.name ?? null,
+      status: 'posted',
+    })
     return NextResponse.json({
       posted: true,
       week,
@@ -337,6 +378,17 @@ export async function GET(request: Request) {
     })
   } catch (err) {
     console.error('[gbp-post] network error', err)
+    await logPost({
+      channel: 'gbp',
+      jobName: 'gbp-post',
+      payloadKind: post.kind,
+      refKey: post.refKey,
+      messagePreview: post.summary.slice(0, 200),
+      link: post.cta?.url ?? null,
+      externalPostId: null,
+      status: 'failed',
+      errorMessage: `network: ${(err as Error).message}`.slice(0, 500),
+    })
     return NextResponse.json({ error: 'gbp post failed' }, { status: 502 })
   }
 }
