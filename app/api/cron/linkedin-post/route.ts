@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { blogPosts } from '@/lib/blog'
 import { listings } from '@/lib/listings'
+import { logPost } from '@/lib/admin-db'
 import { withUtm } from '@/lib/utm'
 
 export const dynamic = 'force-dynamic'
@@ -32,6 +33,10 @@ type PostPayload = {
   url: string
   title: string
   description: string
+  // kind + refKey populate post_log columns so the morning healthcheck can
+  // see freshness per channel and /admin can dedup across reruns.
+  kind: 'blog' | 'listing'
+  refKey: string
 }
 
 function isoWeekNumber(d: Date = new Date()): number {
@@ -63,6 +68,8 @@ function buildFromLatestBlog(): PostPayload | null {
     url,
     title: p.title,
     description: p.excerpt.slice(0, 160),
+    kind: 'blog',
+    refKey: p.slug,
   }
 }
 
@@ -89,6 +96,8 @@ function buildFromListing(): PostPayload | null {
     url: l.compassUrl,
     title,
     description: description || 'Middle Tennessee real estate',
+    kind: 'listing',
+    refKey: l.address.toLowerCase().replace(/[^\w]+/g, '-'),
   }
 }
 
@@ -170,6 +179,17 @@ export async function GET(request: Request) {
         .then((t) => t.slice(0, 100).replace(/[^\w\s.:,\-]/g, ''))
         .catch(() => '')
       console.error('[linkedin-post] upstream error', res.status, bodySnippet)
+      await logPost({
+        channel: 'linkedin',
+        jobName: 'linkedin-post',
+        payloadKind: payload.kind,
+        refKey: payload.refKey,
+        messagePreview: payload.text.slice(0, 200),
+        link: payload.url,
+        externalPostId: null,
+        status: 'failed',
+        errorMessage: `upstream ${res.status} ${bodySnippet}`.slice(0, 500),
+      })
       return NextResponse.json(
         {
           error: 'linkedin upstream returned non-2xx',
@@ -183,6 +203,16 @@ export async function GET(request: Request) {
       )
     }
     const data = (await res.json()) as { id?: string }
+    await logPost({
+      channel: 'linkedin',
+      jobName: 'linkedin-post',
+      payloadKind: payload.kind,
+      refKey: payload.refKey,
+      messagePreview: payload.text.slice(0, 200),
+      link: payload.url,
+      externalPostId: data.id ?? null,
+      status: 'posted',
+    })
     return NextResponse.json({
       posted: true,
       postId: data.id,
@@ -192,6 +222,17 @@ export async function GET(request: Request) {
     })
   } catch (err) {
     console.error('[linkedin-post] network error', err)
+    await logPost({
+      channel: 'linkedin',
+      jobName: 'linkedin-post',
+      payloadKind: payload.kind,
+      refKey: payload.refKey,
+      messagePreview: payload.text.slice(0, 200),
+      link: payload.url,
+      externalPostId: null,
+      status: 'failed',
+      errorMessage: `network: ${(err as Error).message}`.slice(0, 500),
+    })
     return NextResponse.json({ error: 'linkedin post failed' }, { status: 502 })
   }
 }

@@ -102,3 +102,53 @@ export async function activityCounts(): Promise<ActivityCounts> {
 export function isDbConfigured(): boolean {
   return Boolean(process.env.DATABASE_URL);
 }
+
+export interface LogPostRow {
+  channel: string;
+  jobName: string;
+  payloadKind: string;
+  refKey: string;
+  messagePreview?: string | null;
+  link?: string | null;
+  externalPostId?: string | null;
+  status: "posted" | "failed" | "dry_run";
+  errorMessage?: string | null;
+  dryRun?: boolean;
+}
+
+// Write one row to post_log. Used by the Vercel-side cron routes
+// (linkedin-post, gbp-post) so their activity shows up in /admin and is
+// monitored by scripts/morning_healthcheck.py. Schema mirrors the
+// Railway-side `services/autoposter/src/db.ts` logPost helper.
+//
+// Designed to never break the calling cron: missing DATABASE_URL silently
+// no-ops, query errors are swallowed and logged. The upstream post has
+// already succeeded by the time we get here; a logging failure should not
+// cause Vercel to report the cron as failed.
+export async function logPost(row: LogPostRow): Promise<void> {
+  const pool = getPool();
+  if (!pool) return;
+  try {
+    await pool.query(
+      `INSERT INTO post_log
+         (channel, job_name, payload_kind, ref_key, message_preview, link,
+          external_post_id, status, error_message, dry_run)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
+      [
+        row.channel,
+        row.jobName,
+        row.payloadKind,
+        row.refKey,
+        row.messagePreview ?? null,
+        row.link ?? null,
+        row.externalPostId ?? null,
+        row.status,
+        row.errorMessage ?? null,
+        Boolean(row.dryRun),
+      ]
+    );
+  } catch (err) {
+    // Never poison the cron — the post already happened upstream.
+    console.error("[admin-db] logPost failed:", (err as Error).message);
+  }
+}
