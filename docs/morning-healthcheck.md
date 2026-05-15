@@ -36,7 +36,6 @@ These are listed in every alert email so a green run is never mistaken for full 
 - **`/api/cron/indexnow`** — submits URLs to Bing/Yandex, no DB write
 - **`/api/cron/agent-briefing`** — sends email + ClickUp task, no DB write
 - **`/api/cron/instagram-post`** — currently blocked at Meta Business Suite linkage (see [`IG-SETUP-PLAYBOOK.md`](./IG-SETUP-PLAYBOOK.md))
-- **Local content engine** (`content_engine/`, Joshua's Mac with Ollama) — out of GitHub Actions reach
 - **US federal holidays** — a holiday on a scheduled day will surface as STALE until the next firing
 - **DST drift** — v1 anchors thresholds in days, not local clock time; +/-1h drift acceptable
 
