@@ -492,6 +492,32 @@ def test_main_emails_on_pass_with_always_email(monkeypatch):
     assert called["n"] == 1
 
 
+def test_main_empty_healthcheck_url_env_falls_back_to_default(monkeypatch):
+    """GitHub Actions resolves `${{ vars.X }}` to '' when X is undefined,
+    which Python's `os.environ.get(key, default)` returns AS '' (not the
+    default). Confirm we fall through to HEALTHCHECK_URL_DEFAULT in that
+    case rather than passing '' to urllib (which raises ValueError)."""
+    captured: dict = {}
+
+    def fake_check(url, opener=None):
+        captured["url"] = url
+        return hc.CheckResult(name=f"site uptime — {url}", status="pass", detail="ok")
+
+    monkeypatch.setattr(hc, "check_site_uptime", fake_check)
+    monkeypatch.setattr(
+        hc,
+        "check_listings_git_freshness",
+        lambda repo_dir, now=None, run_fn=None: hc.CheckResult(
+            name="git", status="pass", detail="ok"
+        ),
+    )
+    monkeypatch.setenv("HEALTHCHECK_URL", "")  # the broken-empty case
+    monkeypatch.delenv("DATABASE_URL", raising=False)
+
+    hc.main(["--no-email", "--repo-dir", "/repo"])
+    assert captured["url"] == hc.HEALTHCHECK_URL_DEFAULT
+
+
 def test_main_misconfig_exit_2_without_dsn(monkeypatch):
     _patch_dns_helpers(monkeypatch, healthcheck_status="pass", git_status="pass")
     monkeypatch.delenv("DATABASE_URL", raising=False)

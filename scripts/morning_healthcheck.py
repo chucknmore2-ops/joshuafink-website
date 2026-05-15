@@ -205,10 +205,6 @@ DOCUMENTED_GAPS: tuple[tuple[str, str], ...] = (
         "post_log once Railway autoposter ships the IG channel.",
     ),
     (
-        "Local content engine (Ollama, Joshua's Mac)",
-        "Runs on a laptop. Out of GitHub Actions reach.",
-    ),
-    (
         "Holidays / DST",
         "v1 is holiday-naive and tolerates +/- ~1h DST drift. A US federal "
         "holiday on a scheduled day will surface as STALE until the next "
@@ -744,9 +740,13 @@ def _build_parser() -> argparse.ArgumentParser:
         default=os.getcwd(),
         help="Path to the joshuafink-website checkout (for git freshness).",
     )
+    # `os.environ.get(key, default)` returns '' (not default) when the env
+    # var is set-but-empty — which is what GitHub Actions does for an
+    # undefined `${{ vars.X }}` reference. Use `or` so empty string falls
+    # through to the hardcoded default.
     p.add_argument(
         "--healthcheck-url",
-        default=os.environ.get("HEALTHCHECK_URL", HEALTHCHECK_URL_DEFAULT),
+        default=os.environ.get("HEALTHCHECK_URL") or HEALTHCHECK_URL_DEFAULT,
         help=f"URL to ping (default: {HEALTHCHECK_URL_DEFAULT}).",
     )
     p.add_argument(
