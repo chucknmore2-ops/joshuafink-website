@@ -1,0 +1,7 @@
+# Runtime dependencies for scripts/morning_healthcheck.py
+# Pin to known-good versions — this workflow runs daily, drift is risk.
+psycopg2-binary==2.9.10
+
+# Test deps — only needed for `pytest scripts/test_morning_healthcheck.py`
+# The healthcheck script itself does NOT import pytest.
+pytest==8.4.2
