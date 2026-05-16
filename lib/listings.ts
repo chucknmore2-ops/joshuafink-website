@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-05-11T12:00:26.844Z
+// AUTO-GENERATED — Last synced: 2026-05-16T18:28:43.057Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -18,15 +18,6 @@ export interface Listing {
 
 export const listings: Listing[] = [
   {
-    address: "9209 Duncaster Ct",
-    city: "Brentwood, TN 37027",
-    price: 2699000,
-    sqft: 5392,
-    status: "Active",
-    compassUrl: "https://www.compass.com/homedetails/9209-Duncaster-Ct-Brentwood-TN-37027/TLPVE_pid/",
-    imageUrl: "https://www.compass.com/m/d53fd43cd78e267e296b847a0f3b8a67ddb07d9d_img_0_f3a02/2048x1536.webp",
-  },
-  {
     address: "1901 New Bristol Ln",
     city: "Brentwood, TN 37027 | MLS #3197403",
     price: 1875000,
@@ -45,22 +36,31 @@ export const listings: Listing[] = [
     imageUrl: "https://www.compass.com/m/510a18b337189490b7abc84fd410b9c6dab5f40a_img_0_8790c/2048x1536.webp",
   },
   {
+    address: "159 N Berwick Ln",
+    city: "Franklin, TN 37069 | MLS #3155368",
+    price: 1224900,
+    sqft: 4948,
+    status: "Active",
+    compassUrl: "https://www.compass.com/homedetails/159-N-Berwick-Ln-Franklin-TN-37069/SXI63_pid/",
+    imageUrl: "https://www.compass.com/m/e74c5662a5fe3fac2f65df84af18a425919f7171_img_0_ff6ef/2048x1536.webp",
+  },
+  {
     address: "6612 Fox Hollow Rd",
-    city: "Nashville, TN 37205 | MLS #3178177",
-    price: 974500,
+    city: "Nashville, TN 37205 | MLS #3213799",
+    price: 949900,
     sqft: 3058,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/6612-Fox-Hollow-Rd-Nashville-TN-37205/S670X_pid/",
-    imageUrl: "https://www.compass.com/m/631b2e6657107659ace52f1a6c744401a39706f4_img_0_f3dad/2048x1536.webp",
+    imageUrl: "https://www.compass.com/m/04c53ab6eab9c48467cde9e054015490bb1054b1_img_0_9753a/2048x1536.webp",
   },
   {
-    address: "107 Garwood Dr",
-    city: "Nashville, TN 37210 | MLS #3178176",
-    price: 449900,
-    sqft: 1545,
+    address: "1113 Linn Cv Ct",
+    city: "Gallatin, TN 37066 | MLS #3214253",
+    price: 539900,
+    sqft: 2869,
     status: "Active",
-    compassUrl: "https://www.compass.com/homedetails/107-Garwood-Dr-Nashville-TN-37210/TBGK6_pid/",
-    imageUrl: "https://www.compass.com/m/ed363eb2cc0340484b485e5e3434e6d41e548f07_img_0_bd65f/2048x1536.webp",
+    compassUrl: "https://www.compass.com/homedetails/1113-Linn-Cv-Ct-Gallatin-TN-37066/SPCI8_pid/",
+    imageUrl: "https://www.compass.com/m/8d52f2127c31faf652f00727b6c3ec01b4279a80_img_0_2f6ec/2048x1536.webp",
   },
   {
     address: "4127 Edwards Ave",
@@ -69,7 +69,16 @@ export const listings: Listing[] = [
     sqft: 1223,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/4127-Edwards-Ave-Nashville-TN-37216/THUS9_pid/",
-    imageUrl: "https://www.compass.com/ucfe-assets/public-media/ogImage-listingPage-missingPhotography.jpg",
+    imageUrl: "https://www.compass.com/m/9de45187a2226dddece81c5f3266db949623e396_img_0_9267e/2048x1536.webp",
+  },
+  {
+    address: "107 Garwood Dr",
+    city: "Nashville, TN 37210 | MLS #3213802",
+    price: 439500,
+    sqft: 1545,
+    status: "Active",
+    compassUrl: "https://www.compass.com/homedetails/107-Garwood-Dr-Nashville-TN-37210/TBGK6_pid/",
+    imageUrl: "https://www.compass.com/m/e3e365a5d55b995a81d5a88a152f7f8a35df3574_img_1_958f3/2048x1536.webp",
   },
   {
     address: "511 Wanda Dr",
