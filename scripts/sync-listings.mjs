@@ -29,7 +29,8 @@ async function scrapeListings() {
   const page = await context.newPage();
 
   console.log(`[sync-listings] Navigating to ${COMPASS_URL}`);
-  await page.goto(COMPASS_URL, { waitUntil: 'networkidle', timeout: 30000 });
+  // See fetch-images.mjs — networkidle is unreliable from cloud IPs.
+  await page.goto(COMPASS_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
 
   // Wait for listing cards to render
   await page.waitForTimeout(3000);
