@@ -23,7 +23,8 @@ async function main() {
   });
 
   const page = await ctx.newPage();
-  await page.goto(COMPASS_URL, { waitUntil: 'networkidle', timeout: 30000 });
+  // See fetch-images.mjs — networkidle is unreliable from cloud IPs.
+  await page.goto(COMPASS_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
   await page.waitForTimeout(3000);
 
   // Scroll down to load transactions section

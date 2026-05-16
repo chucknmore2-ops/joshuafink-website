@@ -24,7 +24,11 @@ async function main() {
   });
 
   const page = await ctx.newPage();
-  await page.goto(COMPASS_URL, { waitUntil: 'networkidle', timeout: 30000 });
+  // `networkidle` (500ms quiet) is unreliable on modern sites with analytics
+  // and lazy-loading — failed ~50% of GH Actions runs from cloud IPs.
+  // `domcontentloaded` + the 5s buffer below is plenty for the listing cards
+  // to client-side render before we start scraping.
+  await page.goto(COMPASS_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
   await page.waitForTimeout(5000);
 
   // Get all listing cards with URLs and images
