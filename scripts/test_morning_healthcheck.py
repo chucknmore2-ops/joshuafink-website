@@ -133,6 +133,31 @@ class _FakeConn:
         self.closed = True
 
 
+def test_fetch_query_excludes_dry_run_status():
+    """Pinned: dry_run rows must NOT count as fresh activity. A service
+    stuck with AUTOPOSTER_DRY_RUN=1 writes dry_run rows every fire but
+    nothing reaches the upstream API — treating those as 'fresh' would
+    mask exactly that class of misconfiguration."""
+    captured = {"sqls": []}
+
+    class _Cur:
+        def __enter__(self): return self
+        def __exit__(self, *a): pass
+        def execute(self, sql, *args, **kwargs):
+            captured["sqls"].append(sql)
+        def fetchall(self): return []
+
+    class _Conn:
+        def cursor(self): return _Cur()
+        def close(self): pass
+
+    hc._fetch_last_post_per_channel_job("dsn://", connect_fn=lambda d: _Conn())
+    select_sql = next((s for s in captured["sqls"] if "FROM post_log" in s), None)
+    assert select_sql is not None, f"no SELECT FROM post_log found in {captured['sqls']}"
+    assert "status = 'posted'" in select_sql
+    assert "dry_run" not in select_sql
+
+
 def test_postgres_reachable_pass():
     fake_conn = _FakeConn(rows=[(1,)])
     result = hc.check_postgres_reachable("dsn://", connect_fn=lambda dsn: fake_conn)

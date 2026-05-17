@@ -318,6 +318,13 @@ def _fetch_last_post_per_channel_job(
 
     Returns timezone-aware datetimes. Channels with no rows ever are simply
     absent from the dict (the per-channel check then surfaces a GAP).
+
+    Counts ONLY `status = 'posted'` — `dry_run` rows do NOT prove the
+    pipeline reached the upstream API. A service stuck with
+    AUTOPOSTER_DRY_RUN=1 will write `dry_run` rows on every fire but
+    nothing ever lands on Facebook; treating those as fresh would mask
+    that exact misconfiguration. `failed` rows also don't count
+    (failures are not freshness).
     """
     conn = connect_fn(dsn)
     try:
@@ -327,7 +334,7 @@ def _fetch_last_post_per_channel_job(
                 """
                 SELECT channel, job_name, MAX(posted_at) AS last_at
                   FROM post_log
-                 WHERE status IN ('posted', 'dry_run')
+                 WHERE status = 'posted'
                  GROUP BY channel, job_name
                 """
             )
