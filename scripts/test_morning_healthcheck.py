@@ -34,6 +34,13 @@ def _fake_latest(days_ago: float) -> datetime:
     return NOW - timedelta(days=days_ago)
 
 
+def _fake_latest_real(days_ago: float) -> datetime:
+    """Real-time-relative variant for tests that go through main() (which
+    calls datetime.now(timezone.utc) internally). The NOW-relative variant
+    breaks once enough real time elapses past the hardcoded NOW."""
+    return datetime.now(timezone.utc) - timedelta(days=days_ago)
+
+
 # ---------------------------------------------------------------------------
 # Schedule consistency — guard against drift from lib/admin-schedule.ts
 # ---------------------------------------------------------------------------
@@ -445,12 +452,77 @@ def test_report_includes_alerts_section_on_fail():
     assert "DOCUMENTED GAPS" in text
 
 
+def test_report_includes_remediation_section_when_actionable():
+    """STALE/ERROR/MISCONFIG results should produce a HOW TO FIX section
+    with per-failure tips and quick links. Green runs should not."""
+    results = [
+        hc.CheckResult(
+            name="autoposter-listing (FB) — listing-spotlight",
+            status="stale",
+            detail="last write 4.7d ago",
+        ),
+    ]
+    text = hc.format_text_report(results, now=NOW, hostname="ci-runner")
+    assert "HOW TO FIX" in text
+    assert "FB_PAGE_TOKEN" in text  # autoposter-listing tip mentions the token
+    assert "~/.facebook_tokens" in text
+    assert "Quick links:" in text
+    assert "railway.com/project/" in text  # quick link URL
+
+
+def test_report_no_remediation_when_all_green():
+    results = [hc.CheckResult(name="x", status="pass", detail="ok")]
+    text = hc.format_text_report(results, now=NOW, hostname="ci-runner")
+    assert "HOW TO FIX" not in text
+    assert "Quick links:" not in text
+
+
+@pytest.mark.parametrize("check_name,must_contain", [
+    ("postgres reachable", "DATABASE_PUBLIC_URL"),
+    ("site uptime — https://example/", "vercel.com"),
+    ("sync-listings — lib/listings.ts", "Sync Compass Listings"),
+    ("autoposter-listing (FB) — listing-spotlight", "FB_PAGE_TOKEN"),
+    ("autoposter-stats (FB) — content-market-stats", "Cron Runs"),
+    ("autoposter-testimonial (FB) — content-testimonial", "Cron Runs"),
+    ("autoposter-tips (FB) — content-tips", "Cron Runs"),
+    ("autoposter-engagement (FB) — content-engagement", "Cron Runs"),
+    ("vercel-cron-linkedin", "/api/linkedin/auth"),
+    ("vercel-cron-gbp", "GBP"),
+])
+def test_remediation_tip_per_failure_type(check_name, must_contain):
+    """Each known failure mode produces an actionable tip mentioning the
+    specific console/command for that pipeline."""
+    r = hc.CheckResult(name=check_name, status="stale", detail="")
+    tip = hc._remediation_for(r)
+    assert tip is not None, f"no tip returned for {check_name!r}"
+    assert must_contain in tip, (
+        f"tip for {check_name!r} missing {must_contain!r}; got: {tip}"
+    )
+
+
+def test_remediation_returns_none_for_pass_and_gap():
+    assert hc._remediation_for(hc.CheckResult(name="x", status="pass", detail="")) is None
+    assert hc._remediation_for(hc.CheckResult(name="x", status="gap", detail="")) is None
+
+
+def test_misconfig_database_url_gets_tip():
+    """The most common MISCONFIG (no DATABASE_URL) gets a specific add-the-secret tip."""
+    r = hc.CheckResult(
+        name="postgres",
+        status="misconfig",
+        detail="DATABASE_URL is not set — DB-dependent checks skipped",
+    )
+    tip = hc._remediation_for(r)
+    assert tip is not None
+    assert "Secrets" in tip
+
+
 # ---------------------------------------------------------------------------
 # CLI / main()
 # ---------------------------------------------------------------------------
 
 def test_main_no_email_prints_report(monkeypatch, capsys):
-    latest = {(j.channel, j.job_name): _fake_latest(0.5) for j in hc.EXPECTED_JOBS}
+    latest = {(j.channel, j.job_name): _fake_latest_real(0.5) for j in hc.EXPECTED_JOBS}
     _patch_dns_helpers(monkeypatch, healthcheck_status="pass", git_status="pass", latest_map=latest)
     monkeypatch.setenv("DATABASE_URL", "dsn://")
     monkeypatch.delenv("GMAIL_USER", raising=False)
@@ -463,8 +535,8 @@ def test_main_no_email_prints_report(monkeypatch, capsys):
 
 
 def test_main_sends_email_on_failure(monkeypatch, capsys):
-    latest = {(j.channel, j.job_name): _fake_latest(0.5) for j in hc.EXPECTED_JOBS}
-    latest[("facebook", "listing-spotlight")] = _fake_latest(99)
+    latest = {(j.channel, j.job_name): _fake_latest_real(0.5) for j in hc.EXPECTED_JOBS}
+    latest[("facebook", "listing-spotlight")] = _fake_latest_real(99)
     _patch_dns_helpers(monkeypatch, healthcheck_status="pass", git_status="pass", latest_map=latest)
     monkeypatch.setenv("DATABASE_URL", "dsn://")
     monkeypatch.setenv("GMAIL_USER", "bot@example.com")
@@ -486,7 +558,7 @@ def test_main_sends_email_on_failure(monkeypatch, capsys):
 
 
 def test_main_does_not_email_on_pass_without_always_email(monkeypatch):
-    latest = {(j.channel, j.job_name): _fake_latest(0.5) for j in hc.EXPECTED_JOBS}
+    latest = {(j.channel, j.job_name): _fake_latest_real(0.5) for j in hc.EXPECTED_JOBS}
     _patch_dns_helpers(monkeypatch, healthcheck_status="pass", git_status="pass", latest_map=latest)
     monkeypatch.setenv("DATABASE_URL", "dsn://")
     monkeypatch.setenv("GMAIL_USER", "bot@example.com")
@@ -502,7 +574,7 @@ def test_main_does_not_email_on_pass_without_always_email(monkeypatch):
 
 
 def test_main_emails_on_pass_with_always_email(monkeypatch):
-    latest = {(j.channel, j.job_name): _fake_latest(0.5) for j in hc.EXPECTED_JOBS}
+    latest = {(j.channel, j.job_name): _fake_latest_real(0.5) for j in hc.EXPECTED_JOBS}
     _patch_dns_helpers(monkeypatch, healthcheck_status="pass", git_status="pass", latest_map=latest)
     monkeypatch.setenv("DATABASE_URL", "dsn://")
     monkeypatch.setenv("GMAIL_USER", "bot@example.com")
@@ -553,8 +625,8 @@ def test_main_misconfig_exit_2_without_dsn(monkeypatch):
 def test_main_email_send_failure_keeps_alert_exit_code(monkeypatch):
     """If the SMTP send blows up we still surface the underlying exit-1; we
     do NOT swallow the alert by returning 0."""
-    latest = {(j.channel, j.job_name): _fake_latest(0.5) for j in hc.EXPECTED_JOBS}
-    latest[("facebook", "listing-spotlight")] = _fake_latest(99)
+    latest = {(j.channel, j.job_name): _fake_latest_real(0.5) for j in hc.EXPECTED_JOBS}
+    latest[("facebook", "listing-spotlight")] = _fake_latest_real(99)
     _patch_dns_helpers(monkeypatch, healthcheck_status="pass", git_status="pass", latest_map=latest)
     monkeypatch.setenv("DATABASE_URL", "dsn://")
     monkeypatch.setenv("GMAIL_USER", "bot@example.com")

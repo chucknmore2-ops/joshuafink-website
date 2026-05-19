@@ -644,6 +644,93 @@ def _icon(status: str) -> str:
     }.get(status, status.upper())
 
 
+def _remediation_for(result: CheckResult) -> Optional[str]:
+    """Map a failing check to a concrete first-action playbook line.
+
+    Returns None for PASS/GAP — only STALE / ERROR / MISCONFIG get tips.
+    Match is by case-insensitive substring on the check name so renames
+    of EXPECTED_JOBS don't silently break the map.
+    """
+    if not (result.is_alert or result.status == STATUS_MISCONFIG):
+        return None
+
+    name = result.name.lower()
+    detail = result.detail.lower()
+
+    # Per-failure-mode tips. Order matters — first match wins.
+    # DATABASE_URL-not-set MISCONFIG must come before the postgres-name
+    # match below, otherwise the postgres reachability tip wins for both.
+    if "database_url" in detail and "not set" in detail:
+        return (
+            "Set the DATABASE_URL secret in the GitHub repo: Settings → "
+            "Secrets and variables → Actions → New repository secret. Use "
+            "the DATABASE_PUBLIC_URL from Railway → Postgres → Variables."
+        )
+    if "postgres reachable" in name or "postgres" == name:
+        return (
+            "Railway → Postgres service → confirm running + reachable. "
+            "Verify DATABASE_URL secret at "
+            "github.com/chucknmore2-ops/joshuafink-website/settings/secrets/actions "
+            "uses the DATABASE_PUBLIC_URL (viaduct.proxy.rlwy.net), not the "
+            "internal one."
+        )
+    if "site uptime" in name:
+        return (
+            "Open vercel.com → joshuafink-website → check the latest "
+            "production deploy. If failed, redeploy. If the deploy is fine, "
+            "/api/healthcheck route may have regressed — read its log."
+        )
+    if "sync-listings" in name:
+        return (
+            "Actions tab → Sync Compass Listings → Run workflow. If repeated "
+            "runs fail, the Compass scraper selectors likely drifted — "
+            "see scripts/sync-all.sh."
+        )
+    if "autoposter-listing" in name:
+        return (
+            "Railway → services/autoposter → Cron Runs → Run Now. If the log "
+            "shows `(#200) pages_manage_posts` → paste the working Page token "
+            "from ~/.facebook_tokens on the Mac into Railway FB_PAGE_TOKEN. "
+            "If `DRY RUN — no API call made.` → Variables tab, set "
+            "AUTOPOSTER_DRY_RUN=0."
+        )
+    if "autoposter-stats" in name or "autoposter-testimonial" in name or \
+       "autoposter-tips" in name or "autoposter-engagement" in name:
+        service = name.split("(")[0].strip()  # "autoposter-stats (FB) — content-..." -> "autoposter-stats"
+        return (
+            f"Railway → {service} → Cron Runs → Run Now. Same FB_PAGE_TOKEN "
+            "issue if log shows `(#200) pages_manage_posts`. Otherwise check "
+            "the service is not paused."
+        )
+    if "vercel-cron-linkedin" in name:
+        return (
+            "Vercel → joshuafink-website → Deployments → Logs → filter "
+            "/api/cron/linkedin-post. 401 from LinkedIn means the access token "
+            "expired (60-day lifetime) — re-run https://joshuafink.com/api/linkedin/auth, "
+            "copy the new access_token into Vercel env LINKEDIN_ACCESS_TOKEN."
+        )
+    if "vercel-cron-gbp" in name:
+        return (
+            "Vercel → joshuafink-website → Deployments → Logs → filter "
+            "/api/cron/gbp-post. GBP refresh tokens shouldn't expire; if "
+            "Google returns 401 the OAuth grant was likely revoked — re-run "
+            "the OAuth flow per docs/automation.md."
+        )
+    return None  # No tip — generic alert, hand-investigate
+
+
+# Always-present link block to help the operator click directly into the
+# things they'll likely touch. Cheaper than chasing them down each time.
+ALERT_QUICK_LINKS: tuple[tuple[str, str], ...] = (
+    ("Railway project", "https://railway.com/project/4785ac44-c49b-4d1a-8537-40aba96e60fe"),
+    ("Vercel project", "https://vercel.com/chucknmore2-7257s-projects/joshuafink-website"),
+    ("/admin dashboard", "https://www.joshuafink.com/admin"),
+    ("Re-trigger healthcheck", "https://github.com/chucknmore2-ops/joshuafink-website/actions/workflows/morning_healthcheck.yml"),
+    ("GitHub secrets", "https://github.com/chucknmore2-ops/joshuafink-website/settings/secrets/actions"),
+    ("FB token debugger", "https://developers.facebook.com/tools/debug/accesstoken/"),
+)
+
+
 def format_text_report(
     results: list[CheckResult],
     *,
@@ -677,6 +764,23 @@ def format_text_report(
         for r in misconfigs:
             lines.append(f"  [{_icon(r.status)}] {r.name}")
             lines.append(f"        {r.detail}")
+        lines.append("")
+
+    # === HOW TO FIX === — only when we have something to fix.
+    # Each alert/misconfig gets a per-failure-mode tip; everything else gets
+    # the always-on quick links so you can click straight into the consoles.
+    actionable = [r for r in results if r.is_alert or r.status == STATUS_MISCONFIG]
+    if actionable:
+        lines.append("=== HOW TO FIX ===")
+        for r in actionable:
+            tip = _remediation_for(r)
+            if tip:
+                lines.append(f"  → {r.name}")
+                lines.append(f"    {tip}")
+        lines.append("")
+        lines.append("Quick links:")
+        for label, url in ALERT_QUICK_LINKS:
+            lines.append(f"  - {label}: {url}")
         lines.append("")
 
     lines.append("=== ALL CHECKS ===")
