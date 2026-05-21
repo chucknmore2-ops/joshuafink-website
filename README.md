@@ -22,12 +22,25 @@ A production-quality real estate agent website for **Joshua Fink**, Affiliate Br
 
 ### Install & Run Locally
 
-```bash
-# Install dependencies
-npm install
+For a fresh machine (or after a long absence), run the bootstrap:
 
-# Start dev server (hot reload)
-npm run dev
+```bash
+npm run setup
+```
+
+This verifies tooling, installs npm + Python deps, installs the Vercel CLI,
+links the project, and pulls `.env.local` from Vercel. Idempotent — safe to
+re-run anytime.
+
+For day-to-day development:
+
+```bash
+npm install          # only when package.json changes
+npm run dev          # hot-reload dev server on :3000
+npm run typecheck    # strict TypeScript pass
+npm run build        # production build (run before opening a PR)
+npm run lint         # ESLint
+npm run healthcheck  # run morning_healthcheck.py against prod DB (requires .env.local)
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
@@ -71,7 +84,27 @@ Vercel will assign you a free URL like `joshuafink-website.vercel.app` in ~90 se
 
 ### Environment Variables
 
-No environment variables are required for this project.
+Production secrets live in **Vercel → project Settings → Environment Variables**.
+The site renders fully without any env vars for the public, statically-generated
+routes — but the following features require them:
+
+| Feature | Env vars |
+| --- | --- |
+| Google Analytics | `NEXT_PUBLIC_GA_ID` |
+| Lead capture (`/api/contact`) — Slack + email + Monday | `SENDGRID_API_KEY`, `SLACK_BOT_TOKEN`, `MONDAY_API_TOKEN`, `MONDAY_BOARD_ID`, `N8N_WEBHOOK_BASE`, `CASH_OFFER_WEBHOOK_BASE`, `BUYER_LEAD_WEBHOOK_BASE` |
+| Cron routes (IndexNow, GBP, LinkedIn, Instagram) | `CRON_SECRET` |
+| Google Business Profile auto-poster | `GBP_CLIENT_ID`, `GBP_CLIENT_SECRET`, `GBP_REFRESH_TOKEN`, `GBP_ACCOUNT_ID`, `GBP_LOCATION_ID` |
+| LinkedIn auto-poster | `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET`, `LINKEDIN_REDIRECT_URI`, `LINKEDIN_ACCESS_TOKEN`, `LINKEDIN_AUTHOR_URN` |
+| Instagram auto-poster | `IG_BUSINESS_ACCOUNT_ID`, `IG_ACCESS_TOKEN` |
+| Morning healthcheck (`scripts/morning_healthcheck.py`) | `DATABASE_URL` |
+| Content engine (Phase 2A+) | `ANTHROPIC_API_KEY` |
+
+See [docs/automation.md](docs/automation.md) for the full env var list and the
+one-time OAuth setup for each social channel.
+
+For local development, run `npm run setup` (or `vercel env pull .env.local`)
+to pull a `.env.local` snapshot of the development-environment values. The
+file is gitignored — never commit it.
 
 ---
 

@@ -52,3 +52,4 @@ content_engine_cash_offer/output/drafts/
 
 # claude-mem auto-generated context dumps
 AGENTS.md
+.env*
