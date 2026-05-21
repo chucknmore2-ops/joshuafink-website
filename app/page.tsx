@@ -8,7 +8,7 @@ import { listings as featuredListings } from '@/lib/listings'
 export const metadata: Metadata = {
   title: 'Joshua Fink | Top Realtor in Middle Tennessee | Compass Real Estate',
   description:
-    'Joshua Fink — Affiliate Broker at Compass Real Estate serving Nashville, Brentwood, Franklin and all of Middle Tennessee. 17+ years of experience, 100+ homes sold annually.',
+    'Top-rated Compass agent serving Franklin, Brentwood, Spring Hill, Nashville, and all of Middle Tennessee. 17+ years, 100+ homes sold annually, 5★ rating from 218+ clients. Free valuation and off-market listing access.',
 }
 
 const stats = [

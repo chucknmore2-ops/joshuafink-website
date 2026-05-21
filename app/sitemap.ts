@@ -2,6 +2,8 @@ import type { MetadataRoute } from 'next'
 import { blogPosts } from '@/lib/blog'
 import { getAllSuburbSlugs } from '@/lib/suburbs'
 import { getAllNeighborhoodSlugs } from '@/lib/neighborhoods'
+import { allFeaturedPairSlugs } from '@/lib/compare'
+import { getAllSchoolSlugs } from '@/lib/schools'
 
 const SITE = 'https://www.joshuafink.com'
 
@@ -24,6 +26,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE}/neighborhoods`, priority: 0.85, changeFrequency: 'weekly', lastModified: now },
     { url: `${SITE}/reviews`, priority: 0.7, changeFrequency: 'monthly', lastModified: now },
     { url: `${SITE}/contact`, priority: 0.7, changeFrequency: 'monthly', lastModified: now },
+    { url: `${SITE}/market`, priority: 0.85, changeFrequency: 'weekly', lastModified: now },
+    { url: `${SITE}/compare`, priority: 0.8, changeFrequency: 'monthly', lastModified: now },
+    { url: `${SITE}/homes-near`, priority: 0.8, changeFrequency: 'monthly', lastModified: now },
+    { url: `${SITE}/guide/buyer`, priority: 0.7, changeFrequency: 'monthly', lastModified: now },
   ]
 
   // ── Blog posts — parse date strings with a defensive fallback ─────
@@ -62,5 +68,38 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: now,
   }))
 
-  return [...core, ...blog, ...sellSuburbs, ...buySuburbs, ...neighborhoodPages]
+  // ── Market reports (one per suburb) ───────────────────────────────
+  const marketReports: MetadataRoute.Sitemap = suburbSlugs.map((slug) => ({
+    url: `${SITE}/market/${slug}`,
+    priority: 0.85,
+    changeFrequency: 'weekly' as const,
+    lastModified: now,
+  }))
+
+  // ── Suburb head-to-head comparison pages (featured pairs only) ────
+  const comparePages: MetadataRoute.Sitemap = allFeaturedPairSlugs().map((slug) => ({
+    url: `${SITE}/compare/${slug}`,
+    priority: 0.75,
+    changeFrequency: 'monthly' as const,
+    lastModified: now,
+  }))
+
+  // ── Homes-near-[school] landing pages ─────────────────────────────
+  const schoolPages: MetadataRoute.Sitemap = getAllSchoolSlugs().map((slug) => ({
+    url: `${SITE}/homes-near/${slug}`,
+    priority: 0.8,
+    changeFrequency: 'monthly' as const,
+    lastModified: now,
+  }))
+
+  return [
+    ...core,
+    ...blog,
+    ...sellSuburbs,
+    ...buySuburbs,
+    ...neighborhoodPages,
+    ...marketReports,
+    ...comparePages,
+    ...schoolPages,
+  ]
 }

@@ -4,6 +4,7 @@ import './globals.css'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import MobileCallCTA from '@/components/MobileCallCTA'
+import { reviews, reviewStats } from '@/lib/reviews'
 
 // Self-host Google Fonts via next/font — eliminates the render-blocking
 // CSS @import, preloads the required subsets, and exposes CSS variables
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
     template: '%s | Joshua Fink | Compass Real Estate',
   },
   description:
-    'Joshua Fink is a top-producing Affiliate Broker at Compass Real Estate in Middle Tennessee. 17+ years of experience, 100+ homes sold annually, Diamond & Titan Award winner.',
+    'Top-rated Compass agent in Middle Tennessee — Franklin, Brentwood, Spring Hill, Nashville. 17+ years, 100+ homes sold annually, 5★ from 218+ clients. Diamond & Titan Award winner. Free valuation, off-market access.',
   metadataBase: new URL('https://joshuafink.com'),
   keywords: [
     'Joshua Fink',
@@ -129,6 +130,34 @@ export default function RootLayout({
                     'https://www.zillow.com/profile/JoshuaFinkGroup',
                   ],
                   priceRange: '$$',
+                  // AggregateRating sourced from Joshua's Zillow review profile
+                  // (218 reviews, 5.0 average as of latest sync). The reviewCount
+                  // includes off-site reviews collected on Zillow over 17+ years
+                  // of practice. Update lib/reviews.ts → reviewStats when the
+                  // Zillow total moves.
+                  aggregateRating: {
+                    '@type': 'AggregateRating',
+                    ratingValue: reviewStats.rating.toFixed(1),
+                    reviewCount: reviewStats.total,
+                    bestRating: '5',
+                    worstRating: '1',
+                  },
+                  // Surface up to 10 verbatim reviews so Google can pull stars +
+                  // review excerpts into the SERP knowledge panel. Full review
+                  // text + author lives on /reviews; we only emit excerpts here
+                  // to keep the JSON-LD payload reasonable.
+                  review: reviews.map((r) => ({
+                    '@type': 'Review',
+                    reviewRating: {
+                      '@type': 'Rating',
+                      ratingValue: r.rating,
+                      bestRating: 5,
+                    },
+                    author: { '@type': 'Person', name: r.reviewer },
+                    datePublished: r.date,
+                    reviewBody: r.text,
+                    itemReviewed: { '@id': 'https://joshuafink.com/#agent' },
+                  })),
                 },
                 {
                   '@type': 'Person',

@@ -108,11 +108,47 @@ export default function SellPage() {
     })),
   }
 
+  // HowTo schema for the 4-step "Sell with Joshua" process. Eligible for
+  // Google's HowTo rich result and AI-overview citations on queries like
+  // "how to sell a home in Tennessee" / "steps to sell house in Nashville".
+  const howToLd = {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: 'How to Sell a Home in Middle Tennessee with Joshua Fink',
+    description:
+      "A 4-step process to sell your home in Middle Tennessee: free comp-backed valuation, listing prep + marketing strategy, maximum buyer exposure, and negotiation through to close.",
+    totalTime: 'P30D',
+    estimatedCost: {
+      '@type': 'MonetaryAmount',
+      currency: 'USD',
+      value: '0',
+    },
+    supply: [
+      { '@type': 'HowToSupply', name: 'Recent home maintenance records (optional)' },
+      { '@type': 'HowToSupply', name: 'Mortgage payoff statement from your lender' },
+    ],
+    tool: [
+      { '@type': 'HowToTool', name: 'Compass MLS + agent-network distribution' },
+      { '@type': 'HowToTool', name: 'Professional listing photography and 3D tour' },
+    ],
+    step: steps.map((s, i) => ({
+      '@type': 'HowToStep',
+      position: i + 1,
+      name: s.title,
+      text: s.body,
+      url: `https://joshuafink.com/sell#step-${i + 1}`,
+    })),
+  }
+
   return (
     <div className="bg-white">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToLd) }}
       />
 
       {/* Hero */}
