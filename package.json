@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "healthcheck": "python3 scripts/morning_healthcheck.py",
+    "setup": "bash scripts/setup-machine.sh"
   },
   "dependencies": {
     "framer-motion": "^12.38.0",
