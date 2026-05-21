@@ -101,10 +101,11 @@ export default function Footer() {
             <ul className="space-y-2">
               {[
                 { href: '/listings', label: 'Active Listings' },
+                { href: '/guide/buyer', label: "Free Buyer's Guide" },
+                { href: '/homes-near', label: 'Homes by School Zone' },
                 { href: '/buy/franklin-tn', label: 'Buy in Franklin' },
                 { href: '/buy/brentwood-tn', label: 'Buy in Brentwood' },
                 { href: '/buy/spring-hill-tn', label: 'Buy in Spring Hill' },
-                { href: '/buy/nashville-tn', label: 'Buy in Nashville' },
                 { href: '/neighborhoods', label: 'Neighborhood Guides' },
               ].map((link) => (
                 <li key={link.href}>
@@ -155,6 +156,8 @@ export default function Footer() {
                 { href: '/about', label: 'About Joshua' },
                 { href: '/reviews', label: 'Client Reviews' },
                 { href: '/blog', label: 'Blog' },
+                { href: '/market', label: 'Market Reports' },
+                { href: '/compare', label: 'Suburb Comparisons' },
                 { href: '/contact', label: 'Contact' },
                 { href: '/privacy', label: 'Privacy Policy' },
               ].map((link) => (
