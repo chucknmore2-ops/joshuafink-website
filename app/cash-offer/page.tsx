@@ -3,6 +3,7 @@ import Link from 'next/link'
 import CashOfferForm from './CashOfferForm'
 import TrustBadges from '@/components/TrustBadges'
 import ReviewStrip from '@/components/ReviewStrip'
+import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 
 export const metadata: Metadata = {
   title: 'Sell My House Fast Nashville | Cash Offer in 24 Hours | Joshua Fink',
@@ -123,8 +124,16 @@ const sellerReviewFilter = (r: { transaction: string }) =>
   /\bsold\b|\bsell\b|bought and sold/i.test(r.transaction)
 
 export default function CashOfferPage() {
+  const breadcrumb = buildBreadcrumbSchema([
+    { name: 'Home', href: '/' },
+    { name: 'Cash Offer', href: '/cash-offer' },
+  ])
   return (
     <div className="bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
 
       {/* Hero */}
       <div className="bg-black text-white py-20 px-4 sm:px-6 lg:px-8">

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import ContactForm from './ContactForm'
+import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 
 export const metadata: Metadata = {
   title: 'Contact Joshua Fink',
@@ -8,8 +9,16 @@ export const metadata: Metadata = {
 }
 
 export default function ContactPage() {
+  const breadcrumb = buildBreadcrumbSchema([
+    { name: 'Home', href: '/' },
+    { name: 'Contact', href: '/contact' },
+  ])
   return (
     <div className="bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
       {/* Page header */}
       <div className="bg-black text-white py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">

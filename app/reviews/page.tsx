@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { reviews, reviewStats } from '@/lib/reviews'
+import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 
 export const metadata: Metadata = {
   title: 'Client Reviews | Joshua Fink | Compass Real Estate Nashville',
@@ -51,11 +52,20 @@ export default function ReviewsPage() {
     })),
   }
 
+  const breadcrumb = buildBreadcrumbSchema([
+    { name: 'Home', href: '/' },
+    { name: 'Reviews', href: '/reviews' },
+  ])
+
   return (
     <div className="bg-white">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewsSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
       {/* Header */}
       <div className="bg-black text-white py-16 px-4 sm:px-6 lg:px-8">
