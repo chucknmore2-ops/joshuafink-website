@@ -52,6 +52,9 @@ export const metadata: Metadata = {
       // RSS autodiscovery — lets Feedly / NetNewsWire / LinkedIn RSS
       // feeders find /blog/rss.xml without a manual pointer.
       'application/rss+xml': '/blog/rss.xml',
+      // JSON Feed v1.1 — modern alternative spec used by Feedbin, Reeder,
+      // NetNewsWire. Same posts as RSS, JSON-native parse path.
+      'application/feed+json': '/blog/feed.json',
     },
   },
 }
