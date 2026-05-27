@@ -218,8 +218,16 @@ export default function RootLayout({
           }}
         />
         {/* Meta Pixel: add real Pixel ID here when available */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:bg-black focus:text-white focus:px-4 focus:py-2 focus:rounded-sm focus:shadow-lg focus:outline focus:outline-2 focus:outline-[#C41E3A]"
+        >
+          Skip to main content
+        </a>
         <Navbar />
-        <main className="flex-1 pt-16 pb-16 md:pb-0">{children}</main>
+        <main id="main-content" tabIndex={-1} className="flex-1 pt-16 pb-16 md:pb-0">
+          {children}
+        </main>
         <Footer />
         <MobileCallCTA />
       </body>
