@@ -30,6 +30,59 @@ function isoReviewDate(human: string): string | undefined {
   return d.toISOString().slice(0, 10)
 }
 
+const faqEntries: { question: string; answer: string }[] = [
+  {
+    question: 'Who is Joshua Fink?',
+    answer:
+      'Joshua Fink is an Affiliate Broker with Compass Real Estate serving Nashville and Middle Tennessee. He has over 17 years of experience and personally sells 100+ homes per year across Davidson, Williamson, Maury, Rutherford, Sumner, and Wilson counties.',
+  },
+  {
+    question: 'How long has Joshua Fink been a real estate agent?',
+    answer:
+      'Joshua has been a licensed real estate professional in Tennessee for over 17 years, holding TREC license #351484.',
+  },
+  {
+    question: 'What awards has Joshua Fink won?',
+    answer:
+      'Joshua has been honored with the Diamond Award and Titan Award from Compass Real Estate for top-producer performance, and has been named Top Producing Agent of the Year in recognition of his consistent sales results.',
+  },
+  {
+    question: 'Where does Joshua Fink sell homes?',
+    answer:
+      'Joshua works across Middle Tennessee — including Nashville, Franklin, Brentwood, Spring Hill, Nolensville, Thompson’s Station, Murfreesboro, Columbia, Mount Juliet, Hendersonville, and Smyrna.',
+  },
+  {
+    question: 'Does Joshua Fink work with both buyers and sellers?',
+    answer:
+      "Yes. Joshua is an experienced Buyer's Agent and Listing Agent, and also specializes in relocation, short sales, and landlord representation.",
+  },
+  {
+    question: 'What is the best way to reach Joshua Fink?',
+    answer:
+      'Call or text 615-551-2727, email joshua@joshuafink.com, or message him through joshuafink.com/contact for the fastest response.',
+  },
+  {
+    question: 'Does Joshua Fink donate to charity?',
+    answer:
+      "Yes. Joshua donates a portion of every commission to the Children's Miracle Network and local Tennessee charity partners each quarter — when you work with Josh, your transaction supports kids and families across Middle Tennessee.",
+  },
+]
+
+function buildFaqSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqEntries.map((entry) => ({
+      '@type': 'Question',
+      name: entry.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: entry.answer,
+      },
+    })),
+  }
+}
+
 function buildProfileSchema() {
   const reviewNodes = reviews.slice(0, 10).map((r) => ({
     '@type': 'Review',
@@ -70,11 +123,16 @@ function buildProfileSchema() {
 
 export default function AboutPage() {
   const schema = buildProfileSchema()
+  const faqSchema = buildFaqSchema()
   return (
     <div className="bg-white">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
       {/* Page header */}
       <div className="bg-black text-white py-16 px-4 sm:px-6 lg:px-8">
@@ -233,6 +291,26 @@ export default function AboutPage() {
               </p>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* FAQ section */}
+      <div className="bg-[#F5F5F5] py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
+            Frequently Asked Questions
+          </p>
+          <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-black mb-10">
+            About Joshua Fink
+          </h2>
+          <dl className="divide-y divide-[#E0E0E0] border-t border-[#E0E0E0]">
+            {faqEntries.map((entry) => (
+              <div key={entry.question} className="py-6">
+                <dt className="text-lg font-bold text-black mb-2">{entry.question}</dt>
+                <dd className="text-[#333] leading-relaxed">{entry.answer}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </div>
     </div>
