@@ -98,16 +98,16 @@ Reach out anytime: [615-551-2727](tel:6155512727) or [joshua@joshuafink.com](mai
   },
   {
     slug: "nashville-real-estate-market-2025",
-    title: "Nashville Real Estate Market: What Buyers and Sellers Need to Know in 2025",
+    title: "Nashville Real Estate Market: What Buyers and Sellers Need to Know in 2026",
     date: "March 15, 2026",
     excerpt:
-      "The Nashville real estate market continues to evolve in 2025. Whether you're buying your first home or selling a long-held property, here's what you need to know to navigate today's market with confidence.",
+      "The Nashville real estate market continues to evolve in 2026. Whether you're buying your first home or selling a long-held property, here's what you need to know to navigate today's market with confidence.",
     content: `
-The Nashville real estate market has always been one of the most dynamic in the country, and 2025 is no exception. After a few years of rapid price appreciation and historically low inventory, the market is finding a new equilibrium — one that presents real opportunities for both buyers and sellers who know what to look for.
+The Nashville real estate market has always been one of the most dynamic in the country, and 2026 is no exception. After a few years of rapid price appreciation and historically low inventory, the market is finding a new equilibrium — one that presents real opportunities for both buyers and sellers who know what to look for.
 
 ## The Current State of the Market
 
-As we move through 2025, Middle Tennessee continues to attract a steady stream of relocating families, remote workers, and corporate expansions. Nashville's combination of no state income tax, a thriving job market, and genuine Southern charm keeps demand strong even as mortgage rates have stabilized at levels higher than the historic lows of 2020–2021.
+As we move through 2026, Middle Tennessee continues to attract a steady stream of relocating families, remote workers, and corporate expansions. Nashville's combination of no state income tax, a thriving job market, and genuine Southern charm keeps demand strong even as mortgage rates have stabilized at levels higher than the historic lows of 2020–2021.
 
 Inventory has improved slightly compared to the frenzied pace of 2021–2022, but we're still in a seller's market in most desirable neighborhoods. [Brentwood](/buy/brentwood-tn), [Franklin](/buy/franklin-tn), and the 37206 corridor remain highly competitive, with well-priced homes often receiving multiple offers within the first weekend.
 
@@ -131,7 +131,7 @@ Inventory has improved slightly compared to the frenzied pace of 2021–2022, bu
 
 **Concessions are back.** In today's market, offering closing cost assistance or a rate buydown can be the difference between getting your deal closed and watching it fall apart. Build a small buffer into your pricing strategy to accommodate reasonable buyer requests.
 
-## The Outlook for the Rest of 2025
+## The Outlook for the Rest of 2026
 
 Most indicators point toward continued stability with modest appreciation in well-located areas. Nashville's fundamentals — job growth, population inflow, and quality of life — remain strong. The market isn't going backward; it's just normalizing after an extraordinary run.
 
@@ -496,9 +496,9 @@ I've been helping buyers and sellers in Brentwood and throughout Middle Tennesse
   },
   {
     slug: "spring-hill-tn-homes-for-sale",
-    title: "Spring Hill TN Homes for Sale: Your Complete 2025 Guide",
+    title: "Spring Hill TN Homes for Sale: Your Complete 2026 Guide",
     date: "March 22, 2026",
-    excerpt: "Spring Hill is one of Middle Tennessee's fastest-growing cities. Here's everything you need to know about buying a home in Spring Hill, TN in 2025.",
+    excerpt: "Spring Hill is one of Middle Tennessee's fastest-growing cities. Here's everything you need to know about buying a home in Spring Hill, TN in 2026.",
     content: `
 [Spring Hill](/buy/spring-hill-tn), Tennessee has transformed from a quiet bedroom community into one of the most sought-after places to live in Middle Tennessee. With major employers, top-rated schools, and a small-town feel just 30 miles south of Nashville, it's no surprise that Spring Hill consistently ranks among the fastest-growing cities in the state.
 
@@ -512,7 +512,7 @@ I've been helping buyers and sellers in Brentwood and throughout Middle Tennesse
 
 ## What Are Home Prices Like in Spring Hill?
 
-In 2025, Spring Hill home prices typically range from the mid-$300s for starter homes to $700K+ for larger new construction. The sweet spot for most buyers is $400,000–$550,000, where you'll find 3–4 bedroom homes with generous square footage and newer builds.
+In 2026, Spring Hill home prices typically range from the mid-$300s for starter homes to $700K+ for larger new construction. The sweet spot for most buyers is $400,000–$550,000, where you'll find 3–4 bedroom homes with generous square footage and newer builds.
 
 Compared to Brentwood or Franklin, Spring Hill offers significantly more house for your money — often 30–40% more square footage at the same price point.
 
