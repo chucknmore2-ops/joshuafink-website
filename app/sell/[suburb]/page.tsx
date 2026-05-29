@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getSuburb, getAllSuburbSlugs } from '@/lib/suburbs'
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
+import SuburbLeadForm from '@/components/SuburbLeadForm'
 
 type Props = {
   params: Promise<{ suburb: string }>
@@ -45,7 +46,6 @@ export default async function SuburbPage({ params }: Props) {
   const suburb = getSuburb(slug)
   if (!suburb) notFound()
 
-  const formspreeUrl = '/api/contact'
   const faqs = suburb.faqs
   const cityGuides = getNeighborhoodsByCitySlug(slug)
 
@@ -385,7 +385,16 @@ export default async function SuburbPage({ params }: Props) {
               <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-6">
                 Tell Us About Your {suburb.name} Home
               </p>
-              <form action={formspreeUrl} method="POST" className="space-y-5">
+              <SuburbLeadForm
+                successTitle="Request Sent!"
+                successMessage={
+                  <>
+                    Joshua will reach out within a few hours with your free {suburb.name} valuation. For faster response, call{' '}
+                    <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                  </>
+                }
+                resetLabel="Submit Another"
+              >
                 {/* Hidden fields */}
                 <input type="hidden" name="lead_type" value="sell" />
                 <input type="hidden" name="subject" value="sell" />
@@ -498,7 +507,7 @@ export default async function SuburbPage({ params }: Props) {
                 >
                   Get My Free {suburb.name} Valuation →
                 </button>
-              </form>
+              </SuburbLeadForm>
             </div>
           </div>
         </div>
