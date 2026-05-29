@@ -56,7 +56,7 @@ export default function LinksPage() {
         <div className="flex flex-col items-center mb-8">
           <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-white mb-4 shadow-xl">
             <Image
-              src="/headshot.jpg"
+              src="/headshot.webp"
               alt="Joshua Fink — Compass Real Estate"
               fill
               className="object-cover"

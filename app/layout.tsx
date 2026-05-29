@@ -101,7 +101,7 @@ export default function RootLayout({
                   url: 'https://joshuafink.com',
                   telephone: '+1-615-551-2727',
                   email: 'joshua@joshuafink.com',
-                  image: 'https://joshuafink.com/headshot.jpg',
+                  image: 'https://joshuafink.com/headshot.webp',
                   logo: 'https://joshuafink.com/compass-logo-black.png',
                   address: {
                     '@type': 'PostalAddress',
@@ -171,7 +171,7 @@ export default function RootLayout({
                   url: 'https://joshuafink.com/about',
                   telephone: '+1-615-551-2727',
                   email: 'joshua@joshuafink.com',
-                  image: 'https://joshuafink.com/headshot.jpg',
+                  image: 'https://joshuafink.com/headshot.webp',
                   hasCredential: [
                     {
                       '@type': 'EducationalOccupationalCredential',

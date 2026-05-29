@@ -16,21 +16,21 @@ export type HeroSlide = {
 
 export const heroSlides: HeroSlide[] = [
   {
-    imageUrl: '/hero/9209-duncaster.png',
+    imageUrl: '/hero/9209-duncaster.webp',
     alt: 'Featured Compass listing — 9209 Duncaster Court, Brentwood TN',
     status: 'Featured',
     cityShort: 'Brentwood, TN',
     href: 'https://www.compass.com/homedetails/9209-Duncaster-Ct-Brentwood-TN-37027/TLPVE_pid/',
   },
   {
-    imageUrl: '/hero/1901-new-bristol.png',
+    imageUrl: '/hero/1901-new-bristol.webp',
     alt: 'Coming-soon home — 1901 New Bristol, listed by Joshua Fink Group',
     status: 'Coming Soon',
     cityShort: 'Middle Tennessee',
     href: '/contact?subject=1901+New+Bristol+(Coming+Soon)',
   },
   {
-    imageUrl: '/hero/9560-dresden.png',
+    imageUrl: '/hero/9560-dresden.webp',
     alt: 'Featured Compass listing — 9560 Dresden Square, Brentwood TN',
     status: 'Featured',
     cityShort: 'Brentwood, TN',
