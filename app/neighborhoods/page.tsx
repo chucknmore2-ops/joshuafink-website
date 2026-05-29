@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description:
     'In-depth neighborhood guides for the most-searched subdivisions in Franklin, Brentwood, Spring Hill, Nolensville, and the broader Middle Tennessee market. Schools, HOA, amenities, price ranges — and live listings on Compass.',
   alternates: {
-    canonical: 'https://www.joshuafink.com/neighborhoods',
+    canonical: 'https://joshuafink.com/neighborhoods',
   },
 }
 
@@ -25,8 +25,8 @@ export default function NeighborhoodsIndexPage() {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.joshuafink.com' },
-      { '@type': 'ListItem', position: 2, name: 'Neighborhoods', item: 'https://www.joshuafink.com/neighborhoods' },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://joshuafink.com' },
+      { '@type': 'ListItem', position: 2, name: 'Neighborhoods', item: 'https://joshuafink.com/neighborhoods' },
     ],
   }
 
