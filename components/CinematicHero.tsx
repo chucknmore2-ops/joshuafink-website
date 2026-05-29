@@ -36,18 +36,6 @@ export default function CinematicHero({ slides }: { slides: HeroSlide[] }) {
       aria-roledescription="carousel"
       aria-label="Featured Middle Tennessee properties"
     >
-      {/* Preload hint for first slide (improves LCP) */}
-      {slides[0] && (
-        // eslint-disable-next-line @next/next/no-head-element
-        <link
-          rel="preload"
-          as="image"
-          href={slides[0].imageUrl}
-          // @ts-expect-error fetchpriority is valid but not yet in React types
-          fetchpriority="high"
-        />
-      )}
-
       {/* Background stack — crossfading hero imagery */}
       <div className="absolute inset-0 z-0">
         <AnimatePresence mode="sync">
