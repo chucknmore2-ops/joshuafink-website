@@ -55,7 +55,7 @@ export default async function BuySuburbPage({ params }: Props) {
         url: 'https://joshuafink.com',
         telephone: '+16155512727',
         email: 'joshua@joshuafink.com',
-        image: 'https://joshuafink.com/headshot.jpg',
+        image: 'https://joshuafink.com/headshot.webp',
         description: `Joshua Fink is a buyer&apos;s agent at Compass Real Estate specializing in ${suburb.displayName} home purchases. Local market expert, off-market access, proven negotiator.`,
         areaServed: {
           '@type': 'City',

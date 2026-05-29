@@ -163,7 +163,7 @@ export default function AboutPage() {
           <div className="lg:col-span-2">
             <div className="relative aspect-[3/4] bg-[#E8E8E8] overflow-hidden">
               <Image
-                src="/headshot.jpg"
+                src="/headshot.webp"
                 alt="Joshua Fink — Affiliate Broker at Compass Real Estate"
                 fill
                 className="object-cover object-top"
