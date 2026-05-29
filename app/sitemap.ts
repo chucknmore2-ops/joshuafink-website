@@ -5,7 +5,7 @@ import { getAllNeighborhoodSlugs } from '@/lib/neighborhoods'
 import { allFeaturedPairSlugs } from '@/lib/compare'
 import { getAllSchoolSlugs } from '@/lib/schools'
 
-const SITE = 'https://www.joshuafink.com'
+const SITE = 'https://joshuafink.com'
 
 // Dynamic sitemap — Next.js App Router serves this at /sitemap.xml automatically
 // and re-generates on every deploy. Replaces the previous static

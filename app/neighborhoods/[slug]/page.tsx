@@ -36,12 +36,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       'Compass Real Estate',
     ],
     alternates: {
-      canonical: `https://www.joshuafink.com/neighborhoods/${n.slug}`,
+      canonical: `https://joshuafink.com/neighborhoods/${n.slug}`,
     },
     openGraph: {
       title: n.metaTitle,
       description: n.metaDescription,
-      url: `https://www.joshuafink.com/neighborhoods/${n.slug}`,
+      url: `https://joshuafink.com/neighborhoods/${n.slug}`,
       siteName: 'Joshua Fink Group',
       type: 'article',
     },
@@ -79,10 +79,10 @@ export default async function NeighborhoodPage({ params }: Props) {
     '@context': 'https://schema.org',
     '@type': 'RealEstateAgent',
     name: 'Joshua Fink — Compass Real Estate',
-    url: 'https://www.joshuafink.com',
+    url: 'https://joshuafink.com',
     telephone: '+16155512727',
     email: 'joshua@joshuafink.com',
-    image: 'https://www.joshuafink.com/headshot.jpg',
+    image: 'https://joshuafink.com/headshot.jpg',
     description: `Joshua Fink is a Compass Real Estate agent serving ${n.name} in ${n.city}, ${n.schemaState} and the broader Middle Tennessee market.`,
     areaServed: {
       '@type': 'Place',
@@ -104,13 +104,13 @@ export default async function NeighborhoodPage({ params }: Props) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.joshuafink.com' },
-      { '@type': 'ListItem', position: 2, name: 'Neighborhoods', item: 'https://www.joshuafink.com/neighborhoods' },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://joshuafink.com' },
+      { '@type': 'ListItem', position: 2, name: 'Neighborhoods', item: 'https://joshuafink.com/neighborhoods' },
       {
         '@type': 'ListItem',
         position: 3,
         name: `${n.name}, ${n.city}`,
-        item: `https://www.joshuafink.com/neighborhoods/${n.slug}`,
+        item: `https://joshuafink.com/neighborhoods/${n.slug}`,
       },
     ],
   }
