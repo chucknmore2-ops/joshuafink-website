@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getSuburb, getAllSuburbSlugs } from '@/lib/suburbs'
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
+import SuburbLeadForm from '@/components/SuburbLeadForm'
 
 type Props = {
   params: Promise<{ suburb: string }>
@@ -421,10 +422,15 @@ export default async function BuySuburbPage({ params }: Props) {
               <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-6">
                 Tell Joshua What You&apos;re Looking For
               </p>
-              <form
-                action="/api/contact"
-                method="POST"
-                className="space-y-5"
+              <SuburbLeadForm
+                successTitle="Request Sent!"
+                successMessage={
+                  <>
+                    Joshua will reach out same-day with {suburb.name} listings that fit. For anything urgent, call{' '}
+                    <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                  </>
+                }
+                resetLabel="Submit Another"
               >
                 <input type="hidden" name="lead_type" value="buyer" />
                 <input type="hidden" name="suburb" value={suburb.name} />
@@ -510,7 +516,7 @@ export default async function BuySuburbPage({ params }: Props) {
                   style={{ backgroundColor: '#C41E3A' }}>
                   Start My {suburb.name} Home Search →
                 </button>
-              </form>
+              </SuburbLeadForm>
             </div>
           </div>
         </div>
