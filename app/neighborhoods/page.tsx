@@ -91,12 +91,12 @@ export default function NeighborhoodsIndexPage() {
               More Neighborhoods Coming
             </p>
             <h2 className="text-2xl font-black text-black tracking-tight mb-3">
-              New Guides Published Twice a Week
+              Don't See Your Neighborhood Yet?
             </h2>
             <p className="text-sm text-[#444] max-w-2xl mx-auto mb-6">
-              Joshua publishes new subdivision and neighborhood guides on a steady cadence —
-              covering top-searched communities across Franklin, Brentwood, Spring Hill,
-              Nolensville, Nashville, and beyond.
+              New subdivision and neighborhood guides are added regularly — covering
+              top-searched communities across Franklin, Brentwood, Spring Hill, Nolensville,
+              Nashville, and beyond. Tell Joshua which one you want next.
             </p>
             <Link
               href="/contact"
