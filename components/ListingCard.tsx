@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import type { Listing } from '@/lib/listings'
+import { withUtm } from '@/lib/utm'
 
 function formatPrice(price: number): string {
   if (price >= 1000000) {
@@ -108,7 +109,12 @@ export default function ListingCard({ listing }: Props) {
         )}
 
         <a
-          href={listing.compassUrl}
+          href={withUtm(listing.compassUrl, {
+            source: 'joshuafink',
+            medium: 'referral',
+            campaign: 'listing-card',
+            content: listing.address.toLowerCase().replace(/[^\w]+/g, '-'),
+          })}
           target="_blank"
           rel="noopener noreferrer"
           className="mt-auto text-center text-sm font-semibold border border-black text-black py-2.5 rounded-full tracking-wide transition-all duration-200 hover:bg-black hover:text-white"

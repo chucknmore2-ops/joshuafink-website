@@ -21,15 +21,17 @@ export interface UtmParams {
 }
 
 export function withUtm(url: string, utm: UtmParams): string {
-  // External URLs (e.g. compass.com listing pages) — return as-is. UTMs
-  // would only confuse third-party analytics.
+  // Tag joshuafink.com URLs (for our own GA4) and compass.com URLs (so
+  // Compass-side analytics can attribute joshuafink.com → Compass funnel
+  // traffic for neighborhood/listing CTAs). Other external URLs are
+  // returned as-is to avoid polluting third-party analytics we don't own.
   let parsed: URL
   try {
     parsed = new URL(url)
   } catch {
     return url // not a valid URL — caller error, don't decorate
   }
-  if (!/(^|\.)joshuafink\.com$/i.test(parsed.hostname)) {
+  if (!/(^|\.)(joshuafink|compass)\.com$/i.test(parsed.hostname)) {
     return url
   }
 

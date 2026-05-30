@@ -7,6 +7,7 @@ import {
   getRelatedNeighborhoods,
 } from '@/lib/neighborhoods'
 import { getSuburb } from '@/lib/suburbs'
+import { withUtm } from '@/lib/utm'
 
 type Props = {
   params: Promise<{ slug: string }>
@@ -54,7 +55,15 @@ export default async function NeighborhoodPage({ params }: Props) {
   if (!n) notFound()
 
   const parentSuburb = getSuburb(n.citySlug)
-  const compassUrl = n.compassSearchUrl || 'https://www.compass.com/agents/joshua-fink/'
+  const compassUrl = withUtm(
+    n.compassSearchUrl || 'https://www.compass.com/agents/joshua-fink/',
+    {
+      source: 'joshuafink',
+      medium: 'referral',
+      campaign: 'neighborhood-guide',
+      content: n.slug,
+    }
+  )
   const related = getRelatedNeighborhoods(n.slug, 3)
 
   const placeSchema = {
