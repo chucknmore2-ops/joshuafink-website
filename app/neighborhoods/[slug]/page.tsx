@@ -195,6 +195,35 @@ export default async function NeighborhoodPage({ params }: Props) {
                 </Link>
               </div>
             </div>
+
+            {parentSuburb && (
+              <>
+                <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mt-10 mb-6">
+                  {parentSuburb.name} Market — 2026
+                </p>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                  <div className="bg-white p-6 border border-[#E8E8E8]">
+                    <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mb-2">Median Price</p>
+                    <p className="text-xl font-black text-black">{parentSuburb.medianPrice}</p>
+                  </div>
+                  <div className="bg-white p-6 border border-[#E8E8E8]">
+                    <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mb-2">Avg Days on Market</p>
+                    <p className="text-xl font-black text-black">{parentSuburb.avgDaysOnMarket}</p>
+                  </div>
+                  <div className="bg-white p-6 border border-[#E8E8E8]">
+                    <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mb-2">Price / Sq Ft</p>
+                    <p className="text-xl font-black text-black">${parentSuburb.pricePerSqft}</p>
+                  </div>
+                  <div className="bg-white p-6 border border-[#E8E8E8]">
+                    <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mb-2">YoY Change</p>
+                    <p className="text-xl font-black text-black">{parentSuburb.yoyChange}</p>
+                  </div>
+                </div>
+                <p className="text-xs text-[#7B7B7B] mt-3">
+                  Source: Joshua Fink / Compass market data for {parentSuburb.displayName}. {n.name} sits within this market.
+                </p>
+              </>
+            )}
           </div>
         </div>
 
