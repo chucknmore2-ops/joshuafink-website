@@ -179,14 +179,59 @@ export default function HomePage() {
               ['smyrna-tn', 'Smyrna, TN'],
               ['la-vergne-tn', 'La Vergne, TN'],
             ].map(([slug, label]) => (
-              <Link
+              <div
                 key={slug}
-                href={`/buy/${slug}`}
-                className="rounded-2xl border border-neutral-200 bg-white px-5 py-4 text-sm font-semibold text-black transition-all duration-200 hover:bg-black hover:text-white hover:border-black"
+                className="rounded-2xl border border-neutral-200 bg-white px-5 py-4 text-sm"
               >
-                {label}
-              </Link>
+                <Link
+                  href={`/buy/${slug}`}
+                  className="block font-semibold text-black hover:underline"
+                >
+                  {label}
+                </Link>
+                <Link
+                  href="/neighborhoods"
+                  className="mt-1 block text-xs text-neutral-500 hover:text-black"
+                >
+                  Neighborhood guides →
+                </Link>
+              </div>
             ))}
+          </div>
+
+          <div className="mt-10 pt-8 border-t border-neutral-200">
+            <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-4">
+              Featured Neighborhood Guides
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {[
+                ['westhaven-franklin-tn', 'Westhaven (Franklin)'],
+                ['mckays-mill-franklin-tn', "McKay's Mill (Franklin)"],
+                ['fieldstone-farms-franklin-tn', 'Fieldstone Farms (Franklin)'],
+                ['berry-farms-franklin-tn', 'Berry Farms (Franklin)'],
+                ['highlands-at-ladd-park-franklin-tn', 'The Highlands at Ladd Park (Franklin)'],
+                ['governors-club-brentwood-tn', 'Governors Club (Brentwood)'],
+                ['annandale-brentwood-tn', 'Annandale (Brentwood)'],
+                ['raintree-forest-brentwood-tn', 'Raintree Forest (Brentwood)'],
+                ['burberry-glen-nolensville-tn', 'Burberry Glen (Nolensville)'],
+                ['bent-creek-nolensville-tn', 'Bent Creek (Nolensville)'],
+                ['tollgate-village-thompsons-station-tn', "Tollgate Village (Thompson's Station)"],
+              ].map(([slug, label]) => (
+                <Link
+                  key={slug}
+                  href={`/neighborhoods/${slug}`}
+                  className="rounded-full border border-neutral-200 bg-white px-4 py-2 text-xs font-semibold text-black transition-colors hover:bg-black hover:text-white hover:border-black"
+                >
+                  {label}
+                </Link>
+              ))}
+              <Link
+                href="/neighborhoods"
+                className="rounded-full border border-black bg-black px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-white hover:text-black"
+              >
+                All neighborhood guides →
+              </Link>
+            </div>
           </div>
         </div>
       </section>
