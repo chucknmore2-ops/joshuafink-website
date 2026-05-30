@@ -72,6 +72,12 @@ export default function ListingsPage() {
             >
               Call 615-551-2727
             </a>
+            <a
+              href="sms:+16155512727"
+              className="inline-flex items-center justify-center border-2 border-black text-black text-sm font-bold px-8 py-4 tracking-wide hover:bg-black hover:text-white transition-colors"
+            >
+              Text 615-551-2727
+            </a>
           </div>
         </div>
 
