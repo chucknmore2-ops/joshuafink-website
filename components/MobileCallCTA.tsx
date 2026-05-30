@@ -17,6 +17,14 @@ export default function MobileCallCTA() {
   const pathname = usePathname()
   if (pathname?.startsWith('/admin')) return null
 
+  // On buyer-intent pages (listings, buy, neighborhoods), texting converts
+  // better than a cash-offer pitch, so swap the secondary CTA for an SMS link.
+  const preferText =
+    pathname?.startsWith('/listings') ||
+    pathname?.startsWith('/buy') ||
+    pathname?.startsWith('/neighborhoods') ||
+    pathname?.startsWith('/homes-near')
+
   return (
     <div
       className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-neutral-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]"
@@ -41,14 +49,34 @@ export default function MobileCallCTA() {
           </svg>
           Call Joshua · {TEL_DISPLAY}
         </a>
-        <Link
-          href="/cash-offer"
-          className="flex items-center justify-center px-4 py-3.5 border-l border-neutral-200 bg-brand-crimson text-white text-sm font-bold tracking-wide active:scale-[0.98] transition-transform"
-          aria-label="Get a cash offer"
-          data-cta="mobile-sticky-cash"
-        >
-          Cash Offer
-        </Link>
+        {preferText ? (
+          <a
+            href={`sms:+1${TEL}`}
+            className="flex items-center justify-center gap-1.5 px-4 py-3.5 border-l border-neutral-200 bg-brand-crimson text-white text-sm font-bold tracking-wide active:scale-[0.98] transition-transform"
+            aria-label={`Text Joshua Fink at ${TEL_DISPLAY}`}
+            data-cta="mobile-sticky-text"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="w-4 h-4"
+              aria-hidden="true"
+            >
+              <path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8l-4 4V6a2 2 0 0 1 2-2zm3 6h2v2H7v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2z" />
+            </svg>
+            Text Joshua
+          </a>
+        ) : (
+          <Link
+            href="/cash-offer"
+            className="flex items-center justify-center px-4 py-3.5 border-l border-neutral-200 bg-brand-crimson text-white text-sm font-bold tracking-wide active:scale-[0.98] transition-transform"
+            aria-label="Get a cash offer"
+            data-cta="mobile-sticky-cash"
+          >
+            Cash Offer
+          </Link>
+        )}
       </div>
     </div>
   )
