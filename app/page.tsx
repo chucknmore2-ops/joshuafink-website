@@ -4,6 +4,7 @@ import ListingCard from '@/components/ListingCard'
 import CinematicHero from '@/components/CinematicHero'
 import { heroSlides } from '@/lib/hero-slides'
 import { listings as featuredListings } from '@/lib/listings'
+import { buildListingItemList } from '@/lib/listing-schema'
 
 export const metadata: Metadata = {
   title: 'Joshua Fink | Top Realtor in Middle Tennessee | Compass Real Estate',
@@ -18,8 +19,17 @@ const stats = [
 ]
 
 export default function HomePage() {
+  const featuredItemList = buildListingItemList(
+    featuredListings,
+    'Featured Homes — Joshua Fink, Compass Real Estate'
+  )
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(featuredItemList) }}
+      />
       {/* ── HERO ── cinematic, curated showcase deck (decoupled from active listings) */}
       <CinematicHero slides={heroSlides} />
 

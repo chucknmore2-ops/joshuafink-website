@@ -2,7 +2,6 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import type { HeroSlide } from '@/lib/hero-slides'
 import TrustBadges from '@/components/TrustBadges'
@@ -12,17 +11,20 @@ const SLIDE_MS = 6500
 export default function CinematicHero({ slides }: { slides: HeroSlide[] }) {
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
-  const reduceMotion = useReducedMotion()
 
   useEffect(() => {
     setIndex(0)
   }, [slides.length])
 
   useEffect(() => {
-    if (reduceMotion || paused || slides.length <= 1) return
+    if (paused || slides.length <= 1) return
+    // Respect reduced-motion preference: don't auto-advance.
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return
+    }
     const id = setInterval(() => setIndex((i) => (i + 1) % slides.length), SLIDE_MS)
     return () => clearInterval(id)
-  }, [slides.length, reduceMotion, paused])
+  }, [slides.length, paused])
 
   const active = slides[index]
 
@@ -36,31 +38,28 @@ export default function CinematicHero({ slides }: { slides: HeroSlide[] }) {
       aria-roledescription="carousel"
       aria-label="Featured Middle Tennessee properties"
     >
-      {/* Background stack — crossfading hero imagery */}
+      {/* Background stack — CSS opacity crossfade between hero images */}
       <div className="absolute inset-0 z-0">
-        <AnimatePresence mode="sync">
-          {active && (
-            <motion.div
-              key={active.imageUrl}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: reduceMotion ? 0 : 1.4, ease: [0.2, 0.8, 0.2, 1] }}
-              className="absolute inset-0"
-            >
-              <div className={reduceMotion ? 'w-full h-full' : 'w-full h-full animate-ken-burns'}>
-                <Image
-                  src={active.imageUrl}
-                  alt={active.alt}
-                  fill
-                  priority={index === 0}
-                  sizes="100vw"
-                  className="object-cover"
-                />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {slides.map((slide, i) => (
+          <div
+            key={slide.imageUrl}
+            className={`absolute inset-0 transition-opacity duration-[1400ms] ease-editorial motion-reduce:transition-none ${
+              i === index ? 'opacity-100' : 'opacity-0'
+            }`}
+            aria-hidden={i === index ? undefined : 'true'}
+          >
+            <div className="w-full h-full animate-ken-burns motion-reduce:animate-none">
+              <Image
+                src={slide.imageUrl}
+                alt={slide.alt}
+                fill
+                priority={i === 0}
+                sizes="100vw"
+                className="object-cover"
+              />
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Cinematic gradient — stronger scrim for WCAG contrast over variable imagery */}
@@ -69,52 +68,39 @@ export default function CinematicHero({ slides }: { slides: HeroSlide[] }) {
 
       {/* Content */}
       <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 sm:pb-20 pt-32">
-        <motion.p
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: reduceMotion ? 0 : 0.6, delay: 0.1 }}
-          className="text-white font-semibold text-xs sm:text-sm tracking-[0.4em] uppercase mb-5 sm:mb-6 text-white/85"
+        <p
+          className="text-white font-semibold text-xs sm:text-sm tracking-[0.4em] uppercase mb-5 sm:mb-6 text-white/85 animate-fade-in motion-reduce:animate-none"
+          style={{ animationDelay: '100ms' }}
         >
           Compass · Middle Tennessee
-        </motion.p>
+        </p>
 
-        <motion.h1
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: reduceMotion ? 0 : 0.8, delay: 0.2, ease: [0.2, 0.8, 0.2, 1] }}
-          className="font-display text-white leading-[0.95] tracking-tight mb-5 sm:mb-7 max-w-4xl"
+        <h1
+          className="font-display text-white leading-[0.95] tracking-tight mb-5 sm:mb-7 max-w-4xl animate-fade-in-up motion-reduce:animate-none"
+          style={{ animationDelay: '200ms' }}
         >
           <span className="block text-5xl sm:text-7xl lg:text-8xl font-black">Live Middle</span>
           <span className="block text-5xl sm:text-7xl lg:text-8xl font-black italic text-white/95">
             Tennessee.
           </span>
-        </motion.h1>
+        </h1>
 
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: reduceMotion ? 0 : 0.7, delay: 0.35 }}
-          className="text-lg sm:text-xl text-white/90 font-light leading-relaxed max-w-xl mb-10"
+        <p
+          className="text-lg sm:text-xl text-white/90 font-light leading-relaxed max-w-xl mb-10 animate-fade-in-up motion-reduce:animate-none"
+          style={{ animationDelay: '350ms' }}
         >
           Joshua Fink — Affiliate Broker at Compass Real Estate. <span className="font-semibold text-white">17+ years</span>,{' '}
           <span className="font-semibold text-white">100+ homes sold annually</span>, and a home-field
           advantage in every Nashville suburb.
-        </motion.p>
+        </p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: reduceMotion ? 0 : 0.7, delay: 0.45 }}
-          className="mb-7"
-        >
+        <div className="mb-7 animate-fade-in-up motion-reduce:animate-none" style={{ animationDelay: '450ms' }}>
           <TrustBadges variant="dark" />
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: reduceMotion ? 0 : 0.7, delay: 0.5 }}
-          className="flex flex-col sm:flex-row flex-wrap gap-3"
+        <div
+          className="flex flex-col sm:flex-row flex-wrap gap-3 animate-fade-in-up motion-reduce:animate-none"
+          style={{ animationDelay: '500ms' }}
         >
           <Link
             href="/sell"
@@ -134,15 +120,13 @@ export default function CinematicHero({ slides }: { slides: HeroSlide[] }) {
           >
             Browse Listings <span aria-hidden="true">→</span>
           </Link>
-        </motion.div>
+        </div>
 
         {/* Slide caption (status + city, no price) + indicator dots */}
         {active && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: reduceMotion ? 0 : 1, delay: 0.8 }}
-            className="mt-12 sm:mt-16 flex items-end justify-between gap-6 border-t border-white/15 pt-6"
+          <div
+            className="mt-12 sm:mt-16 flex items-end justify-between gap-6 border-t border-white/15 pt-6 animate-fade-in motion-reduce:animate-none"
+            style={{ animationDelay: '800ms' }}
           >
             <div
               className="min-w-0"
@@ -189,21 +173,19 @@ export default function CinematicHero({ slides }: { slides: HeroSlide[] }) {
                 </button>
               ))}
             </div>
-          </motion.div>
+          </div>
         )}
       </div>
 
       {/* Bottom scroll hint */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: reduceMotion ? 0 : 0.8, delay: 1.1 }}
-        className="hidden lg:flex absolute bottom-6 right-6 z-20 text-white/60 text-[10px] tracking-[0.3em] uppercase font-semibold items-center gap-3"
+      <div
+        className="hidden lg:flex absolute bottom-6 right-6 z-20 text-white/60 text-[10px] tracking-[0.3em] uppercase font-semibold items-center gap-3 animate-fade-in motion-reduce:animate-none"
+        style={{ animationDelay: '1100ms' }}
         aria-hidden="true"
       >
         <span>Scroll</span>
         <span className="block w-8 h-[1px] bg-white/40" />
-      </motion.div>
+      </div>
     </section>
   )
 }
