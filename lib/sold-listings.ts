@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-05-25T11:43:33.705Z
+// AUTO-GENERATED — Last synced: 2026-06-01T13:28:03.066Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-sold.mjs
 
@@ -63,7 +63,7 @@ export const soldListings: Listing[] = [
     acres: 1.071,
     status: "Sold",
     compassUrl: "https://www.compass.com/homedetails/9451-Appleton-Ct-Brentwood-TN-37027/1586230701225457937_lid/",
-    imageUrl: "https://www.compass.com/m/bcaf8feee5d3307bb3454a54976b346a6003f8c2_img_0_dee10/480x320.webp",
+    imageUrl: "https://www.compass.com/m/8fddefabbbe523e8a4a4678281baaecdb83e4ef5756287c06190b9d7ae569dd7/480x320.webp",
   },
   {
     address: "9526 Elgin Way",

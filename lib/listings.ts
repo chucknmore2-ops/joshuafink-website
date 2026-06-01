@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-05-25T11:42:29.097Z
+// AUTO-GENERATED — Last synced: 2026-06-01T13:26:54.906Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -21,8 +21,6 @@ export const listings: Listing[] = [
     address: "1901 New Bristol Ln",
     city: "Brentwood, TN 37027 | MLS #3197403",
     price: 1875000,
-    beds: 5,
-    baths: 5,
     sqft: 5855,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/1901-New-Bristol-Ln-Brentwood-TN-37027/RS25E_pid/",
@@ -32,8 +30,6 @@ export const listings: Listing[] = [
     address: "9560 Dresden Square",
     city: "Brentwood, TN 37027 | MLS #3175708",
     price: 1299000,
-    beds: 6,
-    baths: 6,
     sqft: 4256,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/9560-Dresden-Square-Brentwood-TN-37027/T863Z_pid/",
@@ -43,8 +39,6 @@ export const listings: Listing[] = [
     address: "159 N Berwick Ln",
     city: "Franklin, TN 37069 | MLS #3155368",
     price: 1224900,
-    beds: 5,
-    baths: 5,
     sqft: 4948,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/159-N-Berwick-Ln-Franklin-TN-37069/SXI63_pid/",
@@ -54,8 +48,6 @@ export const listings: Listing[] = [
     address: "6612 Fox Hollow Rd",
     city: "Nashville, TN 37205 | MLS #3213799",
     price: 949900,
-    beds: 4,
-    baths: 3,
     sqft: 3058,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/6612-Fox-Hollow-Rd-Nashville-TN-37205/S670X_pid/",
@@ -65,8 +57,6 @@ export const listings: Listing[] = [
     address: "1113 Linn Cv Ct",
     city: "Gallatin, TN 37066 | MLS #3214253",
     price: 539900,
-    beds: 4,
-    baths: 4,
     sqft: 2869,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/1113-Linn-Cv-Ct-Gallatin-TN-37066/SPCI8_pid/",
@@ -76,8 +66,6 @@ export const listings: Listing[] = [
     address: "4127 Edwards Ave",
     city: "Nashville, TN 37216 | MLS #3194194",
     price: 439900,
-    beds: 3,
-    baths: 1,
     sqft: 1223,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/4127-Edwards-Ave-Nashville-TN-37216/THUS9_pid/",
@@ -87,8 +75,6 @@ export const listings: Listing[] = [
     address: "107 Garwood Dr",
     city: "Nashville, TN 37210 | MLS #3213802",
     price: 439500,
-    beds: 3,
-    baths: 2,
     sqft: 1545,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/107-Garwood-Dr-Nashville-TN-37210/TBGK6_pid/",
@@ -98,19 +84,9 @@ export const listings: Listing[] = [
     address: "511 Wanda Dr",
     city: "Nashville, TN 37210",
     price: 419900,
-    beds: 4,
-    baths: 2,
     sqft: 1400,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/511-Wanda-Dr-Nashville-TN-37210/SDYP1_pid/",
     imageUrl: "https://www.compass.com/m/4e9cb7fc9872c9dbd0b0f820634b2dfa965d3cfe_img_1_17c54/2048x1536.webp",
-  },
-  {
-    address: "1202 Valarie Ln",
-    city: "Columbia, TN 38401 | MLS #3015326",
-    price: 104900,
-    status: "Active",
-    compassUrl: "https://www.compass.com/homedetails/1202-Valarie-Ln-Columbia-TN-38401/SOSRR_pid/",
-    imageUrl: "https://www.compass.com/m/a517431879e40ab793f4c4b5513a2b0b449258fb_img_1_6fa08/2048x1536.webp",
   }
 ];
