@@ -8,6 +8,7 @@ import {
 } from '@/lib/neighborhoods'
 import { getSuburb } from '@/lib/suburbs'
 import { withUtm } from '@/lib/utm'
+import SuburbLeadForm from '@/components/SuburbLeadForm'
 
 type Props = {
   params: Promise<{ slug: string }>
@@ -77,6 +78,15 @@ export default async function NeighborhoodPage({ params }: Props) {
       addressRegion: n.schemaState,
       addressCountry: 'US',
     },
+    ...(typeof n.latitude === 'number' && typeof n.longitude === 'number'
+      ? {
+          geo: {
+            '@type': 'GeoCoordinates',
+            latitude: n.latitude,
+            longitude: n.longitude,
+          },
+        }
+      : {}),
     containedInPlace: {
       '@type': 'City',
       name: n.schemaCity,
@@ -481,6 +491,60 @@ export default async function NeighborhoodPage({ params }: Props) {
                 Text 615-551-2727
               </a>
             </div>
+          </div>
+
+          {/* Inline lead-capture form */}
+          <div className="max-w-3xl mx-auto mt-12 bg-white p-8 sm:p-10">
+            <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-6">
+              Get {n.name} Listings &amp; Local Advice
+            </p>
+            <SuburbLeadForm
+              successTitle="Request Sent!"
+              successMessage={
+                <>
+                  Joshua will reach out same-day with {n.name} insights and listings that fit. For anything urgent, call{' '}
+                  <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                </>
+              }
+              resetLabel="Submit Another"
+            >
+              <input type="hidden" name="lead_type" value="buyer" />
+              <input type="hidden" name="suburb" value={n.name} />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label htmlFor="name" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Full Name *</label>
+                  <input type="text" id="name" name="name" required placeholder="Jane Smith"
+                    className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                </div>
+                <div>
+                  <label htmlFor="phone" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Phone *</label>
+                  <input type="tel" id="phone" name="phone" required placeholder="615-555-0000"
+                    className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="email" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Email Address *</label>
+                <input type="email" id="email" name="email" required placeholder="you@example.com"
+                  className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+              </div>
+
+              <div>
+                <label htmlFor="body" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">What can Joshua help with? (optional)</label>
+                <textarea id="body" name="body" rows={4}
+                  placeholder={`Buying or selling in ${n.name}? Tell Joshua your must-haves — school zone, budget, timeline. Anything helps.`}
+                  className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors resize-y" />
+              </div>
+
+              <p className="text-xs text-[#A0A0A0]">* Joshua responds same-day. No spam, no pressure.</p>
+
+              <button type="submit"
+                className="w-full sm:w-auto text-white text-sm font-bold px-10 py-4 tracking-wide transition-colors"
+                style={{ backgroundColor: '#C41E3A' }}>
+                Talk to Joshua About {n.name} →
+              </button>
+            </SuburbLeadForm>
           </div>
         </div>
       </div>

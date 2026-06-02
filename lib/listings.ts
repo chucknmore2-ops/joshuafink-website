@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-06-01T13:26:54.906Z
+// AUTO-GENERATED — Last synced: 2026-06-02T13:47:54.918Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -20,7 +20,7 @@ export const listings: Listing[] = [
   {
     address: "1901 New Bristol Ln",
     city: "Brentwood, TN 37027 | MLS #3197403",
-    price: 1875000,
+    price: 1849000,
     sqft: 5855,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/1901-New-Bristol-Ln-Brentwood-TN-37027/RS25E_pid/",
@@ -46,7 +46,7 @@ export const listings: Listing[] = [
   },
   {
     address: "6612 Fox Hollow Rd",
-    city: "Nashville, TN 37205 | MLS #3213799",
+    city: "Nashville, TN 37205",
     price: 949900,
     sqft: 3058,
     status: "Active",

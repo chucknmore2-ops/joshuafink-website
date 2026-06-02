@@ -1,0 +1,45 @@
+name: Build check
+
+# Guarantees every PR to main typechecks and builds before merge. The bot's
+# auto-merge ("auto-merge when CI is green" at autonomy tier 2) relies on this
+# being a required, broad gate — schema-validation.yml also builds, but only
+# for app/**, lib/** path changes, so this catches the rest (components/**,
+# config, scripts). A Tier-1 direct push to main bypasses PR checks entirely,
+# which is exactly the gap that let a build-breaking commit ship uncaught.
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build Next.js
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1

@@ -3,6 +3,26 @@ import ListingCard from '@/components/ListingCard'
 import { listings } from '@/lib/listings'
 import { soldListings } from '@/lib/sold-listings'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
+import { buildListingItemList } from '@/lib/listing-schema'
+
+const faqs = [
+  {
+    q: 'How often are these listings updated?',
+    a: 'Active inventory is synced directly from Joshua’s Compass profile. Homes move quickly in Middle Tennessee, so if a listing you like is already pending or sold, contact Joshua — he often knows about comparable homes before they hit the public market.',
+  },
+  {
+    q: 'Can I see homes that aren’t listed here?',
+    a: 'Yes. Through Compass Private Exclusives and Coming Soon, Joshua has access to off-market and pre-market homes across Franklin, Brentwood, Nashville, and the surrounding suburbs that never appear on public sites. Reach out with your criteria and he’ll send matches directly.',
+  },
+  {
+    q: 'How do I get notified when a matching home comes on the market?',
+    a: 'Tell Joshua what you’re looking for — area, price range, beds, must-haves — and he’ll set up a tailored alert so you hear about new and off-market listings the moment they’re available, not days later.',
+  },
+  {
+    q: 'What does “Recently Sold” show?',
+    a: 'These are homes Joshua has closed across Middle Tennessee. They’re a snapshot of the price points, neighborhoods, and home styles he works in every day — useful comps if you’re trying to understand what your own home might be worth.',
+  },
+]
 
 export const metadata: Metadata = {
   title: 'Listings — Active & Recently Sold | Joshua Fink | Compass Nashville',
@@ -22,11 +42,36 @@ export default function ListingsPage() {
     { name: 'Listings', href: '/listings' },
   ])
 
+  const activeItemList = buildListingItemList(listings, 'Active Listings — Joshua Fink, Compass')
+  const soldItemList = buildListingItemList(soldListings, 'Recently Sold — Joshua Fink, Compass')
+
+  const faqLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  }
+
   return (
     <div className="bg-white">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(activeItemList) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(soldItemList) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
       {/* Page header */}
       <div className="bg-black text-white py-16 px-4 sm:px-6 lg:px-8">
@@ -99,6 +144,24 @@ export default function ListingsPage() {
             </div>
           </div>
         )}
+
+        {/* FAQ */}
+        <div className="mt-20 max-w-3xl">
+          <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
+            Common Questions
+          </p>
+          <h2 className="text-3xl font-black text-black tracking-tight mb-8">
+            Buying &amp; Browsing in Middle Tennessee
+          </h2>
+          <dl className="divide-y divide-neutral-200 border-t border-neutral-200">
+            {faqs.map((f) => (
+              <div key={f.q} className="py-6">
+                <dt className="text-lg font-bold text-black mb-2">{f.q}</dt>
+                <dd className="text-sm text-neutral-600 leading-relaxed">{f.a}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
       </div>
     </div>
   )
