@@ -104,13 +104,5 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/511-Wanda-Dr-Nashville-TN-37210/SDYP1_pid/",
     imageUrl: "https://www.compass.com/m/4e9cb7fc9872c9dbd0b0f820634b2dfa965d3cfe_img_1_17c54/2048x1536.webp",
-  },
-  {
-    address: "1202 Valarie Ln",
-    city: "Columbia, TN 38401 | MLS #3015326",
-    price: 104900,
-    status: "Active",
-    compassUrl: "https://www.compass.com/homedetails/1202-Valarie-Ln-Columbia-TN-38401/SOSRR_pid/",
-    imageUrl: "https://www.compass.com/m/a517431879e40ab793f4c4b5513a2b0b449258fb_img_1_6fa08/2048x1536.webp",
   }
 ];
