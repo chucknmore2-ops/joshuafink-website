@@ -64,11 +64,25 @@ async function main() {
       const subtitleEl = card.querySelector('[data-testid="cx-react-listingCard-subtitle"], [data-tn="listing-card-street-address"]');
       const addressText = subtitleEl?.textContent?.trim() || '';
 
-      // Beds/baths/sqft from substats
+      // Beds/baths/sqft from substats.
+      // Compass renders each substat value twice (responsive duplicate spans),
+      // so a naive textContent read yields doubled values ("6"->"66",
+      // "9,812"->"9,8129,812"). Prefer the first child element's text, and as
+      // a safety net collapse any string that is exactly two identical halves.
+      const undouble = (s) => {
+        s = (s || '').trim();
+        if (s && s.length % 2 === 0) {
+          const half = s.length / 2;
+          if (s.slice(0, half) === s.slice(half)) return s.slice(0, half);
+        }
+        return s;
+      };
       const substats = card.querySelectorAll('[data-testid="cx-react-listingCard-substatsSection"] > div');
       let beds = 0, baths = 0, sqft = 0, acres = 0;
       for (const stat of substats) {
-        const val = stat.querySelector('dd')?.textContent?.trim() || '';
+        const dd = stat.querySelector('dd');
+        const firstChild = dd?.querySelector('span, div');
+        const val = undouble((firstChild?.textContent || dd?.textContent || '').trim());
         const label = stat.querySelector('dt')?.textContent?.trim()?.toLowerCase() || '';
         if (label.includes('bed')) beds = parseInt(val) || 0;
         else if (label.includes('bath')) baths = parseFloat(val) || 0;

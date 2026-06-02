@@ -91,7 +91,7 @@ export default function NeighborhoodsIndexPage() {
               More Neighborhoods Coming
             </p>
             <h2 className="text-2xl font-black text-black tracking-tight mb-3">
-              Don't See Your Neighborhood Yet?
+              Don&apos;t See Your Neighborhood Yet?
             </h2>
             <p className="text-sm text-[#444] max-w-2xl mx-auto mb-6">
               New subdivision and neighborhood guides are added regularly — covering
