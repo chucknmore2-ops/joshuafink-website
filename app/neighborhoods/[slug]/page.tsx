@@ -78,6 +78,15 @@ export default async function NeighborhoodPage({ params }: Props) {
       addressRegion: n.schemaState,
       addressCountry: 'US',
     },
+    ...(typeof n.latitude === 'number' && typeof n.longitude === 'number'
+      ? {
+          geo: {
+            '@type': 'GeoCoordinates',
+            latitude: n.latitude,
+            longitude: n.longitude,
+          },
+        }
+      : {}),
     containedInPlace: {
       '@type': 'City',
       name: n.schemaCity,
