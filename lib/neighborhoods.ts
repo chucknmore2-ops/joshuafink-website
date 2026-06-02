@@ -19,6 +19,8 @@ export type Neighborhood = {
   faqs: { q: string; a: string }[]
   schemaCity: string
   schemaState: string
+  latitude?: number
+  longitude?: number
   compassSearchUrl?: string
 }
 
@@ -88,6 +90,8 @@ export const neighborhoods: Record<string, Neighborhood> = {
     ],
     schemaCity: 'Franklin',
     schemaState: 'TN',
+    latitude: 35.9337,
+    longitude: -86.9557,
     compassSearchUrl: COMPASS_AGENT_URL,
   },
 
@@ -154,6 +158,8 @@ export const neighborhoods: Record<string, Neighborhood> = {
     ],
     schemaCity: 'Brentwood',
     schemaState: 'TN',
+    latitude: 35.9620,
+    longitude: -86.7610,
     compassSearchUrl: COMPASS_AGENT_URL,
   },
 
@@ -220,6 +226,8 @@ export const neighborhoods: Record<string, Neighborhood> = {
     ],
     schemaCity: 'Franklin',
     schemaState: 'TN',
+    latitude: 35.9665,
+    longitude: -86.8590,
     compassSearchUrl: COMPASS_AGENT_URL,
   },
 
@@ -286,6 +294,8 @@ export const neighborhoods: Record<string, Neighborhood> = {
     ],
     schemaCity: 'Franklin',
     schemaState: 'TN',
+    latitude: 35.9270,
+    longitude: -86.9130,
     compassSearchUrl: COMPASS_AGENT_URL,
   },
 
@@ -352,6 +362,8 @@ export const neighborhoods: Record<string, Neighborhood> = {
     ],
     schemaCity: 'Franklin',
     schemaState: 'TN',
+    latitude: 35.8810,
+    longitude: -86.8580,
     compassSearchUrl: COMPASS_AGENT_URL,
   },
 
@@ -418,6 +430,8 @@ export const neighborhoods: Record<string, Neighborhood> = {
     ],
     schemaCity: 'Brentwood',
     schemaState: 'TN',
+    latitude: 35.9700,
+    longitude: -86.8200,
     compassSearchUrl: COMPASS_AGENT_URL,
   },
 
@@ -484,6 +498,8 @@ export const neighborhoods: Record<string, Neighborhood> = {
     ],
     schemaCity: 'Brentwood',
     schemaState: 'TN',
+    latitude: 36.0095,
+    longitude: -86.7785,
     compassSearchUrl: COMPASS_AGENT_URL,
   },
 
@@ -550,6 +566,8 @@ export const neighborhoods: Record<string, Neighborhood> = {
     ],
     schemaCity: 'Franklin',
     schemaState: 'TN',
+    latitude: 35.9030,
+    longitude: -86.8900,
     compassSearchUrl: COMPASS_AGENT_URL,
   },
 
@@ -616,6 +634,8 @@ export const neighborhoods: Record<string, Neighborhood> = {
     ],
     schemaCity: "Thompson's Station",
     schemaState: 'TN',
+    latitude: 35.8370,
+    longitude: -86.9130,
     compassSearchUrl: COMPASS_AGENT_URL,
   },
 
@@ -682,6 +702,8 @@ export const neighborhoods: Record<string, Neighborhood> = {
     ],
     schemaCity: 'Nolensville',
     schemaState: 'TN',
+    latitude: 35.9525,
+    longitude: -86.6610,
     compassSearchUrl: COMPASS_AGENT_URL,
   },
 
@@ -748,6 +770,8 @@ export const neighborhoods: Record<string, Neighborhood> = {
     ],
     schemaCity: 'Nolensville',
     schemaState: 'TN',
+    latitude: 35.9430,
+    longitude: -86.6740,
     compassSearchUrl: COMPASS_AGENT_URL,
   },
 }
