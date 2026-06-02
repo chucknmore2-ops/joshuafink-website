@@ -1,12 +1,6 @@
-// AUTO-GENERATED — Last synced: 2026-05-25T11:43:33.705Z
+// AUTO-GENERATED — Last synced: 2026-06-02T13:47:16.769Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-sold.mjs
-//
-// 2026-06-01: beds/baths/sqft were corrupted by a scraper bug that doubled
-// each substat value ("6"->"66", "9,812"->"98129812"). Values below were
-// de-doubled deterministically (each was exactly two identical halves) and
-// the scraper was fixed in scripts/fetch-sold.mjs. Re-run the scraper to
-// confirm against live Compass before treating these as authoritative.
 
 import type { Listing } from './listings';
 
@@ -18,7 +12,7 @@ export const soldListings: Listing[] = [
     beds: 6,
     baths: 9,
     sqft: 9812,
-    acres: 1.431,
+    acres: 1.43,
     status: "Sold",
     compassUrl: "https://www.compass.com/homedetails/9293-Fordham-Dr-Brentwood-TN-37027/1141460039452708273_lid/",
     imageUrl: "https://www.compass.com/m/d0d1beaa460ada67dc6d58c9743da4b6804dd9cd_img_0_7b1be/480x320.webp",
@@ -66,10 +60,10 @@ export const soldListings: Listing[] = [
     beds: 5,
     baths: 6,
     sqft: 6435,
-    acres: 1.071,
+    acres: 1.07,
     status: "Sold",
     compassUrl: "https://www.compass.com/homedetails/9451-Appleton-Ct-Brentwood-TN-37027/1586230701225457937_lid/",
-    imageUrl: "https://www.compass.com/m/bcaf8feee5d3307bb3454a54976b346a6003f8c2_img_0_dee10/480x320.webp",
+    imageUrl: "https://www.compass.com/m/8fddefabbbe523e8a4a4678281baaecdb83e4ef5756287c06190b9d7ae569dd7/480x320.webp",
   },
   {
     address: "9526 Elgin Way",
@@ -204,6 +198,18 @@ export const soldListings: Listing[] = [
     imageUrl: "https://www.compass.com/m/c932dca0373ffb58886dd64e8476f130223c250c_img_0_6968c/480x320.webp",
   },
   {
+    address: "8117 Hilldale Dr",
+    city: "Brentwood, TN 37027",
+    price: 1100000,
+    beds: 4,
+    baths: 3,
+    sqft: 2730,
+    acres: 1.07,
+    status: "Sold",
+    compassUrl: "https://www.compass.com/homedetails/8117-Hilldale-Dr-Brentwood-TN-37027/1553130529249927305_lid/",
+    imageUrl: "https://www.compass.com/m/f4aa7860e55bb73a771f4ce571e36c1ea6c3c735_img_0_db9ed/480x320.webp",
+  },
+  {
     address: "1743 Stillwater Cir",
     city: "Brentwood, TN 37027",
     price: 1100000,
@@ -214,17 +220,5 @@ export const soldListings: Listing[] = [
     status: "Sold",
     compassUrl: "https://www.compass.com/homedetails/1743-Stillwater-Cir-Brentwood-TN-37027/1191269538326923993_lid/",
     imageUrl: "https://www.compass.com/m/abbef8264e1d5f980bd80224088f3a2b8360c857_img_0_e0986/480x320.webp",
-  },
-  {
-    address: "8117 Hilldale Dr",
-    city: "Brentwood, TN 37027",
-    price: 1100000,
-    beds: 4,
-    baths: 3,
-    sqft: 2730,
-    acres: 1.071,
-    status: "Sold",
-    compassUrl: "https://www.compass.com/homedetails/8117-Hilldale-Dr-Brentwood-TN-37027/1553130529249927305_lid/",
-    imageUrl: "https://www.compass.com/m/f4aa7860e55bb73a771f4ce571e36c1ea6c3c735_img_0_db9ed/480x320.webp",
   }
 ];
