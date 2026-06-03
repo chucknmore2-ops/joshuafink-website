@@ -774,6 +774,387 @@ export const neighborhoods: Record<string, Neighborhood> = {
     longitude: -86.6740,
     compassSearchUrl: COMPASS_AGENT_URL,
   },
+
+  // ───────────────────────────────────────────────────────────────────────
+  // SPRING HILL, TN (added 2026-06-02). All six are on the Williamson County
+  // side of Spring Hill (the premium, established side — Spring Hill straddles
+  // the Williamson/Maury line). Price bands and school-zone assignments below
+  // are sourced from public listing/brokerage data + district info and are
+  // FLAGGED FOR JOSHUA TO VERIFY before treating as authoritative — pricing is
+  // early-2026 and small-sample on some communities; WCS rezones periodically.
+  // Benevento's lat/long is approximate (no reliable subdivision centroid found).
+  // ───────────────────────────────────────────────────────────────────────
+  'wades-grove-spring-hill-tn': {
+    slug: 'wades-grove-spring-hill-tn',
+    name: 'Wades Grove',
+    city: 'Spring Hill',
+    citySlug: 'spring-hill-tn',
+    county: 'Williamson County',
+    metaTitle: 'Wades Grove Neighborhood Guide — Spring Hill, TN | Joshua Fink',
+    metaDescription:
+      'Wades Grove in Spring Hill, TN: a large all-brick community off Buckner Lane in Williamson County, with a pool, pavilion, and Williamson County Schools zoning. Local insight from Compass agent Joshua Fink.',
+    intro:
+      'Wades Grove is one of the largest and best-known subdivisions on the Williamson County side of Spring Hill — roughly 700 all-brick homes off Buckner Lane, built from 2006 onward, with a community pool and pavilion and the Williamson County Schools zoning buyers move here for.',
+    about:
+      'Wades Grove sits along Buckner Lane in the 37174 ZIP, on the Williamson County side of the Williamson/Maury line that runs through Spring Hill. It is a large, established subdivision — cited at roughly 700 homes — developed in phases from 2006 onward, which means a mix of mature, landscaped older sections and newer construction. Homes are predominantly all-brick (some brick-and-stone or brick-with-siding) in traditional and contemporary styles, generally ranging from around 1,440 to 3,950 square feet with three to five bedrooms. The community amenity package centers on a swimming pool and a reservable pavilion, with a playground, sidewalks, and maintained common areas; the Spring Hill Sports Complex and Harvey Park are nearby. Commuters reach I-65 via the Saturn Parkway / June Lake interchange.',
+    vibe: 'Large, established, family-friendly all-brick community with a pool and pavilion.',
+    priceBand: '$470K – $725K (approx.)',
+    buildYears: '2006 to present (phased development)',
+    hoa: 'Active HOA with modest dues (roughly $40–$50/month). Covers common-area landscaping, the community pool and pavilion, and amenity upkeep. Confirm current dues with the HOA before writing an offer.',
+    schoolNotes:
+      'Wades Grove is generally zoned to Williamson County Schools — most commonly Bethesda Elementary, Spring Station Middle, and Summit High School, though a few edge lots may fall to Allendale Elementary. WCS rezones periodically, so always verify the assignment for the specific address against the current Williamson County Schools zoning map.',
+    amenities: [
+      'Community swimming pool',
+      'Reservable community pavilion',
+      'Playground',
+      'Sidewalks and maintained common green spaces',
+      'Near Spring Hill Sports Complex and Harvey Park',
+    ],
+    homeStyles: [
+      'All-brick traditional two-story homes',
+      'Brick-and-stone and brick-with-siding elevations',
+      'Contemporary open floor plans',
+      'Single-family homes from roughly 1,440 to 3,950 sq ft',
+    ],
+    whyBullets: [
+      'Williamson County Schools at a Spring Hill price: Wades Grove pairs sought-after WCS zoning with a more attainable entry point than Franklin or Brentwood — a major draw for relocating families.',
+      'Scale and stability: At roughly 700 homes built across many phases, Wades Grove has a deep, established resident base and consistent all-brick construction that holds its look over time.',
+      'Everyday convenience: Buckner Lane location puts shopping, the Spring Hill Sports Complex, and the I-65 corridor minutes away.',
+    ],
+    faqs: [
+      {
+        q: 'How much do homes in Wades Grove cost in 2026?',
+        a: 'As of early 2026, Wades Grove homes generally trade in roughly the $470K–$725K range, with most activity clustered around a high-$500s median. Active inventory is small, so figures move quickly — Joshua can pull current closed comps within the community for an exact read.',
+      },
+      {
+        q: 'Is Wades Grove in Williamson or Maury County?',
+        a: 'Williamson County. Spring Hill straddles the Williamson/Maury line, and a few aggregator sites mislabel Wades Grove as Maury because the 37174 ZIP is majority-Maury — but the Buckner Lane parcels and Williamson County Schools zoning confirm it sits in Williamson.',
+      },
+      {
+        q: 'What schools are zoned to Wades Grove?',
+        a: 'Most addresses are zoned to Williamson County Schools — typically Bethesda Elementary, Spring Station Middle, and Summit High — with a few edge lots possibly assigned to Allendale Elementary. Zoning can change, so verify the specific address with the district before you make an offer.',
+      },
+      {
+        q: 'Does Wades Grove have a pool and an HOA?',
+        a: 'Yes. There is a community pool and a reservable pavilion, plus a playground and sidewalks, maintained by an active HOA with modest monthly dues. Confirm the current dues amount with the HOA.',
+      },
+    ],
+    schemaCity: 'Spring Hill',
+    schemaState: 'TN',
+    latitude: 35.7574,
+    longitude: -86.8788,
+    compassSearchUrl: COMPASS_AGENT_URL,
+  },
+
+  'cherry-grove-spring-hill-tn': {
+    slug: 'cherry-grove-spring-hill-tn',
+    name: 'Cherry Grove',
+    city: 'Spring Hill',
+    citySlug: 'spring-hill-tn',
+    county: 'Williamson County',
+    metaTitle: 'Cherry Grove Neighborhood Guide — Spring Hill, TN | Joshua Fink',
+    metaDescription:
+      'Cherry Grove in Spring Hill, TN: an established all-brick Williamson County community on larger lots near the Thompson’s Station line, zoned to Summit High. Local insight from Compass agent Joshua Fink.',
+    intro:
+      'Cherry Grove is an established, spacious all-brick community off Buckner Lane on the Spring Hill / Thompson’s Station border — known for larger lots, its distinctive Australian-themed street names, and a coveted Williamson County school zone anchored by Summit High.',
+    about:
+      'Cherry Grove sits on the north side of Spring Hill near the Thompson’s Station line, in Williamson County (37174/37179). Built across multiple phases over roughly two decades — from about 2001/2002 through the late 2010s — it is now essentially built out, trading as resales. Homes are predominantly all-brick (some brick-and-stone) traditional designs, generally in the 2,400–4,800 square-foot range with four to five bedrooms, bonus rooms, and two- to three-car garages, on lots of roughly 0.19 to 0.43 acre — noticeably larger than many newer Spring Hill developments. The community is recognizable for its Australian-themed streets (Brisbane, Canberra, Alice Springs, Wallaby) and a shared amenity set of pool, clubhouse, and playground. Buckner Lane — currently being widened — is the main corridor, with I-65 and Spring Hill Marketplace minutes away.',
+    vibe: 'Established, spacious all-brick neighborhood on larger lots with a top Williamson school zone.',
+    priceBand: '$560K – $1.07M (approx.)',
+    buildYears: 'Early 2000s to roughly 2019 (built out)',
+    hoa: 'Active HOA with modest dues (roughly $38–$55/month, varying by phase). Covers the community pool, clubhouse, playground, and common areas. Confirm current dues with the HOA.',
+    schoolNotes:
+      'Cherry Grove is zoned to Williamson County Schools, with Summit High serving the community. Elementary and middle assignments vary by phase/address — commonly Allendale or Bethesda Elementary and Spring Station or Thompson’s Station Middle. WCS rezones periodically, so verify the specific address against the current district zoning map.',
+    amenities: [
+      'Community swimming pool',
+      'Clubhouse',
+      'Playground',
+      'Sidewalk network throughout',
+      'Larger-than-average lots with mature landscaping',
+    ],
+    homeStyles: [
+      'All-brick and brick-and-stone traditional homes',
+      'Four- and five-bedroom plans with bonus rooms',
+      'Two- to three-car garages',
+      'Lots roughly 0.19–0.43 acre',
+    ],
+    whyBullets: [
+      'Land and maturity: Cherry Grove’s larger lots and mature tree canopy are increasingly rare in Spring Hill, where newer subdivisions pack homes closer together.',
+      'Summit High zoning: A consistent Williamson County Schools assignment — with Summit High serving the neighborhood — is the resale anchor here.',
+      'Built out and stable: With construction long finished, Cherry Grove trades as a tight resale market with a settled, long-tenured resident base.',
+    ],
+    faqs: [
+      {
+        q: 'How much do homes in Cherry Grove cost in 2026?',
+        a: 'Recent listings have generally run from the high $500s to just over $1M, with a median around the mid-$700s. Larger all-brick homes on premium lots sit at the top of that range. Joshua can pull current Cherry Grove comps for an exact, up-to-date read.',
+      },
+      {
+        q: 'Is Cherry Grove in Williamson or Maury County?',
+        a: 'Williamson County. It sits on the north/Thompson’s Station side of Spring Hill and is zoned to Williamson County Schools (Summit High). A few listing portals mistag it as Maury, but the district and county records place it in Williamson.',
+      },
+      {
+        q: 'What schools are zoned to Cherry Grove?',
+        a: 'Williamson County Schools, with Summit High serving the community. Elementary and middle assignments vary by phase — typically Allendale or Bethesda Elementary and Spring Station or Thompson’s Station Middle — so confirm the exact address with the district before making an offer.',
+      },
+      {
+        q: 'What makes Cherry Grove different from newer Spring Hill subdivisions?',
+        a: 'Lot size and maturity. Cherry Grove was built on larger lots with established landscaping, and it’s fully built out, so you’re buying into a settled community rather than an active construction site — at a Williamson County school address.',
+      },
+    ],
+    schemaCity: 'Spring Hill',
+    schemaState: 'TN',
+    latitude: 35.7730,
+    longitude: -86.8880,
+    compassSearchUrl: COMPASS_AGENT_URL,
+  },
+
+  'campbell-station-spring-hill-tn': {
+    slug: 'campbell-station-spring-hill-tn',
+    name: 'Campbell Station',
+    city: 'Spring Hill',
+    citySlug: 'spring-hill-tn',
+    county: 'Williamson County',
+    metaTitle: 'Campbell Station Neighborhood Guide — Spring Hill, TN | Joshua Fink',
+    metaDescription:
+      'Campbell Station in Spring Hill, TN: an established all-brick Williamson County community off Columbia Pike, walkable to Main Street, on generous lots. Local insight from Compass agent Joshua Fink.',
+    intro:
+      'Campbell Station is one of Spring Hill’s premier established communities — roughly 485 all-brick homes off Columbia Pike on the Williamson County side, on generous lots and within walking distance of Main Street shops and grocery.',
+    about:
+      'Campbell Station sits off Columbia Pike along Campbell Station Parkway, on the Williamson County side of Spring Hill. Built largely in the 2000s (roughly 2003–2013), it is a sizable, settled community of about 485 homes — predominantly all-brick single-family homes in traditional and colonial styling, both ranch and two-story, plus a separate townhome enclave (The Highlands) governed by its own HOA. Single-family homes are substantial, often 2,800 to 5,800 square feet with three or more bedrooms, formal living and dining rooms, bonus rooms, and frequently three-car garages, on generous lots ranging from about a quarter acre to over three-quarters of an acre. Amenities center on a community pool and cabana along sidewalk-lined streets with mature landscaping; the standout feature is location — walkable to Spring Hill’s Main Street retail.',
+    vibe: 'Premier established all-brick community on large lots, walkable to Main Street.',
+    priceBand: '$650K – $1.1M (approx.)',
+    buildYears: 'Roughly 2003 to 2013',
+    hoa: 'Active HOA (roughly $55–$57/month) covering common areas, entrance landscaping, and the community pool. The Highlands townhome section has its own separate HOA. Confirm current dues before writing an offer.',
+    schoolNotes:
+      'Campbell Station is zoned to Williamson County Schools — typically Heritage Middle and Independence High, with elementary assignment varying by location within the subdivision (Longview, Amanda H. North, or Heritage Elementary; the portion north of Campbell Station Parkway has been sent to Heritage). WCS rezones periodically, so verify the specific address with the district.',
+    amenities: [
+      'Community swimming pool',
+      'Pool cabana',
+      'Sidewalk-lined streets',
+      'Mature landscaping and maintained common areas',
+      'Walking distance to Main Street retail and grocery',
+    ],
+    homeStyles: [
+      'All-brick traditional and colonial single-family homes',
+      'Both ranch and two-story plans, roughly 2,800–5,800 sq ft',
+      'Formal living/dining rooms, bonus rooms, three-car garages',
+      'Separate townhome enclave (The Highlands)',
+      'Generous lots from about 0.26 to 0.84 acre',
+    ],
+    whyBullets: [
+      'Walkability is rare here: Few Spring Hill subdivisions put you within walking distance of Main Street shops and grocery — Campbell Station does.',
+      'Space and presence: Larger lots and substantial all-brick homes give Campbell Station a more established, settled feel than newer tract communities.',
+      'Williamson County Schools: A consistent WCS assignment (Heritage Middle / Independence High) underpins long-term resale.',
+    ],
+    faqs: [
+      {
+        q: 'How much do homes in Campbell Station cost in 2026?',
+        a: 'As of early 2026, active listings have generally run from roughly $690K to $975K, with a broader trailing-year range of about $650K to $1.1M for larger homes on premium lots. Joshua can pull current Campbell Station comps for an exact figure.',
+      },
+      {
+        q: 'Is Campbell Station in Williamson or Maury County?',
+        a: 'Williamson County. The community’s own HOA describes it as being in southern Williamson County, and it falls within Williamson County Schools attendance zones.',
+      },
+      {
+        q: 'What schools are zoned to Campbell Station?',
+        a: 'Williamson County Schools — generally Heritage Middle and Independence High, with the elementary assignment varying by section (Longview, Amanda H. North, or Heritage). Because the subdivision is split by Campbell Station Parkway and WCS rezones periodically, verify your specific address with the district.',
+      },
+      {
+        q: 'Are there townhomes in Campbell Station?',
+        a: 'Yes — The Highlands is a townhome enclave within Campbell Station, governed by its own separate HOA. The bulk of the community is larger all-brick single-family homes.',
+      },
+    ],
+    schemaCity: 'Spring Hill',
+    schemaState: 'TN',
+    latitude: 35.7510,
+    longitude: -86.9120,
+    compassSearchUrl: COMPASS_AGENT_URL,
+  },
+
+  'autumn-ridge-spring-hill-tn': {
+    slug: 'autumn-ridge-spring-hill-tn',
+    name: 'Autumn Ridge',
+    city: 'Spring Hill',
+    citySlug: 'spring-hill-tn',
+    county: 'Williamson County',
+    metaTitle: 'Autumn Ridge Neighborhood Guide — Spring Hill, TN | Joshua Fink',
+    metaDescription:
+      'Autumn Ridge in Spring Hill, TN: an upscale custom-home community off Miles Johnson Parkway in Williamson County with a pool, clubhouse, and pond on larger lots. Local insight from Compass agent Joshua Fink.',
+    intro:
+      'Autumn Ridge is an upscale, custom-home enclave off Miles Johnson Parkway on the Williamson County side of Spring Hill — large all-brick homes on generous lots, a full amenity package (pool, clubhouse, pond), and a top-rated WCS school zone.',
+    about:
+      'Autumn Ridge sits off Miles Johnson Parkway in central Spring Hill (37174), with quick I-65 access and walkability to Harvey Park. Developed across multiple phases from roughly 2007/2008 onward by a roster of custom builders, it sits at the higher end of the Spring Hill market. Homes are all-brick and brick-and-stone custom builds, generally 3,000 to 4,600 square feet (some larger), typically four to five-plus bedrooms with three-car garages, on lots around a third of an acre and up — larger than many neighboring communities. The amenity package, built out around 2014, includes a community pool and clubhouse, a catch-and-release pond, a playground, and walking trails. (Note: Autumn Ridge and the adjacent, separately-named "Arbors at Autumn Ridge" are distinct communities with different HOAs, amenities, and price points — this guide covers Autumn Ridge proper.)',
+    vibe: 'Upscale custom-home community on larger lots with resort-style amenities.',
+    priceBand: '$510K – $1.35M (approx.)',
+    buildYears: 'Roughly 2007/2008 to present (phased)',
+    hoa: 'Active HOA (roughly $61–$62/month) covering the clubhouse, pool, pond, playground/trails, and common-area upkeep. Confirm current dues with the HOA.',
+    schoolNotes:
+      'Autumn Ridge is zoned to Williamson County Schools — typically Heritage Middle and Independence High, with elementary assignment varying by address (Longview or Amanda H. North). Some older listings reference Spring Hill High. WCS rezones periodically, so verify the specific address with the district.',
+    amenities: [
+      'Community swimming pool (built ~2014)',
+      'Clubhouse (built ~2014)',
+      'Catch-and-release pond',
+      'Playground and walking trails',
+      'Underground utilities; adjacent to Harvey Park',
+    ],
+    homeStyles: [
+      'All-brick and brick-and-stone custom homes',
+      'Generally 3,000–4,600+ sq ft, four to five-plus bedrooms',
+      'Three-car (some four-car) garages',
+      'Larger lots, roughly a third of an acre and up',
+    ],
+    whyBullets: [
+      'Custom, not tract: Autumn Ridge was built by a roster of custom builders, so the homes have more individual character than typical production neighborhoods.',
+      'Full amenity package: Pool, clubhouse, pond, and trails put it among the more amenity-rich communities in Spring Hill.',
+      'Upper-end WCS address: Larger lots, larger homes, and Williamson County Schools place it at the higher end of the local market with strong relocation appeal.',
+    ],
+    faqs: [
+      {
+        q: 'How much do homes in Autumn Ridge cost in 2026?',
+        a: 'As of early 2026, Autumn Ridge spans a wide range — roughly $510K to $1.35M — with recent medians often in the high-$700s to low-seven-figures depending on size and lot. It’s one of Spring Hill’s upper-end communities. Joshua can pull current comps for a precise read.',
+      },
+      {
+        q: 'Is Autumn Ridge the same as Arbors at Autumn Ridge?',
+        a: 'No. They are two distinct, adjacent communities that share a name. Autumn Ridge (off Miles Johnson Parkway) has the pool, clubhouse, and pond and larger lots; Arbors at Autumn Ridge (off Wilkes Lane) is smaller-lot with a lower HOA and no pool/clubhouse. This guide covers Autumn Ridge proper.',
+      },
+      {
+        q: 'What schools are zoned to Autumn Ridge?',
+        a: 'Williamson County Schools — generally Heritage Middle and Independence High, with the elementary (Longview or Amanda H. North) varying by address. Zoning can change, so confirm the specific address with the district before making an offer.',
+      },
+      {
+        q: 'Is Autumn Ridge in Williamson or Maury County?',
+        a: 'Williamson County. Multiple independent sources and its WCS school zoning confirm Autumn Ridge proper sits entirely on the Williamson side of Spring Hill.',
+      },
+    ],
+    schemaCity: 'Spring Hill',
+    schemaState: 'TN',
+    latitude: 35.7600,
+    longitude: -86.9310,
+    compassSearchUrl: COMPASS_AGENT_URL,
+  },
+
+  'benevento-spring-hill-tn': {
+    slug: 'benevento-spring-hill-tn',
+    name: 'Benevento',
+    city: 'Spring Hill',
+    citySlug: 'spring-hill-tn',
+    county: 'Williamson County',
+    metaTitle: 'Benevento Neighborhood Guide — Spring Hill, TN | Joshua Fink',
+    metaDescription:
+      'Benevento in Spring Hill, TN: an Italian-themed, all-brick Williamson County community off Buckner Lane with fountains, tree-lined sidewalks, and Summit High zoning. Local insight from Compass agent Joshua Fink.',
+    intro:
+      'Benevento is a small, upscale, Italian-inspired community off Buckner Lane on the Williamson County side of Spring Hill — all-brick and brick-and-stone homes, cascading fountains, arched entrances, and Italian street names, just outside Franklin.',
+    about:
+      'Benevento sits off Buckner Lane near Duplex Road in the 37174 ZIP, between US-31 and I-65, on the Williamson County side of Spring Hill. Developed from the mid-2000s onward — the original Benevento (roughly 80–85 homes) starting around 2006, with the adjacent Benevento East phase running from about 2010 to 2018 and newer construction since — it is a relatively small, cohesive community of roughly 100-plus acres. The architecture leans Italian: arched and columned entrances, cascading fountains, tree-canopied sidewalks, and Italian-themed street names (Maleventum Way, Via Francesco Drive, Appian Way). Homes are mainly all-brick or brick-and-stone, generally 2,500 to 4,500 square feet with three to five bedrooms, on lots of roughly a quarter to a half acre. The original section has a community pool and playground; Benevento East has a lower HOA and relies on nearby Port Royal Park and greenways. Saturn Parkway puts Franklin, Brentwood, and Nashville within an easy commute.',
+    vibe: 'Small, elegant, Italian-themed all-brick enclave with fountains and tree-lined sidewalks.',
+    priceBand: '$675K – $1.2M (approx.)',
+    buildYears: 'Roughly 2006 to present (Benevento East ~2010–2018)',
+    hoa: 'Active HOA; dues vary by section (roughly $32–$50/month). The original section’s dues cover a community pool and common areas; Benevento East carries lower dues and no pool. Confirm current dues with the HOA.',
+    schoolNotes:
+      'Benevento is zoned to Williamson County Schools — most commonly Allendale Elementary, Spring Station Middle, and Summit High. WCS rezones periodically and the official district map governs, so verify the specific address before writing an offer.',
+    amenities: [
+      'Community pool and playground (original Benevento section)',
+      'Cascading fountains and arched, Italian-themed entrances',
+      'Tree-canopied sidewalks throughout',
+      'Near Port Royal Park and greenways',
+    ],
+    homeStyles: [
+      'Italian-aesthetic traditional homes',
+      'All-brick and brick-and-stone exteriors with columned porches',
+      'Generally 2,500–4,500 sq ft, three to five bedrooms',
+      'Lots roughly a quarter to a half acre',
+    ],
+    whyBullets: [
+      'A distinctive look: Benevento’s consistent Italian theme — fountains, arched entrances, brick-and-stone elevations — gives it a more elegant, cohesive feel than typical Spring Hill subdivisions.',
+      'Small and cohesive: At roughly 80–85 original homes plus the East phase, it’s an intimate community rather than a sprawling one.',
+      'Williamson schools, easy commute: Summit High zoning plus quick Saturn Parkway/I-65 access to Franklin, Brentwood, and Nashville.',
+    ],
+    faqs: [
+      {
+        q: 'How much do homes in Benevento cost in 2026?',
+        a: 'As of early 2026, Benevento homes have generally run from roughly $675K to $1.2M, with recent active listings in the $730K–$950K range and a median in the high $700s. Joshua can pull current comps for the original section versus Benevento East.',
+      },
+      {
+        q: 'Is Benevento in Williamson or Maury County?',
+        a: 'Williamson County. Multiple independent sources and its Williamson County Schools zoning place Benevento on the Williamson side of Spring Hill, just outside Franklin — despite an occasional online mistag as Maury.',
+      },
+      {
+        q: 'What schools are zoned to Benevento?',
+        a: 'Williamson County Schools — commonly Allendale Elementary, Spring Station Middle, and Summit High. Zoning can change, so confirm the specific address against the current district map before making an offer.',
+      },
+      {
+        q: 'What is the difference between Benevento and Benevento East?',
+        a: 'They’re adjacent phases of the same community. The original Benevento (mid-2000s) has a community pool and a slightly higher HOA; Benevento East (roughly 2010 onward) is newer, carries lower dues, and has no pool of its own, with residents using nearby Port Royal Park.',
+      },
+    ],
+    schemaCity: 'Spring Hill',
+    schemaState: 'TN',
+    latitude: 35.7280,
+    longitude: -86.8820,
+    compassSearchUrl: COMPASS_AGENT_URL,
+  },
+
+  'spring-hill-place-spring-hill-tn': {
+    slug: 'spring-hill-place-spring-hill-tn',
+    name: 'Spring Hill Place',
+    city: 'Spring Hill',
+    citySlug: 'spring-hill-tn',
+    county: 'Williamson County',
+    metaTitle: 'Spring Hill Place Neighborhood Guide — Spring Hill, TN | Joshua Fink',
+    metaDescription:
+      'Spring Hill Place in Spring Hill, TN: an established Williamson County community off Buckner Lane with a pool, clubhouse, tennis, and a pond, zoned to Summit High. Local insight from Compass agent Joshua Fink.',
+    intro:
+      'Spring Hill Place is an established, amenity-rich community off Buckner Lane on the Williamson County side of Spring Hill — roughly 200 brick homes with a pool, clubhouse, tennis courts, and a neighborhood pond, zoned to Summit High.',
+    about:
+      'Spring Hill Place sits off Buckner Lane between US-31 and I-65 in the 37174 ZIP, on the Williamson County side of Spring Hill. Built out from roughly 2002 to the mid-2010s as an approximately 200-home community, it offers traditional and transitional single-family homes — multiple gables, front porches, and columns — in all-brick and brick-and-siding, generally 2,000 to 4,500 square feet on lots of about a quarter to a third of an acre. It is one of the more amenity-rich established neighborhoods in this part of Spring Hill, with a community pool, clubhouse, tennis courts, and a pond, along with sidewalks and mature landscaping. It is not gated. Saturn Parkway and I-65 put Cool Springs, Franklin, and Nashville within easy reach.',
+    vibe: 'Established, amenity-rich Williamson-County community with pool, clubhouse, and tennis.',
+    priceBand: '$615K – $1.22M (approx.)',
+    buildYears: 'Roughly 2002 to 2014',
+    hoa: 'Active HOA (recent figures around $75–$82/month; older sources cite less). Covers the pool, clubhouse, tennis courts, and common-area landscaping. Confirm current dues with the HOA before writing an offer.',
+    schoolNotes:
+      'Spring Hill Place is zoned to Williamson County Schools — typically Allendale Elementary, Spring Station Middle, and Summit High. WCS rezones periodically as schools reach capacity, so verify the specific address against the current district zoning map.',
+    amenities: [
+      'Community swimming pool',
+      'Clubhouse',
+      'Tennis courts',
+      'Neighborhood pond',
+      'Sidewalks and mature landscaping (not gated)',
+    ],
+    homeStyles: [
+      'Traditional and transitional single-family homes',
+      'All-brick and brick-and-siding exteriors with gables and porches',
+      'Generally 2,000–4,500 sq ft',
+      'Lots roughly 0.23–0.41 acre',
+    ],
+    whyBullets: [
+      'Amenities for the price band: Pool, clubhouse, tennis, and a pond make Spring Hill Place one of the more amenity-rich established communities in this pocket of Spring Hill.',
+      'Summit High zoning: A consistent Williamson County Schools assignment is a core part of the resale story.',
+      'Established and convenient: Built out by the mid-2010s with mature landscaping, and minutes from Buckner Lane shopping and the I-65 corridor.',
+    ],
+    faqs: [
+      {
+        q: 'How much do homes in Spring Hill Place cost in 2026?',
+        a: 'As of early 2026, active listings have generally run from the mid-$600s to about $1.22M, with a trailing-year median in the high-$800s to low-$900s. Active inventory is small, so Joshua can pull current closed comps for an exact, up-to-date number.',
+      },
+      {
+        q: 'Is Spring Hill Place in Williamson or Maury County?',
+        a: 'Williamson County. Every source consistently places it on the Williamson side of Spring Hill, off Buckner Lane, with Williamson County Schools zoning.',
+      },
+      {
+        q: 'What schools are zoned to Spring Hill Place?',
+        a: 'Williamson County Schools — typically Allendale Elementary, Spring Station Middle, and Summit High. Because WCS rezones periodically, verify the specific address against the current district map before making an offer.',
+      },
+      {
+        q: 'Does Spring Hill Place have an HOA, and what does it cover?',
+        a: 'Yes. The HOA covers the pool, clubhouse, tennis courts, and common-area landscaping. Recent dues figures are around $75–$82/month, though older sources cite less — confirm the current amount with the HOA.',
+      },
+    ],
+    schemaCity: 'Spring Hill',
+    schemaState: 'TN',
+    latitude: 35.7120,
+    longitude: -86.9020,
+    compassSearchUrl: COMPASS_AGENT_URL,
+  },
 }
 
 export function getNeighborhood(slug: string): Neighborhood | undefined {
