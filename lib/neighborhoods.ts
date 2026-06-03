@@ -1155,6 +1155,325 @@ export const neighborhoods: Record<string, Neighborhood> = {
     longitude: -86.9020,
     compassSearchUrl: COMPASS_AGENT_URL,
   },
+
+  // ───────────────────────────────────────────────────────────────────────
+  // SPRING HILL, TN — MAURY COUNTY side (added 2026-06-03). The more attainable
+  // side of the Williamson/Maury line, zoned to Maury County Public Schools
+  // (lower property taxes than the Williamson side). Price bands and school
+  // zoning are research-sourced from public listing/brokerage/district data and
+  // FLAGGED FOR JOSHUA TO VERIFY (see PR). Notes: Port Royal Estates and Dartford
+  // genuinely STRADDLE the county line (some addresses are Williamson) — the
+  // guides say so and tell buyers to confirm per address. Hampton Springs was
+  // recently rezoned to the newer Battle Creek schools. HOA dues are estimates.
+  // ───────────────────────────────────────────────────────────────────────
+  'harvest-point-spring-hill-tn': {
+    slug: 'harvest-point-spring-hill-tn',
+    name: 'Harvest Point',
+    city: 'Spring Hill',
+    citySlug: 'spring-hill-tn',
+    county: 'Maury County',
+    metaTitle: 'Harvest Point Neighborhood Guide — Spring Hill, TN | Joshua Fink',
+    metaDescription:
+      'Harvest Point in Spring Hill, TN: a large, amenity-rich master-planned community on the Maury County side off Cleburne Road — pool, trails, dog park, and a wide price range. Local insight from Compass agent Joshua Fink.',
+    intro:
+      'Harvest Point is one of Spring Hill’s largest and most amenity-rich master-planned communities — a walkable, resort-style neighborhood off Cleburne Road on the Maury County side, with everything from townhomes to larger single-family homes and a deep amenity package.',
+    about:
+      'Harvest Point sits in southwest Spring Hill off Cleburne Road, on the Maury County side of the city, just past Spring Hill Middle School (which abuts the community). Built out across 16+ phases since 2018 by builders including D.R. Horton and Celebration Homes (with Regent and Phillips also active in places), it offers a broad mix of product — townhomes from around 1,240 square feet up to single-family homes near 4,000 square feet, mostly traditional architecture with fiber-cement and brick exteriors on compact suburban lots. The draw is the lifestyle: a resort-style pool with a splash pad, a clubhouse, dog park, tennis courts, playgrounds, walking trails along the creeks, a community garden, and on-site/adjacent shopping. Being on the Maury side, it carries lower Maury County property taxes than comparable Williamson County addresses, with Franklin/Cool Springs and Columbia each roughly 15–25 minutes away.',
+    vibe: 'Large, amenity-rich master-planned community with a “small-town meets resort” feel at an attainable price.',
+    priceBand: '$350K – $850K (approx.)',
+    buildYears: '2018 to present (16+ phases, still building)',
+    hoa: 'Active HOA. Single-family dues are modest (roughly $65–$90/month, some phases billed quarterly); townhomes run higher (~$215–$225/month) and cover exterior maintenance. Confirm current dues for the specific phase with the HOA.',
+    schoolNotes:
+      'Harvest Point is served by Maury County Public Schools — most commonly Spring Hill Elementary, Spring Hill Middle (adjacent to the community), and Spring Hill High. A small number of homes may zone differently, and Maury County adjusts boundaries over time, so verify the assignment for the specific address with the district.',
+    amenities: [
+      'Resort-style pool with splash pad',
+      'Clubhouse / pool house',
+      'Dog park and tennis courts',
+      'Playgrounds and walking/nature trails',
+      'Community garden and on-site/adjacent shopping',
+    ],
+    homeStyles: [
+      'Single-family homes roughly 1,672–3,971 sq ft',
+      'Townhomes roughly 1,240–2,460 sq ft',
+      'Traditional architecture, fiber-cement/brick exteriors',
+      'Builders include D.R. Horton and Celebration Homes',
+      'Compact suburban lots (~0.15–0.25 acre)',
+    ],
+    whyBullets: [
+      'Amenities for the money: Harvest Point’s pool, clubhouse, dog park, tennis, and trails rival far pricier communities — at a Maury-County price point.',
+      'Something for every buyer: Townhomes for first-time buyers through larger single-family homes for move-up families, all under one HOA.',
+      'Lower taxes, easy commute: The Maury-side location means lower property taxes, with quick access to retail, I-65, and both Franklin and Columbia.',
+    ],
+    faqs: [
+      {
+        q: 'How much do homes in Harvest Point cost in 2026?',
+        a: 'As of mid-2026, Harvest Point spans roughly $350K to $850K — townhomes generally in the $350K–$475K range and single-family homes from the mid-$400s into the $800s, with new construction available. Joshua can pull current comps for the specific product and phase you’re considering.',
+      },
+      {
+        q: 'Is Harvest Point in Williamson or Maury County?',
+        a: 'Maury County. It sits in southwest Spring Hill off Cleburne Road, is served by Maury County Public Schools, and carries Maury County’s lower property-tax rate compared with the Williamson side of Spring Hill.',
+      },
+      {
+        q: 'What schools are zoned to Harvest Point?',
+        a: 'Maury County Public Schools — most commonly Spring Hill Elementary, Spring Hill Middle (right next to the community), and Spring Hill High. Zoning can change and a few homes may differ, so verify the specific address with the district before making an offer.',
+      },
+      {
+        q: 'What amenities does Harvest Point have?',
+        a: 'A lot — a resort-style pool with splash pad, clubhouse, dog park, tennis courts, playgrounds, walking trails, and a community garden, plus on-site and adjacent shopping. It’s one of the most amenity-rich communities in Spring Hill.',
+      },
+    ],
+    schemaCity: 'Spring Hill',
+    schemaState: 'TN',
+    latitude: 35.7379,
+    longitude: -86.9777,
+    compassSearchUrl: COMPASS_AGENT_URL,
+  },
+
+  'port-royal-estates-spring-hill-tn': {
+    slug: 'port-royal-estates-spring-hill-tn',
+    name: 'Port Royal Estates',
+    city: 'Spring Hill',
+    citySlug: 'spring-hill-tn',
+    county: 'Maury County',
+    metaTitle: 'Port Royal Estates Neighborhood Guide — Spring Hill, TN | Joshua Fink',
+    metaDescription:
+      'Port Royal Estates in Spring Hill, TN: an attainable, established community off Port Royal Road, mostly Maury County with a Williamson-zoned pocket. Local insight from Compass agent Joshua Fink.',
+    intro:
+      'Port Royal Estates is one of Spring Hill’s more attainable established neighborhoods — mid-size brick homes off Port Royal Road with neighborhood pools and easy I-65 access. Most of it is Maury County, but it straddles the county line, so a handful of addresses fall in Williamson.',
+    about:
+      'Port Royal Estates sits off Port Royal Road in the 37174 ZIP, developed from the mid-2000s onward in phases. It’s part of a cluster of related-but-distinct communities under the “Port Royal” name — Port Royal Estates (the original sections), The Reserve at Port Royal (larger single-family sections), and the Villas at Port Royal (attached townhomes) — so it pays to know which one a listing is in. Homes here are traditional suburban single-family designs, typically all-brick or brick-and-vinyl, three to four bedrooms, roughly 1,700–3,000 square feet on quarter-acre-ish lots. The neighborhood’s defining quirk is that it straddles the Maury/Williamson county line: most homes are Maury County (Marvin Wright / Spring Hill schools), but a subset in Section 2 falls in Williamson County (Chapman’s Retreat / Spring Station / Summit) — meaning two homes a few doors apart can sit in different counties and school districts. Modest HOA dues fund shared amenities, and Saturn Parkway puts I-65 about five minutes away.',
+    vibe: 'Attainable, established brick-home neighborhood with pools and easy I-65 access.',
+    priceBand: '$415K – $585K single-family (townhomes from ~$289K)',
+    buildYears: 'Roughly 2006 to 2016',
+    hoa: 'Active HOA. Single-family dues are modest (roughly $44–$55/month); the Villas townhomes run higher (~$130–$180/month) for exterior maintenance. Confirm current dues with the HOA.',
+    schoolNotes:
+      'Most Port Royal Estates addresses are Maury County Public Schools — typically Marvin Wright Elementary, Spring Hill Middle, and Spring Hill High. However, some Section 2 addresses fall in Williamson County Schools (Chapman’s Retreat Elementary, Spring Station Middle, Summit High). Because the county line runs through the area, you MUST verify the county and school assignment for the exact address.',
+    amenities: [
+      'Community pool(s)',
+      'Playground(s)',
+      'Sidewalks and (in some sections) underground utilities',
+      'About 5 minutes to Saturn Parkway / I-65',
+      'Near the Port Royal Publix',
+    ],
+    homeStyles: [
+      'Traditional suburban single-family homes',
+      'All-brick and brick-and-vinyl exteriors',
+      'Typically 3–4 bedrooms, roughly 1,700–3,000 sq ft',
+      'Quarter-acre-ish lots (townhomes much smaller)',
+    ],
+    whyBullets: [
+      'Attainable entry to Spring Hill: Single-family homes here generally sit below the Williamson-side communities, and the Villas townhomes open the door near $300K.',
+      'Pools and convenience: Neighborhood pools, sidewalks, and a five-minute hop to I-65 make it an easy commuter pick.',
+      'Know your county line: The Maury/Williamson split is a feature if you understand it — Joshua confirms the exact county, tax rate, and schools before you write an offer.',
+    ],
+    faqs: [
+      {
+        q: 'How much do homes in Port Royal Estates cost in 2026?',
+        a: 'As of mid-2026, detached single-family homes generally run from roughly $415K to $585K, while the attached Villas townhomes have started near $289K. The widely-seen “from $289K” headline refers to those townhomes, not detached homes. Joshua can pull current comps for the exact section.',
+      },
+      {
+        q: 'Is Port Royal Estates in Williamson or Maury County?',
+        a: 'Mostly Maury County, but it straddles the line — a subset of Section 2 addresses are in Williamson County. That changes both the property-tax rate and the school district, so it’s essential to verify the specific address.',
+      },
+      {
+        q: 'What schools are zoned to Port Royal Estates?',
+        a: 'Maury-side homes are typically zoned to Marvin Wright Elementary, Spring Hill Middle, and Spring Hill High (Maury County Public Schools). Williamson-side (Section 2) homes are zoned to Chapman’s Retreat Elementary, Spring Station Middle, and Summit High (Williamson County Schools). Confirm the exact address before making an offer.',
+      },
+      {
+        q: 'What’s the difference between Port Royal Estates, The Reserve at Port Royal, and the Villas?',
+        a: 'They’re related but separate. Port Royal Estates is the original single-family sections; The Reserve at Port Royal is a larger, somewhat newer single-family development (300+ homes); and the Villas at Port Royal are attached townhomes with their own pool. Listings under “Port Royal” can be any of the three, so check which one.',
+      },
+    ],
+    schemaCity: 'Spring Hill',
+    schemaState: 'TN',
+    latitude: 35.7380,
+    longitude: -86.9040,
+    compassSearchUrl: COMPASS_AGENT_URL,
+  },
+
+  'reserve-at-port-royal-spring-hill-tn': {
+    slug: 'reserve-at-port-royal-spring-hill-tn',
+    name: 'The Reserve at Port Royal',
+    city: 'Spring Hill',
+    citySlug: 'spring-hill-tn',
+    county: 'Maury County',
+    metaTitle: 'The Reserve at Port Royal Neighborhood Guide — Spring Hill, TN | Joshua Fink',
+    metaDescription:
+      'The Reserve at Port Royal in Spring Hill, TN: a 300+ home single-family community off Reserve Boulevard on the Maury County side, with a pool and playground. Local insight from Compass agent Joshua Fink.',
+    intro:
+      'The Reserve at Port Royal is a large single-family community — over 300 homes off Reserve Boulevard on the Maury County side of Spring Hill, with a neighborhood pool, playground, and quick I-65 access. It’s distinct from the older Port Royal Estates next door.',
+    about:
+      'The Reserve at Port Royal is the larger single-family component of the broader “Port Royal” area in Spring Hill, off Reserve Boulevard in the 37174 ZIP — not to be confused with the adjacent, older Port Royal Estates or the Villas at Port Royal townhomes. Built largely from the mid-2000s through the 2010s, it’s a family-oriented community of 300-plus homes on compact suburban lots (roughly 0.20–0.25 acre), generally 2,200–4,100 square feet with three to four bedrooms in traditional suburban styling. A community pool and playground anchor the amenities, and the location is minutes from I-65, shopping, and dining. Most addresses are Maury County (served by Maury County Public Schools), though the wider Port Royal area touches the Williamson line, so the exact county and school assignment should be confirmed per address.',
+    vibe: 'Large, family-friendly single-family community with a neighborhood pool, value-priced on the Maury side.',
+    priceBand: '$465K – $720K (approx.)',
+    buildYears: 'Roughly mid-2000s to mid-2010s',
+    hoa: 'Active HOA (managed by Acclaimed Property Management) covering the community pool, playground, and common areas. Specific dues weren’t publicly listed — confirm the current amount with the HOA.',
+    schoolNotes:
+      'The Reserve at Port Royal is primarily Maury County Public Schools — typically Marvin Wright Elementary, Spring Hill Middle, and Spring Hill High (some addresses surface Spring Hill Elementary). Because the broader Port Royal area straddles the county line, verify the county and school assignment for the specific address.',
+    amenities: [
+      'Community swimming pool',
+      'Playground',
+      'Sidewalks and green space (300+ homes)',
+      'Minutes from I-65, shopping, and dining',
+    ],
+    homeStyles: [
+      'Traditional suburban single-family homes',
+      'Typically 3–4 bedrooms, roughly 2,200–4,100 sq ft',
+      'Compact suburban lots (~0.20–0.25 acre)',
+    ],
+    whyBullets: [
+      'Scale and amenities: At 300-plus homes with a pool and playground, The Reserve offers a full neighborhood feel at a Maury-County price.',
+      'Newer, larger product: Generally larger single-family homes than the adjacent Port Royal Estates, appealing to move-up families.',
+      'Commuter-friendly value: Minutes to I-65 with lower Maury property taxes than the Williamson side of town.',
+    ],
+    faqs: [
+      {
+        q: 'How much do homes in The Reserve at Port Royal cost in 2026?',
+        a: 'Recent single-family listings have generally run from roughly $465K to $720K depending on size and lot. Active inventory is small, so figures move quickly — Joshua can pull current closed comps for an exact read.',
+      },
+      {
+        q: 'Is The Reserve at Port Royal the same as Port Royal Estates?',
+        a: 'No. They’re adjacent and share the “Port Royal” name, but they’re separate communities. The Reserve is a larger, somewhat newer single-family development (300+ homes off Reserve Boulevard); Port Royal Estates is the older original sections. There are also the Villas at Port Royal townhomes.',
+      },
+      {
+        q: 'Is The Reserve at Port Royal in Williamson or Maury County?',
+        a: 'Most addresses are Maury County (Maury County Public Schools). The broader Port Royal area sits near the county line, so confirm the exact county, tax rate, and school zone for the specific address before making an offer.',
+      },
+      {
+        q: 'What schools serve The Reserve at Port Royal?',
+        a: 'Primarily Maury County Public Schools — typically Marvin Wright Elementary, Spring Hill Middle, and Spring Hill High (some addresses show Spring Hill Elementary). Zoning can change, so verify per address.',
+      },
+    ],
+    schemaCity: 'Spring Hill',
+    schemaState: 'TN',
+    latitude: 35.7385,
+    longitude: -86.9045,
+    compassSearchUrl: COMPASS_AGENT_URL,
+  },
+
+  'hampton-springs-spring-hill-tn': {
+    slug: 'hampton-springs-spring-hill-tn',
+    name: 'Hampton Springs',
+    city: 'Spring Hill',
+    citySlug: 'spring-hill-tn',
+    county: 'Maury County',
+    metaTitle: 'Hampton Springs Neighborhood Guide — Spring Hill, TN | Joshua Fink',
+    metaDescription:
+      'Hampton Springs in Spring Hill, TN: an attainable, established Maury County community off Kedron Road with a pool, single-family homes and townhomes, and low HOA dues. Local insight from Compass agent Joshua Fink.',
+    intro:
+      'Hampton Springs is one of the more affordable established communities on the Maury County side of Spring Hill — a mix of mature single-family streets and newer townhomes off Kedron Road, with a pool, low single-family HOA dues, and quick I-65 access.',
+    about:
+      'Hampton Springs sits off Kedron Road (via Port Royal Road) in the 37174 ZIP, on the Maury County side of Spring Hill. Built out over roughly 15 years — single-family from around 2004/2006 and townhomes added from the mid-2010s through about 2021 — it offers both established and newer product. Single-family homes run roughly 1,774–2,812 square feet (three to five bedrooms) in traditional and ranch styles with partial-brick or all-brick exteriors; the townhomes are around 1,620–1,772 square feet with attached two-car garages. A community pool and playground anchor the amenities along a walkable, sidewalk-connected layout. Notably low single-family HOA dues (around $30/month) make it attractive to budget-conscious buyers. The community was recently rezoned into the newer Battle Creek schools, which buyers should confirm per address.',
+    vibe: 'Established, attainably-priced community mixing brick homes and townhomes with a pool and low dues.',
+    priceBand: '$412K – $545K single-family (townhomes ~$340K–$385K)',
+    buildYears: 'Roughly 2004/2006 to 2021',
+    hoa: 'Active HOA with low single-family dues (around $27–$30/month); townhomes run higher (~$175–$190/month) for exterior maintenance. Confirm current dues with the HOA.',
+    schoolNotes:
+      'Hampton Springs is served by Maury County Public Schools. After the Battle Creek schools opened (~2021), much of this area rezoned to Battle Creek Elementary and Battle Creek Middle, with Spring Hill High for high school — though some older listings still cite Marvin Wright Elementary and Spring Hill Middle. Because this zoning changed recently, verify the specific address against the Maury County Public Schools street list.',
+    amenities: [
+      'Community swimming pool',
+      'Playground',
+      'Sidewalk-connected, walkable streets',
+      'Underground utilities (portions)',
+      'Minutes to Spring Hill retail and I-65',
+    ],
+    homeStyles: [
+      'Single-family homes ~1,774–2,812 sq ft, 3–5 bedrooms',
+      'Townhomes ~1,620–1,772 sq ft with 2-car garages',
+      'Traditional and ranch styles, partial- or all-brick',
+      'Midsize suburban lots on a sidewalk grid',
+    ],
+    whyBullets: [
+      'Low cost of ownership: Single-family HOA dues around $30/month are among the lowest of any amenity neighborhood in Spring Hill.',
+      'Options for every buyer: Newer townhomes for first-time buyers and established single-family homes for growing families.',
+      'Newer schools nearby: Recent rezoning into the Battle Creek schools (opened ~2021) is a plus — just confirm the assignment for your exact address.',
+    ],
+    faqs: [
+      {
+        q: 'How much do homes in Hampton Springs cost in 2026?',
+        a: 'As of mid-2026, single-family homes generally run from roughly $412K to $545K, with townhomes around $340K–$385K. Active inventory is small, so Joshua can pull current comps for the specific product type.',
+      },
+      {
+        q: 'Is Hampton Springs in Williamson or Maury County?',
+        a: 'Maury County. Property records for the Kedron Road area and its Maury County Public Schools zoning confirm it — despite a couple of generic directory pages that loosely say Williamson.',
+      },
+      {
+        q: 'What schools are zoned to Hampton Springs?',
+        a: 'Maury County Public Schools. Much of the area was rezoned to the newer Battle Creek Elementary and Battle Creek Middle (opened ~2021), with Spring Hill High for high school; some older listings still reference Marvin Wright Elementary and Spring Hill Middle. Because this changed recently, verify the exact address with the district.',
+      },
+      {
+        q: 'Does Hampton Springs have townhomes?',
+        a: 'Yes — newer townhomes (roughly 1,620–1,772 sq ft, three-bed, two-car garage) were added alongside the established single-family homes. Townhome HOA dues are higher than single-family because they cover exterior maintenance.',
+      },
+    ],
+    schemaCity: 'Spring Hill',
+    schemaState: 'TN',
+    latitude: 35.7200,
+    longitude: -86.9240,
+    compassSearchUrl: COMPASS_AGENT_URL,
+  },
+
+  'dartford-spring-hill-tn': {
+    slug: 'dartford-spring-hill-tn',
+    name: 'Dartford',
+    city: 'Spring Hill',
+    citySlug: 'spring-hill-tn',
+    county: 'Maury County',
+    metaTitle: 'Dartford Neighborhood Guide — Spring Hill, TN | Joshua Fink',
+    metaDescription:
+      'Dartford in Spring Hill, TN: a newer Pulte-built community off Port Royal Road on the Maury County side, with trail access and low HOA dues. Local insight from Compass agent Joshua Fink.',
+    intro:
+      'Dartford is a newer, compact Pulte-built community off Port Royal Road on the Maury County side of Spring Hill — sub-$500K homes, low HOA dues, and trail access near Port Royal Park, with easy I-65/Saturn Parkway commuting.',
+    about:
+      'Dartford is a small, uniform Pulte community delivered around 2019–2021 off Port Royal Road in the 37174 ZIP. The core streets — Lonergan Circle, Cadence Drive, Sercy Drive — sit in Maury County, with homes typically three to four bedrooms, around 2,060–2,440 square feet, featuring open-concept layouts, nine-foot main-level ceilings, and two-car garages on small suburban lots (~0.15–0.21 acre). It’s a popular choice for first-time and relocating buyers thanks to its sub-$500K Maury-side pricing and low (~$55/month) HOA. The single most important buyer detail is the county line: Dartford sits right on it, and a separately-marketed “Phase 2” pocket (Posada Court) is actually Williamson County (Chapman’s Retreat / Spring Station / Summit), so county, tax rate, and schools can differ by exact address. Amenities are modest — trails and proximity to Port Royal Park rather than a pool or clubhouse.',
+    vibe: 'Newer, compact Pulte enclave with trail access and attainable Maury-side pricing.',
+    priceBand: '$435K – $530K (approx., Maury-side homes)',
+    buildYears: 'Roughly 2019 to 2021',
+    hoa: 'Active HOA (around $55/month) covering common-area and grounds maintenance. No community pool or clubhouse. Confirm current dues with the HOA.',
+    schoolNotes:
+      'The Maury-side core of Dartford (Lonergan/Cadence/Sercy) is zoned to Maury County Public Schools — Marvin Wright Elementary, Spring Hill Middle, and Spring Hill High. A separately-marketed “Phase 2” pocket on Posada Court is in Williamson County (Chapman’s Retreat Elementary, Spring Station Middle, Summit High). Because Dartford sits on the county line, verify the county and school assignment for the exact address.',
+    amenities: [
+      'Walking / multi-use trails',
+      'Near Port Royal Park (disc golf, picnic areas, river access)',
+      'Saturn Parkway greenway nearby',
+      'No on-site pool or clubhouse',
+      'Quick access to Port Royal Road retail and I-65',
+    ],
+    homeStyles: [
+      'Pulte production homes, early-2020s build',
+      'Typically 3–4 bedrooms, ~2,060–2,440 sq ft',
+      'Open-concept layouts, 9-ft main-level ceilings, 2-car garages',
+      'Small suburban lots (~0.15–0.21 acre)',
+    ],
+    whyBullets: [
+      'Newer at an attainable price: Early-2020s Pulte construction under $500K on the Maury side is increasingly hard to find in Spring Hill.',
+      'Low carrying cost: A ~$55/month HOA and Maury County tax rate keep ownership costs down.',
+      'Mind the county line: Dartford sits right on it — Joshua confirms whether a given address is Maury or Williamson (and which schools) before you write an offer.',
+    ],
+    faqs: [
+      {
+        q: 'How much do homes in Dartford cost in 2026?',
+        a: 'On the Maury side, Dartford homes have generally run from roughly $435K to $530K. A few Williamson-side “Phase 2” homes have listed higher. Joshua can pull current comps for the specific section.',
+      },
+      {
+        q: 'Is Dartford in Williamson or Maury County?',
+        a: 'It straddles the line. The core community (Lonergan Circle, Cadence Drive, Sercy Drive) is Maury County, but a separately-marketed “Phase 2” pocket on Posada Court is Williamson County. That changes the tax rate and schools, so verify the exact address.',
+      },
+      {
+        q: 'What schools are zoned to Dartford?',
+        a: 'The Maury-side core is zoned to Marvin Wright Elementary, Spring Hill Middle, and Spring Hill High (Maury County Public Schools). The Williamson-side Phase 2 is zoned to Chapman’s Retreat Elementary, Spring Station Middle, and Summit High (Williamson County Schools). Confirm per address before making an offer.',
+      },
+      {
+        q: 'Who built Dartford and does it have a pool?',
+        a: 'Dartford is a PulteGroup community built around 2019–2021. It does not have a community pool or clubhouse — amenities are modest, centered on trails and nearby Port Royal Park. (Note: a separate rental “Dartford Townhomes” shares the name but is not the for-sale single-family subdivision.)',
+      },
+    ],
+    schemaCity: 'Spring Hill',
+    schemaState: 'TN',
+    latitude: 35.7490,
+    longitude: -86.9030,
+    compassSearchUrl: COMPASS_AGENT_URL,
+  },
 }
 
 export function getNeighborhood(slug: string): Neighborhood | undefined {
