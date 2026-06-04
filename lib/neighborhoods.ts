@@ -33,7 +33,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     city: 'Franklin',
     citySlug: 'franklin-tn',
     county: 'Williamson County',
-    metaTitle: 'Westhaven Neighborhood Guide — Franklin, TN | Joshua Fink',
+    metaTitle: 'Westhaven Neighborhood Guide — Franklin, TN',
     metaDescription:
       'Everything you need to know about Westhaven in Franklin, TN: amenities, schools, home styles, HOA, and current price ranges. Local insight from Compass agent Joshua Fink.',
     intro:
@@ -101,7 +101,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     city: 'Brentwood',
     citySlug: 'brentwood-tn',
     county: 'Williamson County',
-    metaTitle: 'Governors Club Neighborhood Guide — Brentwood, TN | Joshua Fink',
+    metaTitle: 'Governors Club Neighborhood Guide — Brentwood, TN',
     metaDescription:
       'Governors Club is the gated, Greg Norman-designed luxury golf community in Brentwood, TN. Real insight from Compass agent Joshua Fink — homes, club, schools, and price ranges.',
     intro:
@@ -169,7 +169,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     city: 'Franklin',
     citySlug: 'franklin-tn',
     county: 'Williamson County',
-    metaTitle: "McKay's Mill Neighborhood Guide — Franklin, TN | Joshua Fink",
+    metaTitle: "McKay's Mill Neighborhood Guide — Franklin, TN",
     metaDescription:
       "McKay's Mill is one of Franklin's largest and most popular family subdivisions. Local insight from Compass agent Joshua Fink — homes, schools, amenities, HOA, and current pricing.",
     intro:
@@ -237,7 +237,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     city: 'Franklin',
     citySlug: 'franklin-tn',
     county: 'Williamson County',
-    metaTitle: 'Fieldstone Farms Neighborhood Guide — Franklin, TN | Joshua Fink',
+    metaTitle: 'Fieldstone Farms Neighborhood Guide — Franklin, TN',
     metaDescription:
       'Fieldstone Farms is one of the largest, most popular family subdivisions in Franklin, TN. Local insight from Compass agent Joshua Fink — homes, schools, HOA, amenities, and pricing.',
     intro:
@@ -305,7 +305,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     city: 'Franklin',
     citySlug: 'franklin-tn',
     county: 'Williamson County',
-    metaTitle: 'Berry Farms Neighborhood Guide — Franklin, TN | Joshua Fink',
+    metaTitle: 'Berry Farms Neighborhood Guide — Franklin, TN',
     metaDescription:
       'Berry Farms is the newer mixed-use master-planned community in south Franklin, TN — walkable, modern, and growing fast. Local insight from Compass agent Joshua Fink.',
     intro:
@@ -373,7 +373,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     city: 'Brentwood',
     citySlug: 'brentwood-tn',
     county: 'Williamson County',
-    metaTitle: 'Annandale Neighborhood Guide — Brentwood, TN | Joshua Fink',
+    metaTitle: 'Annandale Neighborhood Guide — Brentwood, TN',
     metaDescription:
       'Annandale is one of the most prestigious non-gated communities in Brentwood, TN — large estate lots, custom homes, and Williamson County Schools. Local insight from Compass agent Joshua Fink.',
     intro:
@@ -441,7 +441,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     city: 'Brentwood',
     citySlug: 'brentwood-tn',
     county: 'Williamson County',
-    metaTitle: 'Raintree Forest Neighborhood Guide — Brentwood, TN | Joshua Fink',
+    metaTitle: 'Raintree Forest Neighborhood Guide — Brentwood, TN',
     metaDescription:
       'Raintree Forest is one of Brentwood\'s most established luxury subdivisions — wooded lots, brick traditional estates, and Williamson County Schools. Compass agent Joshua Fink walks you through what to know.',
     intro:
@@ -509,7 +509,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     city: 'Franklin',
     citySlug: 'franklin-tn',
     county: 'Williamson County',
-    metaTitle: 'The Highlands at Ladd Park Guide — Franklin, TN | Joshua Fink',
+    metaTitle: 'The Highlands at Ladd Park Guide — Franklin, TN',
     metaDescription:
       'The Highlands at Ladd Park is a newer upscale Franklin community — modern construction, larger lots, and Williamson County Schools. Local insight from Compass agent Joshua Fink.',
     intro:
@@ -577,7 +577,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     city: "Thompson's Station",
     citySlug: 'thompsons-station-tn',
     county: 'Williamson County',
-    metaTitle: "Tollgate Village Neighborhood Guide — Thompson's Station, TN | Joshua Fink",
+    metaTitle: "Tollgate Village Neighborhood Guide — Thompson's Station, TN",
     metaDescription:
       "Tollgate Village is one of the largest, fastest-growing master-planned communities in Thompson's Station, TN. Compass agent Joshua Fink covers homes, schools, HOA, and price ranges.",
     intro:
@@ -645,7 +645,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     city: 'Nolensville',
     citySlug: 'nolensville-tn',
     county: 'Williamson County',
-    metaTitle: 'Burberry Glen Neighborhood Guide — Nolensville, TN | Joshua Fink',
+    metaTitle: 'Burberry Glen Neighborhood Guide — Nolensville, TN',
     metaDescription:
       'Burberry Glen is one of the most popular newer family subdivisions in Nolensville, TN — modern homes, Williamson County Schools, and quick access to Cool Springs. Local insight from Compass agent Joshua Fink.',
     intro:
@@ -713,7 +713,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     city: 'Nolensville',
     citySlug: 'nolensville-tn',
     county: 'Williamson County',
-    metaTitle: 'Bent Creek Neighborhood Guide — Nolensville, TN | Joshua Fink',
+    metaTitle: 'Bent Creek Neighborhood Guide — Nolensville, TN',
     metaDescription:
       'Bent Creek is one of the largest and most popular family subdivisions in Nolensville, TN — established homes, mature trees, and Williamson County Schools. Compass agent Joshua Fink walks you through what to know.',
     intro:
@@ -790,7 +790,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     city: 'Spring Hill',
     citySlug: 'spring-hill-tn',
     county: 'Williamson County',
-    metaTitle: 'Wades Grove Neighborhood Guide — Spring Hill, TN | Joshua Fink',
+    metaTitle: 'Wades Grove Neighborhood Guide — Spring Hill, TN',
     metaDescription:
       'Wades Grove in Spring Hill, TN: a large all-brick community off Buckner Lane in Williamson County, with a pool, pavilion, and Williamson County Schools zoning. Local insight from Compass agent Joshua Fink.',
     intro:
@@ -852,7 +852,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     city: 'Spring Hill',
     citySlug: 'spring-hill-tn',
     county: 'Williamson County',
-    metaTitle: 'Cherry Grove Neighborhood Guide — Spring Hill, TN | Joshua Fink',
+    metaTitle: 'Cherry Grove Neighborhood Guide — Spring Hill, TN',
     metaDescription:
       'Cherry Grove in Spring Hill, TN: an established all-brick Williamson County community on larger lots near the Thompson’s Station line, zoned to Summit High. Local insight from Compass agent Joshua Fink.',
     intro:
@@ -914,7 +914,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     city: 'Spring Hill',
     citySlug: 'spring-hill-tn',
     county: 'Williamson County',
-    metaTitle: 'Campbell Station Neighborhood Guide — Spring Hill, TN | Joshua Fink',
+    metaTitle: 'Campbell Station Neighborhood Guide — Spring Hill, TN',
     metaDescription:
       'Campbell Station in Spring Hill, TN: an established all-brick Williamson County community off Columbia Pike, walkable to Main Street, on generous lots. Local insight from Compass agent Joshua Fink.',
     intro:
@@ -977,7 +977,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     city: 'Spring Hill',
     citySlug: 'spring-hill-tn',
     county: 'Williamson County',
-    metaTitle: 'Autumn Ridge Neighborhood Guide — Spring Hill, TN | Joshua Fink',
+    metaTitle: 'Autumn Ridge Neighborhood Guide — Spring Hill, TN',
     metaDescription:
       'Autumn Ridge in Spring Hill, TN: an upscale custom-home community off Miles Johnson Parkway in Williamson County with a pool, clubhouse, and pond on larger lots. Local insight from Compass agent Joshua Fink.',
     intro:
@@ -1039,7 +1039,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     city: 'Spring Hill',
     citySlug: 'spring-hill-tn',
     county: 'Williamson County',
-    metaTitle: 'Benevento Neighborhood Guide — Spring Hill, TN | Joshua Fink',
+    metaTitle: 'Benevento Neighborhood Guide — Spring Hill, TN',
     metaDescription:
       'Benevento in Spring Hill, TN: an Italian-themed, all-brick Williamson County community off Buckner Lane with fountains, tree-lined sidewalks, and Summit High zoning. Local insight from Compass agent Joshua Fink.',
     intro:
@@ -1100,7 +1100,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     city: 'Spring Hill',
     citySlug: 'spring-hill-tn',
     county: 'Williamson County',
-    metaTitle: 'Spring Hill Place Neighborhood Guide — Spring Hill, TN | Joshua Fink',
+    metaTitle: 'Spring Hill Place Neighborhood Guide — Spring Hill, TN',
     metaDescription:
       'Spring Hill Place in Spring Hill, TN: an established Williamson County community off Buckner Lane with a pool, clubhouse, tennis, and a pond, zoned to Summit High. Local insight from Compass agent Joshua Fink.',
     intro:
@@ -1172,7 +1172,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     city: 'Spring Hill',
     citySlug: 'spring-hill-tn',
     county: 'Maury County',
-    metaTitle: 'Harvest Point Neighborhood Guide — Spring Hill, TN | Joshua Fink',
+    metaTitle: 'Harvest Point Neighborhood Guide — Spring Hill, TN',
     metaDescription:
       'Harvest Point in Spring Hill, TN: a large, amenity-rich master-planned community on the Maury County side off Cleburne Road — pool, trails, dog park, and a wide price range. Local insight from Compass agent Joshua Fink.',
     intro:
@@ -1235,7 +1235,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     city: 'Spring Hill',
     citySlug: 'spring-hill-tn',
     county: 'Maury County',
-    metaTitle: 'Port Royal Estates Neighborhood Guide — Spring Hill, TN | Joshua Fink',
+    metaTitle: 'Port Royal Estates Neighborhood Guide — Spring Hill, TN',
     metaDescription:
       'Port Royal Estates in Spring Hill, TN: an attainable, established community off Port Royal Road, mostly Maury County with a Williamson-zoned pocket. Local insight from Compass agent Joshua Fink.',
     intro:
@@ -1297,7 +1297,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     city: 'Spring Hill',
     citySlug: 'spring-hill-tn',
     county: 'Maury County',
-    metaTitle: 'The Reserve at Port Royal Neighborhood Guide — Spring Hill, TN | Joshua Fink',
+    metaTitle: 'The Reserve at Port Royal Neighborhood Guide — Spring Hill, TN',
     metaDescription:
       'The Reserve at Port Royal in Spring Hill, TN: a 300+ home single-family community off Reserve Boulevard on the Maury County side, with a pool and playground. Local insight from Compass agent Joshua Fink.',
     intro:
@@ -1357,7 +1357,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     city: 'Spring Hill',
     citySlug: 'spring-hill-tn',
     county: 'Maury County',
-    metaTitle: 'Hampton Springs Neighborhood Guide — Spring Hill, TN | Joshua Fink',
+    metaTitle: 'Hampton Springs Neighborhood Guide — Spring Hill, TN',
     metaDescription:
       'Hampton Springs in Spring Hill, TN: an attainable, established Maury County community off Kedron Road with a pool, single-family homes and townhomes, and low HOA dues. Local insight from Compass agent Joshua Fink.',
     intro:
@@ -1419,7 +1419,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     city: 'Spring Hill',
     citySlug: 'spring-hill-tn',
     county: 'Maury County',
-    metaTitle: 'Dartford Neighborhood Guide — Spring Hill, TN | Joshua Fink',
+    metaTitle: 'Dartford Neighborhood Guide — Spring Hill, TN',
     metaDescription:
       'Dartford in Spring Hill, TN: a newer Pulte-built community off Port Royal Road on the Maury County side, with trail access and low HOA dues. Local insight from Compass agent Joshua Fink.',
     intro:
