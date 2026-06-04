@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-06-02T13:47:54.918Z
+// AUTO-GENERATED — Last synced: 2026-06-04T11:19:14.843Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
