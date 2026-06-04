@@ -109,6 +109,12 @@ export default function RootLayout({
                     addressRegion: 'TN',
                     addressCountry: 'US',
                   },
+                  geo: {
+                    '@type': 'GeoCoordinates',
+                    latitude: 36.1627,
+                    longitude: -86.7816,
+                  },
+                  hasMap: 'https://www.google.com/maps/place/Nashville,+TN',
                   areaServed: [
                     { '@type': 'City', name: 'Franklin, TN' },
                     { '@type': 'City', name: 'Brentwood, TN' },
