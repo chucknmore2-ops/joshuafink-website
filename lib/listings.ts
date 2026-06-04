@@ -24,7 +24,7 @@ export const listings: Listing[] = [
     sqft: 5855,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/1901-New-Bristol-Ln-Brentwood-TN-37027/RS25E_pid/",
-    imageUrl: "https://www.compass.com/m/dbce75850016454ef970361e1bce7b0af6e18c69_img_0_4a318/2048x1536.webp",
+    imageUrl: "https://www.compass.com/m/dbce75850016454ef970361e1bce7b0af6e18c69_img_0_4a318/640x480.webp",
   },
   {
     address: "9560 Dresden Square",
@@ -33,7 +33,7 @@ export const listings: Listing[] = [
     sqft: 4256,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/9560-Dresden-Square-Brentwood-TN-37027/T863Z_pid/",
-    imageUrl: "https://www.compass.com/m/510a18b337189490b7abc84fd410b9c6dab5f40a_img_0_8790c/2048x1536.webp",
+    imageUrl: "https://www.compass.com/m/510a18b337189490b7abc84fd410b9c6dab5f40a_img_0_8790c/640x480.webp",
   },
   {
     address: "159 N Berwick Ln",
@@ -42,7 +42,7 @@ export const listings: Listing[] = [
     sqft: 4948,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/159-N-Berwick-Ln-Franklin-TN-37069/SXI63_pid/",
-    imageUrl: "https://www.compass.com/m/e74c5662a5fe3fac2f65df84af18a425919f7171_img_0_ff6ef/2048x1536.webp",
+    imageUrl: "https://www.compass.com/m/e74c5662a5fe3fac2f65df84af18a425919f7171_img_0_ff6ef/640x480.webp",
   },
   {
     address: "6612 Fox Hollow Rd",
@@ -51,7 +51,7 @@ export const listings: Listing[] = [
     sqft: 3058,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/6612-Fox-Hollow-Rd-Nashville-TN-37205/S670X_pid/",
-    imageUrl: "https://www.compass.com/m/04c53ab6eab9c48467cde9e054015490bb1054b1_img_0_9753a/2048x1536.webp",
+    imageUrl: "https://www.compass.com/m/04c53ab6eab9c48467cde9e054015490bb1054b1_img_0_9753a/640x480.webp",
   },
   {
     address: "1113 Linn Cv Ct",
@@ -60,7 +60,7 @@ export const listings: Listing[] = [
     sqft: 2869,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/1113-Linn-Cv-Ct-Gallatin-TN-37066/SPCI8_pid/",
-    imageUrl: "https://www.compass.com/m/8d52f2127c31faf652f00727b6c3ec01b4279a80_img_0_2f6ec/2048x1536.webp",
+    imageUrl: "https://www.compass.com/m/8d52f2127c31faf652f00727b6c3ec01b4279a80_img_0_2f6ec/640x480.webp",
   },
   {
     address: "4127 Edwards Ave",
@@ -69,7 +69,7 @@ export const listings: Listing[] = [
     sqft: 1223,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/4127-Edwards-Ave-Nashville-TN-37216/THUS9_pid/",
-    imageUrl: "https://www.compass.com/m/9de45187a2226dddece81c5f3266db949623e396_img_0_9267e/2048x1536.webp",
+    imageUrl: "https://www.compass.com/m/9de45187a2226dddece81c5f3266db949623e396_img_0_9267e/640x480.webp",
   },
   {
     address: "107 Garwood Dr",
@@ -78,7 +78,7 @@ export const listings: Listing[] = [
     sqft: 1545,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/107-Garwood-Dr-Nashville-TN-37210/TBGK6_pid/",
-    imageUrl: "https://www.compass.com/m/e3e365a5d55b995a81d5a88a152f7f8a35df3574_img_1_958f3/2048x1536.webp",
+    imageUrl: "https://www.compass.com/m/e3e365a5d55b995a81d5a88a152f7f8a35df3574_img_1_958f3/640x480.webp",
   },
   {
     address: "511 Wanda Dr",
@@ -87,6 +87,6 @@ export const listings: Listing[] = [
     sqft: 1400,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/511-Wanda-Dr-Nashville-TN-37210/SDYP1_pid/",
-    imageUrl: "https://www.compass.com/m/4e9cb7fc9872c9dbd0b0f820634b2dfa965d3cfe_img_1_17c54/2048x1536.webp",
+    imageUrl: "https://www.compass.com/m/4e9cb7fc9872c9dbd0b0f820634b2dfa965d3cfe_img_1_17c54/640x480.webp",
   }
 ];
