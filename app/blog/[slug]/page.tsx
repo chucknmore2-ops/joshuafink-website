@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getPostBySlug, getAllSlugs, getRelatedPosts, type BlogPost } from '@/lib/blog'
+import SuburbLeadForm from '@/components/SuburbLeadForm'
 
 interface Props {
   params: { slug: string }
@@ -320,6 +321,71 @@ export default function BlogPostPage({ params }: Props) {
                 615-551-2727
               </a>
             </div>
+          </div>
+        </div>
+
+        {/* Inline lead capture — convert organic blog readers without sending them to /contact */}
+        <div className="mt-12">
+          <div className="border border-[#E8E8E8] rounded-2xl p-8">
+            <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-2">
+              Talk to Joshua
+            </p>
+            <h3 className="text-2xl font-black text-black mb-2">
+              Questions on this? Send a quick note.
+            </h3>
+            <p className="text-sm text-[#444] leading-relaxed mb-6">
+              Buying, selling, or just exploring Middle Tennessee? Joshua will personally reach
+              out same-day with answers, comps, or a tailored search.
+            </p>
+
+            <SuburbLeadForm
+              successTitle="Message Sent!"
+              successMessage={
+                <>
+                  Joshua will reach out same-day. For anything urgent, call{' '}
+                  <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                </>
+              }
+              resetLabel="Send Another"
+            >
+              <input type="hidden" name="lead_type" value="general" />
+              <input type="hidden" name="source" value="blog" />
+              <input type="hidden" name="blog_slug" value={post.slug} />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label htmlFor="name" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Full Name *</label>
+                  <input type="text" id="name" name="name" required placeholder="Jane Smith"
+                    className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                </div>
+                <div>
+                  <label htmlFor="phone" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Phone *</label>
+                  <input type="tel" id="phone" name="phone" required placeholder="615-555-0000"
+                    className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="email" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Email Address *</label>
+                <input type="email" id="email" name="email" required placeholder="you@example.com"
+                  className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+              </div>
+
+              <div>
+                <label htmlFor="body" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">How Can Joshua Help? (optional)</label>
+                <textarea id="body" name="body" rows={4}
+                  placeholder="Buying, selling, neighborhood questions — anything helps Joshua respond with what you need."
+                  className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors resize-y" />
+              </div>
+
+              <p className="text-xs text-[#A0A0A0]">* Joshua responds same-day. No spam, no pressure.</p>
+
+              <button type="submit"
+                className="w-full sm:w-auto text-white text-sm font-bold px-10 py-4 tracking-wide transition-colors"
+                style={{ backgroundColor: '#C41E3A' }}>
+                Send Message →
+              </button>
+            </SuburbLeadForm>
           </div>
         </div>
 
