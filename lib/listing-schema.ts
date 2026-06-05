@@ -16,6 +16,7 @@ function parseAddress(streetAddress: string, city: string) {
   const address: Record<string, string> = {
     '@type': 'PostalAddress',
     streetAddress,
+    addressCountry: 'US',
   }
   if (match) {
     address.addressLocality = match[1]
