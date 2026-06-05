@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-06-04T11:19:14.843Z
+// AUTO-GENERATED — Last synced: 2026-06-05T11:32:22.401Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -56,7 +56,7 @@ export const listings: Listing[] = [
   {
     address: "1113 Linn Cv Ct",
     city: "Gallatin, TN 37066 | MLS #3214253",
-    price: 539900,
+    price: 519900,
     sqft: 2869,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/1113-Linn-Cv-Ct-Gallatin-TN-37066/SPCI8_pid/",
