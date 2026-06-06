@@ -79,9 +79,9 @@ export default function CinematicHero({ slides }: { slides: HeroSlide[] }) {
           className="font-display text-white leading-[0.95] tracking-tight mb-5 sm:mb-7 max-w-4xl animate-fade-in-up motion-reduce:animate-none"
           style={{ animationDelay: '200ms' }}
         >
-          <span className="block text-5xl sm:text-7xl lg:text-8xl font-black">Live Middle</span>
-          <span className="block text-5xl sm:text-7xl lg:text-8xl font-black italic text-white/95">
-            Tennessee.
+          <span className="block text-5xl sm:text-7xl lg:text-8xl font-black">Middle Tennessee Real Estate</span>
+          <span className="block text-3xl sm:text-5xl lg:text-6xl font-black italic text-white/95">
+            Franklin · Brentwood · Nashville
           </span>
         </h1>
 
