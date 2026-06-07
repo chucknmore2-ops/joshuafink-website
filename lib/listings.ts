@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-06-06T10:09:07.246Z
+// AUTO-GENERATED — Last synced: 2026-06-07T10:32:31.026Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -73,7 +73,7 @@ export const listings: Listing[] = [
   },
   {
     address: "107 Garwood Dr",
-    city: "Nashville, TN 37210 | MLS #3213802",
+    city: "Nashville, TN 37210",
     price: 439500,
     sqft: 1545,
     status: "Active",
@@ -88,5 +88,14 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/511-Wanda-Dr-Nashville-TN-37210/SDYP1_pid/",
     imageUrl: "https://www.compass.com/m/4e9cb7fc9872c9dbd0b0f820634b2dfa965d3cfe_img_1_17c54/2048x1536.webp",
+  },
+  {
+    address: "870 Reeves Rd",
+    city: "Antioch, TN 37013 | MLS #3231793",
+    price: 339900,
+    sqft: 1134,
+    status: "Active",
+    compassUrl: "https://www.compass.com/homedetails/870-Reeves-Rd-Antioch-TN-37013/SW1BU_pid/",
+    imageUrl: "https://www.compass.com/m/a7ef33f971b3f98f9c9df198198d003671a4c04ee14a9a100ddb182a937911e6/2048x1536.webp",
   }
 ];
