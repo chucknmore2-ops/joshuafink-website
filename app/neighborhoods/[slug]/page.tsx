@@ -92,21 +92,7 @@ export default async function NeighborhoodPage({ params }: Props) {
       name: n.schemaCity,
       addressRegion: n.schemaState,
     },
-  }
-
-  const agentSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'RealEstateAgent',
-    name: 'Joshua Fink — Compass Real Estate',
-    url: 'https://joshuafink.com',
-    telephone: '+16155512727',
-    email: 'joshua@joshuafink.com',
-    image: 'https://joshuafink.com/headshot.webp',
-    description: `Joshua Fink is a Compass Real Estate agent serving ${n.name} in ${n.city}, ${n.schemaState} and the broader Middle Tennessee market.`,
-    areaServed: {
-      '@type': 'Place',
-      name: `${n.name}, ${n.city}, ${n.schemaState}`,
-    },
+    provider: { '@id': 'https://joshuafink.com/#agent' },
   }
 
   const faqSchema = {
@@ -137,7 +123,6 @@ export default async function NeighborhoodPage({ params }: Props) {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(placeSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(agentSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
 
