@@ -293,6 +293,17 @@ export default function HomePage() {
                 ['burberry-glen-nolensville-tn', 'Burberry Glen (Nolensville)'],
                 ['bent-creek-nolensville-tn', 'Bent Creek (Nolensville)'],
                 ['tollgate-village-thompsons-station-tn', "Tollgate Village (Thompson's Station)"],
+                ['wades-grove-spring-hill-tn', 'Wades Grove (Spring Hill)'],
+                ['cherry-grove-spring-hill-tn', 'Cherry Grove (Spring Hill)'],
+                ['campbell-station-spring-hill-tn', 'Campbell Station (Spring Hill)'],
+                ['autumn-ridge-spring-hill-tn', 'Autumn Ridge (Spring Hill)'],
+                ['benevento-spring-hill-tn', 'Benevento (Spring Hill)'],
+                ['spring-hill-place-spring-hill-tn', 'Spring Hill Place (Spring Hill)'],
+                ['harvest-point-spring-hill-tn', 'Harvest Point (Spring Hill)'],
+                ['port-royal-estates-spring-hill-tn', 'Port Royal Estates (Spring Hill)'],
+                ['reserve-at-port-royal-spring-hill-tn', 'The Reserve at Port Royal (Spring Hill)'],
+                ['hampton-springs-spring-hill-tn', 'Hampton Springs (Spring Hill)'],
+                ['dartford-spring-hill-tn', 'Dartford (Spring Hill)'],
               ].map(([slug, label]) => (
                 <Link
                   key={slug}
