@@ -52,26 +52,7 @@ export default async function SuburbPage({ params }: Props) {
   const schemaOrg = {
     '@context': 'https://schema.org',
     '@graph': [
-      {
-        '@type': 'RealEstateAgent',
-        name: 'Joshua Fink — Compass Real Estate',
-        url: 'https://joshuafink.com',
-        telephone: '+16155512727',
-        email: 'joshua@joshuafink.com',
-        image: 'https://joshuafink.com/headshot.webp',
-        description: `Joshua Fink is a top-producing Affiliate Broker at Compass Real Estate specializing in ${suburb.displayName} home sales. 17+ years of experience, 100+ homes sold annually.`,
-        areaServed: {
-          '@type': 'City',
-          name: suburb.schemaCity,
-          addressRegion: suburb.schemaState,
-          addressCountry: 'US',
-        },
-        knowsAbout: [
-          `Sell home in ${suburb.displayName}`,
-          `${suburb.displayName} home valuation`,
-          'Middle Tennessee real estate',
-        ],
-      },
+      { '@id': 'https://joshuafink.com/#agent' },
       {
         '@type': 'LocalBusiness',
         name: 'Joshua Fink Group — Compass Real Estate',
