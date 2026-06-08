@@ -5,7 +5,7 @@ import TrustBadges from '@/components/TrustBadges'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 
 export const metadata: Metadata = {
-  title: 'Sell Your Home in Nashville | Joshua Fink — Compass Real Estate',
+  title: 'Sell Your Home in Nashville',
   description:
     'Ready to sell? Get a free home valuation and expert guidance from Joshua Fink at Compass. Serving Nashville, Franklin, Brentwood, Spring Hill, and all of Middle Tennessee.',
   openGraph: {

@@ -9,6 +9,25 @@
  */
 import type { Listing } from './listings'
 
+function parseAddress(streetAddress: string, city: string) {
+  // city looks like "Brentwood, TN 37027" optionally suffixed with " | MLS #…"
+  const cityClean = city.split('|')[0].trim()
+  const match = cityClean.match(/^(.*?),\s*([A-Z]{2})\s+(\d{5}(?:-\d{4})?)$/)
+  const address: Record<string, string> = {
+    '@type': 'PostalAddress',
+    streetAddress,
+    addressCountry: 'US',
+  }
+  if (match) {
+    address.addressLocality = match[1]
+    address.addressRegion = match[2]
+    address.postalCode = match[3]
+  } else {
+    address.addressLocality = cityClean
+  }
+  return address
+}
+
 export function buildListingItemList(items: Listing[], name: string) {
   return {
     '@context': 'https://schema.org',
@@ -21,7 +40,7 @@ export function buildListingItemList(items: Listing[], name: string) {
       item: {
         '@type': 'SingleFamilyResidence',
         name: l.address,
-        address: `${l.address}, ${l.city}`,
+        address: parseAddress(l.address, l.city),
         url: l.compassUrl,
         ...(l.imageUrl ? { image: l.imageUrl } : {}),
         ...(l.beds !== undefined ? { numberOfRooms: l.beds } : {}),

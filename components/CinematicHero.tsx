@@ -79,9 +79,9 @@ export default function CinematicHero({ slides }: { slides: HeroSlide[] }) {
           className="font-display text-white leading-[0.95] tracking-tight mb-5 sm:mb-7 max-w-4xl animate-fade-in-up motion-reduce:animate-none"
           style={{ animationDelay: '200ms' }}
         >
-          <span className="block text-5xl sm:text-7xl lg:text-8xl font-black">Live Middle</span>
-          <span className="block text-5xl sm:text-7xl lg:text-8xl font-black italic text-white/95">
-            Tennessee.
+          <span className="block text-5xl sm:text-7xl lg:text-8xl font-black">Middle Tennessee Real Estate</span>
+          <span className="block text-3xl sm:text-5xl lg:text-6xl font-black italic text-white/95">
+            Franklin · Brentwood · Nashville
           </span>
         </h1>
 
@@ -120,6 +120,23 @@ export default function CinematicHero({ slides }: { slides: HeroSlide[] }) {
           >
             Browse Listings <span aria-hidden="true">→</span>
           </Link>
+          <a
+            href="tel:6155512727"
+            className="hidden sm:inline-flex items-center justify-center gap-2 bg-transparent border border-white/50 text-white text-sm font-semibold px-8 py-4 rounded-full tracking-wide transition-all duration-200 hover:bg-white/10 hover:border-white active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            aria-label="Call Joshua Fink at (615) 551-2727"
+            data-cta="hero-call"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="w-4 h-4"
+              aria-hidden="true"
+            >
+              <path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.24.2 2.45.57 3.57a1 1 0 0 1-.24 1.02l-2.21 2.2z" />
+            </svg>
+            Call (615) 551-2727
+          </a>
         </div>
 
         {/* Slide caption (status + city, no price) + indicator dots */}

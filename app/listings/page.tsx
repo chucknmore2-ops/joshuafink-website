@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import ListingCard from '@/components/ListingCard'
+import SuburbLeadForm from '@/components/SuburbLeadForm'
 import { listings } from '@/lib/listings'
 import { soldListings } from '@/lib/sold-listings'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
@@ -25,7 +26,7 @@ const faqs = [
 ]
 
 export const metadata: Metadata = {
-  title: 'Listings — Active & Recently Sold | Joshua Fink | Compass Nashville',
+  title: 'Listings — Active & Recently Sold',
   description:
     "Active listings and recently sold homes from Joshua Fink at Compass Real Estate — Nashville, Brentwood, Franklin, Spring Hill, Columbia, and across Middle Tennessee. See what's on the market and what's actually closing.",
 }
@@ -95,34 +96,77 @@ export default function ListingsPage() {
           ))}
         </div>
 
-        {/* CTA */}
-        <div className="mt-16 border border-[#E8E8E8] p-8 sm:p-12 text-center">
-          <h2 className="text-2xl font-black text-black mb-3">
-            Don&apos;t see what you&apos;re looking for?
-          </h2>
-          <p className="text-[#6B6B6B] mb-6 max-w-lg mx-auto">
-            New listings hit the market every day. Contact Joshua to get notified the moment a home
-            matching your criteria becomes available.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="/contact"
-              className="inline-flex items-center justify-center bg-black text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-[#222] transition-colors"
+        {/* Inline lead capture */}
+        <div className="mt-16 border border-[#E8E8E8] p-8 sm:p-12">
+          <div className="max-w-2xl mx-auto">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-black text-black mb-3">
+                Don&apos;t see what you&apos;re looking for?
+              </h2>
+              <p className="text-[#6B6B6B] max-w-lg mx-auto">
+                New listings hit the market every day — including Compass Private Exclusives and
+                Coming Soon homes that never appear publicly. Tell Joshua what you&apos;re after.
+              </p>
+            </div>
+
+            <SuburbLeadForm
+              successTitle="Request Sent!"
+              successMessage={
+                <>
+                  Joshua will reach out same-day with matching homes. For anything urgent, call{' '}
+                  <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                </>
+              }
+              resetLabel="Submit Another"
             >
-              Contact Joshua
-            </a>
-            <a
-              href="tel:6155512727"
-              className="inline-flex items-center justify-center border-2 border-black text-black text-sm font-bold px-8 py-4 tracking-wide hover:bg-black hover:text-white transition-colors"
-            >
-              Call 615-551-2727
-            </a>
-            <a
-              href="sms:+16155512727"
-              className="inline-flex items-center justify-center border-2 border-black text-black text-sm font-bold px-8 py-4 tracking-wide hover:bg-black hover:text-white transition-colors"
-            >
-              Text 615-551-2727
-            </a>
+              <input type="hidden" name="lead_type" value="buyer" />
+              <input type="hidden" name="source" value="listings" />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label htmlFor="name" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Full Name *</label>
+                  <input type="text" id="name" name="name" required placeholder="Jane Smith"
+                    className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                </div>
+                <div>
+                  <label htmlFor="phone" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Phone *</label>
+                  <input type="tel" id="phone" name="phone" required placeholder="615-555-0000"
+                    className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="email" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Email Address *</label>
+                <input type="email" id="email" name="email" required placeholder="you@example.com"
+                  className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+              </div>
+
+              <div>
+                <label htmlFor="body" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">What Are You Looking For? (optional)</label>
+                <textarea id="body" name="body" rows={3}
+                  placeholder="Area, price range, beds, must-haves — anything helps Joshua send the right matches."
+                  className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors resize-y" />
+              </div>
+
+              <label htmlFor="notify_matches" className="flex items-start gap-3 text-sm text-black cursor-pointer">
+                <input type="checkbox" id="notify_matches" name="notify_matches" value="yes" defaultChecked
+                  className="mt-0.5 h-4 w-4 border-[#E8E8E8] text-black focus:ring-black" />
+                <span>Notify me of matching homes as they hit the market (including off-market and Coming Soon).</span>
+              </label>
+
+              <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+                <button type="submit"
+                  className="w-full sm:w-auto inline-flex items-center justify-center bg-black text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-[#222] transition-colors">
+                  Send to Joshua →
+                </button>
+                <a
+                  href="tel:6155512727"
+                  className="w-full sm:w-auto inline-flex items-center justify-center border-2 border-black text-black text-sm font-bold px-8 py-4 tracking-wide hover:bg-black hover:text-white transition-colors"
+                >
+                  Or Call 615-551-2727
+                </a>
+              </div>
+            </SuburbLeadForm>
           </div>
         </div>
 
