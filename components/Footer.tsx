@@ -15,7 +15,8 @@ export default function Footer() {
             <p className="mt-3 text-[#A0A0A0] text-sm leading-relaxed">
               Joshua Fink<br />
               Affiliate Broker | Middle Tennessee<br />
-              Compass Real Estate
+              Compass Real Estate<br />
+              TN License #351484
             </p>
             <div className="mt-5 space-y-2 text-sm">
               <a

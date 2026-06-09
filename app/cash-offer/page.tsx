@@ -4,6 +4,7 @@ import CashOfferForm from './CashOfferForm'
 import TrustBadges from '@/components/TrustBadges'
 import ReviewStrip from '@/components/ReviewStrip'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
+import { getCashOfferCityLinks } from '@/lib/cash-offer-cities'
 
 export const metadata: Metadata = {
   title: 'Sell My House Fast Nashville | Cash Offer in 24 Hours | Joshua Fink',
@@ -109,21 +110,11 @@ const faqs = [
   },
 ]
 
-const suburbCTAs: Array<[slug: string, label: string]> = [
-  ['nashville-tn', 'Nashville'],
-  ['franklin-tn', 'Franklin'],
-  ['brentwood-tn', 'Brentwood'],
-  ['spring-hill-tn', 'Spring Hill'],
-  ['murfreesboro-tn', 'Murfreesboro'],
-  ['columbia-tn', 'Columbia'],
-  ['hendersonville-tn', 'Hendersonville'],
-  ['mount-juliet-tn', 'Mount Juliet'],
-]
-
 const sellerReviewFilter = (r: { transaction: string }) =>
   /\bsold\b|\bsell\b|bought and sold/i.test(r.transaction)
 
 export default function CashOfferPage() {
+  const cityLinks = getCashOfferCityLinks()
   const breadcrumb = buildBreadcrumbSchema([
     { name: 'Home', href: '/' },
     { name: 'Cash Offer', href: '/cash-offer' },
@@ -301,18 +292,18 @@ export default function CashOfferPage() {
               Serving every suburb across <span className="font-display italic font-semibold">Middle Tennessee</span>
             </h2>
             <p className="text-neutral-600 leading-relaxed">
-              Offers are priced off real local comps — not a national algorithm. Tap your area below for a neighborhood-specific seller&apos;s guide.
+              Offers are priced off real local comps — not a national algorithm. Tap your city below for a local cash-offer page built around your market.
             </p>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-            {suburbCTAs.map(([slug, label]) => (
+            {cityLinks.map(({ slug, name }) => (
               <Link
                 key={slug}
-                href={`/sell/${slug}`}
+                href={`/cash-offer/${slug}`}
                 className="rounded-2xl border border-neutral-200 bg-white px-5 py-4 text-sm font-semibold text-black transition-all duration-200 hover:bg-black hover:text-white hover:border-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
               >
-                Sell My House Fast in {label}, TN <span aria-hidden="true">→</span>
+                Sell My House Fast in {name}, TN <span aria-hidden="true">→</span>
               </Link>
             ))}
           </div>
