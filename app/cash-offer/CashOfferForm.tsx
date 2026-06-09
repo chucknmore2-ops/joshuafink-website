@@ -4,7 +4,14 @@ import { useState, FormEvent } from 'react'
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error'
 
-export default function CashOfferForm() {
+type CashOfferFormProps = {
+  /** Lead attribution source — e.g. "cash-offer" (default) or "cash-offer-franklin-tn". */
+  source?: string
+  /** When set, tags the lead with the city and personalizes the form heading. */
+  cityName?: string
+}
+
+export default function CashOfferForm({ source = 'cash-offer', cityName }: CashOfferFormProps = {}) {
   const [state, setState] = useState<FormState>('idle')
   const [errorMsg, setErrorMsg] = useState('')
 
@@ -72,7 +79,7 @@ export default function CashOfferForm() {
   return (
     <div id="cash-offer-form" className="bg-white text-black p-8 rounded-2xl">
       <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-2">
-        Get Your Cash Offer
+        {cityName ? `Get Your ${cityName} Cash Offer` : 'Get Your Cash Offer'}
       </p>
       <h2 className="text-2xl font-black text-black mb-6">
         Free. No Obligation. 24 Hours.
@@ -81,7 +88,8 @@ export default function CashOfferForm() {
       <form onSubmit={handleSubmit} className="space-y-4">
         <input type="hidden" name="lead_type" value="sell" />
         <input type="hidden" name="subject" value="sell" />
-        <input type="hidden" name="source" value="cash-offer" />
+        <input type="hidden" name="source" value={source} />
+        {cityName && <input type="hidden" name="suburb" value={cityName} />}
         {/* Honeypot — invisible to humans, bots auto-fill it */}
         <input type="text" name="website" autoComplete="off" tabIndex={-1} aria-hidden="true"
           style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, width: 0 }} />

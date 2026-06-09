@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { blogPosts } from '@/lib/blog'
 import { getAllSuburbSlugs } from '@/lib/suburbs'
+import { getAllCashOfferCitySlugs } from '@/lib/cash-offer-cities'
 import { getAllNeighborhoodSlugs } from '@/lib/neighborhoods'
 import { allFeaturedPairSlugs } from '@/lib/compare'
 import { getAllSchoolSlugs } from '@/lib/schools'
@@ -60,6 +61,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: now,
   }))
 
+  // ── Cash-offer city landing pages ─────────────────────────────────
+  const cashOfferCities: MetadataRoute.Sitemap = getAllCashOfferCitySlugs().map((slug) => ({
+    url: `${SITE}/cash-offer/${slug}`,
+    priority: 0.9, // high-intent seller-lead pages
+    changeFrequency: 'monthly' as const,
+    lastModified: now,
+  }))
+
   // ── Neighborhood guide pages ──────────────────────────────────────
   const neighborhoodPages: MetadataRoute.Sitemap = getAllNeighborhoodSlugs().map((slug) => ({
     url: `${SITE}/neighborhoods/${slug}`,
@@ -97,6 +106,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...blog,
     ...sellSuburbs,
     ...buySuburbs,
+    ...cashOfferCities,
     ...neighborhoodPages,
     ...marketReports,
     ...comparePages,
