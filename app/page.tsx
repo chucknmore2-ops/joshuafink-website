@@ -267,6 +267,12 @@ export default function HomePage() {
                   {label}
                 </Link>
                 <Link
+                  href={`/sell/${slug}`}
+                  className="mt-1 block text-xs text-neutral-500 hover:text-black"
+                >
+                  Sell your home →
+                </Link>
+                <Link
                   href="/neighborhoods"
                   className="mt-1 block text-xs text-neutral-500 hover:text-black"
                 >
