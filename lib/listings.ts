@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-06-09T11:21:36.167Z
+// AUTO-GENERATED — Last synced: 2026-06-10T11:42:26.274Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -51,7 +51,7 @@ export const listings: Listing[] = [
     sqft: 3058,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/6612-Fox-Hollow-Rd-Nashville-TN-37205/S670X_pid/",
-    imageUrl: "https://www.compass.com/m/04c53ab6eab9c48467cde9e054015490bb1054b1_img_1_36116/2048x1536.webp",
+    imageUrl: "https://www.compass.com/m/04c53ab6eab9c48467cde9e054015490bb1054b1_img_0_9753a/2048x1536.webp",
   },
   {
     address: "1113 Linn Cv Ct",
@@ -60,7 +60,7 @@ export const listings: Listing[] = [
     sqft: 2869,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/1113-Linn-Cv-Ct-Gallatin-TN-37066/SPCI8_pid/",
-    imageUrl: "https://www.compass.com/m/8d52f2127c31faf652f00727b6c3ec01b4279a80_img_1_a68a5/2048x1536.webp",
+    imageUrl: "https://www.compass.com/m/8d52f2127c31faf652f00727b6c3ec01b4279a80_img_0_2f6ec/2048x1536.webp",
   },
   {
     address: "4127 Edwards Ave",
@@ -69,7 +69,7 @@ export const listings: Listing[] = [
     sqft: 1223,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/4127-Edwards-Ave-Nashville-TN-37216/THUS9_pid/",
-    imageUrl: "https://www.compass.com/m/9de45187a2226dddece81c5f3266db949623e396_img_1_5aef5/2048x1536.webp",
+    imageUrl: "https://www.compass.com/m/9de45187a2226dddece81c5f3266db949623e396_img_0_9267e/2048x1536.webp",
   },
   {
     address: "107 Garwood Dr",
