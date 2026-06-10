@@ -57,7 +57,8 @@ export default async function NeighborhoodPage({ params }: Props) {
 
   const parentSuburb = getSuburb(n.citySlug)
   const compassUrl = withUtm(
-    n.compassSearchUrl || `https://www.compass.com/homes-for-sale/${n.slug}/`,
+    n.compassSearchUrl ||
+      `https://www.compass.com/search/sale/cities/${encodeURIComponent(n.city)}/?keyword=${encodeURIComponent(n.name)}`,
     {
       source: 'joshuafink',
       medium: 'referral',
