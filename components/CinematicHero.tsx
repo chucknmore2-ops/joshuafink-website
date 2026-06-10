@@ -30,7 +30,7 @@ export default function CinematicHero({ slides }: { slides: HeroSlide[] }) {
 
   return (
     <section
-      className="relative bg-black min-h-[92vh] flex items-end overflow-hidden"
+      className="relative bg-black min-h-[78svh] md:min-h-[92vh] flex items-end overflow-hidden"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
@@ -48,12 +48,14 @@ export default function CinematicHero({ slides }: { slides: HeroSlide[] }) {
             }`}
             aria-hidden={i === index ? undefined : 'true'}
           >
-            <div className="w-full h-full animate-ken-burns motion-reduce:animate-none">
+            <div className="w-full h-full md:animate-ken-burns motion-reduce:animate-none">
               <Image
                 src={slide.imageUrl}
                 alt={slide.alt}
                 fill
                 priority={i === 0}
+                loading={i === 0 ? undefined : 'lazy'}
+                fetchPriority={i === 0 ? 'high' : 'low'}
                 sizes="100vw"
                 className="object-cover"
               />
