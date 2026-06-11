@@ -145,7 +145,7 @@ export default function RootLayout({
                     'https://www.compass.com/agents/joshua-fink/',
                     'https://www.zillow.com/profile/JoshuaFinkGroup',
                   ],
-                  priceRange: '$$',
+                  priceRange: '$300000-$2500000',
                   // AggregateRating sourced from Joshua's Zillow review profile
                   // (218 reviews, 5.0 average as of latest sync). The reviewCount
                   // includes off-site reviews collected on Zillow over 17+ years
