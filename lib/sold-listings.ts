@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-06-11T12:14:59.617Z
+// AUTO-GENERATED — Last synced: 2026-06-12T11:48:33.347Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-sold.mjs
 
@@ -198,18 +198,6 @@ export const soldListings: Listing[] = [
     imageUrl: "https://www.compass.com/m/c932dca0373ffb58886dd64e8476f130223c250c_img_0_6968c/480x320.webp",
   },
   {
-    address: "1743 Stillwater Cir",
-    city: "Brentwood, TN 37027",
-    price: 1100000,
-    beds: 4,
-    baths: 4,
-    sqft: 3324,
-    acres: 0.34,
-    status: "Sold",
-    compassUrl: "https://www.compass.com/homedetails/1743-Stillwater-Cir-Brentwood-TN-37027/1191269538326923993_lid/",
-    imageUrl: "https://www.compass.com/m/abbef8264e1d5f980bd80224088f3a2b8360c857_img_0_e0986/480x320.webp",
-  },
-  {
     address: "8117 Hilldale Dr",
     city: "Brentwood, TN 37027",
     price: 1100000,
@@ -220,5 +208,17 @@ export const soldListings: Listing[] = [
     status: "Sold",
     compassUrl: "https://www.compass.com/homedetails/8117-Hilldale-Dr-Brentwood-TN-37027/1553130529249927305_lid/",
     imageUrl: "https://www.compass.com/m/f4aa7860e55bb73a771f4ce571e36c1ea6c3c735_img_0_db9ed/480x320.webp",
+  },
+  {
+    address: "1743 Stillwater Cir",
+    city: "Brentwood, TN 37027",
+    price: 1100000,
+    beds: 4,
+    baths: 4,
+    sqft: 3324,
+    acres: 0.34,
+    status: "Sold",
+    compassUrl: "https://www.compass.com/homedetails/1743-Stillwater-Cir-Brentwood-TN-37027/1191269538326923993_lid/",
+    imageUrl: "https://www.compass.com/m/abbef8264e1d5f980bd80224088f3a2b8360c857_img_0_e0986/480x320.webp",
   }
 ];
