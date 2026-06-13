@@ -23,7 +23,9 @@ export default function MobileCallCTA() {
     pathname?.startsWith('/listings') ||
     pathname?.startsWith('/buy') ||
     pathname?.startsWith('/neighborhoods') ||
-    pathname?.startsWith('/homes-near')
+    pathname?.startsWith('/homes-near') ||
+    pathname?.startsWith('/cash-offer') ||
+    pathname?.startsWith('/sell')
 
   return (
     <div
