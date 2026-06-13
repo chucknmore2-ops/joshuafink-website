@@ -40,7 +40,31 @@ async function main() {
       const href = link?.getAttribute('href') || '';
       const url = href.startsWith('http') ? href : 'https://www.compass.com' + href;
       const imgUrl = (img?.src || '').replace('/480x320.webp', '/2048x1536.webp');
-      return { url, imgUrl };
+
+      // Beds/baths/sqft from substats — same approach as fetch-sold.mjs.
+      // Compass renders each substat value twice (responsive duplicate spans),
+      // so collapse a string that is exactly two identical halves.
+      const undouble = (s) => {
+        s = (s || '').trim();
+        if (s && s.length % 2 === 0) {
+          const half = s.length / 2;
+          if (s.slice(0, half) === s.slice(half)) return s.slice(0, half);
+        }
+        return s;
+      };
+      const substats = card.querySelectorAll('[data-testid="cx-react-listingCard-substatsSection"] > div');
+      let cardBeds = 0, cardBaths = 0, cardSqft = 0;
+      for (const stat of substats) {
+        const dd = stat.querySelector('dd');
+        const firstChild = dd?.querySelector('span, div');
+        const val = undouble((firstChild?.textContent || dd?.textContent || '').trim());
+        const label = stat.querySelector('dt')?.textContent?.trim()?.toLowerCase() || '';
+        if (label.includes('bed')) cardBeds = parseInt(val) || 0;
+        else if (label.includes('bath')) cardBaths = parseFloat(val) || 0;
+        else if (label.includes('sq')) cardSqft = parseInt(val.replace(/,/g, '')) || 0;
+      }
+
+      return { url, imgUrl, cardBeds, cardBaths, cardSqft };
     });
   });
 
@@ -76,11 +100,14 @@ async function main() {
       const priceMatch = desc.match(/\$([\d,]+)/);
       const price = priceMatch ? parseInt(priceMatch[1].replace(/,/g, '')) : 0;
       const bedsMatch = desc.match(/(\d+)\s*(?:bed|bd)/i);
-      const beds = bedsMatch ? parseInt(bedsMatch[1]) : 0;
       const bathsMatch = desc.match(/([\d.]+)\s*(?:bath|ba)/i);
-      const baths = bathsMatch ? parseFloat(bathsMatch[1]) : 0;
       const sqftMatch = desc.match(/([\d,]+)\s*(?:sq|sqft|square)/i);
-      const sqft = sqftMatch ? parseInt(sqftMatch[1].replace(/,/g, '')) : 0;
+      // Prefer agent-page card substats (structured DOM, always present) over
+      // detail-page og:description regex (the description format varies and
+      // historically left active listings with 0 beds / 0 baths).
+      const beds = card.cardBeds || (bedsMatch ? parseInt(bedsMatch[1]) : 0);
+      const baths = card.cardBaths || (bathsMatch ? parseFloat(bathsMatch[1]) : 0);
+      const sqft = card.cardSqft || (sqftMatch ? parseInt(sqftMatch[1].replace(/,/g, '')) : 0);
 
       const listing = {
         address,
