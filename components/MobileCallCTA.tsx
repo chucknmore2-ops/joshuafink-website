@@ -19,11 +19,15 @@ export default function MobileCallCTA() {
 
   // On buyer-intent pages (listings, buy, neighborhoods), texting converts
   // better than a cash-offer pitch, so swap the secondary CTA for an SMS link.
+  // Also swap on cash-offer and sell pages — the Cash Offer link would be
+  // self-referential there, so a Text Joshua CTA is the higher-value action.
   const preferText =
     pathname?.startsWith('/listings') ||
     pathname?.startsWith('/buy') ||
     pathname?.startsWith('/neighborhoods') ||
-    pathname?.startsWith('/homes-near')
+    pathname?.startsWith('/homes-near') ||
+    pathname?.startsWith('/cash-offer') ||
+    pathname?.startsWith('/sell')
 
   return (
     <div
