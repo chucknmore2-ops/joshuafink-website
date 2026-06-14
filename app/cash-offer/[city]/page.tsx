@@ -11,6 +11,7 @@ import {
   getCashOfferCityLinks,
 } from '@/lib/cash-offer-cities'
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
+import { linkifyNeighborhoods } from '@/lib/linkify-neighborhoods'
 
 type Props = {
   params: Promise<{ city: string }>
@@ -207,7 +208,7 @@ export default async function CashOfferCityPage({ params }: Props) {
           </h2>
           <p className="text-neutral-700 text-lg leading-relaxed mb-4">{city.localAngle}</p>
           <p className="text-neutral-600 text-base leading-relaxed">
-            We buy across {city.areas} — and everywhere else in {city.displayName}.
+            We buy across {linkifyNeighborhoods(city.areas, slug)} — and everywhere else in {city.displayName}.
           </p>
         </div>
       </div>
@@ -418,7 +419,7 @@ export default async function CashOfferCityPage({ params }: Props) {
           </a>
         </div>
         <p className="text-neutral-500 text-sm mt-6">
-          Serving {city.displayName} · {city.areas}
+          Serving {city.displayName} · {linkifyNeighborhoods(city.areas, slug)}
         </p>
       </div>
     </div>

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getSuburb, getAllSuburbSlugs } from '@/lib/suburbs'
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
+import { linkifyNeighborhoods } from '@/lib/linkify-neighborhoods'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 
 type Props = {
@@ -210,7 +211,7 @@ export default async function SuburbPage({ params }: Props) {
                 What Sellers Need to Know in 2026
               </h2>
               <p className="text-[#444] text-base leading-relaxed">
-                {suburb.description}
+                {linkifyNeighborhoods(suburb.description, slug)}
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-4">
                 <Link

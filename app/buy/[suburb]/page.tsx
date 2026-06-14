@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getSuburb, getAllSuburbSlugs } from '@/lib/suburbs'
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
+import { linkifyNeighborhoods } from '@/lib/linkify-neighborhoods'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 
 type Props = {
@@ -236,7 +237,7 @@ export default async function BuySuburbPage({ params }: Props) {
               <h2 className="text-3xl font-black text-black tracking-tight mb-6">
                 What Buyers Need to Know in 2026
               </h2>
-              <p className="text-[#444] text-base leading-relaxed">{description}</p>
+              <p className="text-[#444] text-base leading-relaxed">{linkifyNeighborhoods(description, slug)}</p>
               <div className="mt-8 flex flex-col sm:flex-row gap-4">
                 <Link
                   href="/listings"
@@ -290,7 +291,7 @@ export default async function BuySuburbPage({ params }: Props) {
                   <ul className="space-y-2">
                     {suburb.topNeighborhoods.map((n) => (
                       <li key={n} className="text-sm text-[#444] flex items-center gap-2">
-                        <span style={{ color: '#C41E3A' }}>→</span> {n}
+                        <span style={{ color: '#C41E3A' }}>→</span> {linkifyNeighborhoods(n, slug)}
                       </li>
                     ))}
                   </ul>
