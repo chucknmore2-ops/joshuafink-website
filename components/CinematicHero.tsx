@@ -11,22 +11,34 @@ const SLIDE_MS = 6500
 export default function CinematicHero({ slides }: { slides: HeroSlide[] }) {
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
+  // Below the md breakpoint, render a single static hero to protect mobile LCP/INP.
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const mql = window.matchMedia('(max-width: 767px)')
+    const update = () => setIsMobile(mql.matches)
+    update()
+    mql.addEventListener('change', update)
+    return () => mql.removeEventListener('change', update)
+  }, [])
 
   useEffect(() => {
     setIndex(0)
   }, [slides.length])
 
   useEffect(() => {
-    if (paused || slides.length <= 1) return
+    if (paused || slides.length <= 1 || isMobile) return
     // Respect reduced-motion preference: don't auto-advance.
     if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       return
     }
     const id = setInterval(() => setIndex((i) => (i + 1) % slides.length), SLIDE_MS)
     return () => clearInterval(id)
-  }, [slides.length, paused])
+  }, [slides.length, paused, isMobile])
 
   const active = slides[index]
+  const visibleSlides = isMobile ? slides.slice(0, 1) : slides
 
   return (
     <section
@@ -40,7 +52,7 @@ export default function CinematicHero({ slides }: { slides: HeroSlide[] }) {
     >
       {/* Background stack — CSS opacity crossfade between hero images */}
       <div className="absolute inset-0 z-0">
-        {slides.map((slide, i) => (
+        {visibleSlides.map((slide, i) => (
           <div
             key={slide.imageUrl}
             className={`absolute inset-0 transition-opacity duration-[1400ms] ease-editorial motion-reduce:transition-none ${
@@ -172,7 +184,7 @@ export default function CinematicHero({ slides }: { slides: HeroSlide[] }) {
               </Link>
             </div>
 
-            <div className="flex items-center gap-1 shrink-0" role="tablist" aria-label="Select featured property">
+            <div className="hidden md:flex items-center gap-1 shrink-0" role="tablist" aria-label="Select featured property">
               {slides.map((slide, i) => (
                 <button
                   key={slide.imageUrl}
