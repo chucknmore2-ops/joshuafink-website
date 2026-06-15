@@ -29,6 +29,12 @@ permissions:
   contents: read
   pull-requests: write # for the PR comment with scores
 
+# actions/checkout + setup-* ship as Node 20 JS actions; GitHub forces the
+# Node 24 runtime on 2026-06-16. This env var keeps them running across
+# the cutover without per-action version chases.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   lighthouse:
     runs-on: ubuntu-latest
