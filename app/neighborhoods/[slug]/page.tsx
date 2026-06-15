@@ -73,6 +73,8 @@ export default async function NeighborhoodPage({ params }: Props) {
     '@type': 'Place',
     name: `${n.name}, ${n.city}, ${n.schemaState}`,
     description: n.metaDescription,
+    url: `https://joshuafink.com/neighborhoods/${n.slug}`,
+    image: 'https://joshuafink.com/headshot.webp',
     address: {
       '@type': 'PostalAddress',
       addressLocality: n.schemaCity,
