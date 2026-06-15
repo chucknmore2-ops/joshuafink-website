@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-06-14T10:52:05.618Z
+// AUTO-GENERATED — Last synced: 2026-06-15T14:27:45.193Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -30,14 +30,14 @@ export const listings: Listing[] = [
   },
   {
     address: "9560 Dresden Square",
-    city: "Brentwood, TN 37027 | MLS #3175708",
+    city: "Brentwood, TN 37027",
     price: 1299000,
     beds: 6,
     baths: 6,
     sqft: 4256,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/9560-Dresden-Square-Brentwood-TN-37027/T863Z_pid/",
-    imageUrl: "https://www.compass.com/m/510a18b337189490b7abc84fd410b9c6dab5f40a_img_0_8790c/2048x1536.webp",
+    imageUrl: "https://www.compass.com/m/1726667bfbabb4404e04bd62941b072da078e36ffe55a775567367f26ee41f7d/2048x1536.webp",
   },
   {
     address: "159 N Berwick Ln",
