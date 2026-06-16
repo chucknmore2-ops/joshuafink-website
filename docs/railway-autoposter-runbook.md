@@ -18,7 +18,7 @@ same code; the per-service `JOB_NAME` env var picks which job runs.
 
 | Service name | `JOB_NAME` value | Cron Schedule (UTC) | Equivalent CT | Status as of 2026-05-15 |
 |---|---|---|---|---|
-| `autoposter-listing` | `listing-spotlight` | `0 14 * * 1,3,5` | Mon/Wed/Fri 9:00am | Created, deployed, posted once (2026-04-28). Currently fails on `(#200)` — needs Page token with `pages_manage_posts`. |
+| `autoposter-listing` | `listing-spotlight` | `0 14 * * 1,3,5` | Mon/Wed/Fri 9:00am | Created, deployed, **posting**. Last successful post 2026-06-10; went STALE after (no `posted` row for Fri 06-12 / Mon 06-15). Open Cron Runs → Run Now and read the log to see the cause (token `(#200)`/`(#190)`, `DRY RUN`, or nothing-eligible). |
 | `autoposter-stats` | `content-market-stats` | `0 15 * * 2` | Tue 10:00am | **Not yet created** |
 | `autoposter-testimonial` | `content-testimonial` | `0 15 * * 3` | Wed 10:00am | **Not yet created** |
 | `autoposter-tips` | `content-tips` | `0 15 * * 4` | Thu 10:00am | **Not yet created** |
@@ -48,13 +48,19 @@ others are per-service.
 | `DATABASE_URL` | `${{Postgres.DATABASE_URL}}` reference | Auto-set by Railway when Postgres is provisioned in the same project |
 | `FB_PAGE_ID` | the 15-digit numeric ID of Joshua Fink Group FB Page | `~/.facebook_tokens` on Chuck's Mac, or Facebook → Page → About → Page Transparency |
 | `FB_PAGE_TOKEN` | long-lived **Page** Access Token (NOT a User token) | Derive from a User token via Graph API Explorer → GET `/me/accounts` → copy the `access_token` field from the Joshua Fink Group entry. Must include scopes `pages_manage_posts` + `pages_read_engagement`. |
-| `AUTOPOSTER_DRY_RUN` | `0` for production posting, `1` to preview without posting | A `dry_run=1` value writes a `dry_run` row to `post_log` and prints the would-be caption; the healthcheck counts that as fresh activity. |
+| `AUTOPOSTER_DRY_RUN` | `0` for production posting, `1` to preview without posting | A `dry_run=1` value writes a `dry_run` row to `post_log` and prints the would-be caption. **The morning healthcheck counts only `status='posted'` rows as fresh** (`scripts/morning_healthcheck.py` → `_fetch_last_post_per_channel_job`), so a `dry_run` row does **not** clear a STALE alert — only a real post does. If a service is left on `DRY_RUN=1`, the alert will keep firing. |
 | `LISTING_COOLDOWN_DAYS` | `7` | The autoposter SQL-queries `post_log` to skip listings posted within this window |
 
 ## How `post_log` writes prove the pipeline is alive
 
-Every job — success or failure — writes one row to `post_log` (see
-`services/autoposter/src/db.ts` `logPost()`). Schema:
+Every job that *attempts* a post — success or failure — writes one row to
+`post_log` (see `services/autoposter/src/db.ts` `logPost()`). One exception:
+`listing-spotlight` writes **no row** when every active listing is already on
+cooldown (`LISTING_COOLDOWN_DAYS`, default 7) — it logs `Nothing to post —
+exiting clean.` and exits. That path can surface as STALE with no `failed`
+row to explain it, so when triaging a STALE with no error in the log, check
+whether the listing inventory is small enough that everything is on cooldown.
+Schema:
 
 ```sql
 CREATE TABLE post_log (

@@ -186,6 +186,19 @@ class CheckResult:
         return self.status in ALERT_STATUSES
 
 
+@dataclass
+class LastAttempt:
+    """Most-recent post_log row of ANY status for one (channel, job_name).
+
+    Diagnostic companion to the 'posted'-only freshness query: when a job is
+    STALE this carries *why* — the latest row's status and (for failures) the
+    upstream `error_message`. Never drives pass/fail; only enriches the detail.
+    """
+    status: str
+    posted_at: Optional[datetime]
+    error_message: Optional[str]
+
+
 # Always-on documented gaps — shown in every alert email so a passing
 # run is never mistaken for full coverage.
 DOCUMENTED_GAPS: tuple[tuple[str, str], ...] = (
@@ -356,27 +369,113 @@ def _fetch_last_post_per_channel_job(
     return out
 
 
+def _fetch_last_attempt_per_channel_job(
+    dsn: str,
+    *,
+    connect_fn: Callable[[str], object] = _connect_with_retries,
+) -> dict[tuple[str, str], LastAttempt]:
+    """Most recent row of ANY status per (channel, job_name) — diagnostic only.
+
+    Freshness is driven by `_fetch_last_post_per_channel_job` ('posted'-only).
+    This companion answers *why* a job is stale: a `failed` row carries the
+    upstream `error_message` (e.g. `(#200) ... pages_manage_posts`), a `dry_run`
+    row means `AUTOPOSTER_DRY_RUN=1` is still set, and an absent entry means the
+    service is writing no rows at all (paused / crashed / nothing eligible).
+
+    Unlike the freshness query this does NOT filter on status — it deliberately
+    scans every status to find the latest attempt. Callers treat any failure
+    here as "no diagnostics" rather than letting it fail the whole run.
+    """
+    conn = connect_fn(dsn)
+    try:
+        with conn.cursor() as cur:  # type: ignore[attr-defined]
+            cur.execute(f"SET statement_timeout = {DB_STATEMENT_TIMEOUT_MS}")
+            cur.execute(
+                """
+                SELECT DISTINCT ON (channel, job_name)
+                       channel, job_name, status, posted_at, error_message
+                  FROM post_log
+                 ORDER BY channel, job_name, posted_at DESC
+                """
+            )
+            rows = cur.fetchall()
+    finally:
+        try:
+            conn.close()  # type: ignore[attr-defined]
+        except Exception:  # noqa: BLE001
+            pass
+
+    out: dict[tuple[str, str], LastAttempt] = {}
+    for channel, job_name, status, posted_at, error_message in rows:
+        if posted_at is not None and posted_at.tzinfo is None:
+            posted_at = posted_at.replace(tzinfo=timezone.utc)
+        out[(channel, job_name)] = LastAttempt(
+            status=status, posted_at=posted_at, error_message=error_message
+        )
+    return out
+
+
+# Cap on how much of a raw upstream error_message we echo into the alert email —
+# enough to identify the Graph API error code, not a whole stack trace.
+_DIAG_ERROR_MAXLEN = 240
+
+
+def _diagnose_attempt(
+    job: ExpectedJob,
+    last_attempt_by_key: Optional[dict[tuple[str, str], LastAttempt]],
+) -> str:
+    """Build a one-line ' — why' suffix for a STALE/GAP detail string.
+
+    Returns '' when there's nothing useful to add (no diagnostics available, or
+    the most recent attempt IS the last successful post).
+    """
+    if not last_attempt_by_key:
+        return ""
+    att = last_attempt_by_key.get((job.channel, job.job_name))
+    if att is None or att.status == "posted":
+        return ""
+    when = att.posted_at.isoformat() if att.posted_at else "unknown time"
+    if att.status == "failed":
+        err = (att.error_message or "no error_message recorded").strip()
+        if len(err) > _DIAG_ERROR_MAXLEN:
+            err = err[:_DIAG_ERROR_MAXLEN] + "…"
+        return f" — latest attempt FAILED at {when}: {err}"
+    if att.status == "dry_run":
+        return (
+            f" — latest attempt was a DRY RUN at {when} "
+            f"(AUTOPOSTER_DRY_RUN=1 — dry_run rows are not counted as fresh; "
+            f"set it to 0 to actually post)"
+        )
+    return f" — latest attempt status={att.status!r} at {when}"
+
+
 def check_pipeline_freshness(
     job: ExpectedJob,
     latest_by_key: dict[tuple[str, str], datetime],
     *,
     now: Optional[datetime] = None,
+    last_attempt_by_key: Optional[dict[tuple[str, str], LastAttempt]] = None,
 ) -> CheckResult:
     """One pipeline freshness check.
 
     NEVER_LOGGED ⇒ GAP (warning, not failure). Stale ⇒ STALE (failure).
+    When `last_attempt_by_key` is supplied, STALE/GAP details are enriched
+    with the most recent attempt's status + error so the alert says *why*
+    (token error, stuck dry-run, etc.) instead of just "old".
     """
     now = now or datetime.now(timezone.utc)
     last_at = latest_by_key.get((job.channel, job.job_name))
+    diag = _diagnose_attempt(job, last_attempt_by_key)
     if last_at is None:
         return CheckResult(
             name=job.label,
             status=STATUS_GAP,
             detail=(
-                f"no rows ever in post_log for channel='{job.channel}', "
-                f"job_name='{job.job_name}'. Pipeline may run but is not "
-                f"logging — track via Vercel/Railway function logs."
-            ),
+                f"no successful ('posted') rows in post_log for "
+                f"channel='{job.channel}', job_name='{job.job_name}'. "
+                f"Pipeline may run but is not landing posts — track via "
+                f"Vercel/Railway function logs."
+            ) + diag,
             expected_max_age_days=job.max_age_days,
         )
 
@@ -390,7 +489,7 @@ def check_pipeline_freshness(
         return CheckResult(
             name=job.label,
             status=STATUS_STALE,
-            detail=detail,
+            detail=detail + diag,
             actual_age_days=age_days,
             expected_max_age_days=job.max_age_days,
         )
@@ -601,9 +700,22 @@ def run_all_checks(
         ))
         return results
 
+    # Best-effort diagnostic companion — surfaces *why* a job is stale (failed
+    # row error_message, stuck dry-run). Never fail the run over it.
+    try:
+        last_attempt = _fetch_last_attempt_per_channel_job(dsn)
+    except Exception as exc:  # noqa: BLE001
+        log.warning(
+            "last-attempt diagnostic fetch failed (%s) — alerts will lack the reason",
+            type(exc).__name__,
+        )
+        last_attempt = {}
+
     for job in EXPECTED_JOBS:
         try:
-            results.append(check_pipeline_freshness(job, latest, now=now))
+            results.append(check_pipeline_freshness(
+                job, latest, now=now, last_attempt_by_key=last_attempt
+            ))
         except Exception as exc:  # noqa: BLE001
             results.append(CheckResult(
                 name=job.label,
