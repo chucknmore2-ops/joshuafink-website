@@ -1,10 +1,13 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import ListingCard from '@/components/ListingCard'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import { listings } from '@/lib/listings'
 import { soldListings } from '@/lib/sold-listings'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 import { buildListingItemList } from '@/lib/listing-schema'
+import { getSuburb, getSuburbSlugForListing } from '@/lib/suburbs'
+import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
 
 const faqs = [
   {
@@ -46,6 +49,24 @@ export default function ListingsPage() {
   const activeItemList = buildListingItemList(listings, 'Active Listings — Joshua Fink, Compass')
   const soldItemList = buildListingItemList(soldListings, 'Recently Sold — Joshua Fink, Compass')
 
+  // City links — distribute equity to /buy, /neighborhoods, and /cash-offer pages
+  // for every market actually represented in inventory.
+  const citySlugs = Array.from(
+    new Set(
+      [...listings, ...soldListings]
+        .map((l) => getSuburbSlugForListing(l.city))
+        .filter((s): s is string => !!s),
+    ),
+  )
+  const cityLinks = citySlugs
+    .flatMap((slug) => {
+      const suburb = getSuburb(slug)
+      if (!suburb) return []
+      const guides = getNeighborhoodsByCitySlug(slug)
+      return [{ slug, name: suburb.name, guide: guides[0] }]
+    })
+    .sort((a, b) => a.name.localeCompare(b.name))
+
   const faqLd = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -86,6 +107,48 @@ export default function ListingsPage() {
           </p>
         </div>
       </div>
+
+      {/* Explore by city — internal funnel from /listings into buyer, neighborhood, and cash-offer landing pages */}
+      {cityLinks.length > 0 && (
+        <div className="border-b border-neutral-200 bg-neutral-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <p className="text-xs font-semibold tracking-widest text-neutral-500 uppercase mb-4">
+              Explore by city
+            </p>
+            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-3 text-sm">
+              {cityLinks.map(({ slug, name, guide }) => (
+                <li key={slug} className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <span className="font-bold text-black">{name}:</span>
+                  <Link
+                    href={`/buy/${slug}`}
+                    className="text-black underline-offset-4 hover:underline"
+                  >
+                    Homes for sale
+                  </Link>
+                  {guide && (
+                    <>
+                      <span aria-hidden className="text-neutral-300">·</span>
+                      <Link
+                        href={`/neighborhoods/${guide.slug}`}
+                        className="text-black underline-offset-4 hover:underline"
+                      >
+                        {guide.name} guide
+                      </Link>
+                    </>
+                  )}
+                  <span aria-hidden className="text-neutral-300">·</span>
+                  <Link
+                    href={`/cash-offer/${slug}`}
+                    className="text-black underline-offset-4 hover:underline"
+                  >
+                    Cash offer
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
 
       {/* Active Listings */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">

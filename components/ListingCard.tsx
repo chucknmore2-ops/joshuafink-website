@@ -1,5 +1,7 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import type { Listing } from '@/lib/listings'
+import { getSuburb, getSuburbSlugForListing } from '@/lib/suburbs'
 import { withUtm } from '@/lib/utm'
 
 function formatPrice(price: number): string {
@@ -26,6 +28,9 @@ interface Props {
 }
 
 export default function ListingCard({ listing }: Props) {
+  const suburbSlug = getSuburbSlugForListing(listing.city)
+  const suburbName = suburbSlug ? getSuburb(suburbSlug)?.name : undefined
+
   return (
     <article className="group border border-neutral-200 bg-white rounded-2xl flex flex-col overflow-hidden transition-all duration-200 ease-out hover:shadow-xl hover:-translate-y-1">
       {/* Listing image */}
@@ -108,6 +113,23 @@ export default function ListingCard({ listing }: Props) {
           </div>
         )}
 
+        {suburbSlug && suburbName && (
+          <div className="mt-auto mb-3 flex flex-wrap gap-x-4 gap-y-1 text-xs">
+            <Link
+              href={`/buy/${suburbSlug}`}
+              className="text-black font-semibold underline-offset-4 hover:underline"
+            >
+              Browse {suburbName} homes →
+            </Link>
+            <Link
+              href={`/cash-offer/${suburbSlug}`}
+              className="text-neutral-500 underline-offset-4 hover:underline hover:text-black"
+            >
+              Cash offer →
+            </Link>
+          </div>
+        )}
+
         <a
           href={withUtm(listing.compassUrl, {
             source: 'joshuafink',
@@ -117,7 +139,7 @@ export default function ListingCard({ listing }: Props) {
           })}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-auto text-center text-sm font-semibold border border-black text-black py-2.5 rounded-full tracking-wide transition-all duration-200 hover:bg-black hover:text-white"
+          className={`${suburbSlug ? '' : 'mt-auto '}text-center text-sm font-semibold border border-black text-black py-2.5 rounded-full tracking-wide transition-all duration-200 hover:bg-black hover:text-white`}
         >
           View on Compass →
         </a>

@@ -685,3 +685,17 @@ export function getSuburb(slug: string): Suburb | undefined {
 export function getAllSuburbSlugs(): string[] {
   return Object.keys(suburbs)
 }
+
+// Maps a free-form listing `city` string (e.g. "Brentwood, TN 37027 | MLS #...")
+// to a suburb slug if we have a matching landing page.
+export function getSuburbSlugForListing(city: string): string | undefined {
+  const cityName = city.split(',')[0]?.trim()
+  if (!cityName) return undefined
+  const slug =
+    cityName
+      .toLowerCase()
+      .replace(/['‘’]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') + '-tn'
+  return suburbs[slug] ? slug : undefined
+}
