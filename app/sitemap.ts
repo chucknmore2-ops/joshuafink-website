@@ -31,6 +31,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE}/compare`, priority: 0.8, changeFrequency: 'monthly', lastModified: now },
     { url: `${SITE}/homes-near`, priority: 0.8, changeFrequency: 'monthly', lastModified: now },
     { url: `${SITE}/guide/buyer`, priority: 0.7, changeFrequency: 'monthly', lastModified: now },
+    { url: `${SITE}/moving-to-middle-tennessee`, priority: 0.85, changeFrequency: 'monthly', lastModified: now },
   ]
 
   // ── Blog posts — parse date strings with a defensive fallback ─────
