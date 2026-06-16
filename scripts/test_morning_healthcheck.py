@@ -96,7 +96,7 @@ def test_pipeline_gap_when_never_logged():
     result = hc.check_pipeline_freshness(job, latest, now=NOW)
     assert result.status == hc.STATUS_GAP
     assert not result.is_alert
-    assert "no rows ever" in result.detail
+    assert "no successful" in result.detail
 
 
 def test_pipeline_naive_timestamp_treated_as_utc():
@@ -109,6 +109,151 @@ def test_pipeline_naive_timestamp_treated_as_utc():
     job = hc.EXPECTED_JOBS[0]
     result = hc.check_pipeline_freshness(job, latest, now=NOW)
     assert result.status == hc.STATUS_PASS
+
+
+# ---------------------------------------------------------------------------
+# check_pipeline_freshness — diagnostic enrichment (the "why" suffix)
+# ---------------------------------------------------------------------------
+
+def test_stale_detail_includes_failure_reason():
+    """A STALE job whose latest attempt is a `failed` row should echo the
+    upstream error_message so the alert says *why* it stopped posting."""
+    job = hc.EXPECTED_JOBS[0]  # autoposter-listing
+    latest = {("facebook", "listing-spotlight"): _fake_latest(6.0)}  # >4d → stale
+    attempts = {
+        ("facebook", "listing-spotlight"): hc.LastAttempt(
+            status="failed",
+            posted_at=_fake_latest(1.0),
+            error_message="(#200) The permission(s) pages_manage_posts are not granted",
+        )
+    }
+    result = hc.check_pipeline_freshness(job, latest, now=NOW, last_attempt_by_key=attempts)
+    assert result.status == hc.STATUS_STALE
+    assert "latest attempt FAILED" in result.detail
+    assert "pages_manage_posts" in result.detail
+
+
+def test_stale_detail_includes_dry_run_hint():
+    """A job stuck on AUTOPOSTER_DRY_RUN=1 writes dry_run rows that never count
+    as fresh; the alert should call that out explicitly."""
+    job = hc.EXPECTED_JOBS[0]
+    latest = {("facebook", "listing-spotlight"): _fake_latest(6.0)}
+    attempts = {
+        ("facebook", "listing-spotlight"): hc.LastAttempt(
+            status="dry_run", posted_at=_fake_latest(0.5), error_message=None,
+        )
+    }
+    result = hc.check_pipeline_freshness(job, latest, now=NOW, last_attempt_by_key=attempts)
+    assert result.status == hc.STATUS_STALE
+    assert "DRY RUN" in result.detail
+    assert "AUTOPOSTER_DRY_RUN=1" in result.detail
+
+
+def test_stale_detail_omits_diag_when_latest_attempt_is_the_post():
+    """If the most recent attempt IS the (now-old) successful post, there's no
+    failure to explain — don't append a noisy suffix."""
+    job = hc.EXPECTED_JOBS[0]
+    last = _fake_latest(6.0)
+    latest = {("facebook", "listing-spotlight"): last}
+    attempts = {
+        ("facebook", "listing-spotlight"): hc.LastAttempt(
+            status="posted", posted_at=last, error_message=None,
+        )
+    }
+    result = hc.check_pipeline_freshness(job, latest, now=NOW, last_attempt_by_key=attempts)
+    assert result.status == hc.STATUS_STALE
+    assert "latest attempt" not in result.detail
+
+
+def test_stale_detail_unchanged_without_diagnostics():
+    """No last_attempt map (e.g. diagnostic query failed) → detail is the plain
+    freshness line, no crash."""
+    job = hc.EXPECTED_JOBS[0]
+    latest = {("facebook", "listing-spotlight"): _fake_latest(6.0)}
+    result = hc.check_pipeline_freshness(job, latest, now=NOW, last_attempt_by_key=None)
+    assert result.status == hc.STATUS_STALE
+    assert "latest attempt" not in result.detail
+
+
+def test_gap_detail_explains_failed_attempts():
+    """Never-posted job that nonetheless has a `failed` attempt row: the GAP
+    line should explain it's failing, not silently imply 'never ran'."""
+    job = hc.EXPECTED_JOBS[1]  # content-market-stats
+    attempts = {
+        ("facebook", "content-market-stats"): hc.LastAttempt(
+            status="failed",
+            posted_at=_fake_latest(2.0),
+            error_message="(#190) Malformed access token",
+        )
+    }
+    result = hc.check_pipeline_freshness(job, {}, now=NOW, last_attempt_by_key=attempts)
+    assert result.status == hc.STATUS_GAP
+    assert "Malformed access token" in result.detail
+
+
+def test_diag_error_message_is_truncated():
+    """A huge upstream error_message must not bloat the email — cap it."""
+    job = hc.EXPECTED_JOBS[0]
+    latest = {("facebook", "listing-spotlight"): _fake_latest(6.0)}
+    attempts = {
+        ("facebook", "listing-spotlight"): hc.LastAttempt(
+            status="failed", posted_at=_fake_latest(1.0), error_message="x" * 5000,
+        )
+    }
+    result = hc.check_pipeline_freshness(job, latest, now=NOW, last_attempt_by_key=attempts)
+    assert "…" in result.detail
+    assert len(result.detail) < 600  # freshness line + capped error, not 5000
+
+
+def test_fetch_last_attempt_scans_all_statuses():
+    """The diagnostic query must NOT filter to status='posted' (that's the
+    freshness query's job) — it needs the latest row of any status."""
+    captured = {"sqls": []}
+
+    class _Cur:
+        def __enter__(self): return self
+        def __exit__(self, *a): pass
+        def execute(self, sql, *args, **kwargs):
+            captured["sqls"].append(sql)
+        def fetchall(self): return []
+
+    class _Conn:
+        def cursor(self): return _Cur()
+        def close(self): pass
+
+    hc._fetch_last_attempt_per_channel_job("dsn://", connect_fn=lambda d: _Conn())
+    select_sql = next((s for s in captured["sqls"] if "FROM post_log" in s), None)
+    assert select_sql is not None, f"no SELECT FROM post_log found in {captured['sqls']}"
+    assert "status = 'posted'" not in select_sql
+    assert "DISTINCT ON" in select_sql
+
+
+def test_run_all_stale_alert_surfaces_failure_reason(monkeypatch):
+    """End-to-end through run_all_checks: a stale listing job with a failed
+    attempt should produce a STALE result whose detail names the error."""
+    latest = {(j.channel, j.job_name): _fake_latest(0.5) for j in hc.EXPECTED_JOBS}
+    latest[("facebook", "listing-spotlight")] = _fake_latest(9)  # stale
+    attempts = {
+        ("facebook", "listing-spotlight"): hc.LastAttempt(
+            status="failed",
+            posted_at=_fake_latest(1.0),
+            error_message="(#200) pages_manage_posts not granted",
+        )
+    }
+    _patch_dns_helpers(
+        monkeypatch,
+        healthcheck_status="pass",
+        git_status="pass",
+        latest_map=latest,
+        last_attempt_map=attempts,
+    )
+    results = hc.run_all_checks(
+        dsn="dsn://", healthcheck_url="https://x/", repo_dir="/repo", now=NOW
+    )
+    assert hc.determine_exit_code(results) == 1
+    listing = next(r for r in results if "listing-spotlight" in r.name)
+    assert listing.status == hc.STATUS_STALE
+    assert "pages_manage_posts" in listing.detail
 
 
 # ---------------------------------------------------------------------------
@@ -321,7 +466,7 @@ def test_uptime_error_on_network():
 # Orchestration + exit codes
 # ---------------------------------------------------------------------------
 
-def _patch_dns_helpers(monkeypatch, *, healthcheck_status, git_status, latest_map=None, reach_status="pass"):
+def _patch_dns_helpers(monkeypatch, *, healthcheck_status, git_status, latest_map=None, reach_status="pass", last_attempt_map=None):
     """Replace per-check functions with deterministic fakes."""
     monkeypatch.setattr(
         hc,
@@ -354,6 +499,11 @@ def _patch_dns_helpers(monkeypatch, *, healthcheck_status, git_status, latest_ma
         hc,
         "_fetch_last_post_per_channel_job",
         lambda dsn, connect_fn=None: latest_map or {},
+    )
+    monkeypatch.setattr(
+        hc,
+        "_fetch_last_attempt_per_channel_job",
+        lambda dsn, connect_fn=None: last_attempt_map or {},
     )
 
 
