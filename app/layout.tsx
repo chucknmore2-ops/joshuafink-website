@@ -64,6 +64,22 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const areaServed = [
+    { '@type': 'City', name: 'Franklin, TN' },
+    { '@type': 'City', name: 'Brentwood, TN' },
+    { '@type': 'City', name: 'Spring Hill, TN' },
+    { '@type': 'City', name: 'Nolensville, TN' },
+    { '@type': 'City', name: "Thompson's Station, TN" },
+    { '@type': 'City', name: 'Nashville, TN' },
+    { '@type': 'City', name: 'Murfreesboro, TN' },
+    { '@type': 'City', name: 'Gallatin, TN' },
+    { '@type': 'City', name: 'Hendersonville, TN' },
+    { '@type': 'City', name: 'Columbia, TN' },
+    { '@type': 'City', name: 'Mount Juliet, TN' },
+    { '@type': 'City', name: 'Lebanon, TN' },
+    { '@type': 'City', name: 'Smyrna, TN' },
+    { '@type': 'City', name: 'La Vergne, TN' },
+  ]
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
       <head>
@@ -115,22 +131,7 @@ export default function RootLayout({
                     longitude: -86.7816,
                   },
                   hasMap: 'https://www.google.com/maps/place/Nashville,+TN',
-                  areaServed: [
-                    { '@type': 'City', name: 'Franklin, TN' },
-                    { '@type': 'City', name: 'Brentwood, TN' },
-                    { '@type': 'City', name: 'Spring Hill, TN' },
-                    { '@type': 'City', name: 'Nolensville, TN' },
-                    { '@type': 'City', name: "Thompson's Station, TN" },
-                    { '@type': 'City', name: 'Nashville, TN' },
-                    { '@type': 'City', name: 'Murfreesboro, TN' },
-                    { '@type': 'City', name: 'Gallatin, TN' },
-                    { '@type': 'City', name: 'Hendersonville, TN' },
-                    { '@type': 'City', name: 'Columbia, TN' },
-                    { '@type': 'City', name: 'Mount Juliet, TN' },
-                    { '@type': 'City', name: 'Lebanon, TN' },
-                    { '@type': 'City', name: 'Smyrna, TN' },
-                    { '@type': 'City', name: 'La Vergne, TN' },
-                  ],
+                  areaServed,
                   employee: { '@id': 'https://joshuafink.com/#joshua-fink' },
                   parentOrganization: {
                     '@type': 'RealEstateAgent',
@@ -146,6 +147,42 @@ export default function RootLayout({
                     'https://www.zillow.com/profile/JoshuaFinkGroup',
                   ],
                   priceRange: '$300000-$2500000',
+                  hasOfferCatalog: {
+                    '@type': 'OfferCatalog',
+                    name: 'Real Estate Services',
+                    itemListElement: [
+                      {
+                        '@type': 'Offer',
+                        itemOffered: {
+                          '@type': 'Service',
+                          name: 'Cash Home Purchase',
+                          url: 'https://joshuafink.com/cash-offer',
+                          provider: { '@id': 'https://joshuafink.com/#agent' },
+                          areaServed,
+                        },
+                      },
+                      {
+                        '@type': 'Offer',
+                        itemOffered: {
+                          '@type': 'Service',
+                          name: 'Home Listing & Marketing',
+                          url: 'https://joshuafink.com/sell',
+                          provider: { '@id': 'https://joshuafink.com/#agent' },
+                          areaServed,
+                        },
+                      },
+                      {
+                        '@type': 'Offer',
+                        itemOffered: {
+                          '@type': 'Service',
+                          name: 'Buyer Representation',
+                          url: 'https://joshuafink.com/buy',
+                          provider: { '@id': 'https://joshuafink.com/#agent' },
+                          areaServed,
+                        },
+                      },
+                    ],
+                  },
                   // AggregateRating sourced from Joshua's Zillow review profile
                   // (218 reviews, 5.0 average as of latest sync). The reviewCount
                   // includes off-site reviews collected on Zillow over 17+ years
