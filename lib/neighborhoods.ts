@@ -92,6 +92,322 @@ export const neighborhoods: Record<string, Neighborhood> = {
     longitude: -86.9557,
   },
 
+  'east-nashville-tn': {
+    slug: 'east-nashville-tn',
+    name: 'East Nashville',
+    city: 'Nashville',
+    citySlug: 'nashville-tn',
+    county: 'Davidson County',
+    metaTitle: 'East Nashville Neighborhood Guide — Nashville, TN',
+    metaDescription:
+      'East Nashville homes for sale, explained: historic bungalows, Five Points walkability, vibe, prices, and what to know before you buy. Local insight from Compass agent Joshua Fink.',
+    intro:
+      'East Nashville is the city’s most-talked-about neighborhood east of the Cumberland River — a collection of historic streetcar-era pockets like Lockeland Springs, Eastwood, and Cleveland Park, anchored by the Five Points and Riverside Village commercial nodes. It is walkable, design-forward, and the first stop for buyers who want character over cul-de-sac.',
+    about:
+      'East Nashville is really a cluster of distinct micro-neighborhoods — Lockeland Springs, Eastwood, Cleveland Park, Greenwood, and Inglewood among them — stitched together by Eastland and Gallatin Avenues and the Five Points hub. The housing stock leans heavily on early-1900s craftsman bungalows, four-squares, and Victorian cottages, many beautifully renovated, interspersed with modern infill builds and tall-skinny duplexes. The draw is lifestyle: independent restaurants, coffee shops, music venues, and boutiques you can walk or bike to, plus quick access to downtown over the river. It attracts a creative, professional, and small-business crowd that prizes walkability and architectural character. Inventory ranges from entry-level renovation projects to fully restored historic homes and new modern builds, so the price spread inside East Nashville is wide.',
+    vibe: 'Historic, walkable, creative — Nashville’s character-home favorite.',
+    priceBand: '$450K – $1.2M+',
+    buildYears: 'Early 1900s historic stock with ongoing modern infill',
+    hoa: 'Most single-family historic homes have no HOA. Newer infill, townhome, and condo developments may carry HOA dues — confirm per property. Parts of East Nashville sit inside historic-overlay zoning that governs exterior changes.',
+    schoolNotes:
+      'East Nashville falls within Metro Nashville Public Schools (MNPS), which combines zoned schools with magnet, optional, and charter choices assigned partly by address and partly by application or lottery. Many Nashville buyers weigh zoned, magnet, charter, and private options together. Always confirm current MNPS zoning and any application deadlines for the exact address.',
+    amenities: [
+      'Five Points and Riverside Village walkable dining and retail',
+      'Independent restaurants, coffee, and live-music venues',
+      'Shelby Park and the Shelby Bottoms Greenway',
+      'Quick bridge access to downtown Nashville',
+      'Historic-overlay districts protecting neighborhood character',
+      'Bikeable, grid-pattern streets',
+    ],
+    homeStyles: [
+      'Craftsman bungalows and four-squares (early 1900s)',
+      'Victorian cottages',
+      'Fully renovated historic homes',
+      'Modern infill new construction',
+      'Tall-skinny duplexes and townhomes',
+    ],
+    whyBullets: [
+      'Character is the whole point: East Nashville buyers are choosing architecture, walkability, and a creative neighborhood culture you can’t replicate in a new subdivision. Joshua helps you separate a well-done historic renovation from a flip with lipstick on it.',
+      'Micro-neighborhoods matter: Lockeland Springs lives very differently from Inglewood or Cleveland Park on price, walk score, and feel. Joshua knows the pockets and can target the right one for your budget and commute.',
+      'Wide entry range: From renovation projects in the $400s to restored showpieces past $1M, East Nashville works for a broad range of buyers — if you know where to look.',
+    ],
+    faqs: [
+      {
+        q: 'How much do homes in East Nashville cost in 2026?',
+        a: 'East Nashville spans a wide range — roughly the mid-$400s for smaller cottages and renovation candidates up past $1.2M for large, fully restored historic homes and premium modern infill. Most renovated single-family activity sits in the $600K–$900K range. For a specific street, Joshua can pull recent closed comps.',
+      },
+      {
+        q: 'Is East Nashville a good place to buy?',
+        a: 'For buyers who value walkability, historic character, and proximity to downtown, it is one of the most desirable parts of the city. The trade-off versus the suburbs is smaller lots, older systems in unrenovated homes, and MNPS school decisions that often require a little homework. Joshua walks you through both sides.',
+      },
+      {
+        q: 'What are the main East Nashville sub-neighborhoods?',
+        a: 'Lockeland Springs, Eastwood, Cleveland Park, Greenwood, and Inglewood are the most searched, each with its own price point and personality. Five Points and Riverside Village are the two main walkable commercial hubs.',
+      },
+      {
+        q: 'Do East Nashville homes have HOAs?',
+        a: 'Most historic single-family homes do not. Newer townhome, condo, and infill developments sometimes do. Separately, several East Nashville pockets sit in historic-overlay districts that regulate exterior changes — important to know before you plan a renovation. Joshua confirms both per property.',
+      },
+      {
+        q: 'What schools serve East Nashville?',
+        a: 'East Nashville is part of Metro Nashville Public Schools, which uses a mix of zoned, magnet, optional, and charter schools. Assignment depends on the exact address plus application or lottery for choice programs. Confirm current zoning and deadlines for any specific home before writing an offer.',
+      },
+    ],
+    schemaCity: 'Nashville',
+    schemaState: 'TN',
+    latitude: 36.1782,
+    longitude: -86.7452,
+  },
+
+  '12-south-nashville-tn': {
+    slug: '12-south-nashville-tn',
+    name: '12 South',
+    city: 'Nashville',
+    citySlug: 'nashville-tn',
+    county: 'Davidson County',
+    metaTitle: '12 South Neighborhood Guide — Nashville, TN',
+    metaDescription:
+      '12 South is one of Nashville’s most walkable, in-demand neighborhoods: bungalows, boutiques, and a buzzing main strip. Prices, vibe, and buyer advice from Compass agent Joshua Fink.',
+    intro:
+      '12 South is the compact, intensely walkable neighborhood just south of downtown Nashville built around the 12th Avenue South retail strip — boutiques, coffee, ice cream, and some of the most photographed storefronts in the city. It pairs early-1900s bungalows with high-end renovations and modern infill, and demand here is consistently among the strongest in the urban core.',
+    about:
+      '12 South runs along 12th Avenue South between roughly Linden and Kirkwood, a short hop from downtown, the Gulch, and Belmont. The commercial spine is the draw: a tight, leafy main street of independent boutiques, restaurants, a popular neighborhood park (Sevier Park), and the weekend foot traffic that comes with being a destination. Housing is a mix of restored craftsman bungalows, larger rebuilt homes, modern infill, and townhomes. Lots are small and walkability is high — residents routinely leave the car at home. Because it is both a lifestyle destination and a limited-supply historic grid, 12 South commands a premium over many comparable-size Nashville neighborhoods.',
+    vibe: 'Boutique-lined, ultra-walkable, high-demand urban living.',
+    priceBand: '$700K – $1.8M+',
+    buildYears: 'Early 1900s bungalows with extensive renovation and infill',
+    hoa: 'Detached single-family homes typically have no HOA; newer townhome and condo projects may. Lots are small and street parking is at a premium — worth factoring in.',
+    schoolNotes:
+      '12 South is served by Metro Nashville Public Schools (MNPS), a mix of zoned, magnet, optional, and charter schools assigned by address plus application or lottery for choice programs. Confirm current MNPS zoning and deadlines for the exact address before writing an offer.',
+    amenities: [
+      'The 12th Avenue South boutique and restaurant strip',
+      'Sevier Park and the Sevier Park Community Center',
+      'Walk/bike distance to downtown, the Gulch, and Belmont',
+      'Highly walkable, destination main street',
+      'Strong, consistent resale demand',
+      'Coffee shops, ice cream, and independent retail at your doorstep',
+    ],
+    homeStyles: [
+      'Restored craftsman bungalows',
+      'Larger rebuilt and expanded historic homes',
+      'Modern infill new construction',
+      'Townhomes near the commercial strip',
+    ],
+    whyBullets: [
+      'Walkability commands a premium: 12 South is a true leave-the-car neighborhood, and that lifestyle holds value through market cycles. Joshua helps you judge whether a specific block delivers the walkability you’re paying for.',
+      'Supply is genuinely limited: It’s a small, built-out historic grid, so well-located homes move fast. Joshua’s Compass access and off-market network matter most in tight neighborhoods like this.',
+      'Renovation quality varies widely: At these prices you want to know which “fully renovated” homes are done right. Joshua has walked enough of them to flag the difference.',
+    ],
+    faqs: [
+      {
+        q: 'How much do homes in 12 South cost in 2026?',
+        a: 'Most 12 South single-family homes trade between roughly $700K and $1.8M, with premium renovated and larger homes pushing higher and some townhomes/condos entering below that. For an exact read on a specific block, Joshua can pull recent closed comps.',
+      },
+      {
+        q: 'Why is 12 South so popular?',
+        a: 'It combines a genuine walkable main street, proximity to downtown and the Gulch, historic bungalow charm, and a destination retail/dining scene in one compact neighborhood. That mix keeps demand — and prices — strong.',
+      },
+      {
+        q: 'Is parking a problem in 12 South?',
+        a: 'It can be. Lots are small and the commercial strip draws weekend visitors, so on-street parking is competitive in spots. Off-street parking and garage access are worth prioritizing in your search — Joshua factors it into showings.',
+      },
+      {
+        q: 'What schools serve 12 South?',
+        a: '12 South is part of Metro Nashville Public Schools, which uses zoned, magnet, optional, and charter options assigned by address plus application or lottery. Confirm current zoning and any deadlines for the specific address before you buy.',
+      },
+    ],
+    schemaCity: 'Nashville',
+    schemaState: 'TN',
+    latitude: 36.1234,
+    longitude: -86.7895,
+  },
+
+  'germantown-nashville-tn': {
+    slug: 'germantown-nashville-tn',
+    name: 'Germantown',
+    city: 'Nashville',
+    citySlug: 'nashville-tn',
+    county: 'Davidson County',
+    metaTitle: 'Germantown Neighborhood Guide — Nashville, TN',
+    metaDescription:
+      'Germantown is Nashville’s historic, upscale urban neighborhood just north of downtown — Victorian homes, top restaurants, and the Farmers’ Market. Prices and buyer insight from Compass agent Joshua Fink.',
+    intro:
+      'Germantown is Nashville’s oldest residential neighborhood — a compact, historic district just north of downtown known for restored Victorians, brick streets, a celebrated restaurant scene, and the Nashville Farmers’ Market. It blends 19th-century character with new luxury townhomes and condos, and it is one of the most walkable upscale addresses in the city.',
+    about:
+      'Germantown sits immediately north of the central business district, bordered by the Farmers’ Market and Bicentennial Capitol Mall State Park. The neighborhood is small and dense, with tree-lined streets of restored Victorian and Italianate homes alongside newer luxury townhomes, condos, and a handful of mid-rise developments. It punches well above its size on dining — several of Nashville’s most acclaimed restaurants are here — and residents walk to the Farmers’ Market, First Horizon Park (the Sounds’ ballpark), and downtown. The buyer profile skews professional, empty-nester, and second-home, drawn by low-maintenance urban living with genuine history. Because detached historic homes are scarce, much of the for-sale activity is townhomes and condos.',
+    vibe: 'Historic, upscale, walkable — Nashville’s urban dining district.',
+    priceBand: '$500K – $1.5M+',
+    buildYears: '19th-century historic homes plus modern luxury townhomes/condos',
+    hoa: 'Townhomes and condos — a large share of Germantown inventory — carry HOA dues covering shared structures and amenities. Detached historic homes generally do not, though some sit in a historic-overlay district that regulates exterior changes.',
+    schoolNotes:
+      'Germantown is part of Metro Nashville Public Schools (MNPS), which blends zoned schools with magnet, optional, and charter options assigned by address plus application or lottery. Confirm current MNPS zoning and deadlines for the exact address before writing an offer.',
+    amenities: [
+      'Nashville Farmers’ Market at the neighborhood edge',
+      'Acclaimed, walkable restaurant scene',
+      'First Horizon Park (Nashville Sounds) and Bicentennial Mall State Park',
+      'Walk to downtown and the riverfront',
+      'Historic brick streets and restored architecture',
+      'Low-maintenance townhome and condo living',
+    ],
+    homeStyles: [
+      'Restored Victorian and Italianate homes',
+      'Luxury new-construction townhomes',
+      'Condos and mid-rise units',
+      'Selected modern detached infill',
+    ],
+    whyBullets: [
+      'Low-maintenance urban luxury: Germantown is ideal for buyers who want walkable, lock-and-leave living with real history — not a suburban yard. Joshua helps match you to the right product type, from a Victorian to a new townhome.',
+      'Scarcity at the top: Detached historic homes rarely come up and move quickly when they do. Joshua’s Compass and off-market access is a real edge in a neighborhood this small.',
+      'HOA and overlay due diligence: Much of Germantown is townhome/condo with HOAs, and some blocks are historic-overlay. Joshua reviews the documents so there are no surprises after closing.',
+    ],
+    faqs: [
+      {
+        q: 'How much do homes in Germantown cost in 2026?',
+        a: 'Germantown generally runs from the low-$500s for condos and smaller townhomes up past $1.5M for large luxury townhomes and restored detached Victorians. Most activity is townhome and condo product in between. Joshua can pull exact closed comps for a specific building or street.',
+      },
+      {
+        q: 'Is Germantown mostly condos and townhomes?',
+        a: 'A large share of for-sale inventory is townhomes and condos, because detached historic homes are scarce and tightly held. If you specifically want a detached historic home, expect to wait for the right one — Joshua can set up off-market and new-listing alerts.',
+      },
+      {
+        q: 'What’s the appeal of living in Germantown?',
+        a: 'Walkable upscale living next to downtown, one of the best restaurant clusters in Nashville, the Farmers’ Market, parks, and genuine 19th-century architecture — all in a compact, low-maintenance footprint. It’s a favorite for professionals and empty-nesters.',
+      },
+      {
+        q: 'What schools serve Germantown?',
+        a: 'Germantown is served by Metro Nashville Public Schools, a mix of zoned, magnet, optional, and charter schools assigned by address plus application or lottery for choice programs. Confirm current zoning and deadlines for the exact address before you buy.',
+      },
+    ],
+    schemaCity: 'Nashville',
+    schemaState: 'TN',
+    latitude: 36.1808,
+    longitude: -86.7886,
+  },
+
+  'sylvan-park-nashville-tn': {
+    slug: 'sylvan-park-nashville-tn',
+    name: 'Sylvan Park',
+    city: 'Nashville',
+    citySlug: 'nashville-tn',
+    county: 'Davidson County',
+    metaTitle: 'Sylvan Park Neighborhood Guide — Nashville, TN',
+    metaDescription:
+      'Sylvan Park is a leafy, family-friendly West Nashville neighborhood of cottages and bungalows near McCabe Park. Prices, schools, and buyer advice from Compass agent Joshua Fink.',
+    intro:
+      'Sylvan Park is a leafy, established neighborhood in West Nashville known for its cottages and bungalows, the McCabe Park golf course and community center, and a small, walkable restaurant row on Murphy Road and 46th Avenue. It is one of the more family-friendly pockets of the urban core, popular with buyers who want character and green space without leaving the city.',
+    about:
+      'Sylvan Park sits west of I-440 between Charlotte Avenue and the Nations, organized on a tidy grid with streets named after U.S. presidents. The housing stock is dominated by early-to-mid-1900s cottages, bungalows, and Tudor-influenced homes, with steady renovation activity and newer infill on former tear-down lots. The neighborhood wraps around McCabe Park, which includes a public golf course, greenway access, ball fields, and a community center — a meaningful amenity for active and family buyers. A compact set of neighborhood restaurants and shops keeps daily life walkable. Sylvan Park appeals to buyers who want established trees, a real sense of community, and quick access to downtown and West End, but with a calmer, more residential feel than 12 South or East Nashville.',
+    vibe: 'Leafy, established, family-friendly West Nashville.',
+    priceBand: '$550K – $1.3M+',
+    buildYears: 'Early-to-mid 1900s cottages with ongoing renovation and infill',
+    hoa: 'Most Sylvan Park single-family homes have no HOA. Newer townhome and infill developments may carry dues — confirm per property.',
+    schoolNotes:
+      'Sylvan Park is part of Metro Nashville Public Schools (MNPS), which uses zoned schools alongside magnet, optional, and charter options assigned by address plus application or lottery. Confirm current MNPS zoning and deadlines for the specific address before writing an offer.',
+    amenities: [
+      'McCabe Park — public golf course, ball fields, community center',
+      'Richland Creek Greenway access',
+      'Neighborhood restaurant row on Murphy Road / 46th Ave',
+      'Established tree canopy and grid streets',
+      'Quick access to West End, downtown, and the Nations',
+      'Family-friendly, residential feel',
+    ],
+    homeStyles: [
+      'Early-1900s cottages and bungalows',
+      'Tudor-influenced homes',
+      'Renovated and expanded historic homes',
+      'Modern infill new construction',
+      'Selected townhomes',
+    ],
+    whyBullets: [
+      'Family-friendly without the suburbs: Sylvan Park gives buyers green space, a golf course, and a community feel while staying minutes from downtown. Joshua helps you weigh it against suburban options on price-per-square-foot and schools.',
+      'Renovation vs. infill: The neighborhood has both charming originals and new builds on small lots. Joshua helps you decide which fits your maintenance appetite and resale goals.',
+      'Established and stable: Mature trees, a tidy grid, and consistent demand make Sylvan Park one of West Nashville’s steadier neighborhoods — Joshua can show how it has held value.',
+    ],
+    faqs: [
+      {
+        q: 'How much do homes in Sylvan Park cost in 2026?',
+        a: 'Most Sylvan Park homes trade between roughly $550K and $1.3M, with renovated and new-infill homes at the upper end and smaller original cottages below. Joshua can pull recent closed comps for any specific street.',
+      },
+      {
+        q: 'Is Sylvan Park good for families?',
+        a: 'It’s one of the more family-oriented neighborhoods in the urban core, thanks to McCabe Park, greenway access, established trees, and a residential grid. As with anywhere in Nashville, school assignment takes a little homework — Joshua helps with that.',
+      },
+      {
+        q: 'What’s the difference between Sylvan Park and the Nations?',
+        a: 'They’re neighbors in West Nashville. Sylvan Park is older and more established with mature trees and cottages; the Nations has seen heavier new-construction and modern infill. Joshua can tour both so you feel the difference firsthand.',
+      },
+      {
+        q: 'What schools serve Sylvan Park?',
+        a: 'Sylvan Park is served by Metro Nashville Public Schools, a mix of zoned, magnet, optional, and charter schools assigned by address plus application or lottery for choice programs. Confirm current zoning and deadlines for the exact address before buying.',
+      },
+    ],
+    schemaCity: 'Nashville',
+    schemaState: 'TN',
+    latitude: 36.1503,
+    longitude: -86.8403,
+  },
+
+  'the-gulch-nashville-tn': {
+    slug: 'the-gulch-nashville-tn',
+    name: 'The Gulch',
+    city: 'Nashville',
+    citySlug: 'nashville-tn',
+    county: 'Davidson County',
+    metaTitle: 'The Gulch Neighborhood Guide — Nashville, TN',
+    metaDescription:
+      'The Gulch is Nashville’s walkable high-rise condo district — LEED-certified buildings, nightlife, and downtown at your doorstep. Condo prices and buyer advice from Compass agent Joshua Fink.',
+    intro:
+      'The Gulch is Nashville’s dense, walkable condo district on the southwest edge of downtown — a cluster of mid- and high-rise residential buildings, restaurants, rooftop bars, and the famous “What Lifts You” wings mural. It was one of the first LEED-certified neighborhoods in the South, and it is the go-to for buyers who want lock-and-leave, amenity-rich urban living.',
+    about:
+      'The Gulch sits between downtown and 12 South, built around 11th and 12th Avenues. It is overwhelmingly condo and apartment product — mid- and high-rise buildings with concierge service, fitness centers, rooftop pools, and secured parking — mixed with ground-floor retail, restaurants, and nightlife. There are very few single-family homes; the for-sale market here is condos, from compact one-bedrooms to large luxury penthouses. The neighborhood is built for walkability and a low-maintenance lifestyle: residents walk to dinner, music, and the office downtown. Buyers tend to be professionals, downsizers, investors, and second-home owners who value amenities and location over a yard. Because product is building-specific, HOA dues, rental rules, and amenity packages vary widely from tower to tower — which is exactly where an experienced agent earns their keep.',
+    vibe: 'Walkable high-rise condos, nightlife, and downtown at your door.',
+    priceBand: '$400K – $1.5M+ (condos)',
+    buildYears: 'Mostly 2000s–present mid- and high-rise development',
+    hoa: 'Effectively all Gulch inventory is condo product with monthly HOA/condo dues that cover building amenities, security, and often some utilities. Dues, reserves, and short-term-rental rules vary significantly by building — reviewing them carefully is essential.',
+    schoolNotes:
+      'The Gulch is within Metro Nashville Public Schools (MNPS), which uses zoned, magnet, optional, and charter schools assigned by address plus application or lottery. The Gulch skews toward professionals and downsizers, but for families, confirm current MNPS zoning and choice-program deadlines for the exact address.',
+    amenities: [
+      'Walkable restaurants, rooftop bars, and live music',
+      'LEED-certified, sustainability-focused development',
+      'Building amenities: concierge, fitness, rooftop pools, secured parking',
+      'Steps from downtown and the future riverfront',
+      'The “What Lifts You” wings mural and destination retail',
+      'Lock-and-leave, low-maintenance lifestyle',
+    ],
+    homeStyles: [
+      'High-rise luxury condos and penthouses',
+      'Mid-rise condo units',
+      'Compact urban one- and two-bedrooms',
+      'Live/work and loft-style units',
+    ],
+    whyBullets: [
+      'Building selection is everything: In the Gulch you’re buying the building as much as the unit — HOA health, reserves, rental rules, and amenities vary widely. Joshua helps you compare towers, not just floor plans.',
+      'Lock-and-leave urban living: For professionals, downsizers, and second-home buyers, the Gulch offers walkable, amenity-rich living with no yard to maintain. Joshua matches you to the right building and view.',
+      'Investor and rental nuance: Short-term-rental rules differ by building and are changing. If you’re buying with rental income in mind, Joshua helps you confirm what’s actually allowed before you commit.',
+    ],
+    faqs: [
+      {
+        q: 'How much do condos in The Gulch cost in 2026?',
+        a: 'Gulch condos generally range from around $400K for smaller one-bedrooms to $1.5M and well beyond for large luxury units and penthouses, depending on building, floor, and view. Joshua can pull recent closed comps within a specific building.',
+      },
+      {
+        q: 'Are there single-family homes in The Gulch?',
+        a: 'Very few — the Gulch is almost entirely condo and apartment product. If you want a detached home nearby, neighboring 12 South or the edges of downtown are better targets, and Joshua can show you both.',
+      },
+      {
+        q: 'What should I check before buying a Gulch condo?',
+        a: 'The building’s HOA dues and reserves, special-assessment history, rental and short-term-rental rules, amenity package, and parking. These vary a lot tower to tower. Joshua reviews the condo documents with you before you write an offer.',
+      },
+      {
+        q: 'Is The Gulch a good investment?',
+        a: 'It can be, given its walkability and demand, but returns depend heavily on the specific building and its rental rules — especially around short-term rentals, which differ by tower and are subject to change. Joshua helps you confirm the rules and run the numbers.',
+      },
+    ],
+    schemaCity: 'Nashville',
+    schemaState: 'TN',
+    latitude: 36.1512,
+    longitude: -86.7855,
+  },
+
   'governors-club-brentwood-tn': {
     slug: 'governors-club-brentwood-tn',
     name: 'Governors Club',

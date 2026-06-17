@@ -173,6 +173,162 @@ export const schools: Record<string, School> = {
       },
     ],
   },
+
+  'pearre-creek-elementary-franklin-tn': {
+    slug: 'pearre-creek-elementary-franklin-tn',
+    name: 'Pearre Creek Elementary',
+    level: 'Elementary',
+    district: 'Williamson County Schools',
+    suburbSlug: 'franklin-tn',
+    ratingNote: 'A well-regarded Williamson County elementary serving west Franklin families.',
+    blurb:
+      'Pearre Creek Elementary serves a fast-growing slice of west Franklin and is one of the elementary schools most associated with the Westhaven master-planned community and the surrounding McEwen Drive corridor. Williamson County Schools is consistently among the highest-performing districts in Tennessee, and at the elementary level families search hard by zone — a strong, convenient elementary is often the first filter for relocating parents. Pearre Creek-area homes draw demand for exactly that reason.',
+    neighborhoods: ['Westhaven', 'Sullivan Farms', 'West Franklin / McEwen corridor'],
+    faqs: [
+      {
+        q: 'What neighborhoods are zoned to Pearre Creek Elementary?',
+        a: 'Pearre Creek commonly serves Westhaven, Sullivan Farms, and surrounding west Franklin subdivisions along the McEwen corridor. Elementary zones in Williamson County can change as new schools open, so always confirm the current assignment with Williamson County Schools for the exact address before writing an offer.',
+      },
+      {
+        q: 'How much do homes near Pearre Creek Elementary cost?',
+        a: 'Most homes in the west Franklin area Pearre Creek serves trade from the mid-$600s into the $2M+ range, with Westhaven spanning that full band. Joshua can pull recent closed comps for any specific street or subdivision.',
+      },
+      {
+        q: 'Does the elementary zone really affect resale value?',
+        a: 'In Williamson County, yes. Buyers with young children filter aggressively by elementary zone, and a desirable, convenient elementary supports demand and resale even years before a family has school-age kids. Joshua factors school zoning into every west Franklin search.',
+      },
+    ],
+  },
+
+  'crockett-elementary-brentwood-tn': {
+    slug: 'crockett-elementary-brentwood-tn',
+    name: 'Crockett Elementary',
+    level: 'Elementary',
+    district: 'Williamson County Schools',
+    suburbSlug: 'brentwood-tn',
+    ratingNote: 'A sought-after Williamson County elementary in the Brentwood area.',
+    blurb:
+      'Crockett Elementary is one of the elementary schools tied to southern Brentwood and the Ravenwood High feeder pattern, including the Governors Club area. For families targeting Brentwood specifically for schools, the elementary assignment is the starting point — and Crockett-zoned neighborhoods see steady demand from buyers who want the full Williamson County K-12 path in one of the most affluent zip codes in the region.',
+    neighborhoods: ['Governors Club', 'Taramore', 'Southern Brentwood subdivisions'],
+    faqs: [
+      {
+        q: 'What neighborhoods feed Crockett Elementary?',
+        a: 'Crockett commonly serves portions of southern Brentwood including the Governors Club area and surrounding subdivisions on the Ravenwood feeder path. Zoning lines run inside some larger areas and can change, so confirm the current assignment with Williamson County Schools for any specific address.',
+      },
+      {
+        q: 'How do Crockett-zoned home prices compare?',
+        a: 'Homes in the southern Brentwood area Crockett serves generally trade from the $900s into the multi-millions, with Governors Club estates at the top of the range. Joshua can pull exact comps for any street.',
+      },
+      {
+        q: 'Why do families target a specific elementary zone in Brentwood?',
+        a: 'Because the elementary assignment sets the tone for the entire K-12 path and drives resale. Brentwood buyers routinely shortlist homes by elementary and high-school zone together — Joshua confirms both before every tour.',
+      },
+    ],
+  },
+
+  'woodland-middle-school-brentwood-tn': {
+    slug: 'woodland-middle-school-brentwood-tn',
+    name: 'Woodland Middle School',
+    level: 'Middle',
+    district: 'Williamson County Schools',
+    suburbSlug: 'brentwood-tn',
+    ratingNote: 'A strong Williamson County middle school on the Brentwood / Ravenwood feeder path.',
+    blurb:
+      'Woodland Middle School is a key part of the southern Brentwood feeder pattern that leads to Ravenwood High School, one of the top-rated public high schools in Tennessee. Families relocating to Brentwood for schools think in terms of the full feeder chain — elementary to middle to high — and Woodland is the middle-school link for several of the most demanded south-Brentwood subdivisions, including the Governors Club area.',
+    neighborhoods: ['Governors Club', 'Annandale', 'Taramore', 'Raintree Forest'],
+    faqs: [
+      {
+        q: 'What neighborhoods are zoned to Woodland Middle School?',
+        a: 'Woodland commonly serves much of southern Brentwood on the Ravenwood feeder path, including the Governors Club area, Annandale, Taramore, and Raintree Forest among others. Confirm the current assignment with Williamson County Schools for the exact address — zoning can change.',
+      },
+      {
+        q: 'Does Woodland feed into Ravenwood High School?',
+        a: 'For much of its zone, yes — Woodland Middle sits on the southern Brentwood feeder path that leads to Ravenwood High, which is part of why these neighborhoods stay in such high demand. Always verify the specific feeder assignment for a given address before you buy.',
+      },
+      {
+        q: 'What do homes in the Woodland Middle zone cost?',
+        a: 'Most homes in the southern Brentwood area Woodland serves trade between roughly $1.2M and $4M+, with Governors Club estates higher. Joshua can pull recent comps for any specific subdivision.',
+      },
+    ],
+  },
+
+  'sunset-middle-school-brentwood-tn': {
+    slug: 'sunset-middle-school-brentwood-tn',
+    name: 'Sunset Middle School',
+    level: 'Middle',
+    district: 'Williamson County Schools',
+    suburbSlug: 'brentwood-tn',
+    ratingNote: 'A well-regarded Williamson County middle school serving central Brentwood.',
+    blurb:
+      'Sunset Middle School serves a large, central-Brentwood population and is one of the busiest middle schools in Williamson County. For families weighing the central Brentwood vs southern Brentwood decision, the Sunset feeder path is a frequent shortlist — established neighborhoods, convenient location, and the consistent academic reputation that makes Williamson County Schools a relocation magnet.',
+    neighborhoods: ['Brentwood Hills', 'Central Brentwood subdivisions', 'Concord area'],
+    faqs: [
+      {
+        q: 'What neighborhoods feed Sunset Middle School?',
+        a: 'Sunset commonly serves central Brentwood including Brentwood Hills, the Concord area, and surrounding established subdivisions. Zoning lines exist within some larger areas and can change — confirm the current assignment with Williamson County Schools for any specific address.',
+      },
+      {
+        q: 'How does the Sunset zone compare to the southern Brentwood zones?',
+        a: 'Sunset draws from more central, established Brentwood neighborhoods, while the southern Brentwood schools (like Woodland) draw from newer subdivisions including Governors Club. Both are excellent — the choice usually comes down to which neighborhood and price point fit. Joshua can tour both feeder areas.',
+      },
+      {
+        q: 'What are home prices like in the Sunset Middle zone?',
+        a: 'Most homes in the central Brentwood area Sunset serves trade between roughly $900K and $3M, depending on neighborhood and lot. Joshua can pull street-level comps.',
+      },
+    ],
+  },
+
+  'mill-creek-elementary-nolensville-tn': {
+    slug: 'mill-creek-elementary-nolensville-tn',
+    name: 'Mill Creek Elementary',
+    level: 'Elementary',
+    district: 'Williamson County Schools',
+    suburbSlug: 'nolensville-tn',
+    ratingNote: 'A growing Williamson County elementary serving the Nolensville area.',
+    blurb:
+      'Mill Creek Elementary serves the rapidly growing Nolensville area, part of the Nolensville High feeder pattern that has helped make the town one of the fastest-growing family destinations in Middle Tennessee. Williamson County Schools is the draw, and at the elementary level Nolensville families search tightly by zone — newer subdivisions with a convenient, well-regarded elementary see strong, sustained demand.',
+    neighborhoods: ['Bent Creek', 'Burberry Glen', 'Scales Farmstead', 'Benington'],
+    faqs: [
+      {
+        q: 'What neighborhoods are zoned to Mill Creek Elementary?',
+        a: 'Mill Creek commonly serves Nolensville subdivisions including Bent Creek, Burberry Glen, Scales Farmstead, and Benington among others. Nolensville is growing quickly and elementary zones can shift as new schools open, so always confirm with Williamson County Schools for the exact address.',
+      },
+      {
+        q: 'How much do homes near Mill Creek Elementary cost?',
+        a: 'Most Nolensville homes in the Mill Creek area trade between roughly $580K and $1.1M, with newer construction and custom builds higher. Joshua can pull recent closed comps for any specific subdivision.',
+      },
+      {
+        q: 'Is the Nolensville area a good long-term family bet?',
+        a: 'Many families think so. Williamson County school zoning drives resale demand, and Nolensville has emerged as one of the most popular family destinations in the region. As always, confirm the specific feeder assignment for an address before you buy.',
+      },
+    ],
+  },
+
+  'spring-station-middle-school-thompsons-station-tn': {
+    slug: 'spring-station-middle-school-thompsons-station-tn',
+    name: 'Spring Station Middle School',
+    level: 'Middle',
+    district: 'Williamson County Schools',
+    suburbSlug: 'thompsons-station-tn',
+    ratingNote: 'A well-regarded Williamson County middle school serving the Thompson’s Station and Spring Hill area.',
+    blurb:
+      'Spring Station Middle School serves the Thompson’s Station and Williamson-County side of the Spring Hill area, a stretch that has seen heavy family-driven growth. For buyers chasing Williamson County Schools at a more accessible price point than Franklin or Brentwood, the Spring Station feeder path is a frequent target — newer master-planned communities, room to grow, and the WCS academic reputation that anchors resale.',
+    neighborhoods: ['Tollgate Village', 'Bridgemore Village', "Thompson's Station subdivisions"],
+    faqs: [
+      {
+        q: 'What neighborhoods feed Spring Station Middle School?',
+        a: 'Spring Station commonly serves Thompson&apos;s Station and the Williamson-County side of the Spring Hill area, including communities like Tollgate Village and Bridgemore Village. Zoning can change with growth, so confirm the current assignment with Williamson County Schools for any specific address.',
+      },
+      {
+        q: 'Why do buyers target the Spring Station zone?',
+        a: 'It offers the Williamson County Schools path at a more accessible entry point than Franklin or Brentwood, with newer master-planned communities and more space. For value-focused families set on WCS, it is one of the most popular trade-offs in the county.',
+      },
+      {
+        q: 'What do homes in the Spring Station Middle zone cost?',
+        a: 'Most homes in the Thompson&apos;s Station area Spring Station serves trade between roughly $420K and $1M, depending on community and lot. Joshua can pull recent comps for any specific subdivision.',
+      },
+    ],
+  },
 }
 
 export function getSchool(slug: string): School | undefined {
