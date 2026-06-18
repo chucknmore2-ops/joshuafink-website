@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
-import { blogPosts } from '@/lib/blog'
-import { getAllSuburbSlugs } from '@/lib/suburbs'
+import { getAllSiteUrls } from '@/lib/site-urls'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,26 +11,10 @@ const INDEXNOW_KEY = '7e3a8b9c4d5f6a2e1b0c9d8e7f5a4b3c'
 // Hardcoded upstream — never accept request-controlled values here (SSRF).
 const INDEXNOW_ENDPOINT = 'https://api.indexnow.org/indexnow'
 
-function buildUrlList(): string[] {
-  const core = [
-    '/',
-    '/about',
-    '/contact',
-    '/listings',
-    '/sell',
-    '/cash-offer',
-    '/blog',
-    '/reviews',
-    '/links',
-  ]
-
-  const suburbSlugs = getAllSuburbSlugs()
-  const blogUrls = blogPosts.map((p) => `/blog/${p.slug}`)
-  const buyUrls = suburbSlugs.map((slug) => `/buy/${slug}`)
-  const sellUrls = suburbSlugs.map((slug) => `/sell/${slug}`)
-
-  return [...core, ...blogUrls, ...buyUrls, ...sellUrls].map((path) => `${SITE}${path}`)
-}
+// URL set comes from lib/site-urls.ts — the same source the XML sitemap uses —
+// so every indexable page (cash-offer cities, neighborhood guides, school
+// pages, market reports, comparisons) gets submitted, not just a hand-kept
+// subset. Add new page types in lib/site-urls.ts, not here.
 
 export async function GET(request: Request) {
   const expected = process.env.CRON_SECRET
@@ -51,7 +34,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 
-  const urlList = buildUrlList()
+  const urlList = getAllSiteUrls()
 
   const payload = {
     host: 'joshuafink.com',
