@@ -27,3 +27,28 @@ CREATE INDEX IF NOT EXISTS idx_post_log_dedup
 
 CREATE INDEX IF NOT EXISTS idx_post_log_recent
   ON post_log (posted_at DESC);
+
+-- GEO (Generative Engine Optimization) visibility tracker. Written by the
+-- Vercel cron /api/cron/geo-audit, which creates this table idempotently on
+-- first run (lib/geo-db.ts). One row per (run, engine, query): did Joshua
+-- surface when an AI answer engine was asked a target Middle TN question.
+CREATE TABLE IF NOT EXISTS geo_visibility (
+  id              BIGSERIAL PRIMARY KEY,
+  run_id          TEXT NOT NULL,           -- ISO timestamp of the run
+  engine          TEXT NOT NULL,           -- 'perplexity' | 'openai' | 'claude'
+  model           TEXT,
+  query_id        TEXT NOT NULL,           -- stable id from lib/geo-queries.ts
+  query           TEXT NOT NULL,
+  cited           BOOLEAN NOT NULL,        -- brand surfaced (domain cited OR name mentioned)
+  cited_domain    BOOLEAN NOT NULL,        -- joshuafink.com in a source URL / prose
+  mentioned_name  BOOLEAN NOT NULL,        -- "Joshua Fink" in the answer prose
+  domain_rank     INTEGER,                 -- 1-based position of first joshuafink.com source
+  answer_preview  TEXT,
+  source_urls     TEXT,                    -- JSON array of citation/source URLs
+  ok              BOOLEAN NOT NULL,        -- false = engine call failed (excluded from score)
+  error_message   TEXT,
+  checked_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_geo_visibility_recent
+  ON geo_visibility (checked_at DESC);
