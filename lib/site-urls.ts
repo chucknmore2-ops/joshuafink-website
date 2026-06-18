@@ -56,8 +56,7 @@ export function getSiteUrlCatalog(): SiteUrlEntry[] {
     { path: '/compare', priority: 0.8, changeFrequency: 'monthly' },
     { path: '/homes-near', priority: 0.8, changeFrequency: 'monthly' },
     { path: '/guide/buyer', priority: 0.7, changeFrequency: 'monthly' },
-    // NOTE: /moving-to-middle-tennessee is added by the unmerged PR #111. When
-    // that merges, add it here (one line) and both sitemap + IndexNow pick it up.
+    { path: '/moving-to-middle-tennessee', priority: 0.85, changeFrequency: 'monthly' },
   ]
 
   // ── Blog posts — parse date strings with a defensive fallback ─────

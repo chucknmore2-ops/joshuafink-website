@@ -184,6 +184,12 @@ export default function SellPage() {
               Get My Free Valuation
             </a>
             <a
+              href="sms:+16155512727"
+              className="inline-flex items-center justify-center border border-neutral-600 text-white text-sm font-bold px-8 py-3 rounded-full tracking-wide transition-all duration-200 hover:border-white hover:bg-white/10 active:scale-[0.98] text-center"
+            >
+              Text 615-551-2727
+            </a>
+            <a
               href="tel:6155512727"
               className="inline-flex items-center justify-center border border-neutral-600 text-white text-sm font-bold px-8 py-3 rounded-full tracking-wide transition-all duration-200 hover:border-white hover:bg-white/10 active:scale-[0.98] text-center"
             >

@@ -54,6 +54,15 @@ export default function NeighborhoodsIndexPage() {
               Need live inventory? Each guide funnels into Joshua&apos;s Compass agent profile
               where listings are served in real time.
             </p>
+            <p className="mt-5 text-sm" style={{ color: '#A0A0A0' }}>
+              New to the area?{' '}
+              <Link
+                href="/moving-to-middle-tennessee"
+                className="font-semibold text-white underline underline-offset-4 hover:no-underline"
+              >
+                Start with the Moving to Middle Tennessee relocation guide →
+              </Link>
+            </p>
           </div>
         </div>
 
