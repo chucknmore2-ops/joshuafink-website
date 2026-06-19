@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-06-18T11:54:02.359Z
+// AUTO-GENERATED — Last synced: 2026-06-19T12:10:46.119Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -27,17 +27,6 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/9560-Dresden-Square-Brentwood-TN-37027/T863Z_pid/",
     imageUrl: "https://www.compass.com/m/1726667bfbabb4404e04bd62941b072da078e36ffe55a775567367f26ee41f7d/2048x1536.webp",
-  },
-  {
-    address: "6612 Fox Hollow Rd",
-    city: "Nashville, TN 37205",
-    price: 949900,
-    beds: 4,
-    baths: 2,
-    sqft: 3058,
-    status: "Active",
-    compassUrl: "https://www.compass.com/homedetails/6612-Fox-Hollow-Rd-Nashville-TN-37205/S670X_pid/",
-    imageUrl: "https://www.compass.com/m/04c53ab6eab9c48467cde9e054015490bb1054b1_img_0_9753a/2048x1536.webp",
   },
   {
     address: "1113 Linn Cv Ct",
