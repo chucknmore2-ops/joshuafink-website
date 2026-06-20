@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-06-19T12:10:46.119Z
+// AUTO-GENERATED — Last synced: 2026-06-20T10:36:38.518Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -17,6 +17,17 @@ export interface Listing {
 }
 
 export const listings: Listing[] = [
+  {
+    address: "1901 New Bristol Ln",
+    city: "Brentwood, TN 37027 | MLS #3245826",
+    price: 1849000,
+    beds: 5,
+    baths: 5,
+    sqft: 5855,
+    status: "Active",
+    compassUrl: "https://www.compass.com/homedetails/1901-New-Bristol-Ln-Brentwood-TN-37027/RS25E_pid/",
+    imageUrl: "https://www.compass.com/m/5e20f6de5ae242cba0b75f7227f5a4b1f5937902cfbf792d921c2e860034cf71/2048x1536.webp",
+  },
   {
     address: "9560 Dresden Square",
     city: "Brentwood, TN 37027",
@@ -38,6 +49,17 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/1113-Linn-Cv-Ct-Gallatin-TN-37066/SPCI8_pid/",
     imageUrl: "https://www.compass.com/m/8d52f2127c31faf652f00727b6c3ec01b4279a80_img_0_2f6ec/2048x1536.webp",
+  },
+  {
+    address: "4127 Edwards Ave",
+    city: "Nashville, TN 37216 | MLS #3245823",
+    price: 439900,
+    beds: 3,
+    baths: 1,
+    sqft: 1223,
+    status: "Active",
+    compassUrl: "https://www.compass.com/homedetails/4127-Edwards-Ave-Nashville-TN-37216/THUS9_pid/",
+    imageUrl: "https://www.compass.com/m/2afe7b6255b0dc2419360dc452e865a5300acd8d013467c1f4cd29d34f78fb3a/2048x1536.webp",
   },
   {
     address: "107 Garwood Dr",
@@ -70,6 +92,6 @@ export const listings: Listing[] = [
     sqft: 1134,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/870-Reeves-Rd-Antioch-TN-37013/SW1BU_pid/",
-    imageUrl: "https://www.compass.com/m/ce49d43899de5afcb9e0c75704d5e6a63a12a2c584826f54faf7ebb96ef704be/2048x1536.webp",
+    imageUrl: "https://www.compass.com/m/a7ef33f971b3f98f9c9df198198d003671a4c04ee14a9a100ddb182a937911e6/2048x1536.webp",
   }
 ];
