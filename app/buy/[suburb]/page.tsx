@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getSuburb, getAllSuburbSlugs } from '@/lib/suburbs'
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
+import { reviewStats } from '@/lib/reviews'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 
 type Props = {
@@ -62,6 +63,13 @@ export default async function BuySuburbPage({ params }: Props) {
           name: suburb.schemaCity,
           addressRegion: suburb.schemaState,
           addressCountry: 'US',
+        },
+        aggregateRating: {
+          '@type': 'AggregateRating',
+          ratingValue: reviewStats.rating.toFixed(1),
+          reviewCount: reviewStats.total,
+          bestRating: '5',
+          worstRating: '1',
         },
       },
     ],

@@ -7,6 +7,7 @@ import {
   getRelatedNeighborhoods,
 } from '@/lib/neighborhoods'
 import { getSuburb } from '@/lib/suburbs'
+import { reviewStats } from '@/lib/reviews'
 import { withUtm } from '@/lib/utm'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 
@@ -106,6 +107,30 @@ export default async function NeighborhoodPage({ params }: Props) {
     })),
   }
 
+  const agentSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'RealEstateAgent',
+    name: 'Joshua Fink — Compass Real Estate',
+    url: `https://joshuafink.com/neighborhoods/${n.slug}`,
+    telephone: '+16155512727',
+    email: 'joshua@joshuafink.com',
+    image: 'https://joshuafink.com/headshot.webp',
+    description: `Joshua Fink is a Compass Real Estate agent covering the ${n.name} neighborhood in ${n.city}, ${n.schemaState}.`,
+    areaServed: {
+      '@type': 'City',
+      name: n.schemaCity,
+      addressRegion: n.schemaState,
+      addressCountry: 'US',
+    },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: reviewStats.rating.toFixed(1),
+      reviewCount: reviewStats.total,
+      bestRating: '5',
+      worstRating: '1',
+    },
+  }
+
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -124,6 +149,7 @@ export default async function NeighborhoodPage({ params }: Props) {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(placeSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(agentSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
 
