@@ -31,6 +31,15 @@ export default function SuburbLeadForm({ children, successTitle, successMessage,
       if (res.ok) {
         setState('success')
         form.reset()
+        // Fire a GA4 conversion event so lead-form submissions are measurable.
+        // No-ops safely when gtag isn't loaded (NEXT_PUBLIC_GA_ID unset).
+        if (typeof window !== 'undefined' && (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag) {
+          ;(window as unknown as { gtag: (...args: unknown[]) => void }).gtag('event', 'generate_lead', {
+            event_category: 'lead_form',
+            event_label: (data.source as string) || (data.suburb as string) || 'suburb_lead_form',
+            value: 1,
+          })
+        }
       } else {
         const json = await res.json().catch(() => ({}))
         setErrorMsg(json.error || 'Something went wrong. Please try again.')
