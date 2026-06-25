@@ -208,6 +208,142 @@ export default async function BuySuburbPage({ params }: Props) {
           </div>
         </div>
 
+        {/* Buyer Inquiry Form */}
+        <div id="buyer-form" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16">
+            <div className="lg:col-span-2">
+              <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
+                Free Buyer Consultation
+              </p>
+              <h2 className="text-4xl font-black text-black tracking-tight leading-tight mb-6">
+                Ready to Buy in {suburb.name}?
+              </h2>
+              <p className="text-[#6B6B6B] text-sm leading-relaxed mb-8">
+                Tell Joshua what you&apos;re looking for and he&apos;ll reach out within a few hours with a personalized search strategy — real {suburb.name} listings, real numbers, no pressure.
+              </p>
+              <div className="space-y-5">
+                <div className="border-l-2 pl-5" style={{ borderColor: '#C41E3A' }}>
+                  <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mb-1">Phone</p>
+                  <a href="tel:6155512727" className="text-xl font-black text-black hover:underline">615-551-2727</a>
+                </div>
+                <div className="border-l-2 pl-5" style={{ borderColor: '#C41E3A' }}>
+                  <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mb-1">Also Serving</p>
+                  <p className="text-sm text-[#444]">Franklin · Brentwood · Spring Hill<br />Nolensville · Thompson&apos;s Station<br />&amp; all of Middle Tennessee</p>
+                </div>
+                <div className="border-l-2 pl-5" style={{ borderColor: '#C41E3A' }}>
+                  <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mb-1">Explore</p>
+                  <div className="space-y-1">
+                    <Link href="/listings" className="block text-sm font-semibold text-black hover:underline">→ View active listings</Link>
+                    <Link href={`/sell/${slug}`} className="block text-sm font-semibold text-black hover:underline">→ Selling in {suburb.name}?</Link>
+                    <Link href="/cash-offer" className="block text-sm font-semibold text-black hover:underline">→ Want a cash offer instead?</Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="lg:col-span-3">
+              <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-6">
+                Tell Joshua What You&apos;re Looking For
+              </p>
+              <SuburbLeadForm
+                successTitle="Request Sent!"
+                successMessage={
+                  <>
+                    Joshua will reach out same-day with {suburb.name} listings that fit. For anything urgent, call{' '}
+                    <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                  </>
+                }
+                resetLabel="Submit Another"
+              >
+                <input type="hidden" name="lead_type" value="buyer" />
+                <input type="hidden" name="suburb" value={suburb.name} />
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div>
+                    <label htmlFor="name" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Full Name *</label>
+                    <input type="text" id="name" name="name" required placeholder="Jane Smith"
+                      className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                  </div>
+                  <div>
+                    <label htmlFor="phone" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Phone *</label>
+                    <input type="tel" id="phone" name="phone" required placeholder="615-555-0000"
+                      className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="email" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Email Address *</label>
+                  <input type="email" id="email" name="email" required placeholder="you@example.com"
+                    className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                  <div>
+                    <label htmlFor="budget" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Budget</label>
+                    <select id="budget" name="budget"
+                      className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black bg-white focus:outline-none focus:border-black transition-colors">
+                      <option value="">—</option>
+                      <option>Under $300K</option>
+                      <option>$300K–$450K</option>
+                      <option>$450K–$600K</option>
+                      <option>$600K–$800K</option>
+                      <option>$800K–$1M</option>
+                      <option>$1M+</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label htmlFor="bedrooms" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Bedrooms</label>
+                    <select id="bedrooms" name="bedrooms"
+                      className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black bg-white focus:outline-none focus:border-black transition-colors">
+                      <option value="">—</option>
+                      <option>2+</option><option>3+</option><option>4+</option><option>5+</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label htmlFor="timeline" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Timeline</label>
+                    <select id="timeline" name="timeline"
+                      className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black bg-white focus:outline-none focus:border-black transition-colors">
+                      <option value="">—</option>
+                      <option value="asap">ASAP</option>
+                      <option value="1-3mo">1–3 months</option>
+                      <option value="3-6mo">3–6 months</option>
+                      <option value="6mo+">6+ months</option>
+                      <option value="just-looking">Just exploring</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="pre_approved" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Pre-Approved?</label>
+                  <select id="pre_approved" name="pre_approved"
+                    className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black bg-white focus:outline-none focus:border-black transition-colors">
+                    <option value="">—</option>
+                    <option value="yes">Yes, I have pre-approval</option>
+                    <option value="in-progress">In progress</option>
+                    <option value="cash">Paying cash</option>
+                    <option value="no">Not yet</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="body" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">What Are You Looking For? (optional)</label>
+                  <textarea id="body" name="body" rows={4}
+                    placeholder={`Tell Joshua your must-haves — school zone, neighborhood, lot size, style. Anything helps.`}
+                    className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors resize-y" />
+                </div>
+
+                <p className="text-xs text-[#A0A0A0]">* Joshua responds same-day. No spam, no pressure.</p>
+
+                <button type="submit"
+                  className="w-full sm:w-auto text-white text-sm font-bold px-10 py-4 tracking-wide transition-colors"
+                  style={{ backgroundColor: '#C41E3A' }}>
+                  Start My {suburb.name} Home Search →
+                </button>
+              </SuburbLeadForm>
+            </div>
+          </div>
+        </div>
+
         {/* Market Snapshot */}
         <div className="border-b border-[#E8E8E8] bg-[#F9F9F9]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -433,142 +569,6 @@ export default async function BuySuburbPage({ params }: Props) {
                   See Cash Offer Process →
                 </Link>
               </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Buyer Inquiry Form */}
-        <div id="buyer-form" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16">
-            <div className="lg:col-span-2">
-              <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
-                Free Buyer Consultation
-              </p>
-              <h2 className="text-4xl font-black text-black tracking-tight leading-tight mb-6">
-                Ready to Buy in {suburb.name}?
-              </h2>
-              <p className="text-[#6B6B6B] text-sm leading-relaxed mb-8">
-                Tell Joshua what you&apos;re looking for and he&apos;ll reach out within a few hours with a personalized search strategy — real {suburb.name} listings, real numbers, no pressure.
-              </p>
-              <div className="space-y-5">
-                <div className="border-l-2 pl-5" style={{ borderColor: '#C41E3A' }}>
-                  <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mb-1">Phone</p>
-                  <a href="tel:6155512727" className="text-xl font-black text-black hover:underline">615-551-2727</a>
-                </div>
-                <div className="border-l-2 pl-5" style={{ borderColor: '#C41E3A' }}>
-                  <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mb-1">Also Serving</p>
-                  <p className="text-sm text-[#444]">Franklin · Brentwood · Spring Hill<br />Nolensville · Thompson&apos;s Station<br />&amp; all of Middle Tennessee</p>
-                </div>
-                <div className="border-l-2 pl-5" style={{ borderColor: '#C41E3A' }}>
-                  <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mb-1">Explore</p>
-                  <div className="space-y-1">
-                    <Link href="/listings" className="block text-sm font-semibold text-black hover:underline">→ View active listings</Link>
-                    <Link href={`/sell/${slug}`} className="block text-sm font-semibold text-black hover:underline">→ Selling in {suburb.name}?</Link>
-                    <Link href="/cash-offer" className="block text-sm font-semibold text-black hover:underline">→ Want a cash offer instead?</Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="lg:col-span-3">
-              <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-6">
-                Tell Joshua What You&apos;re Looking For
-              </p>
-              <SuburbLeadForm
-                successTitle="Request Sent!"
-                successMessage={
-                  <>
-                    Joshua will reach out same-day with {suburb.name} listings that fit. For anything urgent, call{' '}
-                    <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
-                  </>
-                }
-                resetLabel="Submit Another"
-              >
-                <input type="hidden" name="lead_type" value="buyer" />
-                <input type="hidden" name="suburb" value={suburb.name} />
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
-                    <label htmlFor="name" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Full Name *</label>
-                    <input type="text" id="name" name="name" required placeholder="Jane Smith"
-                      className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
-                  </div>
-                  <div>
-                    <label htmlFor="phone" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Phone *</label>
-                    <input type="tel" id="phone" name="phone" required placeholder="615-555-0000"
-                      className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="email" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Email Address *</label>
-                  <input type="email" id="email" name="email" required placeholder="you@example.com"
-                    className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                  <div>
-                    <label htmlFor="budget" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Budget</label>
-                    <select id="budget" name="budget"
-                      className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black bg-white focus:outline-none focus:border-black transition-colors">
-                      <option value="">—</option>
-                      <option>Under $300K</option>
-                      <option>$300K–$450K</option>
-                      <option>$450K–$600K</option>
-                      <option>$600K–$800K</option>
-                      <option>$800K–$1M</option>
-                      <option>$1M+</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label htmlFor="bedrooms" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Bedrooms</label>
-                    <select id="bedrooms" name="bedrooms"
-                      className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black bg-white focus:outline-none focus:border-black transition-colors">
-                      <option value="">—</option>
-                      <option>2+</option><option>3+</option><option>4+</option><option>5+</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label htmlFor="timeline" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Timeline</label>
-                    <select id="timeline" name="timeline"
-                      className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black bg-white focus:outline-none focus:border-black transition-colors">
-                      <option value="">—</option>
-                      <option value="asap">ASAP</option>
-                      <option value="1-3mo">1–3 months</option>
-                      <option value="3-6mo">3–6 months</option>
-                      <option value="6mo+">6+ months</option>
-                      <option value="just-looking">Just exploring</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="pre_approved" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Pre-Approved?</label>
-                  <select id="pre_approved" name="pre_approved"
-                    className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black bg-white focus:outline-none focus:border-black transition-colors">
-                    <option value="">—</option>
-                    <option value="yes">Yes, I have pre-approval</option>
-                    <option value="in-progress">In progress</option>
-                    <option value="cash">Paying cash</option>
-                    <option value="no">Not yet</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label htmlFor="body" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">What Are You Looking For? (optional)</label>
-                  <textarea id="body" name="body" rows={4}
-                    placeholder={`Tell Joshua your must-haves — school zone, neighborhood, lot size, style. Anything helps.`}
-                    className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors resize-y" />
-                </div>
-
-                <p className="text-xs text-[#A0A0A0]">* Joshua responds same-day. No spam, no pressure.</p>
-
-                <button type="submit"
-                  className="w-full sm:w-auto text-white text-sm font-bold px-10 py-4 tracking-wide transition-colors"
-                  style={{ backgroundColor: '#C41E3A' }}>
-                  Start My {suburb.name} Home Search →
-                </button>
-              </SuburbLeadForm>
             </div>
           </div>
         </div>
