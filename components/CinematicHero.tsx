@@ -97,6 +97,9 @@ export default function CinematicHero({ slides }: { slides: HeroSlide[] }) {
           <span className="block text-3xl sm:text-5xl lg:text-6xl font-black italic text-white/95">
             Franklin · Brentwood · Nashville
           </span>
+          <span className="block text-sm sm:text-base lg:text-lg font-semibold tracking-wide text-white/75 mt-3 sm:mt-4">
+            Spring Hill · Murfreesboro · Hendersonville · Gallatin · Mt. Juliet · Nolensville · Columbia · Thompson&apos;s Station
+          </span>
         </h1>
 
         <p
