@@ -316,6 +316,11 @@ export default function HomePage() {
                 ['reserve-at-port-royal-spring-hill-tn', 'The Reserve at Port Royal (Spring Hill)'],
                 ['hampton-springs-spring-hill-tn', 'Hampton Springs (Spring Hill)'],
                 ['dartford-spring-hill-tn', 'Dartford (Spring Hill)'],
+                ['east-nashville-tn', 'East Nashville'],
+                ['12-south-nashville-tn', '12 South (Nashville)'],
+                ['germantown-nashville-tn', 'Germantown (Nashville)'],
+                ['sylvan-park-nashville-tn', 'Sylvan Park (Nashville)'],
+                ['the-gulch-nashville-tn', 'The Gulch (Nashville)'],
               ].map(([slug, label]) => (
                 <Link
                   key={slug}
