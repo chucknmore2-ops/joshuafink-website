@@ -3,8 +3,8 @@
 // NEXT_PUBLIC_GA_ID is configured.
 //
 // Usage:
-//   withUtm('https://joshuafink.com/blog/foo', { source: 'linkedin', medium: 'auto', campaign: 'blog-syndication' })
-//   -> 'https://joshuafink.com/blog/foo?utm_source=linkedin&utm_medium=auto&utm_campaign=blog-syndication'
+//   withUtm('https://www.joshuafink.com/blog/foo', { source: 'linkedin', medium: 'auto', campaign: 'blog-syndication' })
+//   -> 'https://www.joshuafink.com/blog/foo?utm_source=linkedin&utm_medium=auto&utm_campaign=blog-syndication'
 //
 // Existing query params are preserved. Existing utm_* params are NOT
 // overwritten — first-party tagging wins over the cron's defaults.

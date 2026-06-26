@@ -86,4 +86,4 @@ User-agent: cohere-training-data-crawler
 Allow: /
 Disallow: /api/
 
-Sitemap: https://joshuafink.com/sitemap.xml
+Sitemap: https://www.joshuafink.com/sitemap.xml

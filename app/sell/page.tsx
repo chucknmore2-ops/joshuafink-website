@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     title: 'Sell Your Home | Joshua Fink Group',
     description:
       'Get a free, no-obligation home valuation from Joshua Fink — top-rated Compass agent in Middle Tennessee. Fast offers, local expertise, real results.',
-    url: 'https://joshuafink.com/sell',
+    url: 'https://www.joshuafink.com/sell',
     siteName: 'Joshua Fink Group',
     type: 'website',
   },
@@ -137,7 +137,7 @@ export default function SellPage() {
       position: i + 1,
       name: s.title,
       text: s.body,
-      url: `https://joshuafink.com/sell#step-${i + 1}`,
+      url: `https://www.joshuafink.com/sell#step-${i + 1}`,
     })),
   }
 

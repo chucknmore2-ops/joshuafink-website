@@ -19,14 +19,14 @@ export const dynamic = 'force-dynamic'
 //
 // NOTE: LinkedIn access tokens expire ~60 days after issue. When a run returns
 // 401 Unauthorized from LinkedIn, re-run the OAuth flow:
-//   1. Visit https://joshuafink.com/api/linkedin/auth
+//   1. Visit https://www.joshuafink.com/api/linkedin/auth
 //   2. Approve, get redirected to /api/linkedin/callback
 //   3. Copy access_token from the JSON response into Vercel env
 // Consider enabling LinkedIn's "Member Data Portability" for a longer-lived
 // token if Joshua's app is approved for that scope.
 
 const LINKEDIN_API = 'https://api.linkedin.com/v2/ugcPosts'
-const SITE = 'https://joshuafink.com'
+const SITE = 'https://www.joshuafink.com'
 
 type PostPayload = {
   text: string

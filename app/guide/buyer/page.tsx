@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-const SITE = 'https://joshuafink.com'
+const SITE = 'https://www.joshuafink.com'
 
 export const metadata: Metadata = {
   title: 'The 2026 Middle Tennessee Buyer\'s Guide — Free | Joshua Fink, Compass',

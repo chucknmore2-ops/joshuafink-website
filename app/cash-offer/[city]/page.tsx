@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const city = getCashOfferCity(slug)
   if (!city) return {}
 
-  const url = `https://joshuafink.com/cash-offer/${slug}`
+  const url = `https://www.joshuafink.com/cash-offer/${slug}`
   return {
     title: `Sell My House Fast ${city.displayName} | Cash Offer in 24 Hours — Joshua Fink`,
     description: `Sell your ${city.name} house fast for cash — any condition, any situation. Fair cash offer in 24 hours, close in as little as 7 days. No repairs, no commissions, no fees. Serving all of ${city.county}.`,
@@ -94,7 +94,7 @@ export default async function CashOfferCityPage({ params }: Props) {
   const city = getCashOfferCity(slug)
   if (!city) notFound()
 
-  const url = `https://joshuafink.com/cash-offer/${slug}`
+  const url = `https://www.joshuafink.com/cash-offer/${slug}`
   const allFaqs = [...city.faqs, ...evergreenFaqs]
   const guides = getNeighborhoodsByCitySlug(slug)
   const otherCities = getCashOfferCityLinks().filter((c) => c.slug !== slug)
@@ -138,7 +138,7 @@ export default async function CashOfferCityPage({ params }: Props) {
             provider: {
               '@type': 'RealEstateAgent',
               name: 'Joshua Fink Group',
-              url: 'https://joshuafink.com',
+              url: 'https://www.joshuafink.com',
               telephone: '+1-615-551-2727',
             },
             description: `We buy houses for cash in any condition across ${city.displayName} and ${city.county}. Fair offer in 24 hours, close in as little as 7 days. No repairs, no commissions, no fees.`,

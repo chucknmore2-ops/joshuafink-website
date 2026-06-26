@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: `Buy a Home in ${suburb.displayName} | Joshua Fink — Compass`,
       description: `Expert buyer representation in ${suburb.displayName}. Median price ${suburb.medianPrice}, ${suburb.avgDaysOnMarket} avg days on market. Get insider access with Joshua Fink at Compass.`,
-      url: `https://joshuafink.com/buy/${slug}`,
+      url: `https://www.joshuafink.com/buy/${slug}`,
       siteName: 'Joshua Fink Group',
       type: 'website',
     },
@@ -54,10 +54,10 @@ export default async function BuySuburbPage({ params }: Props) {
       {
         '@type': 'RealEstateAgent',
         name: 'Joshua Fink — Compass Real Estate',
-        url: 'https://joshuafink.com',
+        url: 'https://www.joshuafink.com',
         telephone: '+16155512727',
         email: 'joshua@joshuafink.com',
-        image: 'https://joshuafink.com/headshot.webp',
+        image: 'https://www.joshuafink.com/headshot.webp',
         description: `Joshua Fink is a buyer&apos;s agent at Compass Real Estate specializing in ${suburb.displayName} home purchases. Local market expert, off-market access, proven negotiator.`,
         areaServed: {
           '@type': 'City',
@@ -111,18 +111,18 @@ export default async function BuySuburbPage({ params }: Props) {
             '@context': 'https://schema.org',
             '@type': 'BreadcrumbList',
             itemListElement: [
-              { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://joshuafink.com' },
+              { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.joshuafink.com' },
               {
                 '@type': 'ListItem',
                 position: 2,
                 name: 'Listings',
-                item: 'https://joshuafink.com/listings',
+                item: 'https://www.joshuafink.com/listings',
               },
               {
                 '@type': 'ListItem',
                 position: 3,
                 name: `Buy in ${suburb.displayName}`,
-                item: `https://joshuafink.com/buy/${suburb.slug}`,
+                item: `https://www.joshuafink.com/buy/${suburb.slug}`,
               },
             ],
           }),

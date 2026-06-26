@@ -5,7 +5,7 @@ import { getAllNeighborhoodSlugs } from '@/lib/neighborhoods'
 import { allFeaturedPairSlugs } from '@/lib/compare'
 import { getAllSchoolSlugs } from '@/lib/schools'
 
-export const SITE_ORIGIN = 'https://joshuafink.com'
+export const SITE_ORIGIN = 'https://www.joshuafink.com'
 
 type ChangeFrequency =
   | 'always'

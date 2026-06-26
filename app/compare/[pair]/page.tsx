@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { parsePairSlug, getAllPairSlugsForBuild, pairVerdict } from '@/lib/compare'
 
-const SITE = 'https://joshuafink.com'
+const SITE = 'https://www.joshuafink.com'
 
 type Props = {
   params: Promise<{ pair: string }>

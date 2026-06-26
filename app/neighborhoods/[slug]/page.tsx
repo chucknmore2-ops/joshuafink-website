@@ -39,12 +39,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       'Compass Real Estate',
     ],
     alternates: {
-      canonical: `https://joshuafink.com/neighborhoods/${n.slug}`,
+      canonical: `https://www.joshuafink.com/neighborhoods/${n.slug}`,
     },
     openGraph: {
       title: n.metaTitle,
       description: n.metaDescription,
-      url: `https://joshuafink.com/neighborhoods/${n.slug}`,
+      url: `https://www.joshuafink.com/neighborhoods/${n.slug}`,
       siteName: 'Joshua Fink Group',
       type: 'article',
     },
@@ -74,8 +74,8 @@ export default async function NeighborhoodPage({ params }: Props) {
     '@type': 'Place',
     name: `${n.name}, ${n.city}, ${n.schemaState}`,
     description: n.metaDescription,
-    url: `https://joshuafink.com/neighborhoods/${n.slug}`,
-    image: 'https://joshuafink.com/headshot.webp',
+    url: `https://www.joshuafink.com/neighborhoods/${n.slug}`,
+    image: 'https://www.joshuafink.com/headshot.webp',
     address: {
       '@type': 'PostalAddress',
       addressLocality: n.schemaCity,
@@ -96,7 +96,7 @@ export default async function NeighborhoodPage({ params }: Props) {
       name: n.schemaCity,
       addressRegion: n.schemaState,
     },
-    provider: { '@id': 'https://joshuafink.com/#agent' },
+    provider: { '@id': 'https://www.joshuafink.com/#agent' },
   }
 
   const faqSchema = {
@@ -112,12 +112,12 @@ export default async function NeighborhoodPage({ params }: Props) {
   const agentSchema = {
     '@context': 'https://schema.org',
     '@type': 'RealEstateAgent',
-    '@id': 'https://joshuafink.com/#agent',
+    '@id': 'https://www.joshuafink.com/#agent',
     name: 'Joshua Fink — Compass Real Estate',
-    url: `https://joshuafink.com/neighborhoods/${n.slug}`,
+    url: `https://www.joshuafink.com/neighborhoods/${n.slug}`,
     telephone: '+16155512727',
     email: 'joshua@joshuafink.com',
-    image: 'https://joshuafink.com/headshot.webp',
+    image: 'https://www.joshuafink.com/headshot.webp',
     description: `Joshua Fink is a Compass Real Estate agent covering the ${n.name} neighborhood in ${n.city}, ${n.schemaState}.`,
     areaServed: {
       '@type': 'City',
@@ -138,13 +138,13 @@ export default async function NeighborhoodPage({ params }: Props) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://joshuafink.com' },
-      { '@type': 'ListItem', position: 2, name: 'Neighborhoods', item: 'https://joshuafink.com/neighborhoods' },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.joshuafink.com' },
+      { '@type': 'ListItem', position: 2, name: 'Neighborhoods', item: 'https://www.joshuafink.com/neighborhoods' },
       {
         '@type': 'ListItem',
         position: 3,
         name: `${n.name}, ${n.city}`,
-        item: `https://joshuafink.com/neighborhoods/${n.slug}`,
+        item: `https://www.joshuafink.com/neighborhoods/${n.slug}`,
       },
     ],
   }

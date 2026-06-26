@@ -28,7 +28,7 @@ export const dynamic = 'force-dynamic'
 //   2. POST /{ig-user-id}/media_publish with creation_id → returns media ID
 
 const GRAPH_API = 'https://graph.facebook.com/v19.0'
-const SITE = 'https://joshuafink.com'
+const SITE = 'https://www.joshuafink.com'
 const MAX_CAPTION = 2200 // IG hard limit
 
 type PostPayload = {

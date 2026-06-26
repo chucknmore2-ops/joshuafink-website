@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: `Sell Your Home in ${suburb.displayName} — Free Market Valuation | Joshua Fink`,
       description: `What is my ${suburb.name} home worth? The median price is ${suburb.medianPrice} in 2026. Get a free, personal valuation from Joshua Fink at Compass Real Estate.`,
-      url: `https://joshuafink.com/sell/${slug}`,
+      url: `https://www.joshuafink.com/sell/${slug}`,
       siteName: 'Joshua Fink Group',
       type: 'website',
     },
@@ -57,10 +57,10 @@ export default async function SuburbPage({ params }: Props) {
       {
         '@type': 'RealEstateAgent',
         name: 'Joshua Fink — Compass Real Estate',
-        url: 'https://joshuafink.com',
+        url: 'https://www.joshuafink.com',
         telephone: '+16155512727',
         email: 'joshua@joshuafink.com',
-        image: 'https://joshuafink.com/headshot.webp',
+        image: 'https://www.joshuafink.com/headshot.webp',
         description: `Joshua Fink is a top-producing Affiliate Broker at Compass Real Estate specializing in ${suburb.displayName} home sales. 17+ years of experience, 100+ homes sold annually.`,
         areaServed: {
           '@type': 'City',
@@ -84,7 +84,7 @@ export default async function SuburbPage({ params }: Props) {
       {
         '@type': 'LocalBusiness',
         name: 'Joshua Fink Group — Compass Real Estate',
-        url: `https://joshuafink.com/sell/${slug}`,
+        url: `https://www.joshuafink.com/sell/${slug}`,
         telephone: '+16155512727',
         email: 'joshua@joshuafink.com',
         address: {
@@ -132,13 +132,13 @@ export default async function SuburbPage({ params }: Props) {
             '@context': 'https://schema.org',
             '@type': 'BreadcrumbList',
             itemListElement: [
-              { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://joshuafink.com' },
-              { '@type': 'ListItem', position: 2, name: 'Sell', item: 'https://joshuafink.com/sell' },
+              { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.joshuafink.com' },
+              { '@type': 'ListItem', position: 2, name: 'Sell', item: 'https://www.joshuafink.com/sell' },
               {
                 '@type': 'ListItem',
                 position: 3,
                 name: `Sell in ${suburb.displayName}`,
-                item: `https://joshuafink.com/sell/${suburb.slug}`,
+                item: `https://www.joshuafink.com/sell/${suburb.slug}`,
               },
             ],
           }),

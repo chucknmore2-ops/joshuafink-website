@@ -96,7 +96,7 @@ function buildProfileSchema() {
     author: { '@type': 'Person', name: r.reviewer },
     datePublished: isoReviewDate(r.date),
     reviewBody: r.text,
-    itemReviewed: { '@id': 'https://joshuafink.com/#joshua-fink' },
+    itemReviewed: { '@id': 'https://www.joshuafink.com/#joshua-fink' },
     publisher: {
       '@type': 'Organization',
       name: 'Zillow',
@@ -109,7 +109,7 @@ function buildProfileSchema() {
     '@type': 'ProfilePage',
     mainEntity: {
       '@type': 'Person',
-      '@id': 'https://joshuafink.com/#joshua-fink',
+      '@id': 'https://www.joshuafink.com/#joshua-fink',
       aggregateRating: {
         '@type': 'AggregateRating',
         ratingValue: reviewStats.rating.toFixed(1),

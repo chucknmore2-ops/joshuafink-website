@@ -6,10 +6,10 @@ export const metadata: Metadata = {
   title: 'Middle Tennessee Real Estate Market Reports — 2026 | Joshua Fink',
   description:
     'Current real estate market reports for Franklin, Brentwood, Spring Hill, Nolensville, Nashville and every Middle Tennessee suburb. Median price, days on market, year-over-year change — updated for 2026.',
-  alternates: { canonical: 'https://joshuafink.com/market' },
+  alternates: { canonical: 'https://www.joshuafink.com/market' },
 }
 
-const SITE = 'https://joshuafink.com'
+const SITE = 'https://www.joshuafink.com'
 
 export default function MarketHubPage() {
   const all = Object.values(suburbs).sort((a, b) => b.medianPriceNum - a.medianPriceNum)

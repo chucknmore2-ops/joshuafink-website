@@ -34,7 +34,7 @@ const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token'
 const GBP_POSTS_API = (location: string) =>
   `https://mybusiness.googleapis.com/v4/${location}/localPosts`
 
-const SITE = 'https://joshuafink.com'
+const SITE = 'https://www.joshuafink.com'
 const PHONE = '615-551-2727'
 
 type CTA = { actionType: 'LEARN_MORE' | 'CALL' | 'ORDER' | 'BOOK' | 'SIGN_UP'; url: string }
