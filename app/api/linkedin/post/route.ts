@@ -1,6 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
+  // Require the shared CRON_SECRET so only authorized callers can post as Joshua.
+  // Matches the auth used by /api/cron/* routes.
+  const expected = process.env.CRON_SECRET
+  if (!expected) {
+    return NextResponse.json(
+      { error: 'posting not configured (missing CRON_SECRET)' },
+      { status: 500 }
+    )
+  }
+  const bearer = request.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
+  if (bearer !== expected) {
+    return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+  }
+
   const accessToken = process.env.LINKEDIN_ACCESS_TOKEN
   const authorUrn = process.env.LINKEDIN_AUTHOR_URN // e.g. urn:li:person:XXXXX
 
