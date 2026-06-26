@@ -25,8 +25,37 @@ export default function HomePage() {
     'Featured Homes — Joshua Fink, Compass Real Estate'
   )
 
+  // Homepage-level Organization reference (resolves to the full RealEstateAgent
+  // definition emitted in app/layout.tsx via shared @id) + BreadcrumbList.
+  // Gives brand queries ("Joshua Fink Compass") a homepage-anchored org node
+  // and surfaces a breadcrumb trail in SERP snippets.
+  const homepageGraph = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'RealEstateAgent',
+        '@id': 'https://joshuafink.com/#agent',
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: 'https://joshuafink.com/',
+          },
+        ],
+      },
+    ],
+  }
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homepageGraph) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(featuredItemList) }}
