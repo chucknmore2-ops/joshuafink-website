@@ -1,0 +1,97 @@
+name: Social Autopost
+
+# Fires the CRON_SECRET-protected /api/cron/* posting endpoints on a weekly
+# cadence. This replaces Vercel Cron for social posting: the Vercel Hobby plan
+# caps the number of cron jobs and silently drops the extras, so the LinkedIn /
+# Instagram / GBP crons defined in vercel.json don't reliably fire. GitHub
+# Actions cron is free and uncapped, so we drive the posts from here instead.
+#
+# REQUIRED GitHub repo secret:
+#   CRON_SECRET — must match the value in the Vercel project env. Already set
+#   (used by indexnow-on-content-change.yml). Manage at:
+#   github.com/chucknmore2-ops/joshuafink-website/settings/secrets/actions
+#
+# Cadence (9am Central = 14:00 UTC):
+#   Thu — LinkedIn   (token verified 2026-06-26, LIVE)
+#   Wed — Instagram  (commented out until IG_ACCESS_TOKEN is refreshed)
+#   Tue — GBP        (commented out until the GBP token is refreshed)
+# To enable IG/GBP once their tokens are confirmed, uncomment the matching
+# schedule line below — the routing + manual trigger already support them.
+
+on:
+  schedule:
+    - cron: '0 14 * * 4'   # LinkedIn — Thursdays 14:00 UTC
+    # - cron: '0 14 * * 3' # Instagram — Wednesdays 14:00 UTC  (enable after token refresh)
+    # - cron: '0 14 * * 2' # GBP — Tuesdays 14:00 UTC          (enable after token refresh)
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: 'Channel to post right now'
+        required: true
+        default: linkedin-post
+        type: choice
+        options:
+          - linkedin-post
+          - instagram-post
+          - gbp-post
+
+jobs:
+  autopost:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve target endpoint
+        id: target
+        env:
+          SCHEDULE: ${{ github.event.schedule }}
+          MANUAL: ${{ github.event.inputs.channel }}
+        run: |
+          if [ -n "$MANUAL" ]; then
+            ENDPOINT="$MANUAL"
+          else
+            case "$SCHEDULE" in
+              '0 14 * * 4') ENDPOINT="linkedin-post" ;;
+              '0 14 * * 3') ENDPOINT="instagram-post" ;;
+              '0 14 * * 2') ENDPOINT="gbp-post" ;;
+              *) echo "::error::Unrecognized schedule '$SCHEDULE'"; exit 1 ;;
+            esac
+          fi
+          echo "endpoint=$ENDPOINT" >> "$GITHUB_OUTPUT"
+          echo "Target endpoint: /api/cron/$ENDPOINT"
+
+      - name: Fire the post
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          ENDPOINT: ${{ steps.target.outputs.endpoint }}
+        run: |
+          if [ -z "$CRON_SECRET" ]; then
+            echo "::error::CRON_SECRET is not set in repo secrets. Add it at"
+            echo "github.com/chucknmore2-ops/joshuafink-website/settings/secrets/actions"
+            exit 1
+          fi
+
+          # Hit the www host directly: an apex->www 307 redirect drops the
+          # Authorization header. -L is belt-and-suspenders.
+          URL="https://www.joshuafink.com/api/cron/$ENDPOINT"
+          echo "Posting via $URL"
+
+          # Retry a few times in case a deploy is mid-flight.
+          for attempt in 1 2 3; do
+            echo "Attempt $attempt…"
+            response=$(curl -sSL -w "\n%{http_code}" \
+              -H "Authorization: Bearer $CRON_SECRET" \
+              "$URL")
+            status=$(echo "$response" | tail -n1)
+            body=$(echo "$response" | sed '$d')
+            echo "HTTP $status"
+            echo "$body"
+
+            if [ "$status" = "200" ]; then
+              echo "✅ $ENDPOINT posted."
+              exit 0
+            fi
+            echo "Non-200 (attempt $attempt); retrying in $((attempt * 10))s…"
+            sleep $((attempt * 10))
+          done
+
+          echo "::error::$ENDPOINT failed after 3 attempts (last HTTP $status)."
+          exit 1
