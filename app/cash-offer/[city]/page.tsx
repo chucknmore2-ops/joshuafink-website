@@ -12,6 +12,7 @@ import {
 } from '@/lib/cash-offer-cities'
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
 import { linkifyNeighborhoods } from '@/lib/linkify-neighborhoods'
+import { reviewStats } from '@/lib/reviews'
 
 type Props = {
   params: Promise<{ city: string }>
@@ -121,6 +122,37 @@ export default async function CashOfferCityPage({ params }: Props) {
               name: f.q,
               acceptedAnswer: { '@type': 'Answer', text: f.a },
             })),
+          }),
+        }}
+      />
+
+      {/* RealEstateAgent Schema — surfaces star-rating rich result */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'RealEstateAgent',
+            '@id': 'https://joshuafink.com/#agent',
+            name: 'Joshua Fink — Compass Real Estate',
+            url,
+            telephone: '+16155512727',
+            email: 'joshua@joshuafink.com',
+            image: 'https://joshuafink.com/headshot.webp',
+            description: `Joshua Fink buys houses for cash across ${city.displayName} and ${city.county}, Tennessee — fair offer in 24 hours, close in as little as 7 days.`,
+            areaServed: {
+              '@type': 'City',
+              name: city.schemaCity,
+              addressRegion: 'TN',
+              addressCountry: 'US',
+            },
+            aggregateRating: {
+              '@type': 'AggregateRating',
+              ratingValue: reviewStats.rating.toFixed(1),
+              reviewCount: reviewStats.total,
+              bestRating: '5',
+              worstRating: '1',
+            },
           }),
         }}
       />
