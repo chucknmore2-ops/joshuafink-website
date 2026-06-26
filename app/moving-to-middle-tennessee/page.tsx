@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { suburbs } from '@/lib/suburbs'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 
-const SITE = 'https://joshuafink.com'
+const SITE = 'https://www.joshuafink.com'
 
 // Relocation pillar page. Targets the high-intent "moving to Middle Tennessee /
 // moving to [city] TN" cluster that had zero on-site coverage, and acts as a

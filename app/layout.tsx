@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   },
   description:
     'Top-rated Compass agent in Middle Tennessee — Franklin, Brentwood, Spring Hill, Nashville. 17+ years, 100+ homes sold annually, 5★ from 218+ clients. Diamond & Titan Award winner. Free valuation, off-market access.',
-  metadataBase: new URL('https://joshuafink.com'),
+  metadataBase: new URL('https://www.joshuafink.com'),
   keywords: [
     'Joshua Fink',
     'Compass Real Estate',
@@ -94,15 +94,15 @@ export default function RootLayout({
               '@graph': [
                 {
                   '@type': 'RealEstateAgent',
-                  '@id': 'https://joshuafink.com/#agent',
+                  '@id': 'https://www.joshuafink.com/#agent',
                   name: 'Joshua Fink Group',
                   description:
                     'Joshua Fink is a top-producing Affiliate Broker at Compass Real Estate serving Nashville, Brentwood, Franklin, and all of Middle Tennessee. 17+ years of experience, 100+ homes sold annually.',
-                  url: 'https://joshuafink.com',
+                  url: 'https://www.joshuafink.com',
                   telephone: '+1-615-551-2727',
                   email: 'joshua@joshuafink.com',
-                  image: 'https://joshuafink.com/headshot.webp',
-                  logo: 'https://joshuafink.com/compass-logo-black.png',
+                  image: 'https://www.joshuafink.com/headshot.webp',
+                  logo: 'https://www.joshuafink.com/compass-logo-black.png',
                   address: {
                     '@type': 'PostalAddress',
                     addressLocality: 'Nashville',
@@ -131,7 +131,7 @@ export default function RootLayout({
                     { '@type': 'City', name: 'Smyrna, TN' },
                     { '@type': 'City', name: 'La Vergne, TN' },
                   ],
-                  employee: { '@id': 'https://joshuafink.com/#joshua-fink' },
+                  employee: { '@id': 'https://www.joshuafink.com/#joshua-fink' },
                   parentOrganization: {
                     '@type': 'RealEstateAgent',
                     name: 'Compass Real Estate',
@@ -172,19 +172,19 @@ export default function RootLayout({
                     author: { '@type': 'Person', name: r.reviewer },
                     datePublished: r.date,
                     reviewBody: r.text,
-                    itemReviewed: { '@id': 'https://joshuafink.com/#agent' },
+                    itemReviewed: { '@id': 'https://www.joshuafink.com/#agent' },
                   })),
                 },
                 {
                   '@type': 'Person',
-                  '@id': 'https://joshuafink.com/#joshua-fink',
+                  '@id': 'https://www.joshuafink.com/#joshua-fink',
                   name: 'Joshua Fink',
                   jobTitle: 'Affiliate Broker',
-                  worksFor: { '@id': 'https://joshuafink.com/#agent' },
-                  url: 'https://joshuafink.com/about',
+                  worksFor: { '@id': 'https://www.joshuafink.com/#agent' },
+                  url: 'https://www.joshuafink.com/about',
                   telephone: '+1-615-551-2727',
                   email: 'joshua@joshuafink.com',
-                  image: 'https://joshuafink.com/headshot.webp',
+                  image: 'https://www.joshuafink.com/headshot.webp',
                   hasCredential: [
                     {
                       '@type': 'EducationalOccupationalCredential',
@@ -218,12 +218,12 @@ export default function RootLayout({
                 },
                 {
                   '@type': 'WebSite',
-                  '@id': 'https://joshuafink.com/#website',
-                  url: 'https://joshuafink.com',
+                  '@id': 'https://www.joshuafink.com/#website',
+                  url: 'https://www.joshuafink.com',
                   name: 'Joshua Fink | Compass Real Estate',
                   description:
                     'Real estate in Middle Tennessee — listings, market insights, cash offers, and neighborhood guides.',
-                  publisher: { '@id': 'https://joshuafink.com/#agent' },
+                  publisher: { '@id': 'https://www.joshuafink.com/#agent' },
                   inLanguage: 'en-US',
                 },
               ],

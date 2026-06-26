@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { schools, getSchoolSuburb } from '@/lib/schools'
 
-const SITE = 'https://joshuafink.com'
+const SITE = 'https://www.joshuafink.com'
 
 export const metadata: Metadata = {
   title: 'Homes Near Top Middle Tennessee Schools — Search by School Zone | Joshua Fink',

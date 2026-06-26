@@ -8,7 +8,7 @@ interface Props {
   params: { slug: string }
 }
 
-const SITE_URL = 'https://joshuafink.com'
+const SITE_URL = 'https://www.joshuafink.com'
 const AUTHOR_NAME = 'Joshua Fink'
 const AUTHOR_URL = `${SITE_URL}/about`
 const PUBLISHER_LOGO = `${SITE_URL}/compass-logo-black.png`

@@ -13,13 +13,13 @@ export const metadata: Metadata = {
   keywords:
     'sell my house fast Nashville,cash home buyer Nashville,we buy houses Nashville TN,sell house as-is Nashville,cash offer for home Nashville,sell house fast Franklin TN,cash home buyer Middle Tennessee,sell my house fast Murfreesboro,we buy houses Brentwood TN',
   alternates: {
-    canonical: 'https://joshuafink.com/cash-offer',
+    canonical: 'https://www.joshuafink.com/cash-offer',
   },
   openGraph: {
     title: 'We Buy Houses Nashville — Cash Offer in 24 Hours',
     description:
       'Get a fair cash offer on your home in 24 hours. No repairs, no commissions, no hassle. Close in as little as 7 days. Serving all of Middle Tennessee.',
-    url: 'https://joshuafink.com/cash-offer',
+    url: 'https://www.joshuafink.com/cash-offer',
     siteName: 'Joshua Fink Group',
     type: 'website',
   },
@@ -356,12 +356,12 @@ export default function CashOfferPage() {
             '@context': 'https://schema.org',
             '@type': 'Service',
             name: 'Cash Home Buying — Nashville & Middle Tennessee',
-            url: 'https://joshuafink.com/cash-offer',
-            mainEntityOfPage: 'https://joshuafink.com/cash-offer',
+            url: 'https://www.joshuafink.com/cash-offer',
+            mainEntityOfPage: 'https://www.joshuafink.com/cash-offer',
             provider: {
               '@type': 'RealEstateAgent',
               name: 'Joshua Fink Group',
-              url: 'https://joshuafink.com',
+              url: 'https://www.joshuafink.com',
               telephone: '+1-615-551-2727',
             },
             description:

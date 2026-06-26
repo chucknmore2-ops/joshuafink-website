@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { FEATURED_PAIRS } from '@/lib/compare'
 import { getSuburb } from '@/lib/suburbs'
 
-const SITE = 'https://joshuafink.com'
+const SITE = 'https://www.joshuafink.com'
 
 export const metadata: Metadata = {
   title: 'Middle Tennessee Suburb Comparisons — Which Is Right for You? | Joshua Fink',

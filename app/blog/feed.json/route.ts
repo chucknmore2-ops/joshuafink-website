@@ -4,7 +4,7 @@ import { blogPosts } from '@/lib/blog'
 export const dynamic = 'force-static'
 export const revalidate = 3600
 
-const SITE = 'https://joshuafink.com'
+const SITE = 'https://www.joshuafink.com'
 const FEED_TITLE = 'Joshua Fink | Compass Real Estate — Middle Tennessee Blog'
 const FEED_DESCRIPTION =
   "Market insights, buyer + seller guides, and neighborhood expertise from Joshua Fink, Affiliate Broker at Compass Real Estate. Nashville, Brentwood, Franklin, Spring Hill, and all of Middle Tennessee."

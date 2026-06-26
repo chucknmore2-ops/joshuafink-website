@@ -7,7 +7,7 @@
  * inline; this helper standardizes the pattern for top-level pages.
  */
 
-const SITE = 'https://joshuafink.com'
+const SITE = 'https://www.joshuafink.com'
 
 export type Crumb = { name: string; href: string }
 

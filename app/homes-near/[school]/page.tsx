@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 import { getSchool, getAllSchoolSlugs, getSchoolSuburb } from '@/lib/schools'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 
-const SITE = 'https://joshuafink.com'
+const SITE = 'https://www.joshuafink.com'
 
 type Props = {
   params: Promise<{ school: string }>

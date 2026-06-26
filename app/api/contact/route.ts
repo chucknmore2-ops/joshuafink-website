@@ -195,7 +195,7 @@ async function sendAutoReply(lead: Record<string, string>) {
   </div>
   <div style="background: #F5F5F5; padding: 20px 40px; font-size: 12px; color: #999; border-top: 1px solid #E8E8E8;">
     <p style="margin: 0;">Joshua Fink Group · Compass Real Estate · 8119 Isabella Lane Ste 105, Brentwood TN 37027</p>
-    <p style="margin: 4px 0 0;"><a href="https://joshuafink.com" style="color: #999;">joshuafink.com</a></p>
+    <p style="margin: 4px 0 0;"><a href="https://www.joshuafink.com" style="color: #999;">joshuafink.com</a></p>
   </div>
 </body>
 </html>`

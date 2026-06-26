@@ -3,7 +3,7 @@ import { getAllSiteUrls } from '@/lib/site-urls'
 
 export const dynamic = 'force-dynamic'
 
-const SITE = 'https://joshuafink.com'
+const SITE = 'https://www.joshuafink.com'
 // NOTE: This key is PUBLIC by design — IndexNow requires it to be fetchable at
 // `${SITE}/${INDEXNOW_KEY}.txt` so Bing/Yandex can verify ownership. Do NOT
 // file this as a secret leak. See public/7e3a8b9c4d5f6a2e1b0c9d8e7f5a4b3c.txt.

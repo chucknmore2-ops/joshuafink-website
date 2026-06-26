@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 
-const SITE = 'https://joshuafink.com'
+const SITE = 'https://www.joshuafink.com'
 
 // Hardcoded probe targets — never accept request-controlled URLs (SSRF).
 // Each one represents a "site is live and healthy" signal we want to verify

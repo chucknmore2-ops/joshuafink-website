@@ -8,7 +8,7 @@ interface Props {
   params: { year: string }
 }
 
-const SITE = 'https://joshuafink.com'
+const SITE = 'https://www.joshuafink.com'
 
 function postYear(human: string): number | undefined {
   const d = new Date(human)
