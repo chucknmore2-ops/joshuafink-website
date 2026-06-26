@@ -103,18 +103,27 @@ export default function RootLayout({
                   email: 'joshua@joshuafink.com',
                   image: 'https://www.joshuafink.com/headshot.webp',
                   logo: 'https://www.joshuafink.com/compass-logo-black.png',
+                  // Compass office NAP (Joshua Fink Group). RealEstateAgent is a
+                  // LocalBusiness subtype, so a complete street address here gives
+                  // Google the full NAP for map-pack eligibility — must stay
+                  // consistent with the Google Business Profile + Compass listing.
                   address: {
                     '@type': 'PostalAddress',
-                    addressLocality: 'Nashville',
+                    streetAddress: '8119 Isabella Lane, Suite 105',
+                    addressLocality: 'Brentwood',
                     addressRegion: 'TN',
+                    postalCode: '37027',
                     addressCountry: 'US',
                   },
+                  // Approximate office coordinates (Maryland Farms / Cool Springs
+                  // area of Brentwood) — verify against the exact pin if needed.
                   geo: {
                     '@type': 'GeoCoordinates',
-                    latitude: 36.1627,
-                    longitude: -86.7816,
+                    latitude: 36.0234,
+                    longitude: -86.7838,
                   },
-                  hasMap: 'https://www.google.com/maps/place/Nashville,+TN',
+                  hasMap:
+                    'https://www.google.com/maps/search/?api=1&query=8119+Isabella+Lane+Suite+105+Brentwood+TN+37027',
                   areaServed: [
                     { '@type': 'City', name: 'Franklin, TN' },
                     { '@type': 'City', name: 'Brentwood, TN' },
