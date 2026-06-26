@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-06-25T10:46:57.528Z
+// AUTO-GENERATED — Last synced: 2026-06-26T10:55:46.664Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -42,13 +42,13 @@ export const listings: Listing[] = [
   {
     address: "1113 Linn Cv Ct",
     city: "Gallatin, TN 37066 | MLS #3214253",
-    price: 519900,
+    price: 499900,
     beds: 4,
     baths: 4,
     sqft: 2869,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/1113-Linn-Cv-Ct-Gallatin-TN-37066/SPCI8_pid/",
-    imageUrl: "https://www.compass.com/m/8d52f2127c31faf652f00727b6c3ec01b4279a80_img_0_2f6ec/2048x1536.webp",
+    imageUrl: "https://www.compass.com/m/27a44fbc63c0ae824484f63820d4fad5edb0c0001545ea2e13f041c543ada11d/2048x1536.webp",
   },
   {
     address: "107 Garwood Dr",
