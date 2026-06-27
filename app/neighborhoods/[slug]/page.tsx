@@ -171,22 +171,22 @@ export default async function NeighborhoodPage({ params }: Props) {
               {n.intro}
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-4">
+              <Link
+                href="#contact"
+                className="inline-block text-sm font-bold px-8 py-4 tracking-wide transition-colors text-center"
+                style={{ backgroundColor: '#C41E3A', color: '#FFFFFF' }}
+              >
+                Talk to Joshua
+              </Link>
               <a
                 href={compassUrl}
                 target="_blank"
                 rel="noopener"
-                className="inline-block text-sm font-bold px-8 py-4 tracking-wide transition-colors text-center"
-                style={{ backgroundColor: '#C41E3A', color: '#FFFFFF' }}
-              >
-                See Live {n.name} Listings on Compass →
-              </a>
-              <Link
-                href="#contact"
                 className="inline-block border text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-white hover:text-black transition-colors text-center"
                 style={{ borderColor: '#FFFFFF' }}
               >
-                Talk to Joshua
-              </Link>
+                See Live {n.name} Listings on Compass →
+              </a>
             </div>
             <p className="mt-4 text-xs" style={{ color: '#7B7B7B' }}>
               Listings are served live from compass.com. Joshua Fink is your attributed agent on Compass.
