@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { Fragment } from 'react'
 import { getPostBySlug, getAllSlugs, getRelatedPosts, type BlogPost } from '@/lib/blog'
+import { linkifyLocations } from '@/lib/linkify-neighborhoods'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 
 interface Props {
@@ -90,7 +92,7 @@ function parseInlineMarkdown(text: string) {
       )
     }
 
-    return token
+    return <Fragment key={idx}>{linkifyLocations(token)}</Fragment>
   })
 }
 
