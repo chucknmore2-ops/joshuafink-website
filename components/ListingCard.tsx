@@ -130,19 +130,31 @@ export default function ListingCard({ listing }: Props) {
           </div>
         )}
 
-        <a
-          href={withUtm(listing.compassUrl, {
-            source: 'joshuafink',
-            medium: 'referral',
-            campaign: 'listing-card',
-            content: listing.address.toLowerCase().replace(/[^\w]+/g, '-'),
-          })}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`${suburbSlug ? '' : 'mt-auto '}text-center text-sm font-semibold border border-black text-black py-2.5 rounded-full tracking-wide transition-all duration-200 hover:bg-black hover:text-white`}
-        >
-          View on Compass →
-        </a>
+        <div className={`${suburbSlug ? '' : 'mt-auto '}flex flex-col gap-2`}>
+          <a
+            href={`sms:+16155512727?body=${encodeURIComponent(
+              `Hi Joshua — I'm interested in ${listing.address}. Can you tell me more?`
+            )}`}
+            className="text-center text-sm font-semibold bg-black text-white py-2.5 rounded-full tracking-wide transition-all duration-200 hover:bg-neutral-800"
+            data-cta="listing-card-ask"
+            aria-label={`Text Joshua about ${listing.address}`}
+          >
+            Ask Joshua about this home
+          </a>
+          <a
+            href={withUtm(listing.compassUrl, {
+              source: 'joshuafink',
+              medium: 'referral',
+              campaign: 'listing-card',
+              content: listing.address.toLowerCase().replace(/[^\w]+/g, '-'),
+            })}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-center text-sm font-semibold border border-black text-black py-2.5 rounded-full tracking-wide transition-all duration-200 hover:bg-black hover:text-white"
+          >
+            View on Compass →
+          </a>
+        </div>
       </div>
     </article>
   )
