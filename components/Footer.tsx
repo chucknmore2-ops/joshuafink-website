@@ -107,6 +107,17 @@ export default function Footer() {
                 { href: '/buy/franklin-tn', label: 'Buy in Franklin' },
                 { href: '/buy/brentwood-tn', label: 'Buy in Brentwood' },
                 { href: '/buy/spring-hill-tn', label: 'Buy in Spring Hill' },
+                { href: '/buy/nolensville-tn', label: 'Buy in Nolensville' },
+                { href: '/buy/thompsons-station-tn', label: "Buy in Thompson's Station" },
+                { href: '/buy/nashville-tn', label: 'Buy in Nashville' },
+                { href: '/buy/murfreesboro-tn', label: 'Buy in Murfreesboro' },
+                { href: '/buy/gallatin-tn', label: 'Buy in Gallatin' },
+                { href: '/buy/hendersonville-tn', label: 'Buy in Hendersonville' },
+                { href: '/buy/columbia-tn', label: 'Buy in Columbia' },
+                { href: '/buy/mount-juliet-tn', label: 'Buy in Mount Juliet' },
+                { href: '/buy/lebanon-tn', label: 'Buy in Lebanon' },
+                { href: '/buy/smyrna-tn', label: 'Buy in Smyrna' },
+                { href: '/buy/la-vergne-tn', label: 'Buy in La Vergne' },
                 { href: '/neighborhoods', label: 'Neighborhood Guides' },
               ].map((link) => (
                 <li key={link.href}>
@@ -133,7 +144,17 @@ export default function Footer() {
                 { href: '/sell/franklin-tn', label: 'Sell in Franklin' },
                 { href: '/sell/brentwood-tn', label: 'Sell in Brentwood' },
                 { href: '/sell/spring-hill-tn', label: 'Sell in Spring Hill' },
+                { href: '/sell/nolensville-tn', label: 'Sell in Nolensville' },
+                { href: '/sell/thompsons-station-tn', label: "Sell in Thompson's Station" },
                 { href: '/sell/nashville-tn', label: 'Sell in Nashville' },
+                { href: '/sell/murfreesboro-tn', label: 'Sell in Murfreesboro' },
+                { href: '/sell/gallatin-tn', label: 'Sell in Gallatin' },
+                { href: '/sell/hendersonville-tn', label: 'Sell in Hendersonville' },
+                { href: '/sell/columbia-tn', label: 'Sell in Columbia' },
+                { href: '/sell/mount-juliet-tn', label: 'Sell in Mount Juliet' },
+                { href: '/sell/lebanon-tn', label: 'Sell in Lebanon' },
+                { href: '/sell/smyrna-tn', label: 'Sell in Smyrna' },
+                { href: '/sell/la-vergne-tn', label: 'Sell in La Vergne' },
               ].map((link) => (
                 <li key={link.href}>
                   <Link
