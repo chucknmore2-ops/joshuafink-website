@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-06-28T10:31:23.195Z
+// AUTO-GENERATED — Last synced: 2026-06-29T12:39:04.358Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -114,6 +114,6 @@ export const listings: Listing[] = [
     sqft: 1248,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/4874-Sparta-Pike-Watertown-TN-37184/TMU6R_pid/",
-    imageUrl: "https://www.compass.com/m/fea94b6544d9f0d645c75b1e5f3971429c53b6f6bda17892fa2984735a7b1737/640x480.jpg",
+    imageUrl: "https://www.compass.com/m/187622680f986b0b05fa461aa832ce13b251e2de56a4139db9633366657b3f15/2048x1536.webp",
   }
 ];
