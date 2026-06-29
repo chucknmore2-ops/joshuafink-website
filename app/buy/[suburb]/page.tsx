@@ -53,18 +53,40 @@ export default async function BuySuburbPage({ params }: Props) {
     '@graph': [
       {
         '@type': 'RealEstateAgent',
+        '@id': 'https://www.joshuafink.com/#agent',
         name: 'Joshua Fink — Compass Real Estate',
         url: 'https://www.joshuafink.com',
         telephone: '+16155512727',
         email: 'joshua@joshuafink.com',
         image: 'https://www.joshuafink.com/headshot.webp',
         description: `Joshua Fink is a buyer&apos;s agent at Compass Real Estate specializing in ${suburb.displayName} home purchases. Local market expert, off-market access, proven negotiator.`,
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: '8119 Isabella Lane, Suite 105',
+          addressLocality: 'Brentwood',
+          addressRegion: 'TN',
+          postalCode: '37027',
+          addressCountry: 'US',
+        },
+        geo: {
+          '@type': 'GeoCoordinates',
+          latitude: 36.0234,
+          longitude: -86.7838,
+        },
         areaServed: {
           '@type': 'City',
           name: suburb.schemaCity,
           addressRegion: suburb.schemaState,
           addressCountry: 'US',
         },
+        sameAs: [
+          'https://www.facebook.com/profile.php?id=100064076493905',
+          'https://www.instagram.com/joshuafinkgroup',
+          'https://www.linkedin.com/in/joshuafinkgroup/',
+          'https://x.com/JoshuaFinkGroup',
+          'https://www.compass.com/agents/joshua-fink/',
+          'https://www.zillow.com/profile/JoshuaFinkGroup',
+        ],
         aggregateRating: {
           '@type': 'AggregateRating',
           ratingValue: reviewStats.rating.toFixed(1),
