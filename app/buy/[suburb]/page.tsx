@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getSuburb, getAllSuburbSlugs } from '@/lib/suburbs'
+import { getSuburb, getAllSuburbSlugs, type Suburb } from '@/lib/suburbs'
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
 import { linkifyNeighborhoods } from '@/lib/linkify-neighborhoods'
 import { reviewStats } from '@/lib/reviews'
@@ -80,6 +80,26 @@ export default async function BuySuburbPage({ params }: Props) {
   const faqs = suburb.buyerFaqs || suburb.faqs
   const description = suburb.buyerDescription || suburb.description
   const cityGuides = getNeighborhoodsByCitySlug(slug)
+
+  const nearbyByCity: Record<string, string[]> = {
+    'franklin-tn': ['brentwood-tn', 'nolensville-tn', 'spring-hill-tn', 'thompsons-station-tn', 'nashville-tn'],
+    'brentwood-tn': ['franklin-tn', 'nolensville-tn', 'nashville-tn', 'thompsons-station-tn', 'spring-hill-tn'],
+    'spring-hill-tn': ['franklin-tn', 'thompsons-station-tn', 'columbia-tn', 'brentwood-tn', 'nolensville-tn'],
+    'nolensville-tn': ['franklin-tn', 'brentwood-tn', 'nashville-tn', 'thompsons-station-tn', 'murfreesboro-tn'],
+    'thompsons-station-tn': ['spring-hill-tn', 'franklin-tn', 'columbia-tn', 'brentwood-tn', 'nolensville-tn'],
+    'nashville-tn': ['brentwood-tn', 'franklin-tn', 'mount-juliet-tn', 'hendersonville-tn', 'nolensville-tn', 'murfreesboro-tn'],
+    'murfreesboro-tn': ['smyrna-tn', 'la-vergne-tn', 'nashville-tn', 'nolensville-tn', 'lebanon-tn'],
+    'gallatin-tn': ['hendersonville-tn', 'lebanon-tn', 'mount-juliet-tn', 'nashville-tn', 'brentwood-tn'],
+    'hendersonville-tn': ['gallatin-tn', 'mount-juliet-tn', 'nashville-tn', 'lebanon-tn', 'brentwood-tn'],
+    'columbia-tn': ['spring-hill-tn', 'thompsons-station-tn', 'franklin-tn', 'brentwood-tn', 'murfreesboro-tn'],
+    'mount-juliet-tn': ['lebanon-tn', 'hendersonville-tn', 'nashville-tn', 'gallatin-tn', 'murfreesboro-tn'],
+    'lebanon-tn': ['mount-juliet-tn', 'gallatin-tn', 'hendersonville-tn', 'murfreesboro-tn', 'nashville-tn'],
+    'smyrna-tn': ['la-vergne-tn', 'murfreesboro-tn', 'nashville-tn', 'mount-juliet-tn', 'nolensville-tn'],
+    'la-vergne-tn': ['smyrna-tn', 'murfreesboro-tn', 'nashville-tn', 'mount-juliet-tn', 'nolensville-tn'],
+  }
+  const nearbyCities: Suburb[] = (nearbyByCity[slug] ?? [])
+    .map((s) => getSuburb(s))
+    .filter((s): s is Suburb => Boolean(s))
 
   const faqSchema = {
     '@context': 'https://schema.org',
@@ -590,6 +610,41 @@ export default async function BuySuburbPage({ params }: Props) {
             </div>
           </div>
         </div>
+
+        {/* Also explore homes in nearby Middle TN cities */}
+        {nearbyCities.length > 0 && (
+          <div className="bg-white border-t border-[#E8E8E8] py-16 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+              <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
+                Nearby Cities
+              </p>
+              <h2 className="text-3xl font-black text-black tracking-tight mb-3">
+                Also Explore Homes in Nearby Middle TN Cities
+              </h2>
+              <p className="text-[#6B6B6B] text-sm leading-relaxed max-w-3xl mb-10">
+                Joshua works the whole Middle Tennessee corridor. If you&apos;re weighing {suburb.name}{' '}
+                against other commutes, school zones, or price points, here are buyer guides for the
+                nearest sibling cities.
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                {nearbyCities.map((c) => (
+                  <Link
+                    key={c.slug}
+                    href={`/buy/${c.slug}`}
+                    className="block border border-[#E8E8E8] p-5 hover:border-black transition-colors bg-white"
+                  >
+                    <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-1">
+                      {c.county.split(' / ')[0]}
+                    </p>
+                    <h3 className="text-lg font-black text-black mb-2">{c.name}</h3>
+                    <p className="text-xs text-[#6B6B6B] mb-3">Median {c.medianPrice}</p>
+                    <span className="text-xs font-semibold text-black">Buyer guide →</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Bottom CTA */}
         <div className="text-white py-16 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#0A1628' }}>
