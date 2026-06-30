@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getSuburb, getAllSuburbSlugs } from '@/lib/suburbs'
+import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated } from '@/lib/suburbs'
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
 import { linkifyNeighborhoods } from '@/lib/linkify-neighborhoods'
 import { reviewStats } from '@/lib/reviews'
@@ -184,9 +184,14 @@ export default async function SuburbPage({ params }: Props) {
         {/* Market Snapshot */}
         <div className="border-b border-[#E8E8E8] bg-[#F9F9F9]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-6">
-              {suburb.displayName} Market Snapshot · 2026
-            </p>
+            <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 mb-6">
+              <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase">
+                {suburb.displayName} Market Snapshot · 2026
+              </p>
+              <p className="text-xs text-[#A0A0A0]">
+                Last verified: {marketStatsLastUpdated}
+              </p>
+            </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div className="bg-white p-6 border border-[#E8E8E8]">
                 <p className="text-3xl font-black text-black">{suburb.medianPrice}</p>
