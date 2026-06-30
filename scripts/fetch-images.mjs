@@ -156,6 +156,8 @@ async function main() {
 // Source: ${COMPASS_URL}
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
+export const lastSynced = ${JSON.stringify(timestamp)};
+
 export interface Listing {
   address: string;
   city: string;

@@ -2,6 +2,8 @@
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
+export const lastSynced = '2026-06-29T12:39:04.358Z';
+
 export interface Listing {
   address: string;
   city: string;
