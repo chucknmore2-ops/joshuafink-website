@@ -16,9 +16,12 @@ function formatPrice(price: number): string {
 }
 
 function statusColor(status: string): string {
-  if (status === 'Active') return 'bg-black text-white'
+  if (status === 'Active' || status === 'Coming Soon') return 'bg-black text-white'
   if (status.startsWith('Open House')) return 'bg-neutral-900 text-white'
   if (status === 'Sold') return 'bg-red-600 text-white'
+  // Pending / Contingent / Under Contract → amber so buyers don't mistake these
+  // for available inventory (MLS accuracy + lead-intent quality).
+  if (/pending|contingent|under contract/i.test(status)) return 'bg-amber-500 text-white'
   return 'bg-neutral-100 text-neutral-600'
 }
 

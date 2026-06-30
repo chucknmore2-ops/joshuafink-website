@@ -34,10 +34,17 @@ export const metadata: Metadata = {
     "Active listings and recently sold homes from Joshua Fink at Compass Real Estate — Nashville, Brentwood, Franklin, Spring Hill, Columbia, and across Middle Tennessee. See what's on the market and what's actually closing.",
 }
 
+// Statuses that mean the home is genuinely available to a new buyer.
+// Excludes "Active Under Contract", "Active Contingent", "Pending", etc. — those
+// are under contract and must not be counted as available inventory.
+const AVAILABLE_STATUSES = new Set(['Active', 'Coming Soon'])
+
+function isAvailable(status: string): boolean {
+  return AVAILABLE_STATUSES.has(status) || status.startsWith('Open House')
+}
+
 export default function ListingsPage() {
-  const activeCount = listings.filter(
-    (l) => l.status === 'Active' || l.status.startsWith('Active') || l.status.startsWith('Open')
-  ).length
+  const activeCount = listings.filter((l) => isAvailable(l.status)).length
 
   const soldTotal = soldListings.reduce((sum, l) => sum + l.price, 0)
 
