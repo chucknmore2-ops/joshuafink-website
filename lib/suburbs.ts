@@ -678,6 +678,10 @@ export const suburbs: Record<string, Suburb> = {
   },
 }
 
+// Single source of truth for when the hard-coded medianPrice/avgDaysOnMarket/
+// yoyChange/pricePerSqft figures above were last reviewed. Update when refreshing stats.
+export const marketStatsLastUpdated = '2026-06-30'
+
 export function getSuburb(slug: string): Suburb | undefined {
   return suburbs[slug]
 }
