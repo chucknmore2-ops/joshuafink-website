@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-06-29T12:39:04.358Z
+// AUTO-GENERATED — Last synced: 2026-06-30T11:13:44.937Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -93,17 +93,6 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/3814-Plantation-Dr-Hermitage-TN-37076/TFS3S_pid/",
     imageUrl: "https://www.compass.com/m/c97bf81a1c370da6c2ad6d03ad18b17af397e467f851cba9352fb723580bed34/2048x1536.webp",
-  },
-  {
-    address: "870 Reeves Rd",
-    city: "Antioch, TN 37013 | MLS #3231793",
-    price: 339900,
-    beds: 3,
-    baths: 2,
-    sqft: 1134,
-    status: "Active",
-    compassUrl: "https://www.compass.com/homedetails/870-Reeves-Rd-Antioch-TN-37013/SW1BU_pid/",
-    imageUrl: "https://www.compass.com/m/a7ef33f971b3f98f9c9df198198d003671a4c04ee14a9a100ddb182a937911e6/2048x1536.webp",
   },
   {
     address: "4874 Sparta Pike",
