@@ -13,11 +13,44 @@ export default function ContactPage() {
     { name: 'Home', href: '/' },
     { name: 'Contact', href: '/contact' },
   ])
+  // Explicit LocalBusiness on /contact gives the page a NAP-bearing entity
+  // that matches the Compass office and Google Business Profile. Mirrors
+  // layout.tsx so the address/geo/hasMap stay consistent everywhere.
+  const localBusiness = {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    '@id': 'https://www.joshuafink.com/#office',
+    name: 'Joshua Fink Group — Compass Real Estate',
+    url: 'https://www.joshuafink.com/contact',
+    telephone: '+1-615-551-2727',
+    email: 'joshua@joshuafink.com',
+    image: 'https://www.joshuafink.com/headshot.webp',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: '8119 Isabella Lane, Suite 105',
+      addressLocality: 'Brentwood',
+      addressRegion: 'TN',
+      postalCode: '37027',
+      addressCountry: 'US',
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: 36.0234,
+      longitude: -86.7838,
+    },
+    hasMap:
+      'https://www.google.com/maps/search/?api=1&query=8119+Isabella+Lane+Suite+105+Brentwood+TN+37027',
+    priceRange: '$300000-$2500000',
+  }
   return (
     <div className="bg-white">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusiness) }}
       />
       {/* Page header */}
       <div className="bg-black text-white py-16 px-4 sm:px-6 lg:px-8">
