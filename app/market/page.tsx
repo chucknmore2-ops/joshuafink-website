@@ -11,6 +11,29 @@ export const metadata: Metadata = {
 
 const SITE = 'https://www.joshuafink.com'
 
+const faqs = [
+  {
+    q: 'How often are these Middle Tennessee market reports updated?',
+    a: 'Each suburb report is reviewed and refreshed as new closings are reported through the Middle Tennessee MLS — typically monthly, with year-over-year benchmarks updated quarterly. Headline numbers (median price, days on market, $/sqft, YoY change) are kept current for 2026.',
+  },
+  {
+    q: 'Where does the market data come from?',
+    a: 'Numbers are pulled from RealTracs MLS closings and county assessor records, then filtered to single-family residential transactions in each named suburb. Joshua reviews the data manually — these are not algorithm-generated AVM estimates.',
+  },
+  {
+    q: 'Is the Middle Tennessee housing market up or down right now?',
+    a: 'Year-over-year direction varies by suburb. Higher-priced Williamson County submarkets (Franklin, Brentwood, Nolensville) and growing corridors (Spring Hill, Thompson’s Station, Nashville urban core) have generally appreciated through 2025–2026, while days-on-market has lengthened from the 2021–2022 peak. Open any suburb report for that specific market’s YoY change.',
+  },
+  {
+    q: 'What does "days on market" mean on these reports?',
+    a: 'Average days on market is the median time from list date to under-contract date for closed sales in the last reporting window. It is a stronger market-temperature signal than price alone — under 14 days indicates a seller’s market, 30+ days indicates buyers have negotiating room.',
+  },
+  {
+    q: 'Can Joshua send a more detailed report for my specific street or subdivision?',
+    a: 'Yes. Hyperlocal reports — narrowed to your subdivision, street, or a specific price band — are free on request. Call or text 615-551-2727 and tell Joshua the address and what decision the report is informing.',
+  },
+]
+
 export default function MarketHubPage() {
   const all = Object.values(suburbs).sort((a, b) => b.medianPriceNum - a.medianPriceNum)
 
@@ -34,6 +57,16 @@ export default function MarketHubPage() {
     ],
   }
 
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  }
+
   return (
     <>
       <script
@@ -43,6 +76,10 @@ export default function MarketHubPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       <div className="bg-white">
@@ -93,6 +130,23 @@ export default function MarketHubPage() {
                   Avg {s.avgDaysOnMarket} days on market · ${s.pricePerSqft}/sqft
                 </p>
               </Link>
+            ))}
+          </div>
+        </div>
+
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+          <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
+            Market Report FAQ
+          </p>
+          <h2 className="text-3xl sm:text-4xl font-black text-black tracking-tight mb-10">
+            Frequently Asked Questions
+          </h2>
+          <div className="space-y-8">
+            {faqs.map((faq) => (
+              <div key={faq.q} className="border-b border-[#E8E8E8] pb-6">
+                <h3 className="text-lg font-black text-black mb-2">{faq.q}</h3>
+                <p className="text-sm text-[#6B6B6B] leading-relaxed">{faq.a}</p>
+              </div>
             ))}
           </div>
         </div>
