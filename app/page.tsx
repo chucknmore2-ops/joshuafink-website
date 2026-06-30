@@ -26,15 +26,41 @@ export default function HomePage() {
   )
 
   // Homepage-level Organization reference (resolves to the full RealEstateAgent
-  // definition emitted in app/layout.tsx via shared @id) + BreadcrumbList.
-  // Gives brand queries ("Joshua Fink Compass") a homepage-anchored org node
-  // and surfaces a breadcrumb trail in SERP snippets.
+  // definition emitted in app/layout.tsx via shared @id) + BreadcrumbList +
+  // explicit LocalBusiness node anchoring the Compass office NAP for the local
+  // pack. Mirrors the address/geo/hasMap from layout.tsx so Google sees a
+  // LocalBusiness type directly on the homepage URL.
   const homepageGraph = {
     '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'RealEstateAgent',
         '@id': 'https://joshuafink.com/#agent',
+      },
+      {
+        '@type': 'LocalBusiness',
+        '@id': 'https://www.joshuafink.com/#office',
+        name: 'Joshua Fink Group — Compass Real Estate',
+        url: 'https://www.joshuafink.com',
+        telephone: '+1-615-551-2727',
+        email: 'joshua@joshuafink.com',
+        image: 'https://www.joshuafink.com/headshot.webp',
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: '8119 Isabella Lane, Suite 105',
+          addressLocality: 'Brentwood',
+          addressRegion: 'TN',
+          postalCode: '37027',
+          addressCountry: 'US',
+        },
+        geo: {
+          '@type': 'GeoCoordinates',
+          latitude: 36.0234,
+          longitude: -86.7838,
+        },
+        hasMap:
+          'https://www.google.com/maps/search/?api=1&query=8119+Isabella+Lane+Suite+105+Brentwood+TN+37027',
+        priceRange: '$300000-$2500000',
       },
       {
         '@type': 'BreadcrumbList',
