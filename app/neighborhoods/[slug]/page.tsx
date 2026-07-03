@@ -89,6 +89,7 @@ export default async function NeighborhoodPage({ params }: Props) {
             latitude: n.latitude,
             longitude: n.longitude,
           },
+          hasMap: `https://www.google.com/maps/search/?api=1&query=${n.latitude},${n.longitude}`,
         }
       : {}),
     containedInPlace: {
