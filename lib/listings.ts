@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-07-03T10:40:29.318Z
+// AUTO-GENERATED — Last synced: 2026-07-04T10:14:53.723Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -19,7 +19,7 @@ export interface Listing {
 export const listings: Listing[] = [
   {
     address: "1901 New Bristol Ln",
-    city: "Brentwood, TN 37027 | MLS #3245826",
+    city: "Brentwood, TN 37027",
     price: 1849000,
     beds: 5,
     baths: 5,
@@ -62,6 +62,17 @@ export const listings: Listing[] = [
     imageUrl: "https://www.compass.com/m/e3e365a5d55b995a81d5a88a152f7f8a35df3574_img_0_bd65f/2048x1536.webp",
   },
   {
+    address: "4127 Edwards Ave",
+    city: "Nashville, TN 37216 | MLS #3245823",
+    price: 429900,
+    beds: 3,
+    baths: 1,
+    sqft: 1223,
+    status: "Active",
+    compassUrl: "https://www.compass.com/homedetails/4127-Edwards-Ave-Nashville-TN-37216/THUS9_pid/",
+    imageUrl: "https://www.compass.com/m/2afe7b6255b0dc2419360dc452e865a5300acd8d013467c1f4cd29d34f78fb3a/2048x1536.webp",
+  },
+  {
     address: "511 Wanda Dr",
     city: "Nashville, TN 37210",
     price: 419900,
@@ -81,7 +92,18 @@ export const listings: Listing[] = [
     sqft: 1325,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/3814-Plantation-Dr-Hermitage-TN-37076/TFS3S_pid/",
-    imageUrl: "https://www.compass.com/m/6638e69bad59ee73eea6230dca8bfcd087a0286d5c135137d7132007baeefea4/2048x1536.webp",
+    imageUrl: "https://www.compass.com/m/c97bf81a1c370da6c2ad6d03ad18b17af397e467f851cba9352fb723580bed34/2048x1536.webp",
+  },
+  {
+    address: "870 Reeves Rd",
+    city: "Antioch, TN 37013 | MLS #3231793",
+    price: 339900,
+    beds: 3,
+    baths: 2,
+    sqft: 1134,
+    status: "Active",
+    compassUrl: "https://www.compass.com/homedetails/870-Reeves-Rd-Antioch-TN-37013/SW1BU_pid/",
+    imageUrl: "https://www.compass.com/m/a7ef33f971b3f98f9c9df198198d003671a4c04ee14a9a100ddb182a937911e6/2048x1536.webp",
   },
   {
     address: "4874 Sparta Pike",
