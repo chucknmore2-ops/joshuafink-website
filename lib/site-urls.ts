@@ -4,6 +4,8 @@ import { getAllCashOfferCitySlugs } from '@/lib/cash-offer-cities'
 import { getAllNeighborhoodSlugs } from '@/lib/neighborhoods'
 import { allFeaturedPairSlugs } from '@/lib/compare'
 import { getAllSchoolSlugs } from '@/lib/schools'
+import { listings } from '@/lib/listings'
+import { listingSlug } from '@/lib/listing-detail'
 
 export const SITE_ORIGIN = 'https://www.joshuafink.com'
 
@@ -119,6 +121,15 @@ export function getSiteUrlCatalog(): SiteUrlEntry[] {
     changeFrequency: 'monthly',
   }))
 
+  // ── On-site listing detail pages (one per active listing) ─────────
+  // These capture address-level search intent on joshuafink.com instead of
+  // ceding it to compass.com. Inventory turns over fast, so ping daily.
+  const listingDetailPages: SiteUrlEntry[] = listings.map((l) => ({
+    path: `/listings/${listingSlug(l)}`,
+    priority: 0.7,
+    changeFrequency: 'daily',
+  }))
+
   return [
     ...core,
     ...blog,
@@ -129,6 +140,7 @@ export function getSiteUrlCatalog(): SiteUrlEntry[] {
     ...marketReports,
     ...comparePages,
     ...schoolPages,
+    ...listingDetailPages,
   ]
 }
 
