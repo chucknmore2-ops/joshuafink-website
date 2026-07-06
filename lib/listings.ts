@@ -14,7 +14,13 @@ export interface Listing {
   note?: string;
   compassUrl: string;
   imageUrl?: string;
+  // ISO timestamp of the last Compass sync that confirmed this listing.
+  lastVerified?: string;
 }
+
+// Mirrors the header timestamp so server components can compute sync
+// staleness without parsing comments. Rewritten by scripts/fetch-images.mjs.
+export const listingsSyncedAt = "2026-07-06T12:08:26.912Z";
 
 export const listings: Listing[] = [
   {
@@ -27,6 +33,7 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/1901-New-Bristol-Ln-Brentwood-TN-37027/RS25E_pid/",
     imageUrl: "https://www.compass.com/m/5e20f6de5ae242cba0b75f7227f5a4b1f5937902cfbf792d921c2e860034cf71/2048x1536.webp",
+    lastVerified: listingsSyncedAt,
   },
   {
     address: "9560 Dresden Square",
@@ -38,6 +45,7 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/9560-Dresden-Square-Brentwood-TN-37027/T863Z_pid/",
     imageUrl: "https://www.compass.com/m/1726667bfbabb4404e04bd62941b072da078e36ffe55a775567367f26ee41f7d/2048x1536.webp",
+    lastVerified: listingsSyncedAt,
   },
   {
     address: "1113 Linn Cv Ct",
@@ -49,6 +57,7 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/1113-Linn-Cv-Ct-Gallatin-TN-37066/SPCI8_pid/",
     imageUrl: "https://www.compass.com/m/27a44fbc63c0ae824484f63820d4fad5edb0c0001545ea2e13f041c543ada11d/2048x1536.webp",
+    lastVerified: listingsSyncedAt,
   },
   {
     address: "107 Garwood Dr",
@@ -60,6 +69,7 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/107-Garwood-Dr-Nashville-TN-37210/TBGK6_pid/",
     imageUrl: "https://www.compass.com/m/e3e365a5d55b995a81d5a88a152f7f8a35df3574_img_0_bd65f/2048x1536.webp",
+    lastVerified: listingsSyncedAt,
   },
   {
     address: "4127 Edwards Ave",
@@ -71,6 +81,7 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/4127-Edwards-Ave-Nashville-TN-37216/THUS9_pid/",
     imageUrl: "https://www.compass.com/m/2afe7b6255b0dc2419360dc452e865a5300acd8d013467c1f4cd29d34f78fb3a/2048x1536.webp",
+    lastVerified: listingsSyncedAt,
   },
   {
     address: "511 Wanda Dr",
@@ -82,6 +93,7 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/511-Wanda-Dr-Nashville-TN-37210/SDYP1_pid/",
     imageUrl: "https://www.compass.com/m/4e9cb7fc9872c9dbd0b0f820634b2dfa965d3cfe_img_0_e40e3/2048x1536.webp",
+    lastVerified: listingsSyncedAt,
   },
   {
     address: "3814 Plantation Dr",
@@ -93,6 +105,7 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/3814-Plantation-Dr-Hermitage-TN-37076/TFS3S_pid/",
     imageUrl: "https://www.compass.com/m/c97bf81a1c370da6c2ad6d03ad18b17af397e467f851cba9352fb723580bed34/2048x1536.webp",
+    lastVerified: listingsSyncedAt,
   },
   {
     address: "870 Reeves Rd",
@@ -104,6 +117,7 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/870-Reeves-Rd-Antioch-TN-37013/SW1BU_pid/",
     imageUrl: "https://www.compass.com/m/a7ef33f971b3f98f9c9df198198d003671a4c04ee14a9a100ddb182a937911e6/2048x1536.webp",
+    lastVerified: listingsSyncedAt,
   },
   {
     address: "4874 Sparta Pike",
@@ -115,5 +129,6 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/4874-Sparta-Pike-Watertown-TN-37184/TMU6R_pid/",
     imageUrl: "https://www.compass.com/m/187622680f986b0b05fa461aa832ce13b251e2de56a4139db9633366657b3f15/2048x1536.webp",
+    lastVerified: listingsSyncedAt,
   }
 ];
