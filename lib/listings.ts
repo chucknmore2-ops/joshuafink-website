@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-06-29T12:39:04.358Z
+// AUTO-GENERATED — Last synced: 2026-07-06T12:08:26.912Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -15,18 +15,17 @@ export interface Listing {
   compassUrl: string;
   imageUrl?: string;
   // ISO timestamp of the last Compass sync that confirmed this listing.
-  // Used by /listings to flag the grid as 'Verifying…' if the file goes stale.
   lastVerified?: string;
 }
 
-// Mirrors the header timestamp so server components can compute sync staleness
-// without parsing comments. Updated by scripts/fetch-images.mjs each sync.
-export const listingsSyncedAt = "2026-06-29T12:39:04.358Z";
+// Mirrors the header timestamp so server components can compute sync
+// staleness without parsing comments. Rewritten by scripts/fetch-images.mjs.
+export const listingsSyncedAt = "2026-07-06T12:08:26.912Z";
 
 export const listings: Listing[] = [
   {
     address: "1901 New Bristol Ln",
-    city: "Brentwood, TN 37027 | MLS #3245826",
+    city: "Brentwood, TN 37027",
     price: 1849000,
     beds: 5,
     baths: 5,
