@@ -52,6 +52,17 @@ export default function ListingsPage() {
   const isListingsStale = Number.isFinite(syncAgeMs) && syncAgeMs > STALENESS_LIMIT_MS
   const syncAgeDays = Math.floor(syncAgeMs / (24 * 60 * 60 * 1000))
 
+  // Honest, always-visible freshness stamp: the real date of the last Compass
+  // sync (listingsSyncedAt, rewritten by scripts/fetch-images.mjs). No cadence
+  // is claimed — the sync is not a guaranteed daily cron — so we only state when
+  // it last happened.
+  const listingsUpdatedLabel = new Date(listingsSyncedAt).toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: 'America/Chicago',
+  })
+
   const breadcrumb = buildBreadcrumbSchema([
     { name: 'Home', href: '/' },
     { name: 'Listings', href: '/listings' },
@@ -117,6 +128,9 @@ export default function ListingsPage() {
           <h1 className="text-5xl font-black tracking-tight mb-4">Listings</h1>
           <p className="text-[#A0A0A0] text-lg">
             {activeCount} active {activeCount === 1 ? 'listing' : 'listings'} · {soldListings.length} recently sold across Middle Tennessee
+          </p>
+          <p className="text-[#6B6B6B] text-sm mt-2">
+            Listings updated <time dateTime={listingsSyncedAt}>{listingsUpdatedLabel}</time>
           </p>
         </div>
       </div>
