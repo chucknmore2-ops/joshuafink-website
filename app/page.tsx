@@ -151,7 +151,9 @@ export default function HomePage() {
       </section>
 
       {/* ── INLINE LEAD FORM ── */}
-      <section className="bg-white py-20 border-b border-neutral-200">
+      {/* id + scroll-mt is the target for the hero's first-viewport "Message
+          Joshua" CTA, so mobile users get a capture path without hunting. */}
+      <section id="contact-form" className="scroll-mt-24 bg-white py-20 border-b border-neutral-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">

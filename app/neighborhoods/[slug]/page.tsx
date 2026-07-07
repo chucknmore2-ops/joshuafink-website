@@ -89,6 +89,7 @@ export default async function NeighborhoodPage({ params }: Props) {
             latitude: n.latitude,
             longitude: n.longitude,
           },
+          hasMap: `https://www.google.com/maps/search/?api=1&query=${n.latitude},${n.longitude}`,
         }
       : {}),
     containedInPlace: {
@@ -252,6 +253,51 @@ export default async function NeighborhoodPage({ params }: Props) {
           </div>
         </div>
 
+        {/* Compact top-of-page lead form — surfaces conversion before mobile scroll burden */}
+        <div className="bg-white border-b border-[#E8E8E8] py-10 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-5">
+              <div>
+                <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-2">
+                  Have a question about {n.name}?
+                </p>
+                <h2 className="text-xl sm:text-2xl font-black text-black tracking-tight">
+                  Get same-day answers from Joshua.
+                </h2>
+              </div>
+              <a href="tel:6155512727" className="text-sm font-semibold text-black hover:underline whitespace-nowrap">
+                Or call 615-551-2727
+              </a>
+            </div>
+            <SuburbLeadForm
+              successTitle="Request Sent!"
+              successMessage={
+                <>
+                  Joshua will reach out same-day with {n.name} insights. For anything urgent, call{' '}
+                  <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                </>
+              }
+              resetLabel="Submit Another"
+            >
+              <input type="hidden" name="lead_type" value="buyer" />
+              <input type="hidden" name="suburb" value={n.name} />
+              <input type="hidden" name="source" value={`neighborhood-top:${n.slug}`} />
+
+              <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-3">
+                <input type="text" name="name" required placeholder="Full name" aria-label="Full name"
+                  className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                <input type="tel" name="phone" required placeholder="Phone" aria-label="Phone"
+                  className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                <button type="submit"
+                  className="text-white text-sm font-bold px-6 py-3 tracking-wide transition-colors whitespace-nowrap"
+                  style={{ backgroundColor: '#C41E3A' }}>
+                  Talk to Joshua →
+                </button>
+              </div>
+            </SuburbLeadForm>
+          </div>
+        </div>
+
         {/* About + sidebar */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
@@ -383,6 +429,63 @@ export default async function NeighborhoodPage({ params }: Props) {
           </div>
         </div>
 
+        {/* Mid-page lead form — surfaced after schools/HOA so engaged readers can convert without scrolling past the rest of the guide */}
+        <div id="contact" className="bg-[#F9F9F9] border-y border-[#E8E8E8] py-16 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto bg-white p-8 sm:p-10">
+            <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-6">
+              Get {n.name} Listings &amp; Local Advice
+            </p>
+            <SuburbLeadForm
+              successTitle="Request Sent!"
+              successMessage={
+                <>
+                  Joshua will reach out same-day with {n.name} insights and listings that fit. For anything urgent, call{' '}
+                  <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                </>
+              }
+              resetLabel="Submit Another"
+            >
+              <input type="hidden" name="lead_type" value="buyer" />
+              <input type="hidden" name="suburb" value={n.name} />
+              <input type="hidden" name="source" value={`neighborhood-mid:${n.slug}`} />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label htmlFor="name" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Full Name *</label>
+                  <input type="text" id="name" name="name" required placeholder="Jane Smith"
+                    className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                </div>
+                <div>
+                  <label htmlFor="phone" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Phone *</label>
+                  <input type="tel" id="phone" name="phone" required placeholder="615-555-0000"
+                    className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="email" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Email Address *</label>
+                <input type="email" id="email" name="email" required placeholder="you@example.com"
+                  className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+              </div>
+
+              <div>
+                <label htmlFor="body" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">What can Joshua help with? (optional)</label>
+                <textarea id="body" name="body" rows={4}
+                  placeholder={`Buying or selling in ${n.name}? Tell Joshua your must-haves — school zone, budget, timeline. Anything helps.`}
+                  className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors resize-y" />
+              </div>
+
+              <p className="text-xs text-[#A0A0A0]">* Joshua responds same-day. No spam, no pressure.</p>
+
+              <button type="submit"
+                className="w-full sm:w-auto text-white text-sm font-bold px-10 py-4 tracking-wide transition-colors"
+                style={{ backgroundColor: '#C41E3A' }}>
+                Talk to Joshua About {n.name} →
+              </button>
+            </SuburbLeadForm>
+          </div>
+        </div>
+
         {/* Why Joshua */}
         <div className="bg-[#F5F5F5] py-16 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
@@ -473,7 +576,7 @@ export default async function NeighborhoodPage({ params }: Props) {
         )}
 
         {/* Contact CTA */}
-        <div id="contact" className="text-white py-16 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#0A1628' }}>
+        <div className="text-white py-16 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#0A1628' }}>
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
             <div>
               <h2 className="text-3xl font-black tracking-tight">
@@ -506,60 +609,6 @@ export default async function NeighborhoodPage({ params }: Props) {
                 Text 615-551-2727
               </a>
             </div>
-          </div>
-
-          {/* Inline lead-capture form */}
-          <div className="max-w-3xl mx-auto mt-12 bg-white p-8 sm:p-10">
-            <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-6">
-              Get {n.name} Listings &amp; Local Advice
-            </p>
-            <SuburbLeadForm
-              successTitle="Request Sent!"
-              successMessage={
-                <>
-                  Joshua will reach out same-day with {n.name} insights and listings that fit. For anything urgent, call{' '}
-                  <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
-                </>
-              }
-              resetLabel="Submit Another"
-            >
-              <input type="hidden" name="lead_type" value="buyer" />
-              <input type="hidden" name="suburb" value={n.name} />
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <div>
-                  <label htmlFor="name" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Full Name *</label>
-                  <input type="text" id="name" name="name" required placeholder="Jane Smith"
-                    className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
-                </div>
-                <div>
-                  <label htmlFor="phone" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Phone *</label>
-                  <input type="tel" id="phone" name="phone" required placeholder="615-555-0000"
-                    className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
-                </div>
-              </div>
-
-              <div>
-                <label htmlFor="email" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Email Address *</label>
-                <input type="email" id="email" name="email" required placeholder="you@example.com"
-                  className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
-              </div>
-
-              <div>
-                <label htmlFor="body" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">What can Joshua help with? (optional)</label>
-                <textarea id="body" name="body" rows={4}
-                  placeholder={`Buying or selling in ${n.name}? Tell Joshua your must-haves — school zone, budget, timeline. Anything helps.`}
-                  className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors resize-y" />
-              </div>
-
-              <p className="text-xs text-[#A0A0A0]">* Joshua responds same-day. No spam, no pressure.</p>
-
-              <button type="submit"
-                className="w-full sm:w-auto text-white text-sm font-bold px-10 py-4 tracking-wide transition-colors"
-                style={{ backgroundColor: '#C41E3A' }}>
-                Talk to Joshua About {n.name} →
-              </button>
-            </SuburbLeadForm>
           </div>
         </div>
       </div>
