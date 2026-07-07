@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
-import { getSiteUrlCatalog, SITE_ORIGIN } from '@/lib/site-urls'
+import { getSiteUrlCatalog, absoluteUrl } from '@/lib/site-urls'
 
 // Dynamic sitemap — Next.js App Router serves this at /sitemap.xml automatically
 // and re-generates on every deploy. The URL set comes from lib/site-urls.ts,
@@ -11,7 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date()
 
   return getSiteUrlCatalog().map((entry) => ({
-    url: `${SITE_ORIGIN}${entry.path}`,
+    url: absoluteUrl(entry.path),
     priority: entry.priority,
     changeFrequency: entry.changeFrequency,
     lastModified: entry.lastModified ?? now,

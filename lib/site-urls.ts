@@ -144,7 +144,18 @@ export function getSiteUrlCatalog(): SiteUrlEntry[] {
   ]
 }
 
+/**
+ * Build the absolute URL for a catalog path. The root path '/' collapses to the
+ * bare origin (no trailing slash) so the sitemap/IndexNow URL matches the
+ * homepage's declared canonical (`https://www.joshuafink.com`). Emitting
+ * `.../ ` in the sitemap while the page canonicalizes to no-slash creates an
+ * "alternate page with proper canonical tag" split on the most important page.
+ */
+export function absoluteUrl(path: string): string {
+  return path === '/' ? SITE_ORIGIN : `${SITE_ORIGIN}${path}`
+}
+
 /** Absolute URLs for every catalog entry — used by the IndexNow submitter. */
 export function getAllSiteUrls(): string[] {
-  return getSiteUrlCatalog().map((entry) => `${SITE_ORIGIN}${entry.path}`)
+  return getSiteUrlCatalog().map((entry) => absoluteUrl(entry.path))
 }

@@ -5,6 +5,7 @@ import { blogPosts } from '@/lib/blog'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 
 export const metadata: Metadata = {
+  alternates: { canonical: 'https://www.joshuafink.com/blog' },
   title: 'Real Estate Blog',
   description:
     'Insights, tips, and market updates from Joshua Fink — Affiliate Broker at Compass Real Estate in Middle Tennessee. Stay informed about Nashville and Brentwood real estate.',

@@ -47,7 +47,12 @@ export const metadata: Metadata = {
     siteName: 'Joshua Fink | Compass Real Estate',
   },
   alternates: {
-    canonical: '/',
+    // NOTE: intentionally NO default `canonical` here. A root-level
+    // canonical: '/' is inherited by every child page that doesn't set its
+    // own, silently pointing them all at the homepage ("alternate page with
+    // proper canonical tag" in Search Console → they never rank). Each page
+    // sets its own self-referential canonical instead; the homepage sets its
+    // canonical in app/page.tsx.
     types: {
       // RSS autodiscovery — lets Feedly / NetNewsWire / LinkedIn RSS
       // feeders find /blog/rss.xml without a manual pointer.
