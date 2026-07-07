@@ -33,6 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       'Joshua Fink',
       'Compass Real Estate',
     ],
+    alternates: { canonical: `https://www.joshuafink.com/sell/${slug}` },
     openGraph: {
       title: `Sell Your Home in ${suburb.displayName} — Free Market Valuation | Joshua Fink`,
       description: `What is my ${suburb.name} home worth? The median price is ${suburb.medianPrice} in 2026. Get a free, personal valuation from Joshua Fink at Compass Real Estate.`,

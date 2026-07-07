@@ -8,6 +8,7 @@ import { listings as featuredListings } from '@/lib/listings'
 import { buildListingItemList } from '@/lib/listing-schema'
 
 export const metadata: Metadata = {
+  alternates: { canonical: 'https://www.joshuafink.com' },
   title: 'Top Realtor in Middle Tennessee',
   description:
     'Top-rated Compass agent serving Franklin, Brentwood, Spring Hill, Nashville, and all of Middle Tennessee. 17+ years, 100+ homes sold annually, 5★ rating from 218+ clients. Free valuation and off-market listing access.',
