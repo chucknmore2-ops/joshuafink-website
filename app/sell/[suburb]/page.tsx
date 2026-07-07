@@ -87,11 +87,21 @@ export default async function SuburbPage({ params }: Props) {
         url: `https://www.joshuafink.com/sell/${slug}`,
         telephone: '+16155512727',
         email: 'joshua@joshuafink.com',
+        // Canonical Brentwood office NAP — must match app/layout.tsx and the
+        // Google Business Profile so every suburb page reinforces the same
+        // business location (map-pack eligibility).
         address: {
           '@type': 'PostalAddress',
-          addressLocality: suburb.schemaCity,
+          streetAddress: '8119 Isabella Lane, Suite 105',
+          addressLocality: 'Brentwood',
+          addressRegion: 'TN',
+          postalCode: '37027',
+          addressCountry: 'US',
+        },
+        areaServed: {
+          '@type': 'City',
+          name: suburb.schemaCity,
           addressRegion: suburb.schemaState,
-          postalCode: suburb.schemaZip,
           addressCountry: 'US',
         },
         priceRange: '$$$',
