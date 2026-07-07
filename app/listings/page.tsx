@@ -44,7 +44,13 @@ function isAvailable(status: string): boolean {
 }
 
 export default function ListingsPage() {
-  const activeCount = listings.filter((l) => isAvailable(l.status)).length
+  // Only genuinely-available homes belong in the "Active Listings" grid, the
+  // count, and the availability schema. A Pending/Contingent/Under-Contract
+  // listing must not be rendered as active inventory. Today every listing is
+  // "Active" so this is a no-op, but it makes the page correct the moment a
+  // non-Active status appears in the Compass sync.
+  const availableListings = listings.filter((l) => isAvailable(l.status))
+  const activeCount = availableListings.length
 
   const soldTotal = soldListings.reduce((sum, l) => sum + l.price, 0)
 
@@ -64,7 +70,7 @@ export default function ListingsPage() {
     { name: 'Listings', href: '/listings' },
   ])
 
-  const activeItemList = buildListingItemList(listings, 'Active Listings — Joshua Fink, Compass')
+  const activeItemList = buildListingItemList(availableListings, 'Active Listings — Joshua Fink, Compass')
   const soldItemList = buildListingItemList(soldListings, 'Recently Sold — Joshua Fink, Compass')
 
   // City links — distribute equity to /buy, /neighborhoods, and /cash-offer pages
@@ -183,7 +189,7 @@ export default function ListingsPage() {
           </div>
         )}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {listings.map((listing) => (
+          {availableListings.map((listing) => (
             <ListingCard key={listing.compassUrl} listing={listing} />
           ))}
         </div>
