@@ -6,10 +6,12 @@ import {
   getAllNeighborhoodSlugs,
   getRelatedNeighborhoods,
 } from '@/lib/neighborhoods'
-import { getSuburb } from '@/lib/suburbs'
+import { getSuburb, getSuburbSlugForListing } from '@/lib/suburbs'
 import { reviewStats } from '@/lib/reviews'
 import { withUtm } from '@/lib/utm'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
+import ListingCard from '@/components/ListingCard'
+import { listings } from '@/lib/listings'
 
 type Props = {
   params: Promise<{ slug: string }>
@@ -68,6 +70,17 @@ export default async function NeighborhoodPage({ params }: Props) {
     }
   )
   const related = getRelatedNeighborhoods(n.slug, 3)
+
+  // On-site inventory: the site's OWN active listings whose city maps to this
+  // neighborhood's parent city. Reuses the same listing→suburb matcher as
+  // ListingCard (getSuburbSlugForListing) so the grid, the internal
+  // /listings/[slug] detail pages, and the /buy links can't drift apart. Empty
+  // for cities with no current Joshua listings — in that case we render no grid
+  // and fall back to the existing lead form / Compass hand-off below.
+  const cityListings = listings.filter(
+    (l) => getSuburbSlugForListing(l.city) === n.citySlug,
+  )
+  const hasCityListings = cityListings.length > 0
 
   const placeSchema = {
     '@context': 'https://schema.org',
@@ -172,26 +185,48 @@ export default async function NeighborhoodPage({ params }: Props) {
               {n.intro}
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-4">
-              <Link
-                href="#contact"
-                className="inline-block text-sm font-bold px-8 py-4 tracking-wide transition-colors text-center"
-                style={{ backgroundColor: '#C41E3A', color: '#FFFFFF' }}
-              >
-                Talk to Joshua
-              </Link>
-              <a
-                href={compassUrl}
-                target="_blank"
-                rel="noopener"
-                className="inline-block border text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-white hover:text-black transition-colors text-center"
-                style={{ borderColor: '#FFFFFF' }}
-              >
-                See Live {n.name} Listings on Compass →
-              </a>
+              {hasCityListings ? (
+                <Link
+                  href="#listings"
+                  className="inline-block text-sm font-bold px-8 py-4 tracking-wide transition-colors text-center"
+                  style={{ backgroundColor: '#C41E3A', color: '#FFFFFF' }}
+                >
+                  See {n.city} Homes for Sale →
+                </Link>
+              ) : (
+                <Link
+                  href="#contact"
+                  className="inline-block text-sm font-bold px-8 py-4 tracking-wide transition-colors text-center"
+                  style={{ backgroundColor: '#C41E3A', color: '#FFFFFF' }}
+                >
+                  Talk to Joshua
+                </Link>
+              )}
+              {hasCityListings ? (
+                <Link
+                  href="#contact"
+                  className="inline-block border text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-white hover:text-black transition-colors text-center"
+                  style={{ borderColor: '#FFFFFF' }}
+                >
+                  Talk to Joshua
+                </Link>
+              ) : (
+                <a
+                  href={compassUrl}
+                  target="_blank"
+                  rel="noopener"
+                  className="inline-block border text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-white hover:text-black transition-colors text-center"
+                  style={{ borderColor: '#FFFFFF' }}
+                >
+                  See Live {n.name} Listings on Compass →
+                </a>
+              )}
             </div>
-            <p className="mt-4 text-xs" style={{ color: '#7B7B7B' }}>
-              Listings are served live from compass.com. Joshua Fink is your attributed agent on Compass.
-            </p>
+            {!hasCityListings && (
+              <p className="mt-4 text-xs" style={{ color: '#7B7B7B' }}>
+                Listings are served live from compass.com. Joshua Fink is your attributed agent on Compass.
+              </p>
+            )}
           </div>
         </div>
 
@@ -252,6 +287,43 @@ export default async function NeighborhoodPage({ params }: Props) {
             )}
           </div>
         </div>
+
+        {/* On-site inventory — keep high-intent buyers on joshuafink.com with the
+            agent's OWN active listings (each ListingCard's primary click goes to
+            the internal /listings/[slug] detail page) instead of bouncing them
+            straight to Compass. Only rendered when we actually have matching
+            listings; otherwise the lead form + Compass hand-off below stand in. */}
+        {hasCityListings && (
+          <div id="listings" className="bg-white border-b border-[#E8E8E8] py-16 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+              <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
+                Active Listings
+              </p>
+              <h2 className="text-3xl font-black text-black tracking-tight mb-3">
+                Homes for Sale in {n.city}, TN
+              </h2>
+              <p className="text-[#6B6B6B] text-sm leading-relaxed max-w-3xl mb-10">
+                {cityListings.length === 1 ? 'A current' : 'Current'} {n.city} {cityListings.length === 1 ? 'listing' : 'listings'} represented by
+                Joshua at Compass — view full details on-site, then reach out for a private showing.
+                Searching specifically in {n.name}? Text Joshua and he&apos;ll send matching homes as
+                they hit the market.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {cityListings.map((listing) => (
+                  <ListingCard key={listing.compassUrl} listing={listing} />
+                ))}
+              </div>
+              <div className="mt-10">
+                <Link
+                  href="/listings"
+                  className="inline-block border border-black text-black text-sm font-bold px-6 py-3 tracking-wide hover:bg-black hover:text-white transition-colors text-center"
+                >
+                  View all active listings →
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Compact top-of-page lead form — surfaces conversion before mobile scroll burden */}
         <div className="bg-white border-b border-[#E8E8E8] py-10 px-4 sm:px-6 lg:px-8">
