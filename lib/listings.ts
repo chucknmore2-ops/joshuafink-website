@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-07-06T12:08:26.912Z
+// AUTO-GENERATED — Last synced: 2026-07-07T11:11:53.742Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -15,12 +15,13 @@ export interface Listing {
   compassUrl: string;
   imageUrl?: string;
   // ISO timestamp of the last Compass sync that confirmed this listing.
+  // Used by /listings to flag the grid as 'Verifying…' if the file goes stale.
   lastVerified?: string;
 }
 
-// Mirrors the header timestamp so server components can compute sync
-// staleness without parsing comments. Rewritten by scripts/fetch-images.mjs.
-export const listingsSyncedAt = "2026-07-06T12:08:26.912Z";
+// Mirrors the header timestamp so server components can compute sync staleness
+// without parsing comments. Updated by scripts/fetch-images.mjs each sync.
+export const listingsSyncedAt = "2026-07-07T11:11:53.742Z";
 
 export const listings: Listing[] = [
   {
@@ -30,7 +31,7 @@ export const listings: Listing[] = [
     beds: 5,
     baths: 5,
     sqft: 5855,
-    status: "Active",
+    status: "Active Under Contract",
     compassUrl: "https://www.compass.com/homedetails/1901-New-Bristol-Ln-Brentwood-TN-37027/RS25E_pid/",
     imageUrl: "https://www.compass.com/m/5e20f6de5ae242cba0b75f7227f5a4b1f5937902cfbf792d921c2e860034cf71/2048x1536.webp",
     lastVerified: listingsSyncedAt,
@@ -42,7 +43,7 @@ export const listings: Listing[] = [
     beds: 6,
     baths: 6,
     sqft: 4256,
-    status: "Active",
+    status: "Active Under Contract",
     compassUrl: "https://www.compass.com/homedetails/9560-Dresden-Square-Brentwood-TN-37027/T863Z_pid/",
     imageUrl: "https://www.compass.com/m/1726667bfbabb4404e04bd62941b072da078e36ffe55a775567367f26ee41f7d/2048x1536.webp",
     lastVerified: listingsSyncedAt,
@@ -66,7 +67,7 @@ export const listings: Listing[] = [
     beds: 3,
     baths: 2,
     sqft: 1545,
-    status: "Active",
+    status: "Active Under Contract",
     compassUrl: "https://www.compass.com/homedetails/107-Garwood-Dr-Nashville-TN-37210/TBGK6_pid/",
     imageUrl: "https://www.compass.com/m/e3e365a5d55b995a81d5a88a152f7f8a35df3574_img_0_bd65f/2048x1536.webp",
     lastVerified: listingsSyncedAt,
@@ -90,7 +91,7 @@ export const listings: Listing[] = [
     beds: 4,
     baths: 2,
     sqft: 1400,
-    status: "Active",
+    status: "Active Under Contract",
     compassUrl: "https://www.compass.com/homedetails/511-Wanda-Dr-Nashville-TN-37210/SDYP1_pid/",
     imageUrl: "https://www.compass.com/m/4e9cb7fc9872c9dbd0b0f820634b2dfa965d3cfe_img_0_e40e3/2048x1536.webp",
     lastVerified: listingsSyncedAt,
@@ -105,18 +106,6 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/3814-Plantation-Dr-Hermitage-TN-37076/TFS3S_pid/",
     imageUrl: "https://www.compass.com/m/c97bf81a1c370da6c2ad6d03ad18b17af397e467f851cba9352fb723580bed34/2048x1536.webp",
-    lastVerified: listingsSyncedAt,
-  },
-  {
-    address: "870 Reeves Rd",
-    city: "Antioch, TN 37013 | MLS #3231793",
-    price: 339900,
-    beds: 3,
-    baths: 2,
-    sqft: 1134,
-    status: "Active",
-    compassUrl: "https://www.compass.com/homedetails/870-Reeves-Rd-Antioch-TN-37013/SW1BU_pid/",
-    imageUrl: "https://www.compass.com/m/a7ef33f971b3f98f9c9df198198d003671a4c04ee14a9a100ddb182a937911e6/2048x1536.webp",
     lastVerified: listingsSyncedAt,
   },
   {
