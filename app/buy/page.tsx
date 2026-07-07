@@ -5,6 +5,7 @@ import SuburbLeadForm from '@/components/SuburbLeadForm'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 import { suburbs, getAllSuburbSlugs } from '@/lib/suburbs'
 import { neighborhoods } from '@/lib/neighborhoods'
+import { getAllCashOfferCitySlugs } from '@/lib/cash-offer-cities'
 import { reviewStats } from '@/lib/reviews'
 
 export const metadata: Metadata = {
@@ -116,6 +117,13 @@ const cityList: { slug: string; name: string; county: string; medianPrice: strin
 const neighborhoodList = Object.values(neighborhoods)
   .slice()
   .sort((a, b) => a.city.localeCompare(b.city) || a.name.localeCompare(b.name))
+
+// Cities that also have a cash-offer landing page, so the hub can hand its
+// link authority to those high-intent seller pages (the /buy hub linked to
+// /buy/[city] and the neighborhood guides but never to /cash-offer/[city]).
+// Guarded as a Set so a future slug drift between suburbs and cash-offer
+// cities silently omits the link instead of 404-ing.
+const cashOfferSlugs = new Set(getAllCashOfferCitySlugs())
 
 export default function BuyPage() {
   const faqLd = {
@@ -270,21 +278,32 @@ export default function BuyPage() {
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {cityList.map(({ slug, name, county, medianPrice }) => (
-            <Link
+            <div
               key={slug}
-              href={`/buy/${slug}`}
-              className="block rounded-2xl border border-neutral-200 bg-white p-5 transition-all duration-200 hover:border-black hover:shadow-md"
+              className="rounded-2xl border border-neutral-200 bg-white p-5 transition-all duration-200 hover:border-black hover:shadow-md"
             >
-              <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-1">
-                {county}
-              </p>
-              <p className="text-base font-black text-black mb-1">
-                Homes for Sale in {name}, TN
-              </p>
-              <p className="text-xs text-neutral-500">
-                Median {medianPrice} · See buyer guide →
-              </p>
-            </Link>
+              <Link href={`/buy/${slug}`} className="group block">
+                <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-1">
+                  {county}
+                </p>
+                <p className="text-base font-black text-black mb-1 group-hover:underline">
+                  Homes for Sale in {name}, TN
+                </p>
+                <p className="text-xs text-neutral-500">
+                  Median {medianPrice} · See buyer guide →
+                </p>
+              </Link>
+              {cashOfferSlugs.has(slug) && (
+                <div className="mt-3 pt-3 border-t border-neutral-100">
+                  <Link
+                    href={`/cash-offer/${slug}`}
+                    className="text-xs font-semibold text-neutral-500 underline-offset-4 hover:text-black hover:underline"
+                  >
+                    Need to sell first? Get a {name} cash offer →
+                  </Link>
+                </div>
+              )}
+            </div>
           ))}
         </div>
       </div>
