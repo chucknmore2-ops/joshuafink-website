@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { reviews, reviewStats } from '@/lib/reviews'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
+import GoogleReviewCTA from '@/components/GoogleReviewCTA'
 
 export const metadata: Metadata = {
   title: 'Client Reviews | Joshua Fink | Compass Real Estate Nashville',
@@ -150,6 +151,12 @@ export default function ReviewsPage() {
           >
             Read All Reviews on Zillow →
           </a>
+        </div>
+
+        {/* Leave a Google review — renders only once GOOGLE_REVIEW_URL is set
+            (lib/reviews.ts). Google reviews drive the local map pack. */}
+        <div className="mt-12">
+          <GoogleReviewCTA variant="light" />
         </div>
 
         {/* Work with Josh CTA */}
