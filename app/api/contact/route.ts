@@ -15,6 +15,9 @@ const GOOGLE_SHEET_WEBHOOK_URL = process.env.GOOGLE_SHEET_WEBHOOK_URL || ''
 // Optional shared secret — if set, it's sent with each row and the Apps Script
 // can reject anything without it. Leave empty to skip.
 const SHEET_WEBHOOK_SECRET = process.env.SHEET_WEBHOOK_SECRET || ''
+// Pushover — instant phone alert on each new lead. No-ops until both are set.
+const PUSHOVER_TOKEN = process.env.PUSHOVER_TOKEN || ''
+const PUSHOVER_USER = process.env.PUSHOVER_USER || ''
 
 // ---------------------------------------------------------------------------
 // Spam detection
@@ -285,6 +288,55 @@ async function pushToSheet(lead: Record<string, string>) {
 }
 
 // ---------------------------------------------------------------------------
+// Pushover — instant phone push notification on each new lead.
+// High priority (1) so it bypasses quiet hours. No-ops until creds are set.
+// ---------------------------------------------------------------------------
+
+async function sendPushover(lead: Record<string, string>) {
+  if (!PUSHOVER_TOKEN || !PUSHOVER_USER) {
+    console.log('Pushover: skipping — PUSHOVER_TOKEN or PUSHOVER_USER not set')
+    return
+  }
+
+  const type = lead.subject || lead.lead_type || 'lead'
+  const source = lead.source ? ` · ${lead.source}` : ''
+  const message = [
+    lead.phone ? `📞 ${lead.phone}` : null,
+    lead.email ? `✉️ ${lead.email}` : null,
+    lead.property_address ? `🏠 ${lead.property_address}` : null,
+    lead.suburb ? `📍 ${lead.suburb}` : null,
+    lead.body ? `“${lead.body.slice(0, 220)}”` : null,
+  ].filter(Boolean).join('\n') || 'New lead from joshuafink.com'
+
+  const params = new URLSearchParams({
+    token: PUSHOVER_TOKEN,
+    user: PUSHOVER_USER,
+    title: `🏡 New Lead — ${lead.name || 'Unknown'} (${type})${source}`,
+    message,
+    priority: '1', // high priority — bypasses quiet hours
+    sound: 'cashregister',
+  })
+
+  // Tap the notification to call the lead directly.
+  const digits = (lead.phone || '').replace(/\D/g, '')
+  if (digits) {
+    params.set('url', `tel:${digits}`)
+    params.set('url_title', `Call ${lead.name || 'lead'}`)
+  }
+
+  try {
+    const res = await fetch('https://api.pushover.net/1/messages.json', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString(),
+    })
+    if (!res.ok) console.error('Pushover: non-OK response', res.status)
+  } catch (err) {
+    console.error('Pushover push error:', err)
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Main handler
 // ---------------------------------------------------------------------------
 
@@ -327,6 +379,7 @@ export async function POST(req: NextRequest) {
       sendSlack(lead),
       forwardToJoshua(lead),
       pushToSheet(lead), // Free Google Sheet lead log — works on Vercel
+      sendPushover(lead), // Instant phone push alert
     ]
 
     // Auto-reply only if email provided
