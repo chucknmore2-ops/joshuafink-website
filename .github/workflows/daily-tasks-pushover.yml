@@ -1,0 +1,53 @@
+name: Daily tasks Pushover
+
+# Sends Josh his 5-10 minute daily growth tasks via Pushover every morning.
+# Runs from GitHub Actions because the Vercel Hobby cron slots are maxed.
+#
+# Required repository secrets (Settings -> Secrets and variables -> Actions):
+#   PUSHOVER_TOKEN   Pushover application API token (same value as in Vercel)
+#   PUSHOVER_USER    Pushover user key (same value as in Vercel)
+#
+# The step no-ops (exits 0) if either secret is missing, so a partial setup
+# never fails the workflow. Verify manually: Actions tab -> "Daily tasks
+# Pushover" -> "Run workflow".
+
+on:
+  schedule:
+    # 7am CDT / 8am CST, every day. DST drift is acceptable.
+    - cron: '0 12 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-tasks-pushover
+  cancel-in-progress: true
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Send daily tasks to Pushover
+        env:
+          PUSHOVER_TOKEN: ${{ secrets.PUSHOVER_TOKEN }}
+          PUSHOVER_USER: ${{ secrets.PUSHOVER_USER }}
+        run: |
+          if [ -z "$PUSHOVER_TOKEN" ] || [ -z "$PUSHOVER_USER" ]; then
+            echo "PUSHOVER_TOKEN or PUSHOVER_USER not set — skipping (no failure)."
+            exit 0
+          fi
+          MSG=$(printf '%s\n%s\n%s\n\n%s' \
+            "1) Work new CRM leads FAST - call/text, update status" \
+            "2) Ask 1 happy client for a Google review (your #1 lever)" \
+            "3) 1 Google Business post or a few photos" \
+            "Reviews + GBP = the map pack = more leads.")
+          curl -sS --fail -m 20 \
+            --form-string "token=$PUSHOVER_TOKEN" \
+            --form-string "user=$PUSHOVER_USER" \
+            --form-string "title=Daily Growth Tasks (5-10 min)" \
+            --form-string "message=$MSG" \
+            --form-string "priority=0" \
+            --form-string "sound=bike" \
+            https://api.pushover.net/1/messages.json
