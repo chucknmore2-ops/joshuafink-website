@@ -58,3 +58,45 @@ export function buildListingItemList(items: Listing[], name: string) {
     })),
   }
 }
+
+/**
+ * Single-property schema for an on-site listing detail page
+ * (app/listings/[slug]/page.tsx).
+ *
+ * Emits a RealEstateListing whose `about` is a SingleFamilyResidence built with
+ * the SAME address / room-count / floor-size shape as buildListingItemList
+ * above, so the detail page and the /listings grid describe each home
+ * identically to Google. Price is intentionally omitted for the same
+ * Search-Console-validity reason noted at the top of this file — it lives on the
+ * visible page, not in the markup. `url` should be the on-site detail URL (not
+ * the Compass URL) so this page is the canonical entity for the address.
+ */
+export function buildListingSchema(listing: Listing, url: string) {
+  const residence: Record<string, unknown> = {
+    '@type': 'SingleFamilyResidence',
+    name: listing.address,
+    address: parseAddress(listing.address, listing.city),
+    ...(listing.imageUrl ? { image: listing.imageUrl } : {}),
+    ...(listing.beds !== undefined ? { numberOfRooms: listing.beds } : {}),
+    ...(listing.baths !== undefined ? { numberOfBathroomsTotal: listing.baths } : {}),
+    ...(listing.sqft !== undefined
+      ? {
+          floorSize: {
+            '@type': 'QuantitativeValue',
+            value: listing.sqft,
+            unitCode: 'FTK',
+          },
+        }
+      : {}),
+  }
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'RealEstateListing',
+    url,
+    name: listing.address,
+    ...(listing.imageUrl ? { image: listing.imageUrl } : {}),
+    ...(listing.lastVerified ? { datePosted: listing.lastVerified } : {}),
+    about: residence,
+  }
+}
