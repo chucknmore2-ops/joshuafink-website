@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { Listing } from '@/lib/listings'
 import { getSuburb, getSuburbSlugForListing } from '@/lib/suburbs'
+import { hasListingDetail, listingSlug } from '@/lib/listing-detail'
 import { withUtm } from '@/lib/utm'
 
 function formatPrice(price: number): string {
@@ -16,9 +17,12 @@ function formatPrice(price: number): string {
 }
 
 function statusColor(status: string): string {
-  if (status === 'Active') return 'bg-black text-white'
+  if (status === 'Active' || status === 'Coming Soon') return 'bg-black text-white'
   if (status.startsWith('Open House')) return 'bg-neutral-900 text-white'
   if (status === 'Sold') return 'bg-red-600 text-white'
+  // Pending / Contingent / Under Contract → amber so buyers don't mistake these
+  // for available inventory (MLS accuracy + lead-intent quality).
+  if (/pending|contingent|under contract/i.test(status)) return 'bg-amber-500 text-white'
   return 'bg-neutral-100 text-neutral-600'
 }
 
@@ -30,6 +34,9 @@ interface Props {
 export default function ListingCard({ listing }: Props) {
   const suburbSlug = getSuburbSlugForListing(listing.city)
   const suburbName = suburbSlug ? getSuburb(suburbSlug)?.name : undefined
+  // Active listings have an on-site detail page; sold homes don't, so their card
+  // keeps handing straight off to Compass.
+  const detailHref = hasListingDetail(listing) ? `/listings/${listingSlug(listing)}` : null
 
   return (
     <article className="group border border-neutral-200 bg-white rounded-2xl flex flex-col overflow-hidden transition-all duration-200 ease-out hover:shadow-xl hover:-translate-y-1">
@@ -63,9 +70,19 @@ export default function ListingCard({ listing }: Props) {
           </div>
         )}
 
+        {/* Primary click target — cover the image with a link to the on-site
+            detail page (active listings only). */}
+        {detailHref && (
+          <Link
+            href={detailHref}
+            className="absolute inset-0 z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-inset"
+            aria-label={`View details for ${listing.address}`}
+          />
+        )}
+
         {/* Status badge */}
         <span
-          className={`absolute top-3 left-3 text-xs font-semibold px-3 py-1 rounded-full tracking-wide ${statusColor(
+          className={`absolute top-3 left-3 z-20 text-xs font-semibold px-3 py-1 rounded-full tracking-wide ${statusColor(
             listing.status
           )}`}
         >
@@ -79,7 +96,16 @@ export default function ListingCard({ listing }: Props) {
           <p className="text-2xl font-black text-black tracking-tight">
             {formatPrice(listing.price)}
           </p>
-          <p className="text-sm font-semibold text-black mt-1">{listing.address}</p>
+          {detailHref ? (
+            <Link
+              href={detailHref}
+              className="text-sm font-semibold text-black mt-1 block underline-offset-4 hover:underline"
+            >
+              {listing.address}
+            </Link>
+          ) : (
+            <p className="text-sm font-semibold text-black mt-1">{listing.address}</p>
+          )}
           <p className="text-xs text-neutral-500 mt-0.5">{listing.city}</p>
         </div>
 
@@ -130,19 +156,61 @@ export default function ListingCard({ listing }: Props) {
           </div>
         )}
 
-        <a
-          href={withUtm(listing.compassUrl, {
-            source: 'joshuafink',
-            medium: 'referral',
-            campaign: 'listing-card',
-            content: listing.address.toLowerCase().replace(/[^\w]+/g, '-'),
-          })}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`${suburbSlug ? '' : 'mt-auto '}text-center text-sm font-semibold border border-black text-black py-2.5 rounded-full tracking-wide transition-all duration-200 hover:bg-black hover:text-white`}
-        >
-          View on Compass →
-        </a>
+        <div className={`${suburbSlug ? '' : 'mt-auto '}flex flex-col gap-2`}>
+          {/* Active listings: keep the buyer on-site first. Sold homes have no
+              detail page, so their primary CTA stays the tap-to-text. */}
+          {detailHref ? (
+            <Link
+              href={detailHref}
+              className="text-center text-sm font-semibold bg-black text-white py-2.5 rounded-full tracking-wide transition-all duration-200 hover:bg-neutral-800"
+              data-cta="listing-card-details"
+            >
+              View Details →
+            </Link>
+          ) : (
+            <a
+              href={`sms:+16155512727?body=${encodeURIComponent(
+                `Hi Joshua — I'm interested in ${listing.address}. Can you tell me more?`
+              )}`}
+              className="text-center text-sm font-semibold bg-black text-white py-2.5 rounded-full tracking-wide transition-all duration-200 hover:bg-neutral-800"
+              data-cta="listing-card-ask"
+              aria-label={`Text Joshua about ${listing.address}`}
+            >
+              Ask Joshua about this home
+            </a>
+          )}
+
+          {detailHref && (
+            <a
+              href={`sms:+16155512727?body=${encodeURIComponent(
+                `Hi Joshua — I'm interested in ${listing.address}. Can you tell me more?`
+              )}`}
+              className="text-center text-sm font-semibold border border-black text-black py-2.5 rounded-full tracking-wide transition-all duration-200 hover:bg-black hover:text-white"
+              data-cta="listing-card-ask"
+              aria-label={`Text Joshua about ${listing.address}`}
+            >
+              Ask Joshua about this home
+            </a>
+          )}
+
+          <a
+            href={withUtm(listing.compassUrl, {
+              source: 'joshuafink',
+              medium: 'referral',
+              campaign: 'listing-card',
+              content: listing.address.toLowerCase().replace(/[^\w]+/g, '-'),
+            })}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={
+              detailHref
+                ? 'text-center text-xs font-semibold text-neutral-500 py-1 underline-offset-4 hover:text-black hover:underline'
+                : 'text-center text-sm font-semibold border border-black text-black py-2.5 rounded-full tracking-wide transition-all duration-200 hover:bg-black hover:text-white'
+            }
+          >
+            View on Compass ↗
+          </a>
+        </div>
       </div>
     </article>
   )

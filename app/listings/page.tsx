@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import ListingCard from '@/components/ListingCard'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
-import { listings } from '@/lib/listings'
+import { listings, listingsSyncedAt } from '@/lib/listings'
 import { soldListings } from '@/lib/sold-listings'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 import { buildListingItemList } from '@/lib/listing-schema'
@@ -34,19 +34,54 @@ export const metadata: Metadata = {
     "Active listings and recently sold homes from Joshua Fink at Compass Real Estate — Nashville, Brentwood, Franklin, Spring Hill, Columbia, and across Middle Tennessee. See what's on the market and what's actually closing.",
 }
 
+// Statuses that mean the home is genuinely available to a new buyer.
+// Excludes "Active Under Contract", "Active Contingent", "Pending", etc. — those
+// are under contract and must not be counted as available inventory.
+const AVAILABLE_STATUSES = new Set(['Active', 'Coming Soon'])
+
+function isAvailable(status: string): boolean {
+  return AVAILABLE_STATUSES.has(status) || status.startsWith('Open House')
+}
+
 export default function ListingsPage() {
-  const activeCount = listings.filter(
-    (l) => l.status === 'Active' || l.status.startsWith('Active') || l.status.startsWith('Open')
-  ).length
+  // Only genuinely-available homes belong in the "Active Listings" grid, the
+  // count, and the availability schema. A Pending/Contingent/Under-Contract
+  // listing must not be rendered as active inventory. Today every listing is
+  // "Active" so this is a no-op, but it makes the page correct the moment a
+  // non-Active status appears in the Compass sync.
+  const availableListings = listings.filter((l) => isAvailable(l.status))
+  const activeCount = availableListings.length
 
   const soldTotal = soldListings.reduce((sum, l) => sum + l.price, 0)
+
+  // MLS-freshness guard: if the Compass sync hasn't refreshed in >5 days, the
+  // cached 'Active' status is no longer fully trustworthy. We deliberately KEEP
+  // rendering the grid (never blank a revenue page) but (a) withhold the active
+  // ItemList schema so we don't publish a possibly-sold home as availability
+  // InStock, and (b) show a visible "re-verifying" note. See
+  // lib/listings.ts:listingsSyncedAt.
+  const STALENESS_LIMIT_MS = 5 * 24 * 60 * 60 * 1000
+  const syncAgeMs = Date.now() - new Date(listingsSyncedAt).getTime()
+  const isListingsStale = Number.isFinite(syncAgeMs) && syncAgeMs > STALENESS_LIMIT_MS
+  const syncAgeDays = Math.floor(syncAgeMs / (24 * 60 * 60 * 1000))
+
+  // Honest, always-visible freshness stamp: the real date of the last Compass
+  // sync (listingsSyncedAt, rewritten by scripts/fetch-images.mjs). No cadence
+  // is claimed — the sync is not a guaranteed daily cron — so we only state when
+  // it last happened.
+  const listingsUpdatedLabel = new Date(listingsSyncedAt).toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: 'America/Chicago',
+  })
 
   const breadcrumb = buildBreadcrumbSchema([
     { name: 'Home', href: '/' },
     { name: 'Listings', href: '/listings' },
   ])
 
-  const activeItemList = buildListingItemList(listings, 'Active Listings — Joshua Fink, Compass')
+  const activeItemList = buildListingItemList(availableListings, 'Active Listings — Joshua Fink, Compass')
   const soldItemList = buildListingItemList(soldListings, 'Recently Sold — Joshua Fink, Compass')
 
   // City links — distribute equity to /buy, /neighborhoods, and /cash-offer pages
@@ -83,10 +118,12 @@ export default function ListingsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(activeItemList) }}
-      />
+      {!isListingsStale && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(activeItemList) }}
+        />
+      )}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(soldItemList) }}
@@ -104,6 +141,9 @@ export default function ListingsPage() {
           <h1 className="text-5xl font-black tracking-tight mb-4">Listings</h1>
           <p className="text-[#A0A0A0] text-lg">
             {activeCount} active {activeCount === 1 ? 'listing' : 'listings'} · {soldListings.length} recently sold across Middle Tennessee
+          </p>
+          <p className="text-[#6B6B6B] text-sm mt-2">
+            Listings updated <time dateTime={listingsSyncedAt}>{listingsUpdatedLabel}</time>
           </p>
         </div>
       </div>
@@ -153,8 +193,17 @@ export default function ListingsPage() {
       {/* Active Listings */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <h2 className="text-3xl font-black text-black mb-8 tracking-tight">Active Listings</h2>
+        {isListingsStale && (
+          <div className="mb-8 border border-amber-300 bg-amber-50 text-amber-900 p-4 rounded-2xl">
+            <p className="text-sm leading-relaxed">
+              <span className="font-semibold">Re-verifying availability.</span>{' '}
+              Our Compass sync last refreshed {syncAgeDays} days ago, so a home below may have changed status. For the most current inventory — including off-market and Coming Soon homes — text Joshua at{' '}
+              <a href="tel:6155512727" className="font-semibold underline">615-551-2727</a>.
+            </p>
+          </div>
+        )}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {listings.map((listing) => (
+          {availableListings.map((listing) => (
             <ListingCard key={listing.compassUrl} listing={listing} />
           ))}
         </div>
