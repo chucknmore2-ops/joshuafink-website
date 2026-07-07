@@ -8,10 +8,16 @@ const TO_EMAIL = 'joshua@joshuafink.com'
 const N8N_BASE = process.env.N8N_WEBHOOK_BASE || 'http://localhost:5678/webhook'
 const CASH_OFFER_BASE = process.env.CASH_OFFER_WEBHOOK_BASE || 'http://localhost:5679/webhook'
 const BUYER_LEAD_WEBHOOK_BASE = process.env.BUYER_LEAD_WEBHOOK_BASE || 'http://localhost:5680'
-const MONDAY_TOKEN = process.env.MONDAY_API_TOKEN || ''
-const MONDAY_BOARD = process.env.MONDAY_BOARD_ID || ''
-const MONDAY_GROUP_CASH = 'group_mm25pmwg' // Cash Offer Leads group
-const MONDAY_GROUP_BUYER = 'group_mm2cjyk0' // Buyer Leads group
+// Free lead tracker: a Google Apps Script Web App that appends each lead as a
+// row in a Google Sheet. Set GOOGLE_SHEET_WEBHOOK_URL in Vercel to the /exec
+// deployment URL. No-ops safely until then. (Replaces the retired Monday.com CRM.)
+const GOOGLE_SHEET_WEBHOOK_URL = process.env.GOOGLE_SHEET_WEBHOOK_URL || ''
+// Optional shared secret — if set, it's sent with each row and the Apps Script
+// can reject anything without it. Leave empty to skip.
+const SHEET_WEBHOOK_SECRET = process.env.SHEET_WEBHOOK_SECRET || ''
+// Pushover — instant phone alert on each new lead. No-ops until both are set.
+const PUSHOVER_TOKEN = process.env.PUSHOVER_TOKEN || ''
+const PUSHOVER_USER = process.env.PUSHOVER_USER || ''
 
 // ---------------------------------------------------------------------------
 // Spam detection
@@ -240,79 +246,93 @@ async function forwardToJoshua(lead: Record<string, string>) {
 }
 
 // ---------------------------------------------------------------------------
-// Monday.com CRM — direct API (works from Vercel, no local webhook needed)
+// Google Sheet lead log — free, no CRM subscription. Appends one row per lead
+// via a Google Apps Script Web App. Works from Vercel with no auth/OAuth.
+// No-ops safely until GOOGLE_SHEET_WEBHOOK_URL is set.
 // ---------------------------------------------------------------------------
 
-async function pushToMonday(lead: Record<string, string>) {
-  if (!MONDAY_TOKEN || !MONDAY_BOARD) {
-    console.log('Monday.com: skipping — MONDAY_API_TOKEN or MONDAY_BOARD_ID not set')
+async function pushToSheet(lead: Record<string, string>) {
+  if (!GOOGLE_SHEET_WEBHOOK_URL) {
+    console.log('Google Sheet: skipping — GOOGLE_SHEET_WEBHOOK_URL not set')
     return
   }
 
-  const name = lead.name || 'Unknown'
-  const addr = lead.property_address || ''
-  const itemName = addr ? `${name} — ${addr}` : name
-  const escapedName = itemName.replace(/"/g, '\\"').replace(/\n/g, ' ')
+  // Drop internal fields (honeypot + timing) before logging.
+  const clean = Object.fromEntries(
+    Object.entries(lead).filter(([k]) => !k.startsWith('_') && k !== 'website')
+  )
 
-  const leadType = (lead.subject || lead.lead_type || '').toLowerCase()
-  const isCashOffer = lead.source === 'cash-offer' || ['sell', 'seller'].includes(leadType)
-  const isBuyerLead = ['buy', 'both', 'invest', 'rent', 'other', 'buyer'].includes(leadType)
-  const groupId = isCashOffer ? MONDAY_GROUP_CASH : (isBuyerLead ? MONDAY_GROUP_BUYER : MONDAY_GROUP_BUYER)
-
-  // Try to set column values; fall back to name-only if column IDs don't match
-  const columnValues: Record<string, unknown> = {}
-  if (lead.phone) columnValues['phone'] = { phone: lead.phone.replace(/\D/g, ''), countryShortName: 'US' }
-  if (lead.email) columnValues['email'] = { email: lead.email, text: lead.email }
-  if (lead.property_address) columnValues['text'] = lead.property_address
-  if (lead.situation) columnValues['status'] = { label: lead.situation }
-
-  const headers = {
-    Authorization: MONDAY_TOKEN,
-    'Content-Type': 'application/json',
-    'API-Version': '2024-10',
+  const payload: Record<string, string> = {
+    ...clean,
+    // Normalize the lead type across the different forms into one column.
+    lead_type: lead.subject || lead.lead_type || '',
+    received_at: new Date().toISOString(),
+    ...(SHEET_WEBHOOK_SECRET ? { secret: SHEET_WEBHOOK_SECRET } : {}),
   }
 
   try {
-    // Attempt with column values
-    const queryFull = `mutation {
-      create_item(
-        board_id: ${MONDAY_BOARD}
-        group_id: "${groupId}"
-        item_name: "${escapedName}"
-        column_values: ${JSON.stringify(JSON.stringify(columnValues))}
-      ) { id }
-    }`
-
-    const res = await fetch('https://api.monday.com/v2', {
-      method: 'POST', headers, body: JSON.stringify({ query: queryFull }),
+    const res = await fetch(GOOGLE_SHEET_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      redirect: 'follow', // Apps Script Web Apps 302 to a googleusercontent host
     })
-    const data = await res.json()
-
-    if (data?.data?.create_item?.id) {
-      console.log(`Monday.com: created item ${data.data.create_item.id} for ${name}`)
-      return
-    }
-
-    // Fallback: create without column values
-    console.log('Monday.com: column values failed, trying basic:', data?.errors || data)
-    const queryBasic = `mutation {
-      create_item(
-        board_id: ${MONDAY_BOARD}
-        group_id: "${groupId}"
-        item_name: "${escapedName}"
-      ) { id }
-    }`
-    const res2 = await fetch('https://api.monday.com/v2', {
-      method: 'POST', headers, body: JSON.stringify({ query: queryBasic }),
-    })
-    const data2 = await res2.json()
-    if (data2?.data?.create_item?.id) {
-      console.log(`Monday.com: created item (basic) ${data2.data.create_item.id} for ${name}`)
+    if (!res.ok) {
+      console.error('Google Sheet: non-OK response', res.status)
     } else {
-      console.error('Monday.com: both attempts failed:', data2)
+      console.log(`Google Sheet: logged lead for ${lead.name || 'Unknown'}`)
     }
   } catch (err) {
-    console.error('Monday.com push error:', err)
+    console.error('Google Sheet push error:', err)
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Pushover — instant phone push notification on each new lead.
+// High priority (1) so it bypasses quiet hours. No-ops until creds are set.
+// ---------------------------------------------------------------------------
+
+async function sendPushover(lead: Record<string, string>) {
+  if (!PUSHOVER_TOKEN || !PUSHOVER_USER) {
+    console.log('Pushover: skipping — PUSHOVER_TOKEN or PUSHOVER_USER not set')
+    return
+  }
+
+  const type = lead.subject || lead.lead_type || 'lead'
+  const source = lead.source ? ` · ${lead.source}` : ''
+  const message = [
+    lead.phone ? `📞 ${lead.phone}` : null,
+    lead.email ? `✉️ ${lead.email}` : null,
+    lead.property_address ? `🏠 ${lead.property_address}` : null,
+    lead.suburb ? `📍 ${lead.suburb}` : null,
+    lead.body ? `“${lead.body.slice(0, 220)}”` : null,
+  ].filter(Boolean).join('\n') || 'New lead from joshuafink.com'
+
+  const params = new URLSearchParams({
+    token: PUSHOVER_TOKEN,
+    user: PUSHOVER_USER,
+    title: `🏡 New Lead — ${lead.name || 'Unknown'} (${type})${source}`,
+    message,
+    priority: '1', // high priority — bypasses quiet hours
+    sound: 'cashregister',
+  })
+
+  // Tap the notification to call the lead directly.
+  const digits = (lead.phone || '').replace(/\D/g, '')
+  if (digits) {
+    params.set('url', `tel:${digits}`)
+    params.set('url_title', `Call ${lead.name || 'lead'}`)
+  }
+
+  try {
+    const res = await fetch('https://api.pushover.net/1/messages.json', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString(),
+    })
+    if (!res.ok) console.error('Pushover: non-OK response', res.status)
+  } catch (err) {
+    console.error('Pushover push error:', err)
   }
 }
 
@@ -358,7 +378,8 @@ export async function POST(req: NextRequest) {
     const tasks: Promise<unknown>[] = [
       sendSlack(lead),
       forwardToJoshua(lead),
-      pushToMonday(lead), // Direct API — works on Vercel
+      pushToSheet(lead), // Free Google Sheet lead log — works on Vercel
+      sendPushover(lead), // Instant phone push alert
     ]
 
     // Auto-reply only if email provided

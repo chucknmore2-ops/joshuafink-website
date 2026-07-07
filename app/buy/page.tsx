@@ -1,132 +1,101 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import TrustBadges from '@/components/TrustBadges'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
+import TrustBadges from '@/components/TrustBadges'
+import ReviewStrip from '@/components/ReviewStrip'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
-import { suburbs, getAllSuburbSlugs } from '@/lib/suburbs'
-import { neighborhoods } from '@/lib/neighborhoods'
-import { getAllCashOfferCitySlugs } from '@/lib/cash-offer-cities'
+import { getAllSuburbSlugs, getSuburb } from '@/lib/suburbs'
+import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
 import { reviewStats } from '@/lib/reviews'
 
 export const metadata: Metadata = {
-  title: 'Homes for Sale in Middle Tennessee | Buyer\'s Agent — Joshua Fink',
+  title: "Homes for Sale in Middle Tennessee | Buyer's Agent — Joshua Fink",
   description:
-    'Looking to buy a home in Middle Tennessee? Joshua Fink at Compass represents buyers across Nashville, Franklin, Brentwood, Spring Hill, and every suburb in between. Off-market access, local-comp pricing, and proven negotiation. Free buyer consultation.',
+    "Buy a home anywhere in Middle Tennessee with Joshua Fink at Compass. Franklin, Brentwood, Nashville, Spring Hill, Murfreesboro and every surrounding town — local market expert, off-market and Compass Private Exclusive access, school-zone guidance. Free buyer consultation, no cost to work with a buyer's agent.",
   keywords:
-    'homes for sale Middle Tennessee, Middle Tennessee buyer\'s agent, homes for sale Nashville TN, buy a home in Franklin TN, Nashville buyer\'s agent, real estate agent Middle Tennessee',
+    "homes for sale Middle Tennessee,Middle Tennessee buyer's agent,buy a home in Nashville TN,Franklin TN homes for sale,Brentwood TN real estate,Spring Hill TN homes,Murfreesboro homes for sale,Middle TN real estate agent,buyer representation Nashville,off-market homes Middle Tennessee",
   alternates: {
     canonical: 'https://www.joshuafink.com/buy',
   },
   openGraph: {
-    title: 'Homes for Sale in Middle Tennessee | Joshua Fink — Compass',
+    title: "Homes for Sale in Middle Tennessee — Buyer's Agent Joshua Fink",
     description:
-      'Buy your next home in Middle Tennessee with a local Compass agent. Off-market listings, neighborhood-level expertise, and same-day responses. Serving Nashville, Franklin, Brentwood, Spring Hill, and all of Middle TN.',
+      "Insider access to every Middle Tennessee market — including off-market and Compass Coming Soon homes. Free buyer consultation with Joshua Fink at Compass.",
     url: 'https://www.joshuafink.com/buy',
     siteName: 'Joshua Fink Group',
     type: 'website',
   },
 }
 
-const steps = [
-  {
-    num: '01',
-    title: 'Free Buyer Consultation',
-    body: 'Joshua learns your budget, must-haves, school priorities, and timeline — then maps them to the Middle Tennessee submarkets that actually fit. No spam, no pressure.',
-  },
-  {
-    num: '02',
-    title: 'Off-Market & MLS Search',
-    body: 'You get first-look access to Compass Coming Soon and Private Exclusive listings before they hit Zillow — plus a curated MLS feed dialed to your criteria.',
-  },
-  {
-    num: '03',
-    title: 'Tour & Diligence',
-    body: 'Joshua tours homes with you, pulls real local comps, flags school-zone and HOA gotchas, and tells you which homes are priced to win vs. to wait out.',
-  },
-  {
-    num: '04',
-    title: 'Negotiate & Close',
-    body: 'Offer strategy built for a competitive market — escalation clauses, appraisal-gap language, inspection leverage — through inspections, appraisal, and a clean close.',
-  },
-]
-
-const reasons = [
-  {
-    icon: '🗺️',
-    title: 'Hyperlocal Expertise',
-    body: 'Joshua knows every Middle TN submarket — Williamson, Davidson, Maury, Rutherford, Sumner, and Wilson Counties — block by block, school zone by school zone.',
-  },
+const whyBuy = [
   {
     icon: '🔑',
-    title: 'Off-Market Access',
-    body: "Compass Coming Soon and Private Exclusive listings surface to Joshua's clients first. In a tight market, that early look often wins the home.",
+    title: 'Off-Market & Coming Soon Access',
+    body: 'Joshua surfaces Compass Private Exclusives and Coming Soon homes that never hit the public portals — real inventory you cannot find on Zillow.',
+  },
+  {
+    icon: '🎓',
+    title: 'School-Zone & Commute Expertise',
+    body: 'Every Middle TN town has micro-markets with very different school zones and commute times. Joshua maps the right neighborhoods to your family and your drive.',
   },
   {
     icon: '🤝',
-    title: 'Real Negotiation',
-    body: '17+ years of Middle TN deals means Joshua knows what concessions actually move sellers and which terms cost you more than they save.',
+    title: 'A Negotiator on Your Side',
+    body: '17+ years and 100+ closings a year of local comps and contract experience — working to get you the right home at the right terms, not just any home.',
   },
   {
-    icon: '⚡',
-    title: 'Same-Day Response',
-    body: 'Text or call and you hear back the same day, often within minutes. In a fast market, response time is the difference between winning and watching it sell.',
+    icon: '💵',
+    title: 'No Cost to Buyers',
+    body: "Buyer representation is typically paid through the transaction, not out of your pocket. You get a full-time local expert with no separate fee to work with Joshua.",
   },
 ]
 
 const faqs = [
   {
-    q: "What does a Middle Tennessee buyer's agent actually do?",
-    a: "Joshua represents you — not the seller — through the entire purchase. That includes tuning your search to the right submarkets, surfacing off-market and Coming Soon listings, touring homes, pulling local comps to set your offer, writing the contract, coordinating inspections and appraisal, and negotiating repairs and credits all the way through close. Buyer-agent compensation is negotiated up front and disclosed in writing before you tour.",
+    q: 'Does it cost anything to work with a buyer’s agent?',
+    a: "In most Middle Tennessee transactions, buyer-agent compensation is handled within the deal, so there is typically no separate out-of-pocket cost to you for representation. Joshua walks you through exactly how it works up front and puts any agreement in writing before you tour a single home — no surprises.",
   },
   {
-    q: 'How much does it cost to use a buyer\'s agent?',
-    a: 'In most Middle Tennessee transactions, buyer-agent compensation is paid out of the deal proceeds — historically by the seller through the listing brokerage, though as of August 2024 NAR rule changes it can also be negotiated as a seller concession or paid directly by the buyer. Joshua walks through the exact options at your first consult and you sign a buyer representation agreement that spells out fees before any tours, so there are zero surprises later.',
+    q: 'Which Middle Tennessee areas does Joshua cover?',
+    a: "All of it — Franklin, Brentwood, Spring Hill, Nolensville, Thompson's Station, Nashville, Murfreesboro, Gallatin, Hendersonville, Mount Juliet, Columbia, Lebanon, Smyrna, and La Vergne. Each town has its own dedicated buyer guide below with median prices, school notes, and neighborhood breakdowns.",
   },
   {
-    q: 'Which Middle Tennessee cities and suburbs does Joshua cover?',
-    a: 'All of them. Joshua actively writes deals in Nashville, Franklin, Brentwood, Spring Hill, Nolensville, Thompson\'s Station, Murfreesboro, Smyrna, La Vergne, Gallatin, Hendersonville, Mount Juliet, Lebanon, and Columbia — plus the smaller communities in between. If you\'re looking inside about a 45-minute radius of Nashville, he covers it.',
+    q: 'How do I see homes that aren’t on Zillow yet?',
+    a: 'As a Compass agent, Joshua has access to Private Exclusive and Coming Soon listings that are marketed before (or entirely outside of) the public MLS feeds. Tell him what you’re looking for and he’ll set you up on a private search that includes those off-market homes as they surface.',
   },
   {
-    q: 'How competitive is the Middle Tennessee buyer market in 2026?',
-    a: 'It varies by submarket and price band. Williamson County (Franklin, Brentwood, Nolensville) is the most competitive — well-priced homes in top school zones often see multiple offers within days. Davidson County is more balanced. Maury (Spring Hill, Columbia) and Rutherford (Murfreesboro, Smyrna) sit somewhere in between. Joshua tells you upfront which markets favor buyers and which require an aggressive offer strategy.',
+    q: 'I’m relocating from out of state — can you help before I move?',
+    a: "Absolutely — a large share of Middle TN buyers are relocating. Joshua does video tours, neighborhood orientation calls, school-district walkthroughs, and commute analysis remotely, then has everything ready for an efficient in-person trip. Start with the Moving to Middle Tennessee guide and a quick call.",
   },
   {
-    q: 'Do I need to be pre-approved before touring homes?',
-    a: 'Yes — or at least pre-qualified. In a competitive Middle TN market, sellers expect a pre-approval letter alongside any offer, and many listing agents will not schedule showings without one. If you don\'t have a lender yet, Joshua can connect you with local lenders who close on time. Cash buyers should be ready to show proof of funds.',
+    q: 'How fast should I get pre-approved?',
+    a: 'Before you tour, if you can. In competitive Middle TN price bands, homes can move in days, and a pre-approval letter is what makes your offer credible. Joshua can connect you with trusted local lenders and time your search around your financing so you’re ready to move when the right home appears.',
   },
   {
-    q: 'How long does it take to buy a home in Middle Tennessee?',
-    a: 'Typical timeline is 60–90 days from active search to keys in hand. The search itself varies — pre-approved, decisive buyers often find the right home in 2–4 weeks; pickier searches can stretch 3–6 months. Once you\'re under contract, closing in Tennessee usually takes 30–45 days, driven mostly by your lender\'s underwriting timeline.',
-  },
-  {
-    q: 'Can Joshua help me if I\'m relocating from out of state?',
-    a: 'Yes — relocations are a meaningful share of his business. He can video-tour homes, coordinate inspections remotely, and provide neighborhood-level briefings on schools, commutes, taxes, and HOA quirks so you can make informed offers without flying in for every showing. Many of his clients close on Middle TN homes having visited the area only once or twice.',
-  },
-  {
-    q: 'I might also need to sell. Can Joshua handle both sides?',
-    a: 'Yes. Most Middle TN move-up buyers are also selling something — a current home, a rental, or an inherited property. Joshua runs traditional listings and investor cash offers, so the conversation about how you fund the next home starts with the same call. See /sell for traditional listings and /cash-offer for the cash route.',
+    q: 'What’s the first step?',
+    a: 'Send Joshua a note with your target area, price range, and timeline using the form on this page, or call or text 615-551-2727. You’ll get a same-day reply, a private search set up around your criteria, and an honest read on what your budget buys in each Middle TN market.',
   },
 ]
 
-const cityList: { slug: string; name: string; county: string; medianPrice: string }[] =
-  getAllSuburbSlugs().map((slug) => {
-    const s = suburbs[slug]
-    return { slug, name: s.name, county: s.county, medianPrice: s.medianPrice }
-  })
+const buyerReviewFilter = (r: { transaction: string }) =>
+  /\bbought\b|\bbuy\b|\bpurchas/i.test(r.transaction)
 
-const neighborhoodList = Object.values(neighborhoods)
-  .slice()
-  .sort((a, b) => a.city.localeCompare(b.city) || a.name.localeCompare(b.name))
+export default function BuyHubPage() {
+  const cities = getAllSuburbSlugs()
+    .map((slug) => getSuburb(slug))
+    .filter((s): s is NonNullable<typeof s> => Boolean(s))
 
-// Cities that also have a cash-offer landing page, so the hub can hand its
-// link authority to those high-intent seller pages (the /buy hub linked to
-// /buy/[city] and the neighborhood guides but never to /cash-offer/[city]).
-// Guarded as a Set so a future slug drift between suburbs and cash-offer
-// cities silently omits the link instead of 404-ing.
-const cashOfferSlugs = new Set(getAllCashOfferCitySlugs())
+  // Cities that have at least one neighborhood guide, for the internal-link directory.
+  const cityGuideGroups = cities
+    .map((city) => ({ city, guides: getNeighborhoodsByCitySlug(city.slug) }))
+    .filter((g) => g.guides.length > 0)
 
-export default function BuyPage() {
-  const faqLd = {
+  const breadcrumb = buildBreadcrumbSchema([
+    { name: 'Home', href: '/' },
+    { name: 'Buy', href: '/buy' },
+  ])
+
+  const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
     mainEntity: faqs.map((f) => ({
@@ -136,20 +105,24 @@ export default function BuyPage() {
     })),
   }
 
-  const agentLd = {
+  const serviceSchema = {
     '@context': 'https://schema.org',
-    '@type': 'RealEstateAgent',
-    name: 'Joshua Fink — Compass Real Estate',
+    '@type': 'Service',
+    name: 'Buyer Representation — Middle Tennessee',
     url: 'https://www.joshuafink.com/buy',
-    telephone: '+16155512727',
-    email: 'joshua@joshuafink.com',
-    image: 'https://www.joshuafink.com/headshot.webp',
+    mainEntityOfPage: 'https://www.joshuafink.com/buy',
+    serviceType: 'Real Estate Buyer Agent',
+    // Reference the canonical agent entity defined in app/layout.tsx (#agent)
+    // so all pages consolidate signals onto one knowledge-graph node.
+    provider: { '@id': 'https://www.joshuafink.com/#agent' },
     description:
-      "Joshua Fink is a buyer's agent at Compass Real Estate representing buyers across Middle Tennessee — Nashville, Franklin, Brentwood, Spring Hill, and every suburb in between.",
-    areaServed: {
-      '@type': 'AdministrativeArea',
-      name: 'Middle Tennessee',
-    },
+      'Full-service buyer representation across Middle Tennessee — off-market and Compass Private Exclusive access, school-zone and commute guidance, and local negotiation. No separate cost to buyers.',
+    areaServed: cities.map((c) => ({
+      '@type': 'City',
+      name: c.schemaCity,
+      addressRegion: c.schemaState,
+      addressCountry: 'US',
+    })),
     aggregateRating: {
       '@type': 'AggregateRating',
       ratingValue: reviewStats.rating.toFixed(1),
@@ -159,462 +132,262 @@ export default function BuyPage() {
     },
   }
 
-  const breadcrumb = buildBreadcrumbSchema([
-    { name: 'Home', href: '/' },
-    { name: 'Buy', href: '/buy' },
-  ])
-
   return (
     <div className="bg-white">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(agentLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }} />
 
       {/* Hero */}
       <div className="bg-black text-white py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
-            Buying a Home
-          </p>
-          <h1 className="text-5xl sm:text-6xl font-black tracking-tight leading-[1.05] max-w-3xl">
-            Homes for Sale in Middle Tennessee.
-          </h1>
-          <p className="text-neutral-400 text-lg mt-4 max-w-xl leading-relaxed">
-            Work with a Compass buyer&apos;s agent who knows every Middle TN submarket — Nashville,
-            Franklin, Brentwood, Spring Hill, and every suburb in between. Off-market access,
-            local-comp pricing, real negotiation.
-          </p>
-          <div className="mt-7">
-            <TrustBadges variant="dark" />
-          </div>
-          <div className="mt-7 flex flex-col sm:flex-row gap-3">
-            <a
-              href="#buyer-form"
-              className="inline-flex items-center justify-center bg-white text-black text-sm font-bold px-8 py-3 rounded-full tracking-wide transition-all duration-200 hover:bg-neutral-100 hover:shadow-lg active:scale-[0.98] text-center"
-            >
-              Start My Home Search
-            </a>
-            <Link
-              href="/listings"
-              className="inline-flex items-center justify-center border border-neutral-600 text-white text-sm font-bold px-8 py-3 rounded-full tracking-wide transition-all duration-200 hover:border-white hover:bg-white/10 active:scale-[0.98] text-center"
-            >
-              View Active Listings
-            </Link>
-            <a
-              href="tel:6155512727"
-              className="inline-flex items-center justify-center border border-neutral-600 text-white text-sm font-bold px-8 py-3 rounded-full tracking-wide transition-all duration-200 hover:border-white hover:bg-white/10 active:scale-[0.98] text-center"
-            >
-              Call 615-551-2727
-            </a>
-          </div>
-        </div>
-      </div>
-
-      {/* How it works */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
-          The Process
-        </p>
-        <h2 className="text-4xl font-black text-black tracking-tight mb-14">
-          How Buying With Joshua Works
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {steps.map((step) => (
-            <div key={step.num} className="border-t-2 border-black pt-6">
-              <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
-                Step {step.num}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left — copy + trust */}
+            <div>
+              <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-4">
+                Middle Tennessee Buyer&apos;s Agent
               </p>
-              <h3 className="text-lg font-black text-black mb-3">{step.title}</h3>
-              <p className="text-sm text-neutral-500 leading-relaxed">{step.body}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Why Joshua */}
-      <div className="bg-neutral-50 py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
-            Why Buyers Choose Joshua
-          </p>
-          <h2 className="text-4xl font-black text-black tracking-tight mb-14">
-            Your Unfair Advantage in Middle TN
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {reasons.map((r) => (
-              <div
-                key={r.title}
-                className="bg-white border border-neutral-200 rounded-2xl p-8 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
+              <h1 className="text-5xl sm:text-6xl font-black tracking-tight leading-[1.05] mb-6 font-display">
+                Find Your Home in<br />
+                <span className="italic text-neutral-400">Middle Tennessee.</span>
+              </h1>
+              <p className="text-neutral-300 text-lg leading-relaxed mb-6">
+                From Franklin to Nashville to Murfreesboro — get insider access to every market, including
+                <strong className="text-white"> off-market and Coming Soon homes</strong> you won&apos;t find online.
+                Local expertise, honest guidance, and no cost to work with a buyer&apos;s agent.
+              </p>
+              <a
+                href="tel:6155512727"
+                className="inline-flex items-center gap-3 bg-brand-crimson text-white text-xl font-black px-8 py-4 rounded-full tracking-wide transition-all duration-200 hover:bg-brand-crimson-dark hover:shadow-2xl hover:-translate-y-0.5 active:scale-[0.98] mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                aria-label="Call Joshua at 615-551-2727"
               >
-                <span className="text-3xl">{r.icon}</span>
-                <h3 className="text-base font-black text-black mt-4 mb-2">{r.title}</h3>
-                <p className="text-sm text-neutral-500 leading-relaxed">{r.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+                <span aria-hidden="true">📞</span> 615-551-2727
+              </a>
+              <p className="text-neutral-400 text-sm mt-3 mb-8">Call or text anytime — Joshua answers.</p>
 
-      {/* City grid — links into every /buy/[city] page */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
-          Buy By City
-        </p>
-        <h2 className="text-4xl font-black text-black tracking-tight mb-3">
-          Every Middle Tennessee Submarket.
-        </h2>
-        <p className="text-neutral-600 text-base max-w-2xl mb-10 leading-relaxed">
-          Tap any city for a dedicated buyer page — current median price, days on market, top
-          neighborhoods, and a buyer-specific FAQ for that submarket.
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {cityList.map(({ slug, name, county, medianPrice }) => (
-            <div
-              key={slug}
-              className="rounded-2xl border border-neutral-200 bg-white p-5 transition-all duration-200 hover:border-black hover:shadow-md"
-            >
-              <Link href={`/buy/${slug}`} className="group block">
-                <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-1">
-                  {county}
-                </p>
-                <p className="text-base font-black text-black mb-1 group-hover:underline">
-                  Homes for Sale in {name}, TN
-                </p>
-                <p className="text-xs text-neutral-500">
-                  Median {medianPrice} · See buyer guide →
-                </p>
-              </Link>
-              {cashOfferSlugs.has(slug) && (
-                <div className="mt-3 pt-3 border-t border-neutral-100">
-                  <Link
-                    href={`/cash-offer/${slug}`}
-                    className="text-xs font-semibold text-neutral-500 underline-offset-4 hover:text-black hover:underline"
-                  >
-                    Need to sell first? Get a {name} cash offer →
-                  </Link>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Buyer Lead Form */}
-      <div id="buyer-form" className="bg-neutral-50 border-t border-neutral-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16">
-            <div className="lg:col-span-2">
-              <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
-                Free Buyer Consultation
-              </p>
-              <h2 className="text-4xl font-black text-black tracking-tight leading-tight mb-6">
-                Start Your Middle TN Home Search.
-              </h2>
-              <p className="text-neutral-500 text-sm leading-relaxed mb-8">
-                Tell Joshua what you&apos;re looking for and he&apos;ll reach out same-day with a
-                personalized search strategy — real listings, real numbers, no pressure.
-              </p>
-
-              <div className="space-y-5">
-                <div className="border-l-2 border-black pl-5">
-                  <p className="text-xs text-neutral-400 uppercase tracking-widest font-semibold mb-1">
-                    Phone
-                  </p>
-                  <a href="tel:6155512727" className="text-xl font-black text-black hover:underline">
-                    615-551-2727
-                  </a>
-                </div>
-                <div className="border-l-2 border-black pl-5">
-                  <p className="text-xs text-neutral-400 uppercase tracking-widest font-semibold mb-1">
-                    Email
-                  </p>
-                  <a
-                    href="mailto:joshua@joshuafink.com"
-                    className="text-sm font-semibold text-black hover:underline"
-                  >
-                    joshua@joshuafink.com
-                  </a>
-                </div>
-                <div className="border-l-2 border-black pl-5">
-                  <p className="text-xs text-neutral-400 uppercase tracking-widest font-semibold mb-1">
-                    Serving
-                  </p>
-                  <p className="text-sm text-neutral-600">
-                    Nashville · Franklin · Brentwood
-                    <br />
-                    Spring Hill · Columbia · Gallatin
-                    <br />
-                    &amp; all of Middle Tennessee
-                  </p>
-                </div>
-              </div>
+              <TrustBadges variant="dark" />
             </div>
 
-            <div className="lg:col-span-3">
-              <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-6">
-                Tell Joshua What You&apos;re Looking For
+            {/* Right — inline lead form */}
+            <div id="buyer-form" className="bg-white text-black p-8 sm:p-10 rounded-2xl">
+              <h2 className="text-2xl font-black tracking-tight mb-2">Start Your Home Search</h2>
+              <p className="text-sm text-neutral-600 mb-6">
+                Tell Joshua what you&apos;re after and get a same-day reply with matching homes — including
+                off-market listings.
               </p>
               <SuburbLeadForm
-                successTitle="Request Sent!"
+                successTitle="Search Started!"
                 successMessage={
                   <>
-                    Joshua will reach out same-day with Middle TN listings that fit. For anything
-                    urgent, call{' '}
-                    <a href="tel:6155512727" className="text-black font-semibold underline">
-                      615-551-2727
-                    </a>
-                    .
+                    Joshua will reach out same-day with matching homes. For anything urgent, call{' '}
+                    <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
                   </>
                 }
                 resetLabel="Submit Another"
               >
                 <input type="hidden" name="lead_type" value="buyer" />
-                <input type="hidden" name="source" value="buy-index" />
+                <input type="hidden" name="source" value="buy-hub" />
+                {/* Honeypot — real users never see or fill this */}
+                <input
+                  type="text"
+                  name="website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  className="absolute left-[-9999px] h-0 w-0 opacity-0"
+                />
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
-                    <label
-                      htmlFor="name"
-                      className="block text-xs font-semibold text-black tracking-widest uppercase mb-2"
-                    >
-                      Full Name *
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      required
-                      placeholder="Jane Smith"
-                      className="w-full border border-neutral-200 px-4 py-3 text-sm text-black placeholder-neutral-400 focus:outline-none focus:border-black transition-colors"
-                    />
+                    <label htmlFor="name" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Full Name *</label>
+                    <input type="text" id="name" name="name" required placeholder="Jane Smith"
+                      className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
                   </div>
                   <div>
-                    <label
-                      htmlFor="phone"
-                      className="block text-xs font-semibold text-black tracking-widest uppercase mb-2"
-                    >
-                      Phone *
-                    </label>
-                    <input
-                      type="tel"
-                      id="phone"
-                      name="phone"
-                      required
-                      placeholder="615-555-0000"
-                      className="w-full border border-neutral-200 px-4 py-3 text-sm text-black placeholder-neutral-400 focus:outline-none focus:border-black transition-colors"
-                    />
+                    <label htmlFor="phone" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Phone *</label>
+                    <input type="tel" id="phone" name="phone" required placeholder="(615) 555-0123" autoComplete="tel"
+                      className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
                   </div>
                 </div>
 
                 <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-xs font-semibold text-black tracking-widest uppercase mb-2"
-                  >
-                    Email Address *
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    required
-                    placeholder="you@example.com"
-                    className="w-full border border-neutral-200 px-4 py-3 text-sm text-black placeholder-neutral-400 focus:outline-none focus:border-black transition-colors"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                  <div>
-                    <label
-                      htmlFor="suburb"
-                      className="block text-xs font-semibold text-black tracking-widest uppercase mb-2"
-                    >
-                      Target City
-                    </label>
-                    <select
-                      id="suburb"
-                      name="suburb"
-                      className="w-full border border-neutral-200 px-4 py-3 text-sm text-black bg-white focus:outline-none focus:border-black transition-colors"
-                    >
-                      <option value="">—</option>
-                      {cityList.map(({ slug, name }) => (
-                        <option key={slug} value={name}>
-                          {name}
-                        </option>
-                      ))}
-                      <option value="Open / Multiple">Open / Multiple</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="budget"
-                      className="block text-xs font-semibold text-black tracking-widest uppercase mb-2"
-                    >
-                      Budget
-                    </label>
-                    <select
-                      id="budget"
-                      name="budget"
-                      className="w-full border border-neutral-200 px-4 py-3 text-sm text-black bg-white focus:outline-none focus:border-black transition-colors"
-                    >
-                      <option value="">—</option>
-                      <option>Under $300K</option>
-                      <option>$300K–$450K</option>
-                      <option>$450K–$600K</option>
-                      <option>$600K–$800K</option>
-                      <option>$800K–$1M</option>
-                      <option>$1M+</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="timeline"
-                      className="block text-xs font-semibold text-black tracking-widest uppercase mb-2"
-                    >
-                      Timeline
-                    </label>
-                    <select
-                      id="timeline"
-                      name="timeline"
-                      className="w-full border border-neutral-200 px-4 py-3 text-sm text-black bg-white focus:outline-none focus:border-black transition-colors"
-                    >
-                      <option value="">—</option>
-                      <option value="asap">ASAP</option>
-                      <option value="1-3mo">1–3 months</option>
-                      <option value="3-6mo">3–6 months</option>
-                      <option value="6mo+">6+ months</option>
-                      <option value="just-looking">Just exploring</option>
-                    </select>
-                  </div>
+                  <label htmlFor="email" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Email Address *</label>
+                  <input type="email" id="email" name="email" required placeholder="you@example.com" autoComplete="email"
+                    className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
                 </div>
 
                 <div>
-                  <label
-                    htmlFor="body"
-                    className="block text-xs font-semibold text-black tracking-widest uppercase mb-2"
-                  >
-                    What Are You Looking For? (optional)
-                  </label>
-                  <textarea
-                    id="body"
-                    name="body"
-                    rows={4}
-                    placeholder="Tell Joshua your must-haves — school zone, neighborhood, lot size, style. Anything helps."
-                    className="w-full border border-neutral-200 px-4 py-3 text-sm text-black placeholder-neutral-400 focus:outline-none focus:border-black transition-colors resize-y"
-                  />
+                  <label htmlFor="body" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">What Are You Looking For? (optional)</label>
+                  <textarea id="body" name="body" rows={3}
+                    placeholder="Area, price range, beds, school zone, must-haves — anything helps Joshua send the right matches."
+                    className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors resize-y" />
                 </div>
 
-                <p className="text-xs text-neutral-400">
-                  * Joshua responds same-day. No spam, no pressure.
-                </p>
-
-                <button
-                  type="submit"
-                  className="w-full sm:w-auto bg-black text-white text-sm font-bold px-10 py-4 rounded-full tracking-wide transition-all duration-200 hover:bg-neutral-800 hover:shadow-md active:scale-[0.98]"
-                >
-                  Start My Middle TN Home Search →
-                </button>
+                <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+                  <button type="submit"
+                    className="w-full sm:w-auto inline-flex items-center justify-center bg-black text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-[#222] transition-colors">
+                    Send to Joshua →
+                  </button>
+                  <a
+                    href="tel:6155512727"
+                    className="w-full sm:w-auto inline-flex items-center justify-center border-2 border-black text-black text-sm font-bold px-8 py-4 tracking-wide hover:bg-black hover:text-white transition-colors"
+                  >
+                    Or Call 615-551-2727
+                  </a>
+                </div>
               </SuburbLeadForm>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Neighborhood guides — links into every /neighborhoods/[slug] page */}
-      {neighborhoodList.length > 0 && (
-        <div className="bg-white border-t border-neutral-200 py-20 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
-            <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
-              Neighborhood Guides
+      {/* Why buy with Joshua */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
+          Why Buyers Choose Joshua
+        </p>
+        <h2 className="text-4xl sm:text-5xl font-black text-black tracking-tight mb-14">
+          A Local Expert <span className="font-display italic font-semibold">On Your Side</span>
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {whyBuy.map((w) => (
+            <div key={w.title} className="border-t-2 border-black pt-6">
+              <span className="text-3xl block mb-4" aria-hidden="true">{w.icon}</span>
+              <h3 className="text-lg font-black text-black mb-3">{w.title}</h3>
+              <p className="text-sm text-neutral-600 leading-relaxed">{w.body}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Social proof */}
+      <ReviewStrip variant="light" limit={3} filter={buyerReviewFilter} />
+
+      {/* City directory */}
+      <div className="bg-neutral-50 py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="max-w-3xl mb-8">
+            <p className="text-xs font-semibold tracking-widest text-neutral-500 uppercase mb-3">
+              Buy in Your City
             </p>
-            <h2 className="text-4xl font-black text-black tracking-tight mb-3">
-              Go Deeper: Pick a Neighborhood.
+            <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-black mb-3">
+              Homes for sale across <span className="font-display italic font-semibold">Middle Tennessee</span>
             </h2>
-            <p className="text-neutral-600 text-base max-w-2xl mb-10 leading-relaxed">
-              Honest, in-depth guides to Middle Tennessee&apos;s most-searched neighborhoods —
-              schools, HOA, amenities, home styles, and current price ranges. Live listings are
-              served on Compass with Joshua as your attributed agent.
+            <p className="text-neutral-600 leading-relaxed">
+              Every town has its own buyer guide with current median prices, days on market, school notes, and
+              neighborhood breakdowns. Tap your city to dig in.
             </p>
-            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-2">
-              {neighborhoodList.map((n) => (
-                <li key={n.slug}>
-                  <Link
-                    href={`/neighborhoods/${n.slug}`}
-                    className="block py-2 text-sm text-neutral-700 hover:text-black hover:underline"
-                  >
-                    <span className="font-semibold text-black">{n.name}</span>{' '}
-                    <span className="text-neutral-500">— {n.city}, TN</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {cities.map((c) => (
+              <Link
+                key={c.slug}
+                href={`/buy/${c.slug}`}
+                className="group rounded-2xl border border-neutral-200 bg-white px-6 py-5 transition-all duration-200 hover:border-black hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+              >
+                <div className="flex items-baseline justify-between mb-1">
+                  <span className="text-lg font-black text-black">{c.displayName}</span>
+                  <span className="text-black opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true">→</span>
+                </div>
+                <p className="text-xs text-neutral-500">{c.county}</p>
+                <div className="flex gap-4 mt-3 text-xs text-neutral-600">
+                  <span>Median <strong className="text-black">{c.medianPrice}</strong></span>
+                  <span>{c.avgDaysOnMarket} days on market</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Neighborhood guide directory (internal linking) */}
+      {cityGuideGroups.length > 0 && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="max-w-3xl mb-10">
+            <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
+              Explore by Neighborhood
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-black mb-3">
+              In-depth <span className="font-display italic font-semibold">neighborhood guides</span>
+            </h2>
+            <p className="text-neutral-600 leading-relaxed">
+              Detailed guides to Middle Tennessee&apos;s most-searched neighborhoods — home styles, price bands,
+              HOA and school notes, and what it&apos;s really like to live there.
+            </p>
+          </div>
+
+          <div className="space-y-10">
+            {cityGuideGroups.map(({ city, guides }) => (
+              <div key={city.slug}>
+                <h3 className="text-sm font-black text-black uppercase tracking-widest mb-4">
+                  {city.displayName}
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {guides.map((g) => (
+                    <Link
+                      key={g.slug}
+                      href={`/neighborhoods/${g.slug}`}
+                      className="rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm font-semibold text-black transition-all duration-200 hover:bg-black hover:text-white hover:border-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+                    >
+                      {g.name} <span aria-hidden="true">→</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}
 
       {/* FAQ */}
       <div className="bg-neutral-50 py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mx-auto">
-          <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
+        <div className="max-w-4xl mx-auto">
+          <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3 text-center">
             Common Questions
           </p>
-          <h2 className="text-4xl font-black text-black tracking-tight mb-10">
-            Buying in Middle Tennessee, Answered.
+          <h2 className="text-4xl sm:text-5xl font-black text-black tracking-tight mb-14 text-center">
+            Buying in <span className="font-display italic font-semibold">Middle Tennessee</span>
           </h2>
-          <div className="divide-y divide-neutral-200 border-y border-neutral-200">
-            {faqs.map((f, i) => (
-              <details key={i} className="group py-5">
-                <summary className="flex items-center justify-between cursor-pointer list-none">
-                  <span className="text-base sm:text-lg font-semibold text-black pr-6">{f.q}</span>
-                  <span
-                    className="shrink-0 w-6 h-6 rounded-full border border-neutral-300 flex items-center justify-center text-neutral-500 transition-transform duration-200 group-open:rotate-45"
-                    aria-hidden="true"
-                  >
-                    +
-                  </span>
-                </summary>
-                <p className="mt-3 text-sm text-neutral-600 leading-relaxed">{f.a}</p>
-              </details>
+          <div className="space-y-8">
+            {faqs.map((faq) => (
+              <div key={faq.q} className="border-b border-neutral-200 pb-6">
+                <h3 className="text-lg font-black text-black mb-2">{faq.q}</h3>
+                <p className="text-sm text-neutral-600 leading-relaxed">{faq.a}</p>
+              </div>
             ))}
           </div>
         </div>
       </div>
 
       {/* Bottom CTA */}
-      <div className="bg-black text-white py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-          <div>
-            <h2 className="text-3xl font-black tracking-tight">
-              Ready to find your Middle TN home?
-            </h2>
-            <p className="text-neutral-400 mt-2 text-sm">
-              Free consultation. Local expertise. Same-day response.
-            </p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-3 shrink-0">
-            <a
-              href="#buyer-form"
-              className="inline-flex items-center justify-center bg-white text-black text-sm font-bold px-8 py-3 rounded-full tracking-wide transition-all duration-200 hover:bg-neutral-100 hover:shadow-md active:scale-[0.98] text-center"
-            >
-              Start My Search
-            </a>
-            <a
-              href="tel:6155512727"
-              className="inline-flex items-center justify-center border border-neutral-600 text-white text-sm font-bold px-8 py-3 rounded-full tracking-wide transition-all duration-200 hover:border-white hover:bg-white/10 active:scale-[0.98] text-center"
-            >
-              Call 615-551-2727
-            </a>
-          </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+        <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-4">
+          Ready When You Are
+        </p>
+        <h2 className="text-4xl sm:text-5xl font-black text-black tracking-tight mb-4">
+          Let&apos;s Find Your <span className="font-display italic font-semibold">Next Home</span>
+        </h2>
+        <p className="text-neutral-600 text-base mb-10 max-w-xl mx-auto">
+          No pressure, no obligation — just a local expert who knows every market in Middle Tennessee.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <a
+            href="#buyer-form"
+            className="inline-flex items-center justify-center bg-black text-white text-base font-black px-10 py-4 rounded-full tracking-wide transition-all duration-200 hover:bg-neutral-800 hover:shadow-lg active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+          >
+            Start My Home Search <span aria-hidden="true">→</span>
+          </a>
+          <a
+            href="tel:6155512727"
+            className="inline-flex items-center justify-center border-2 border-black text-black text-base font-black px-10 py-4 rounded-full tracking-wide transition-all duration-200 hover:bg-black hover:text-white active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+          >
+            <span aria-hidden="true">📞</span>&nbsp;Call 615-551-2727
+          </a>
         </div>
+        <p className="text-neutral-500 text-sm mt-6">
+          Serving Nashville · Franklin · Brentwood · Spring Hill · Murfreesboro · and all of Middle Tennessee
+        </p>
       </div>
     </div>
   )
