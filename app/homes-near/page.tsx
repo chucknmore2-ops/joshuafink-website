@@ -7,7 +7,7 @@ const SITE = 'https://www.joshuafink.com'
 export const metadata: Metadata = {
   title: 'Homes Near Top Middle Tennessee Schools — Search by School Zone | Joshua Fink',
   description:
-    'Find homes for sale near Ravenwood, Brentwood, Page, Independence, Centennial, and Nolensville High Schools. School-zone-first home search from Joshua Fink at Compass Real Estate.',
+    'Find homes for sale near Ravenwood, Brentwood, Page, Independence, Centennial, Nolensville, and Blackman High Schools. School-zone-first home search from Joshua Fink at Compass Real Estate.',
   alternates: { canonical: `${SITE}/homes-near` },
 }
 
@@ -17,8 +17,8 @@ const faqs = [
     a: 'Pick the school below — each page lists active inventory inside that attendance zone, plus the feeder elementary and middle schools, typical home styles, and current price band. School-zone search is the right starting filter when zone is non-negotiable, because address-level zoning does not always line up with city or subdivision boundaries.',
   },
   {
-    q: 'What are the highest-rated public high schools in Williamson County?',
-    a: 'Ravenwood (Brentwood), Page (Franklin/Thompson’s Station), Independence (Thompson’s Station), Centennial (Franklin), Brentwood, and Nolensville all consistently rank in the top tier of Tennessee public high schools by test scores, graduation rate, and AP performance. Each school page links to its current rating notes and feeder subdivisions.',
+    q: 'What are the highest-rated public high schools in Middle Tennessee?',
+    a: 'In Williamson County: Ravenwood (Brentwood), Page (Franklin/Thompson’s Station), Independence (Thompson’s Station), Centennial (Franklin), Brentwood, and Nolensville all consistently rank in the top tier of Tennessee public high schools by test scores, graduation rate, and AP performance. In Rutherford County, Blackman High School (Murfreesboro) carries a 4-star SchoolDigger rating and an A on Niche. Each school page links to its current rating notes and feeder subdivisions.',
   },
   {
     q: 'How much do top school zones add to home prices in Middle Tennessee?',
