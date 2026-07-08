@@ -6,6 +6,7 @@ import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
 import { linkifyNeighborhoods } from '@/lib/linkify-neighborhoods'
 import { reviewStats } from '@/lib/reviews'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
+import TrackedTelLink from '@/components/TrackedTelLink'
 
 type Props = {
   params: Promise<{ suburb: string }>
@@ -181,13 +182,14 @@ export default async function SuburbPage({ params }: Props) {
               >
                 Get My Free Valuation
               </a>
-              <a
+              <TrackedTelLink
                 href="tel:6155512727"
                 className="inline-block border text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-white hover:text-black transition-colors text-center"
                 style={{ borderColor: '#FFFFFF' }}
+                data-cta="sell-suburb-hero-call"
               >
                 Call 615-551-2727
-              </a>
+              </TrackedTelLink>
             </div>
           </div>
         </div>
