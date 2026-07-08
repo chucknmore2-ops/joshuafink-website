@@ -360,6 +360,7 @@ export default function CashOfferPage() {
             mainEntityOfPage: 'https://www.joshuafink.com/cash-offer',
             provider: {
               '@type': 'RealEstateAgent',
+              '@id': 'https://www.joshuafink.com/#agent',
               name: 'Joshua Fink Group',
               url: 'https://www.joshuafink.com',
               telephone: '+1-615-551-2727',
