@@ -199,7 +199,7 @@ export default function Footer() {
         <div className="border-t border-[#222] pt-6 text-xs text-[#6B6B6B] space-y-2">
           <p>© {year} Joshua Fink. All rights reserved.</p>
           <p>
-            Joshua Fink is a licensed real estate agent with Compass Real Estate in Tennessee. Compass is a licensed real estate broker. All material presented herein is intended for informational purposes only. Information is compiled from sources deemed reliable but is subject to errors, omissions, changes in price, condition, sale, or withdrawal without notice. No statement is made as to the accuracy of any description. All measurements and square footages are approximate.
+            Joshua Fink, TREC Affiliate Broker License #351484, is a licensed real estate agent with Compass Real Estate in Tennessee. Compass is a licensed real estate broker. All material presented herein is intended for informational purposes only. Information is compiled from sources deemed reliable but is subject to errors, omissions, changes in price, condition, sale, or withdrawal without notice. No statement is made as to the accuracy of any description. All measurements and square footages are approximate.
           </p>
         </div>
       </div>
