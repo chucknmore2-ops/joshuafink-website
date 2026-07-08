@@ -15,10 +15,90 @@ export interface BlogPost {
   disclosure?: string
   /** Editorial audit tier from the 2026-04-19 content quality review. */
   auditTier?: 'keep' | 'fix' | 'rewrite' | 'delete'
+  /** Optional 3-5 question FAQ block, rendered on-page and emitted as FAQPage schema. */
+  faq?: { q: string; a: string }[]
   content: string
 }
 
 export const blogPosts: BlogPost[] = [
+  {
+    slug: "middle-tennessee-real-estate-market-july-2026-update",
+    title: "Middle Tennessee Real Estate Market: July 2026 Update",
+    date: "July 8, 2026",
+    dateModified: "July 8, 2026",
+    excerpt:
+      "Mortgage rates have settled into the mid-6% range and inventory keeps expanding across Middle Tennessee. Here's an honest, county-by-county read on Williamson, Davidson, and Rutherford for July 2026 — and what it means if you're buying or selling this summer.",
+    category: "Market Updates",
+    faq: [
+      {
+        q: "Is Middle Tennessee a buyer's or seller's market in July 2026?",
+        a: "It depends on the price point and the county more than any single metro-wide label. Middle Tennessee in July 2026 is best described as balanced, with meaningfully more inventory and buyer leverage than 2021-2022, but well-priced, well-presented homes in strong school zones are still moving quickly. [VERIFY: Greater Nashville REALTORS® months-of-supply figure, June 2026] gives the precise read for a specific county.",
+      },
+      {
+        q: "What's the average home price in Williamson County right now?",
+        a: "[VERIFY: Greater Nashville REALTORS®/RealTracs median sale price for Williamson County, June 2026]. Franklin-specific figures are on our Franklin market page, which we update as new data comes in.",
+      },
+      {
+        q: "Are mortgage rates going up or down in mid-2026?",
+        a: "Rates have been essentially flat through early summer 2026. Freddie Mac's Primary Mortgage Market Survey averaged 6.43% for a 30-year fixed the week of July 2, 2026 — down modestly from the 7%+ rates of late 2023 but still well above the sub-4% era of 2020-2021.",
+      },
+      {
+        q: "Is Nashville real estate slowing down in 2026?",
+        a: "It's normalizing, not slowing in any alarming sense. Nashville's population growth and job base continue to support demand. What's changed since the 2021-2022 peak is that buyers have more time to decide and more homes to choose from, so pricing has to be accurate from the first day a home is listed.",
+      },
+      {
+        q: "Should I wait until fall to sell my Middle Tennessee home?",
+        a: "Not necessarily — that depends on your specific home, timeline, and goals; we'll dig into fall seasonality in detail later this year. In general, homes priced to today's comps sell in any season. The mistake to avoid is pricing to a comp from 2022.",
+      },
+    ],
+    content: `
+Middle Tennessee's summer 2026 market is best described as balanced and gradually tilting toward buyers: mortgage rates have eased into the mid-6% range, inventory has grown compared to a year ago, and well-priced homes are still selling while overpriced ones sit and accumulate price cuts. If you're buying, you have more room to negotiate than you did in 2022–2023. If you're selling, pricing to today's comps — not last spring's — is the whole game.
+
+Here's an honest, county-by-county read on where things stand heading into July 2026, and what it means depending on which side of the transaction you're on.
+
+## What Are Mortgage Rates Doing This Summer?
+
+Rates have settled into what most buyers and agents across the metro are now calling the "new normal" — the mid-6% range, rather than the sub-3% rates of 2021. Freddie Mac's Primary Mortgage Market Survey put the average 30-year fixed rate at 6.43% for the week of July 2, 2026, essentially flat over the prior month (source: [Freddie Mac PMMS](https://www.freddiemac.com/pmms), week of July 2, 2026). That's meaningfully below the 7%+ rates buyers faced in late 2023, which is part of why more buyers are active in the market again this summer — and part of why sellers are seeing steadier, if less frantic, traffic than the peak pandemic years.
+
+## Is Middle Tennessee a Buyer's or Seller's Market Right Now?
+
+There isn't one honest answer for the whole metro — it genuinely varies by county, price point, and even by subdivision. [VERIFY: Greater Nashville REALTORS® active listing count and months-of-supply, June 2026] would give the precise, sourced read. Qualitatively, what I'm seeing on the ground: buyers have more choices and more negotiating room than at any point since before the pandemic, while sellers who present and price a home correctly are still fielding competitive offers, sometimes multiple, in the first two weeks.
+
+If you're weighing whether to act now or wait, the honest answer is that timing the market perfectly is close to impossible. What you can control is preparation — pricing strategy if you're selling, and pre-approval plus clear priorities if you're buying.
+
+## Williamson County: Franklin, Brentwood & Spring Hill
+
+Williamson County continues to carry the strongest price premium in Middle Tennessee, and Franklin in particular remains one of the more competitive submarkets for move-in-ready homes in a strong school zone. [VERIFY: Greater Nashville REALTORS®/RealTracs — Williamson County median price, days on market, and year-over-year change, June 2026]. Williamson County's 2026 property-tax reappraisal is also part of the seller math this year — we'll cover exactly how that shakes out at the closing table in a future post. For the current day-to-day snapshot on pricing and pace, see our [Franklin market page](/market/franklin-tn).
+
+## Davidson County: Nashville's Urban Core
+
+Nashville's urban neighborhoods — East Nashville, 12 South, Germantown, Sylvan Park — continue to see more measured pricing behavior than the frenzy years, with the biggest differentiator between a home that sells fast and one that sits being presentation and an accurate price from day one. [VERIFY: Greater Nashville REALTORS® — Davidson County median price and active inventory, June 2026]. For the current numbers, visit our [Nashville market page](/market/nashville-tn).
+
+## Rutherford County: Murfreesboro's Value Play
+
+Murfreesboro remains one of the strongest value plays in the metro — more square footage per dollar than the Williamson County suburbs, with steady demand tied to MTSU and the area's healthcare employment base. [VERIFY: Greater Nashville REALTORS® — Rutherford County median price and days on market, June 2026]. Details are on our [Murfreesboro market page](/market/murfreesboro-tn).
+
+## What This Means If You're Buying This Month
+
+- **You have more room to negotiate than in 2022.** Closing-cost credits and rate buydowns are realistic asks in today's market, particularly on homes that have already sat for a few weeks.
+- **Pre-approval is still non-negotiable.** Even in a more balanced market, sellers won't seriously entertain an offer without one.
+- **Move decisively on the right home.** More inventory doesn't mean no competition — a correctly priced home in a strong school zone can still go to multiple offers in a weekend.
+- **Look one ring out if the premium suburbs are stretching your budget.** [Spring Hill](/buy/spring-hill-tn) and [Nolensville](/buy/nolensville-tn) are offering more value per square foot than Brentwood or central Franklin without giving up much on commute or schools.
+
+## What This Means If You're Selling This Month
+
+- **Price to today's comps, not last year's.** Anchoring to a 2022 or even a spring-2025 number is the single most common reason a home sits.
+- **Presentation is doing more work than it used to.** With buyers having real choices again, professional photography and a clean, decluttered showing are the highest-ROI steps before you list.
+- **Expect to negotiate on concessions.** Closing-cost help and rate buydowns are increasingly normal parts of getting a deal to the closing table — build a small buffer into your list price if that matters to your bottom line.
+- **A pre-listing inspection can protect your timeline.** For older homes especially, knowing what a buyer's inspector will find before they find it can save a deal that would otherwise fall apart mid-contract.
+
+## The Bottom Line
+
+Summer 2026 is a market that rewards preparation over urgency. Rates are stable in the mid-6% range, inventory keeps expanding, and the metro-wide headlines are too coarse to describe any single street or subdivision. If you want a specific, honest read on your neighborhood — not a metro average — that's the conversation worth having before you make a move.
+
+Reach out anytime: [615-551-2727](tel:6155512727) or [joshua@joshuafink.com](mailto:joshua@joshuafink.com).
+    `.trim(),
+  },
   {
     slug: "avoid-foreclosure-nashville-tennessee",
     title: "How to Avoid Foreclosure in Nashville & Middle Tennessee: Your Options in 2026",
