@@ -21,6 +21,9 @@ export type Suburb = {
   topNeighborhoods?: string[]
   schoolDistrict?: string
   commuteNote?: string
+  // ISO date (YYYY-MM-DD) when this suburb's medianPrice/DOM/yoyChange were
+  // actually refreshed. Falls back to `marketStatsLastUpdated` when unset.
+  dataUpdatedAt?: string
 }
 
 export const suburbs: Record<string, Suburb> = {

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getSuburb, getAllSuburbSlugs, suburbs } from '@/lib/suburbs'
+import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated, suburbs } from '@/lib/suburbs'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 
 const SITE = 'https://www.joshuafink.com'
@@ -78,7 +78,7 @@ export default async function MarketSuburbPage({ params }: Props) {
     headline: `${s.displayName} housing market in 2026: median ${s.medianPrice}, ${s.yoyChange} YoY`,
     description: `2026 housing market report for ${s.displayName}: median sale price ${s.medianPrice}, ${s.avgDaysOnMarket} avg days on market, ${s.yoyChange} year-over-year appreciation. Market lean: ${lean.lean}.`,
     datePublished: '2026-01-15',
-    dateModified: new Date().toISOString().slice(0, 10),
+    dateModified: s.dataUpdatedAt ?? marketStatsLastUpdated,
     inLanguage: 'en-US',
     url: `${SITE}/market/${slug}`,
     about: {
