@@ -304,6 +304,36 @@ export const schools: Record<string, School> = {
     ],
   },
 
+  'blackman-high-school-murfreesboro-tn': {
+    slug: 'blackman-high-school-murfreesboro-tn',
+    name: 'Blackman High School',
+    level: 'High',
+    district: 'Rutherford County Schools',
+    suburbSlug: 'murfreesboro-tn',
+    ratingNote: 'A top-tier Rutherford County public high school with a 4-star SchoolDigger rating and an A rating on Niche.',
+    blurb:
+      'Blackman High School anchors the fast-growing Blackman area on the northwest side of Murfreesboro, one of the most in-demand school zones in Rutherford County. The school consistently ranks near the top of Rutherford County Schools on independent ratings sites, and its cluster (Blackman Elementary and Blackman Middle feed into it) gives families a full K-12 path in one zone. For buyers who want Williamson County-caliber schools without the Williamson County price tag, Blackman is one of the strongest arguments for choosing Murfreesboro.',
+    neighborhoods: ['Berkshire', 'Shelton Square', 'Blackman Oaks', 'Puckett Station', 'Royal Glen'],
+    faqs: [
+      {
+        q: 'What neighborhoods are zoned to Blackman High School?',
+        a: 'The Blackman area on the northwest side of Murfreesboro includes established subdivisions like Berkshire, Shelton Square, Blackman Oaks, Puckett Station, and Royal Glen, most built in the 2000s and 2010s. Rutherford County sets attendance zones by address, not by subdivision or city boundary, so always confirm the current zone assignment with Rutherford County Schools before writing an offer.',
+      },
+      {
+        q: 'Is Blackman High School a good school?',
+        a: 'Yes. Blackman has held a 4-star rating from SchoolDigger for most of the past decade and carries an A rating and an 8/10 GreatSchools score on Niche, ranking near the top of Rutherford County Schools. It is one of the main reasons families choose the Blackman area over other parts of Murfreesboro.',
+      },
+      {
+        q: 'How much do homes cost in the Blackman school zone?',
+        a: "Pricing in the Blackman area generally tracks Murfreesboro's citywide market rather than commanding a large standalone premium — see the current Murfreesboro market report for up-to-date medians. Joshua can pull recent closed comps for any specific street in Berkshire, Shelton Square, Blackman Oaks, Puckett Station, or Royal Glen.",
+      },
+      {
+        q: 'Why do buyers choose Murfreesboro over Williamson County for schools?',
+        a: "Rutherford County Schools — and Blackman specifically — deliver strong, well-rated public education at a meaningfully lower price point than Franklin or Brentwood. For families prioritizing value alongside a solid school, the Blackman zone is one of the most frequently shortlisted areas in Middle Tennessee.",
+      },
+    ],
+  },
+
   'spring-station-middle-school-thompsons-station-tn': {
     slug: 'spring-station-middle-school-thompsons-station-tn',
     name: 'Spring Station Middle School',
