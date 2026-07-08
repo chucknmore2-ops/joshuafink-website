@@ -56,6 +56,7 @@ export default async function SuburbPage({ params }: Props) {
     '@graph': [
       {
         '@type': 'RealEstateAgent',
+        '@id': 'https://www.joshuafink.com/#agent',
         name: 'Joshua Fink — Compass Real Estate',
         url: 'https://www.joshuafink.com',
         telephone: '+16155512727',

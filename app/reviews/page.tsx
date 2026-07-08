@@ -29,6 +29,7 @@ export default function ReviewsPage() {
   const reviewsSchema = {
     '@context': 'https://schema.org',
     '@type': 'RealEstateAgent',
+    '@id': 'https://www.joshuafink.com/#agent',
     name: 'Joshua Fink Group',
     url: 'https://www.joshuafink.com',
     aggregateRating: {
