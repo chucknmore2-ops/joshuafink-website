@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated } from '@/lib/suburbs'
+import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated, suburbCityGeo } from '@/lib/suburbs'
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
 import { linkifyNeighborhoods } from '@/lib/linkify-neighborhoods'
 import { reviewStats } from '@/lib/reviews'
@@ -110,6 +110,35 @@ export default async function SuburbPage({ params }: Props) {
         priceRange: '$$$',
         servesCuisine: undefined,
         description: `Top-rated real estate agent serving home sellers in ${suburb.displayName}. Free market valuations, professional marketing, proven results.`,
+      },
+      {
+        '@type': 'Place',
+        '@id': `https://www.joshuafink.com/sell/${slug}#place`,
+        name: `${suburb.schemaCity}, ${suburb.schemaState}`,
+        url: `https://www.joshuafink.com/sell/${slug}`,
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: suburb.schemaCity,
+          addressRegion: suburb.schemaState,
+          addressCountry: 'US',
+        },
+        ...(suburbCityGeo[slug]
+          ? {
+              geo: {
+                '@type': 'GeoCoordinates',
+                latitude: suburbCityGeo[slug].latitude,
+                longitude: suburbCityGeo[slug].longitude,
+              },
+            }
+          : {}),
+        containedInPlace: {
+          '@type': 'AdministrativeArea',
+          name: suburb.county,
+          containedInPlace: {
+            '@type': 'State',
+            name: 'Tennessee',
+          },
+        },
       },
     ],
   }

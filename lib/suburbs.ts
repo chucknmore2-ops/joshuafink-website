@@ -685,6 +685,25 @@ export const suburbs: Record<string, Suburb> = {
 // yoyChange/pricePerSqft figures above were last reviewed. Update when refreshing stats.
 export const marketStatsLastUpdated = '2026-06-30'
 
+// City-center coordinates keyed by suburb slug. Used for Place-schema `geo`
+// on /buy/[suburb] and /sell/[suburb] to strengthen local map-pack signals.
+export const suburbCityGeo: Record<string, { latitude: number; longitude: number }> = {
+  'franklin-tn': { latitude: 35.9251, longitude: -86.8689 },
+  'brentwood-tn': { latitude: 36.0331, longitude: -86.7828 },
+  'spring-hill-tn': { latitude: 35.7512, longitude: -86.9300 },
+  'nolensville-tn': { latitude: 35.9542, longitude: -86.6689 },
+  'thompsons-station-tn': { latitude: 35.8034, longitude: -86.8919 },
+  'nashville-tn': { latitude: 36.1627, longitude: -86.7816 },
+  'murfreesboro-tn': { latitude: 35.8456, longitude: -86.3903 },
+  'gallatin-tn': { latitude: 36.3881, longitude: -86.4467 },
+  'hendersonville-tn': { latitude: 36.3050, longitude: -86.6200 },
+  'columbia-tn': { latitude: 35.6151, longitude: -87.0353 },
+  'mount-juliet-tn': { latitude: 36.2001, longitude: -86.5186 },
+  'lebanon-tn': { latitude: 36.2081, longitude: -86.2911 },
+  'smyrna-tn': { latitude: 35.9828, longitude: -86.5186 },
+  'la-vergne-tn': { latitude: 36.0156, longitude: -86.5819 },
+}
+
 export function getSuburb(slug: string): Suburb | undefined {
   return suburbs[slug]
 }
