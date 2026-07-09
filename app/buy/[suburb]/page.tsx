@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated, type Suburb } from '@/lib/suburbs'
+import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated, suburbCityGeo, type Suburb } from '@/lib/suburbs'
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
 import { linkifyNeighborhoods } from '@/lib/linkify-neighborhoods'
 import { reviewStats } from '@/lib/reviews'
@@ -95,6 +95,35 @@ export default async function BuySuburbPage({ params }: Props) {
           reviewCount: reviewStats.total,
           bestRating: '5',
           worstRating: '1',
+        },
+      },
+      {
+        '@type': 'Place',
+        '@id': `https://www.joshuafink.com/buy/${slug}#place`,
+        name: `${suburb.schemaCity}, ${suburb.schemaState}`,
+        url: `https://www.joshuafink.com/buy/${slug}`,
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: suburb.schemaCity,
+          addressRegion: suburb.schemaState,
+          addressCountry: 'US',
+        },
+        ...(suburbCityGeo[slug]
+          ? {
+              geo: {
+                '@type': 'GeoCoordinates',
+                latitude: suburbCityGeo[slug].latitude,
+                longitude: suburbCityGeo[slug].longitude,
+              },
+            }
+          : {}),
+        containedInPlace: {
+          '@type': 'AdministrativeArea',
+          name: suburb.county,
+          containedInPlace: {
+            '@type': 'State',
+            name: 'Tennessee',
+          },
         },
       },
     ],
