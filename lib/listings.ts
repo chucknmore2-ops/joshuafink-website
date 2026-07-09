@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-07-08T10:22:48.824Z
+// AUTO-GENERATED — Last synced: 2026-07-09T10:58:34.372Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -21,7 +21,7 @@ export interface Listing {
 
 // Mirrors the header timestamp so server components can compute sync staleness
 // without parsing comments. Updated by scripts/fetch-images.mjs each sync.
-export const listingsSyncedAt = "2026-07-08T10:22:48.824Z";
+export const listingsSyncedAt = "2026-07-09T10:58:34.372Z";
 
 export const listings: Listing[] = [
   {
@@ -61,18 +61,6 @@ export const listings: Listing[] = [
     lastVerified: listingsSyncedAt,
   },
   {
-    address: "4127 Edwards Ave",
-    city: "Nashville, TN 37216 | MLS #3245823",
-    price: 429900,
-    beds: 3,
-    baths: 1,
-    sqft: 1223,
-    status: "Active",
-    compassUrl: "https://www.compass.com/homedetails/4127-Edwards-Ave-Nashville-TN-37216/THUS9_pid/",
-    imageUrl: "https://www.compass.com/m/2afe7b6255b0dc2419360dc452e865a5300acd8d013467c1f4cd29d34f78fb3a/2048x1536.webp",
-    lastVerified: listingsSyncedAt,
-  },
-  {
     address: "511 Wanda Dr",
     city: "Nashville, TN 37210",
     price: 419900,
@@ -105,7 +93,7 @@ export const listings: Listing[] = [
     sqft: 1134,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/870-Reeves-Rd-Antioch-TN-37013/SW1BU_pid/",
-    imageUrl: "https://www.compass.com/m/a7ef33f971b3f98f9c9df198198d003671a4c04ee14a9a100ddb182a937911e6/2048x1536.webp",
+    imageUrl: "https://www.compass.com/m/ce49d43899de5afcb9e0c75704d5e6a63a12a2c584826f54faf7ebb96ef704be/2048x1536.webp",
     lastVerified: listingsSyncedAt,
   },
   {
