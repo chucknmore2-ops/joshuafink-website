@@ -69,7 +69,7 @@ export default function CinematicHero({ slides }: { slides: HeroSlide[] }) {
                 priority={i === 0}
                 loading={i === 0 ? undefined : 'lazy'}
                 fetchPriority={i === 0 ? 'high' : 'low'}
-                sizes="100vw"
+                sizes="(max-width: 768px) 100vw, (max-width: 1280px) 100vw, 1920px"
                 className="object-cover"
               />
             </div>
