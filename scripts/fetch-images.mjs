@@ -64,7 +64,19 @@ async function main() {
         else if (label.includes('sq')) cardSqft = parseInt(val.replace(/,/g, '')) || 0;
       }
 
-      return { url, imgUrl, cardBeds, cardBaths, cardSqft };
+      // MLS-status reconciliation: don't blindly write 'Active'. If Compass's
+      // own card markup shows a non-Active label (Pending, Sold, Coming Soon,
+      // Active Under Contract), propagate that — otherwise a listing that
+      // changed status between syncs would render with status:'Active' and
+      // schema availability='InStock'.
+      const cardText = (card.innerText || card.textContent || '');
+      let cardStatus = '';
+      if (/Active\s*Under\s*Contract/i.test(cardText)) cardStatus = 'Active Under Contract';
+      else if (/Coming\s*Soon/i.test(cardText)) cardStatus = 'Coming Soon';
+      else if (/Pending/i.test(cardText)) cardStatus = 'Pending';
+      else if (/(?:^|[^A-Za-z])Sold(?:$|[^A-Za-z])/i.test(cardText)) cardStatus = 'Sold';
+
+      return { url, imgUrl, cardBeds, cardBaths, cardSqft, cardStatus };
     });
   });
 
@@ -113,7 +125,7 @@ async function main() {
         address,
         city,
         price,
-        status: 'Active',
+        status: card.cardStatus || 'Active',
         compassUrl: card.url,
         imageUrl: card.imgUrl || meta.ogImage || '',
       };
@@ -149,6 +161,7 @@ async function main() {
     parts.push(`    status: ${JSON.stringify(l.status)}`);
     parts.push(`    compassUrl: ${JSON.stringify(l.compassUrl)}`);
     if (l.imageUrl) parts.push(`    imageUrl: ${JSON.stringify(l.imageUrl)}`);
+    parts.push(`    lastVerified: listingsSyncedAt`);
     return `  {\n${parts.join(',\n')},\n  }`;
   }).join(',\n');
 
@@ -168,7 +181,14 @@ export interface Listing {
   note?: string;
   compassUrl: string;
   imageUrl?: string;
+  // ISO timestamp of the last Compass sync that confirmed this listing.
+  // Used by /listings to flag the grid as 'Verifying…' if the file goes stale.
+  lastVerified?: string;
 }
+
+// Mirrors the header timestamp so server components can compute sync staleness
+// without parsing comments. Updated by scripts/fetch-images.mjs each sync.
+export const listingsSyncedAt = ${JSON.stringify(timestamp)};
 
 export const listings: Listing[] = [
 ${listingsCode}

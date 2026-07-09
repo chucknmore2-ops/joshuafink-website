@@ -8,6 +8,7 @@ import { listings as featuredListings } from '@/lib/listings'
 import { buildListingItemList } from '@/lib/listing-schema'
 
 export const metadata: Metadata = {
+  alternates: { canonical: 'https://www.joshuafink.com' },
   title: 'Top Realtor in Middle Tennessee',
   description:
     'Top-rated Compass agent serving Franklin, Brentwood, Spring Hill, Nashville, and all of Middle Tennessee. 17+ years, 100+ homes sold annually, 5★ rating from 218+ clients. Free valuation and off-market listing access.',
@@ -25,8 +26,37 @@ export default function HomePage() {
     'Featured Homes — Joshua Fink, Compass Real Estate'
   )
 
+  // Homepage-level Organization reference (resolves to the full RealEstateAgent
+  // definition emitted in app/layout.tsx via shared @id) + BreadcrumbList.
+  // Gives brand queries ("Joshua Fink Compass") a homepage-anchored org node
+  // and surfaces a breadcrumb trail in SERP snippets.
+  const homepageGraph = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'RealEstateAgent',
+        '@id': 'https://joshuafink.com/#agent',
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: 'https://joshuafink.com/',
+          },
+        ],
+      },
+    ],
+  }
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homepageGraph) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(featuredItemList) }}
@@ -122,7 +152,9 @@ export default function HomePage() {
       </section>
 
       {/* ── INLINE LEAD FORM ── */}
-      <section className="bg-white py-20 border-b border-neutral-200">
+      {/* id + scroll-mt is the target for the hero's first-viewport "Message
+          Joshua" CTA, so mobile users get a capture path without hunting. */}
+      <section id="contact-form" className="scroll-mt-24 bg-white py-20 border-b border-neutral-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">

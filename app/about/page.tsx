@@ -5,6 +5,7 @@ import { reviews, reviewStats } from '@/lib/reviews'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 
 export const metadata: Metadata = {
+  alternates: { canonical: 'https://www.joshuafink.com/about' },
   title: 'About Joshua Fink',
   description:
     'Learn about Joshua Fink — Affiliate Broker at Compass Real Estate with 17+ years of experience, 100+ homes sold annually, and multiple top-producer awards in Middle Tennessee.',

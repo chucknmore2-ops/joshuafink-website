@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import type { HeroSlide } from '@/lib/hero-slides'
 import TrustBadges from '@/components/TrustBadges'
+import TrackedTelLink from '@/components/TrackedTelLink'
 
 const SLIDE_MS = 6500
 
@@ -132,12 +133,22 @@ export default function CinematicHero({ slides }: { slides: HeroSlide[] }) {
             Get a Cash Offer
           </Link>
           <Link
-            href="/listings"
-            className="inline-flex items-center justify-center bg-transparent border border-white/50 text-white text-sm font-semibold px-8 py-4 rounded-full tracking-wide transition-all duration-200 hover:bg-white/10 hover:border-white active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            href="/buy/franklin-tn"
+            className="inline-flex items-center justify-center bg-brand-navy text-white text-sm font-bold px-8 py-4 rounded-full tracking-wide transition-all duration-200 hover:bg-brand-navy-dark hover:shadow-2xl hover:-translate-y-0.5 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           >
-            Browse Listings <span aria-hidden="true">→</span>
+            Find Your Next Home <span aria-hidden="true">→</span>
           </Link>
+          {/* First-viewport lead capture — jumps to the on-page contact form.
+              The tel button below is desktop-only, so this is the primary
+              direct-contact path for mobile visitors without scrolling. */}
           <a
+            href="#contact-form"
+            className="inline-flex items-center justify-center gap-2 bg-transparent border border-white/50 text-white text-sm font-semibold px-8 py-4 rounded-full tracking-wide transition-all duration-200 hover:bg-white/10 hover:border-white active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            data-cta="hero-message"
+          >
+            Message Joshua
+          </a>
+          <TrackedTelLink
             href="tel:6155512727"
             className="hidden sm:inline-flex items-center justify-center gap-2 bg-transparent border border-white/50 text-white text-sm font-semibold px-8 py-4 rounded-full tracking-wide transition-all duration-200 hover:bg-white/10 hover:border-white active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             aria-label="Call Joshua Fink at (615) 551-2727"
@@ -153,7 +164,7 @@ export default function CinematicHero({ slides }: { slides: HeroSlide[] }) {
               <path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.24.2 2.45.57 3.57a1 1 0 0 1-.24 1.02l-2.21 2.2z" />
             </svg>
             Call (615) 551-2727
-          </a>
+          </TrackedTelLink>
         </div>
 
         {/* Slide caption (status + city, no price) + indicator dots */}

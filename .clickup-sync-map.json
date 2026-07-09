@@ -1,0 +1,193 @@
+{
+  "_list_id": "901417641858",
+  "_rollup_id": "86ban7hdt",
+  "findings": {
+    "f3d6ea": {
+      "task_id": "86ban7h6r",
+      "cu_status": "approved for prod",
+      "synced_at": "2026-06-29T15:01:18.851524+00:00"
+    },
+    "918ad9": {
+      "task_id": "86ban7h75",
+      "cu_status": "blocked",
+      "synced_at": "2026-06-29T15:01:21.703619+00:00"
+    },
+    "7ad364": {
+      "task_id": "86ban7h7p",
+      "cu_status": "blocked",
+      "synced_at": "2026-06-29T15:01:23.775709+00:00"
+    },
+    "027fc9": {
+      "task_id": "86ban7h7w",
+      "cu_status": "complete",
+      "synced_at": "2026-06-29T15:01:25.395914+00:00"
+    },
+    "effd14": {
+      "task_id": "86ban7h8b",
+      "cu_status": "blocked",
+      "synced_at": "2026-06-29T15:01:26.886438+00:00"
+    },
+    "10e71e": {
+      "task_id": "86ban7h8u",
+      "cu_status": "blocked",
+      "synced_at": "2026-06-29T15:01:28.064920+00:00"
+    },
+    "f1f95c": {
+      "task_id": "86ban7h93",
+      "cu_status": "blocked",
+      "synced_at": "2026-06-29T15:01:29.981210+00:00"
+    },
+    "a77d3a": {
+      "task_id": "86ban7h9h",
+      "cu_status": "approved for prod",
+      "synced_at": "2026-06-29T15:01:31.148059+00:00"
+    },
+    "d046e6": {
+      "task_id": "86ban7ha7",
+      "cu_status": "blocked",
+      "synced_at": "2026-06-29T15:01:32.362409+00:00"
+    },
+    "b5656e": {
+      "task_id": "86ban7har",
+      "cu_status": "approved for prod",
+      "synced_at": "2026-06-29T15:01:33.874462+00:00"
+    },
+    "e32e7a": {
+      "task_id": "86ban7hb1",
+      "cu_status": "blocked",
+      "synced_at": "2026-06-29T15:01:35.254641+00:00"
+    },
+    "8ffcd2": {
+      "task_id": "86ban7hbg",
+      "cu_status": "blocked",
+      "synced_at": "2026-06-29T15:01:36.773581+00:00"
+    },
+    "3c32e3": {
+      "task_id": "86ban7hc3",
+      "cu_status": "approved for prod",
+      "synced_at": "2026-06-29T15:01:38.219515+00:00"
+    },
+    "abf6a3": {
+      "task_id": "86ban7hcu",
+      "cu_status": "blocked",
+      "synced_at": "2026-06-29T15:01:40.332214+00:00"
+    },
+    "f6c440": {
+      "task_id": "86ban7hdc",
+      "cu_status": "blocked",
+      "synced_at": "2026-06-29T15:01:41.580199+00:00"
+    },
+    "363dff": {
+      "task_id": "86banqm4x",
+      "cu_status": "complete",
+      "synced_at": "2026-06-30T02:41:21.369709+00:00"
+    },
+    "f2889c": {
+      "task_id": "86banqm52",
+      "cu_status": "blocked",
+      "synced_at": "2026-06-30T02:41:22.652243+00:00"
+    },
+    "94bfef": {
+      "task_id": "86banqm59",
+      "cu_status": "approved for prod",
+      "synced_at": "2026-06-30T02:41:24.059676+00:00"
+    }
+  },
+  "worker": {
+    "86ban7hdc": {
+      "status": "no-changes",
+      "at": "2026-06-30T05:20:10.287449+00:00",
+      "finding_id": "f6c440"
+    },
+    "86ban7hcu": {
+      "status": "no-changes",
+      "at": "2026-06-30T05:50:28.009880+00:00",
+      "finding_id": "abf6a3"
+    },
+    "86ban7hc3": {
+      "status": "pr-opened",
+      "at": "2026-06-30T05:53:08.521290+00:00",
+      "finding_id": "3c32e3"
+    },
+    "86ban7hbg": {
+      "status": "no-changes",
+      "at": "2026-06-30T06:23:32.831946+00:00",
+      "finding_id": "8ffcd2"
+    },
+    "86ban7hb1": {
+      "status": "no-changes",
+      "at": "2026-06-30T06:24:04.441048+00:00",
+      "finding_id": "e32e7a"
+    },
+    "86ban7har": {
+      "status": "pr-opened",
+      "at": "2026-06-30T06:56:37.082443+00:00",
+      "finding_id": "b5656e"
+    },
+    "86ban7ha7": {
+      "status": "no-changes",
+      "at": "2026-06-30T06:57:07.554651+00:00",
+      "finding_id": "d046e6"
+    },
+    "86ban7h9h": {
+      "status": "no-changes",
+      "at": "2026-06-30T07:27:28.340810+00:00",
+      "finding_id": "a77d3a"
+    },
+    "86ban7h93": {
+      "status": "no-changes",
+      "at": "2026-06-30T07:28:06.738588+00:00",
+      "finding_id": "f1f95c"
+    },
+    "86ban7h8u": {
+      "status": "no-changes",
+      "at": "2026-06-30T07:58:52.305333+00:00",
+      "finding_id": "10e71e"
+    },
+    "86ban7h8b": {
+      "status": "no-changes",
+      "at": "2026-06-30T07:59:23.060625+00:00",
+      "finding_id": "effd14"
+    },
+    "86ban7h7w": {
+      "status": "pr-opened",
+      "at": "2026-06-30T08:35:11.974687+00:00",
+      "finding_id": "027fc9"
+    },
+    "86ban7h7p": {
+      "status": "no-changes",
+      "at": "2026-06-30T08:35:42.725446+00:00",
+      "finding_id": "7ad364"
+    },
+    "86ban7h75": {
+      "status": "no-changes",
+      "at": "2026-06-30T09:06:14.364434+00:00",
+      "finding_id": "918ad9"
+    },
+    "86ban7h6r": {
+      "status": "pr-opened",
+      "at": "2026-06-30T09:07:57.135152+00:00",
+      "finding_id": "f3d6ea"
+    },
+    "86bap1hx6": {
+      "status": "no-changes",
+      "at": "2026-06-30T15:03:27.248044+00:00",
+      "finding_id": null
+    },
+    "86banqm59": {
+      "status": "pr-opened",
+      "at": "2026-06-30T15:03:59.639698+00:00",
+      "finding_id": "94bfef"
+    },
+    "86banqm52": {
+      "status": "no-changes",
+      "at": "2026-06-30T15:34:47.079314+00:00",
+      "finding_id": "f2889c"
+    },
+    "86banqm4x": {
+      "status": "pr-opened",
+      "at": "2026-06-30T15:36:58.058680+00:00",
+      "finding_id": "363dff"
+    }
+  }
+}

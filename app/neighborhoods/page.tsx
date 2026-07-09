@@ -11,6 +11,29 @@ export const metadata: Metadata = {
   },
 }
 
+const faqs = [
+  {
+    q: 'What is the best Middle Tennessee neighborhood for families?',
+    a: 'Family-first searches usually start with Brentwood, Franklin, and Nolensville — all anchored by top-rated Williamson County Schools, low crime, and strong long-term appreciation. Spring Hill and Thompson’s Station offer similar schools at a lower price band. Open any neighborhood guide for the specific school zones, HOA, and price range.',
+  },
+  {
+    q: 'Which Middle Tennessee neighborhoods have the best schools?',
+    a: 'Williamson County Schools (Franklin, Brentwood, Nolensville, Thompson’s Station) consistently rank in the top tier of Tennessee public districts. Within that, neighborhoods zoned for Ravenwood High, Page High, and Independence High pull a meaningful school-zone premium — usually 5–15% over comparable homes in adjacent zones.',
+  },
+  {
+    q: 'How are these neighborhood guides different from Zillow or Realtor.com?',
+    a: 'Zillow and Realtor.com show listing data. These guides explain the neighborhood itself — HOA structure, build era, school zone, commute pattern, builder reputation, and how the subdivision actually compares to its neighbors. Joshua has shown or sold homes in every neighborhood featured here.',
+  },
+  {
+    q: 'Where do I find live listings for a specific neighborhood?',
+    a: 'Each guide links to Joshua’s Compass agent profile, which serves real-time inventory directly from the Middle Tennessee MLS. You can also call or text 615-551-2727 and Joshua will send a curated list filtered to your price, beds, and must-haves.',
+  },
+  {
+    q: 'Can Joshua tour a specific neighborhood with me?',
+    a: 'Yes — in-person neighborhood tours are free, with no obligation. Joshua will drive you through the subdivision, walk the streets that matter (cul-de-sacs, pool/clubhouse access, school routes), and show you 2–4 homes if you want to see interiors. Book at /contact or call 615-551-2727.',
+  },
+]
+
 export default function NeighborhoodsIndexPage() {
   const all = Object.values(neighborhoods)
 
@@ -30,9 +53,20 @@ export default function NeighborhoodsIndexPage() {
     ],
   }
 
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  }
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
       <div className="bg-white">
         <div style={{ backgroundColor: '#0A1628' }} className="text-white py-20 px-4 sm:px-6 lg:px-8">
@@ -114,6 +148,23 @@ export default function NeighborhoodsIndexPage() {
             >
               Request a Specific Neighborhood
             </Link>
+          </div>
+
+          <div className="max-w-4xl mx-auto pt-20">
+            <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
+              Neighborhood Guide FAQ
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-black text-black tracking-tight mb-10">
+              Frequently Asked Questions
+            </h2>
+            <div className="space-y-8">
+              {faqs.map((faq) => (
+                <div key={faq.q} className="border-b border-[#E8E8E8] pb-6">
+                  <h3 className="text-lg font-black text-black mb-2">{faq.q}</h3>
+                  <p className="text-sm text-[#6B6B6B] leading-relaxed">{faq.a}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

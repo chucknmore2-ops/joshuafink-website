@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import CashOfferForm from '../CashOfferForm'
 import TrustBadges from '@/components/TrustBadges'
 import ReviewStrip from '@/components/ReviewStrip'
+import TrackedTelLink from '@/components/TrackedTelLink'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 import {
   getCashOfferCity,
@@ -133,12 +134,12 @@ export default async function CashOfferCityPage({ params }: Props) {
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'RealEstateAgent',
-            '@id': 'https://joshuafink.com/#agent',
+            '@id': 'https://www.joshuafink.com/#agent',
             name: 'Joshua Fink — Compass Real Estate',
             url,
             telephone: '+16155512727',
             email: 'joshua@joshuafink.com',
-            image: 'https://joshuafink.com/headshot.webp',
+            image: 'https://www.joshuafink.com/headshot.webp',
             description: `Joshua Fink buys houses for cash across ${city.displayName} and ${city.county}, Tennessee — fair offer in 24 hours, close in as little as 7 days.`,
             areaServed: {
               '@type': 'City',
@@ -213,13 +214,14 @@ export default async function CashOfferCityPage({ params }: Props) {
                 Fair cash offer in <strong className="text-white">24 hours</strong>. Close in as little as{' '}
                 <strong className="text-white">7 days</strong>. No repairs, no commissions, no showings.
               </p>
-              <a
+              <TrackedTelLink
                 href="tel:6155512727"
                 className="inline-flex items-center gap-3 bg-brand-crimson text-white text-xl font-black px-8 py-4 rounded-full tracking-wide transition-all duration-200 hover:bg-brand-crimson-dark hover:shadow-2xl hover:-translate-y-0.5 active:scale-[0.98] mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                 aria-label="Call Joshua at 615-551-2727"
+                data-cta="cash-offer-city-hero-call"
               >
                 <span aria-hidden="true">📞</span> 615-551-2727
-              </a>
+              </TrackedTelLink>
               <p className="text-neutral-400 text-sm mt-3 mb-8">Call or text anytime — Joshua answers.</p>
               <TrustBadges variant="dark" />
             </div>

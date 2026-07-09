@@ -84,3 +84,27 @@ export const reviewStats = {
   rating: 5.0,
   zillowUrl: "https://www.zillow.com/profile/JoshuaFinkGroup",
 };
+
+/**
+ * Direct "write a Google review" link for Joshua's Google Business Profile.
+ *
+ * Google reviews are what drive the local map pack (the 3-pack of businesses
+ * shown above the blue links) — the single highest-leverage local-SEO signal
+ * for a real-estate agent. Static Zillow reviews (above) do NOT feed the map
+ * pack; only Google reviews on the Business Profile do.
+ *
+ * HOW TO ACTIVATE (Joshua, ~2 min):
+ *   1. Sign in to the Google Business Profile for "Joshua Fink Group".
+ *   2. Profile → "Ask for reviews" / "Get more reviews" → copy the short link.
+ *      It looks like  https://g.page/r/XXXXXXXXXXXX/review
+ *      (or            https://search.google.com/local/writereview?placeid=XXXX ).
+ *   3. Paste it below and deploy.
+ *
+ * Until a real URL is set here, every review CTA on the site renders NOTHING
+ * (see components/GoogleReviewCTA.tsx and the post-close email), so there is no
+ * broken link risk — the feature simply stays dark until it's configured.
+ */
+export const GOOGLE_REVIEW_URL = "";
+
+/** True once Joshua has pasted a real Google review link above. */
+export const hasGoogleReviewLink = GOOGLE_REVIEW_URL.trim().length > 0;

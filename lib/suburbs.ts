@@ -21,6 +21,9 @@ export type Suburb = {
   topNeighborhoods?: string[]
   schoolDistrict?: string
   commuteNote?: string
+  // ISO date (YYYY-MM-DD) when this suburb's medianPrice/DOM/yoyChange were
+  // actually refreshed. Falls back to `marketStatsLastUpdated` when unset.
+  dataUpdatedAt?: string
 }
 
 export const suburbs: Record<string, Suburb> = {
@@ -677,6 +680,10 @@ export const suburbs: Record<string, Suburb> = {
     commuteNote: '20-30 min to Nashville via I-24 (traffic dependent)',
   },
 }
+
+// Single source of truth for when the hard-coded medianPrice/avgDaysOnMarket/
+// yoyChange/pricePerSqft figures above were last reviewed. Update when refreshing stats.
+export const marketStatsLastUpdated = '2026-06-30'
 
 export function getSuburb(slug: string): Suburb | undefined {
   return suburbs[slug]

@@ -4,8 +4,10 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
+import TrackedTelLink from '@/components/TrackedTelLink'
 
 const navLinks = [
+  { href: '/buy', label: 'Buy' },
   { href: '/listings', label: 'Listings' },
   { href: '/neighborhoods', label: 'Neighborhoods' },
   { href: '/sell', label: 'Sell' },
@@ -62,12 +64,13 @@ export default function Navbar() {
           </Link>
 
           {/* Call Now — outline pill, desktop only */}
-          <a
+          <TrackedTelLink
             href="tel:6155512727"
             className="hidden md:inline-flex items-center border border-neutral-300 text-black text-sm font-semibold px-5 py-2 rounded-full tracking-wide transition-all duration-200 hover:border-black hover:shadow-sm active:scale-[0.98]"
+            data-cta="navbar-call"
           >
             Call Now
-          </a>
+          </TrackedTelLink>
 
           {/* Hamburger */}
           <button
@@ -121,12 +124,13 @@ export default function Navbar() {
             >
               Get a Cash Offer
             </Link>
-            <a
+            <TrackedTelLink
               href="tel:6155512727"
               className="block text-center border border-neutral-300 text-black text-sm font-semibold px-5 py-3 rounded-full tracking-wide transition-all duration-200 hover:border-black"
+              data-cta="navbar-mobile-menu-call"
             >
               Call 615-551-2727
-            </a>
+            </TrackedTelLink>
           </div>
         </div>
       )}

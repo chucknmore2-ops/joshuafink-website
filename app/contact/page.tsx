@@ -3,6 +3,7 @@ import ContactForm from './ContactForm'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 
 export const metadata: Metadata = {
+  alternates: { canonical: 'https://www.joshuafink.com/contact' },
   title: 'Contact Joshua Fink',
   description:
     'Get in touch with Joshua Fink — Affiliate Broker at Compass Real Estate. Call 615-551-2727 or send a message for buying, selling, or investment guidance in Middle Tennessee.',

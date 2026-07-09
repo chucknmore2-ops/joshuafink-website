@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
 import { reviews, reviewStats } from '@/lib/reviews'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
+import GoogleReviewCTA from '@/components/GoogleReviewCTA'
 
 export const metadata: Metadata = {
+  alternates: { canonical: 'https://www.joshuafink.com/reviews' },
   title: 'Client Reviews | Joshua Fink | Compass Real Estate Nashville',
   description: `Joshua Fink has ${reviewStats.total} five-star reviews on Zillow. Read what buyers and sellers across Middle Tennessee say about working with Joshua.`,
 }
@@ -28,6 +30,7 @@ export default function ReviewsPage() {
   const reviewsSchema = {
     '@context': 'https://schema.org',
     '@type': 'RealEstateAgent',
+    '@id': 'https://www.joshuafink.com/#agent',
     name: 'Joshua Fink Group',
     url: 'https://www.joshuafink.com',
     aggregateRating: {
@@ -150,6 +153,12 @@ export default function ReviewsPage() {
           >
             Read All Reviews on Zillow →
           </a>
+        </div>
+
+        {/* Leave a Google review — renders only once GOOGLE_REVIEW_URL is set
+            (lib/reviews.ts). Google reviews drive the local map pack. */}
+        <div className="mt-12">
+          <GoogleReviewCTA variant="light" />
         </div>
 
         {/* Work with Josh CTA */}

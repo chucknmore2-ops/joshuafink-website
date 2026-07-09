@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getSuburb, getAllSuburbSlugs, suburbs } from '@/lib/suburbs'
+import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated, suburbs } from '@/lib/suburbs'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 
 const SITE = 'https://www.joshuafink.com'
@@ -78,7 +78,7 @@ export default async function MarketSuburbPage({ params }: Props) {
     headline: `${s.displayName} housing market in 2026: median ${s.medianPrice}, ${s.yoyChange} YoY`,
     description: `2026 housing market report for ${s.displayName}: median sale price ${s.medianPrice}, ${s.avgDaysOnMarket} avg days on market, ${s.yoyChange} year-over-year appreciation. Market lean: ${lean.lean}.`,
     datePublished: '2026-01-15',
-    dateModified: new Date().toISOString().slice(0, 10),
+    dateModified: s.dataUpdatedAt ?? marketStatsLastUpdated,
     inLanguage: 'en-US',
     url: `${SITE}/market/${slug}`,
     about: {
@@ -245,6 +245,70 @@ export default async function MarketSuburbPage({ params }: Props) {
               <div className="bg-white p-6 border border-[#E8E8E8]">
                 <p className="text-3xl font-black" style={{ color: '#16a34a' }}>{s.yoyChange}</p>
                 <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">YoY Appreciation</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Mid-page inline lead capture — catches high-intent visitors who scroll
+            past the headline stats but won't reach the bottom CTA form. */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
+          <div className="bg-white border border-[#E8E8E8] p-6 sm:p-8">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
+              <div className="lg:col-span-2">
+                <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
+                  {s.displayName} · Hyperlocal Read
+                </p>
+                <h2 className="text-2xl font-black text-black tracking-tight mb-3">
+                  Want a {s.name}-specific market read on your block?
+                </h2>
+                <p className="text-sm text-[#444] leading-relaxed">
+                  Citywide medians don&apos;t price your specific home. Joshua will reply same-day
+                  with comps within a half-mile and a straight answer on what your move looks like
+                  in {s.displayName} right now.
+                </p>
+              </div>
+              <div className="lg:col-span-3">
+                <SuburbLeadForm
+                  successTitle="Got it — Joshua will reach out today."
+                  successMessage={
+                    <>
+                      Watch for a {s.displayName}-specific reply within a few hours. Urgent? Call{' '}
+                      <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                    </>
+                  }
+                  resetLabel="Send Another"
+                >
+                  <input type="hidden" name="lead_type" value="market" />
+                  <input type="hidden" name="suburb" value={s.name} />
+                  <input type="hidden" name="source" value={`market-${s.slug}-midpage`} />
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="mid-name" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Full Name *</label>
+                      <input type="text" id="mid-name" name="name" required placeholder="Jane Smith"
+                        className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                    </div>
+                    <div>
+                      <label htmlFor="mid-phone" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Phone *</label>
+                      <input type="tel" id="mid-phone" name="phone" required placeholder="615-555-0000"
+                        className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="mid-email" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Email *</label>
+                    <input type="email" id="mid-email" name="email" required placeholder="you@example.com"
+                      className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                  </div>
+
+                  <button type="submit"
+                    className="w-full sm:w-auto text-white text-sm font-bold px-8 py-3.5 tracking-wide transition-colors"
+                    style={{ backgroundColor: '#C41E3A' }}>
+                    Get My {s.name} Market Read →
+                  </button>
+                  <p className="text-xs text-[#A0A0A0]">Same-day reply. No spam, no pressure.</p>
+                </SuburbLeadForm>
               </div>
             </div>
           </div>

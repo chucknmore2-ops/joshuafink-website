@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getSuburb, getAllSuburbSlugs } from '@/lib/suburbs'
+import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated } from '@/lib/suburbs'
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
 import { linkifyNeighborhoods } from '@/lib/linkify-neighborhoods'
 import { reviewStats } from '@/lib/reviews'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
+import TrackedTelLink from '@/components/TrackedTelLink'
 
 type Props = {
   params: Promise<{ suburb: string }>
@@ -33,6 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       'Joshua Fink',
       'Compass Real Estate',
     ],
+    alternates: { canonical: `https://www.joshuafink.com/sell/${slug}` },
     openGraph: {
       title: `Sell Your Home in ${suburb.displayName} — Free Market Valuation | Joshua Fink`,
       description: `What is my ${suburb.name} home worth? The median price is ${suburb.medianPrice} in 2026. Get a free, personal valuation from Joshua Fink at Compass Real Estate.`,
@@ -56,6 +58,7 @@ export default async function SuburbPage({ params }: Props) {
     '@graph': [
       {
         '@type': 'RealEstateAgent',
+        '@id': 'https://www.joshuafink.com/#agent',
         name: 'Joshua Fink — Compass Real Estate',
         url: 'https://www.joshuafink.com',
         telephone: '+16155512727',
@@ -87,11 +90,21 @@ export default async function SuburbPage({ params }: Props) {
         url: `https://www.joshuafink.com/sell/${slug}`,
         telephone: '+16155512727',
         email: 'joshua@joshuafink.com',
+        // Canonical Brentwood office NAP — must match app/layout.tsx and the
+        // Google Business Profile so every suburb page reinforces the same
+        // business location (map-pack eligibility).
         address: {
           '@type': 'PostalAddress',
-          addressLocality: suburb.schemaCity,
+          streetAddress: '8119 Isabella Lane, Suite 105',
+          addressLocality: 'Brentwood',
+          addressRegion: 'TN',
+          postalCode: '37027',
+          addressCountry: 'US',
+        },
+        areaServed: {
+          '@type': 'City',
+          name: suburb.schemaCity,
           addressRegion: suburb.schemaState,
-          postalCode: suburb.schemaZip,
           addressCountry: 'US',
         },
         priceRange: '$$$',
@@ -170,13 +183,14 @@ export default async function SuburbPage({ params }: Props) {
               >
                 Get My Free Valuation
               </a>
-              <a
+              <TrackedTelLink
                 href="tel:6155512727"
                 className="inline-block border text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-white hover:text-black transition-colors text-center"
                 style={{ borderColor: '#FFFFFF' }}
+                data-cta="sell-suburb-hero-call"
               >
                 Call 615-551-2727
-              </a>
+              </TrackedTelLink>
             </div>
           </div>
         </div>
@@ -184,9 +198,14 @@ export default async function SuburbPage({ params }: Props) {
         {/* Market Snapshot */}
         <div className="border-b border-[#E8E8E8] bg-[#F9F9F9]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-6">
-              {suburb.displayName} Market Snapshot · 2026
-            </p>
+            <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 mb-6">
+              <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase">
+                {suburb.displayName} Market Snapshot · 2026
+              </p>
+              <p className="text-xs text-[#A0A0A0]">
+                Last verified: {marketStatsLastUpdated}
+              </p>
+            </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div className="bg-white p-6 border border-[#E8E8E8]">
                 <p className="text-3xl font-black text-black">{suburb.medianPrice}</p>
