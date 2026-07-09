@@ -50,6 +50,11 @@ content_engine_cash_offer/output/drafts/
 # top-level sync logs
 /logs/*.log
 
+# local automation/tooling state — regenerated locally, must not be committed
+.research-queue.json
+.clickup-sync-map.json
+research-brief.md
+
 # claude-mem auto-generated context dumps
 AGENTS.md
 .env*
