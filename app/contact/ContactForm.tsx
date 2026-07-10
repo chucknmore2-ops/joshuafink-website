@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, FormEvent } from 'react'
+import TrackedTelLink from '@/components/TrackedTelLink'
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error'
 
@@ -53,9 +54,13 @@ export default function ContactForm() {
         <h2 className="text-2xl font-black text-black mb-3">Message Sent!</h2>
         <p className="text-neutral-500 text-base leading-relaxed mb-6">
           Thanks for reaching out — Joshua will be in touch shortly. For anything urgent, call{' '}
-          <a href="tel:6155512727" className="text-black font-semibold underline">
+          <TrackedTelLink
+            href="tel:6155512727"
+            className="text-black font-semibold underline"
+            data-cta="contact-form-success-call"
+          >
             615-551-2727
-          </a>
+          </TrackedTelLink>
           .
         </p>
         <button
@@ -171,9 +176,13 @@ export default function ContactForm() {
 
       <p className="text-xs text-neutral-400">
         * Messages go directly to joshua@joshuafink.com. For immediate response, call{' '}
-        <a href="tel:6155512727" className="underline text-black">
+        <TrackedTelLink
+          href="tel:6155512727"
+          className="underline text-black"
+          data-cta="contact-form-footnote-call"
+        >
           615-551-2727
-        </a>
+        </TrackedTelLink>
         .
       </p>
 

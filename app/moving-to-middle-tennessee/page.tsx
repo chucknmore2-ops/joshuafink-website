@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { suburbs } from '@/lib/suburbs'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
+import TrackedTelLink from '@/components/TrackedTelLink'
 
 const SITE = 'https://www.joshuafink.com'
 
@@ -315,12 +316,13 @@ export default function MovingToMiddleTennesseePage() {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4 shrink-0">
-              <a
+              <TrackedTelLink
                 href="tel:6155512727"
                 className="inline-block border border-white text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-white hover:text-black transition-colors text-center"
+                data-cta="moving-hero-call"
               >
                 Call 615-551-2727
-              </a>
+              </TrackedTelLink>
               <a
                 href="sms:+16155512727"
                 className="inline-block border border-white text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-white hover:text-black transition-colors text-center"
@@ -340,7 +342,13 @@ export default function MovingToMiddleTennesseePage() {
                 <>
                   Joshua will reach out same-day to start your Middle Tennessee relocation plan. For
                   anything urgent, call{' '}
-                  <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                  <TrackedTelLink
+                    href="tel:6155512727"
+                    className="text-black font-semibold underline"
+                    data-cta="moving-success-call"
+                  >
+                    615-551-2727
+                  </TrackedTelLink>.
                 </>
               }
               resetLabel="Submit Another"
