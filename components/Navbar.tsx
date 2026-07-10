@@ -27,10 +27,11 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex-shrink-0">
           <Image
-            src="/compass-re-logo-black.png"
+            src="/compass-re-logo-black.webp"
             alt="Compass Real Estate"
-            width={988}
-            height={108}
+            width={180}
+            height={20}
+            sizes="(max-width: 768px) 120px, 180px"
             className="h-7 w-auto md:h-9"
             priority
           />
