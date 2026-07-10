@@ -315,7 +315,13 @@ export default async function SuburbPage({ params }: Props) {
               </div>
               <div className="border border-[#E8E8E8] p-6">
                 <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">Talk to Joshua</p>
-                <a href="tel:6155512727" className="block text-2xl font-black text-black hover:underline mb-1">615-551-2727</a>
+                <TrackedTelLink
+                  href="tel:6155512727"
+                  className="block text-2xl font-black text-black hover:underline mb-1"
+                  data-cta="sell-suburb-snapshot-call"
+                >
+                  615-551-2727
+                </TrackedTelLink>
                 <a href="mailto:joshua@joshuafink.com" className="block text-sm text-[#444] hover:underline">joshua@joshuafink.com</a>
               </div>
             </div>
@@ -408,9 +414,13 @@ export default async function SuburbPage({ params }: Props) {
               <div className="space-y-5">
                 <div className="border-l-2 pl-5" style={{ borderColor: '#C41E3A' }}>
                   <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mb-1">Phone</p>
-                  <a href="tel:6155512727" className="text-xl font-black text-black hover:underline">
+                  <TrackedTelLink
+                    href="tel:6155512727"
+                    className="text-xl font-black text-black hover:underline"
+                    data-cta="sell-suburb-form-panel-call"
+                  >
                     615-551-2727
-                  </a>
+                  </TrackedTelLink>
                 </div>
                 <div className="border-l-2 pl-5" style={{ borderColor: '#C41E3A' }}>
                   <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mb-1">Serving</p>
@@ -447,7 +457,13 @@ export default async function SuburbPage({ params }: Props) {
                 successMessage={
                   <>
                     Joshua will reach out within a few hours with your free {suburb.name} valuation. For faster response, call{' '}
-                    <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                    <TrackedTelLink
+                      href="tel:6155512727"
+                      className="text-black font-semibold underline"
+                      data-cta="sell-suburb-success-call"
+                    >
+                      615-551-2727
+                    </TrackedTelLink>.
                   </>
                 }
                 resetLabel="Submit Another"

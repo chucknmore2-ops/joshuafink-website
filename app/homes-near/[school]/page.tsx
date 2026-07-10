@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getSchool, getAllSchoolSlugs, getSchoolSuburb } from '@/lib/schools'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
+import TrackedTelLink from '@/components/TrackedTelLink'
 
 const SITE = 'https://www.joshuafink.com'
 
@@ -292,9 +293,13 @@ export default async function HomesNearSchoolPage({ params }: Props) {
                 <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
                   Talk to Joshua
                 </p>
-                <a href="tel:6155512727" className="block text-2xl font-black text-black hover:underline mb-1">
+                <TrackedTelLink
+                  href="tel:6155512727"
+                  className="block text-2xl font-black text-black hover:underline mb-1"
+                  data-cta="homes-near-panel-call"
+                >
                   615-551-2727
-                </a>
+                </TrackedTelLink>
                 <a href="mailto:joshua@joshuafink.com" className="block text-sm text-[#444] hover:underline">
                   joshua@joshuafink.com
                 </a>
@@ -345,12 +350,13 @@ export default async function HomesNearSchoolPage({ params }: Props) {
               >
                 Start Your Search
               </Link>
-              <a
+              <TrackedTelLink
                 href="tel:6155512727"
                 className="inline-block border border-white text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-white hover:text-black transition-colors text-center"
+                data-cta="homes-near-final-cta-call"
               >
                 Call 615-551-2727
-              </a>
+              </TrackedTelLink>
             </div>
           </div>
 
@@ -364,7 +370,13 @@ export default async function HomesNearSchoolPage({ params }: Props) {
               successMessage={
                 <>
                   Joshua will reach out same-day with zone-verified {s.name} listings and feeder-neighborhood options. For anything urgent, call{' '}
-                  <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                  <TrackedTelLink
+                    href="tel:6155512727"
+                    className="text-black font-semibold underline"
+                    data-cta="homes-near-success-call"
+                  >
+                    615-551-2727
+                  </TrackedTelLink>.
                 </>
               }
               resetLabel="Submit Another"

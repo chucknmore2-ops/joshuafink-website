@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, FormEvent } from 'react'
+import TrackedTelLink from '@/components/TrackedTelLink'
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error'
 
@@ -53,9 +54,13 @@ export default function SellForm() {
         <h2 className="text-2xl font-black text-black mb-3">Request Sent!</h2>
         <p className="text-neutral-500 text-base leading-relaxed mb-6">
           Joshua will reach out within a few hours with your free home valuation. For faster response, call{' '}
-          <a href="tel:6155512727" className="text-black font-semibold underline">
+          <TrackedTelLink
+            href="tel:6155512727"
+            className="text-black font-semibold underline"
+            data-cta="sell-form-success-call"
+          >
             615-551-2727
-          </a>
+          </TrackedTelLink>
           .
         </p>
         <button
