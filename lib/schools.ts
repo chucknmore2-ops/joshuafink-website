@@ -359,6 +359,32 @@ export const schools: Record<string, School> = {
       },
     ],
   },
+
+  'summit-high-school-spring-hill-tn': {
+    slug: 'summit-high-school-spring-hill-tn',
+    name: 'Summit High School',
+    level: 'High',
+    district: 'Williamson County Schools',
+    suburbSlug: 'spring-hill-tn',
+    ratingNote: 'A top-tier Williamson County Schools high school serving the fast-growing Williamson-County side of Spring Hill.',
+    blurb:
+      'Summit High School serves the Williamson County side of Spring Hill, one of the fastest-growing cities in Tennessee. It carries the same Williamson County Schools reputation that draws families to Franklin and Brentwood, but at Spring Hill\'s more accessible price point — which is why the Summit zone is a frequent shortlist item for value-focused relocating families who still want WCS on the school report. Buyers should note Spring Hill straddles the Williamson/Maury County line, so confirming the exact zone for a specific address matters more here than almost anywhere else Joshua works.',
+    neighborhoods: ['Autumn Ridge', 'Campbell Station', 'Cherry Grove', 'Copper Ridge'],
+    faqs: [
+      {
+        q: 'What neighborhoods are zoned to Summit High School?',
+        a: 'Summit draws from the Williamson County side of Spring Hill, including communities like Autumn Ridge, Campbell Station, Cherry Grove, and Copper Ridge. Spring Hill straddles the Williamson/Maury County line, so always confirm the current zone assignment with Williamson County Schools for any specific address before writing an offer.',
+      },
+      {
+        q: 'How much do homes in the Summit High zone cost?',
+        a: 'Summit-zoned homes are part of the broader Spring Hill market — see the current Spring Hill market report for up-to-date medians and price-per-square-foot. Joshua can pull exact, current comps for any specific street.',
+      },
+      {
+        q: 'Does being zoned to Summit High School affect resale value?',
+        a: 'Yes. Williamson County school zoning is one of the most consistently quoted reasons buyers pay a premium in Spring Hill over comparable homes on the Maury County side. Confirming a Williamson County assignment — Summit or otherwise — before you buy is one of the highest-leverage checks Joshua runs for clients targeting Spring Hill.',
+      },
+    ],
+  },
 }
 
 export function getSchool(slug: string): School | undefined {
