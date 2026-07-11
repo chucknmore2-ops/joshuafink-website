@@ -3670,6 +3670,87 @@ Tour both. Walk Main Street on a Saturday. Drive Cool Springs at rush hour. Watc
 If you want help running the analysis for your specific situation, the [Franklin buyer guide](/buy/franklin-tn) covers the broader Franklin market context. For a personal consultation, reach out: [615-551-2727](tel:6155512727) or [joshua@joshuafink.com](mailto:joshua@joshuafink.com).
     `.trim(),
   },
+  {
+    slug: "how-much-house-can-i-afford-middle-tennessee-2026",
+    title: "How Much House Can You Actually Afford in Middle Tennessee in 2026?",
+    date: "July 10, 2026",
+    dateModified: "July 10, 2026",
+    excerpt:
+      "A payment-first, no-hype answer to the question every Middle Tennessee buyer starts with: how much house can I actually afford? Real math at today's mortgage rates, mapped to what that payment buys in Nashville, Murfreesboro, Spring Hill, and beyond.",
+    category: "For Buyers",
+    content: `
+**Quick answer:** most lenders qualify buyers up to a monthly housing payment of about 28% of gross income (and total debt up to 36–43%), but your *comfortable* number is usually lower than your *approved* number. At today's rate — the 30-year fixed averaged 6.49% the week of July 9, 2026 ([Freddie Mac PMMS](https://www.freddiemac.com/pmms)) — a household earning $110,000/year can plan around roughly $400,000 of purchasing power with 20% down; $140,000/year gets you closer to $515,000. Below is exactly how I get to those numbers, and what they buy across Middle Tennessee right now.
+
+This is the conversation I have with almost every buyer before we tour a single house. Getting the number right up front saves you from falling for a home you can't actually afford — or underselling yourself on one you can.
+
+## The Rule Lenders Actually Use
+
+Underwriting isn't a guess. Most conventional lenders qualify you against two ratios:
+
+- **Front-end (housing) ratio — around 28%.** Your total monthly housing payment (principal, interest, taxes, insurance, HOA — often abbreviated PITIA) shouldn't exceed roughly 28% of your gross monthly income.
+- **Back-end (total debt) ratio — 36% to 43%+.** Housing payment plus every other monthly debt (car loans, student loans, minimum credit card payments) is capped between 36% and 45% depending on the loan program, your credit profile, and your reserves.
+
+FHA and some conventional programs will stretch further than 28/36 for strong-credit borrowers. But the ratio your lender approves and the payment you'll actually be comfortable making for the next 15–30 years are two different numbers. I'd rather walk a buyer into a home with breathing room than the maximum the computer says they qualify for.
+
+## What a Given Payment Buys in Middle Tennessee Right Now
+
+Using the current 6.49% average rate and 30-year terms, here's principal-and-interest only (taxes, insurance, PMI, and HOA are extra and vary by county and property) on this site's own June 2026 median prices:
+
+- **[La Vergne](/buy/la-vergne-tn)** — median $330,000 → about **$1,667/mo** P&I with 20% down.
+- **[Columbia](/buy/columbia-tn)** — median $340,000 → about **$1,717/mo** P&I with 20% down.
+- **[Smyrna](/buy/smyrna-tn)** — median $370,000 → about **$1,869/mo** P&I with 20% down.
+- **[Murfreesboro](/buy/murfreesboro-tn)** — median $380,000 → about **$1,919/mo** P&I with 20% down.
+- **[Nashville](/buy/nashville-tn)** — median $425,000 → about **$2,147/mo** P&I with 20% down.
+- **[Spring Hill](/buy/spring-hill-tn)** — median $450,000 → about **$2,273/mo** P&I with 20% down.
+- **[Franklin](/buy/franklin-tn)** — median $650,000 → about **$3,283/mo** P&I with 20% down.
+
+Putting down less than 20% raises both the loan amount and, on conventional loans, adds private mortgage insurance (PMI) until you reach 20% equity. On that same Nashville median at 10% down, for example, P&I alone climbs to roughly $2,415/mo before PMI is added — a meaningful jump. This is why the size of your down payment changes the math more than most first-time buyers expect.
+
+## Working Backward: What Income Gets You There
+
+Flip the math around and it looks like this — using the 28% front-end rule, 20% down, and today's rate, with taxes/insurance/HOA estimated separately from the loan payment itself:
+
+- **~$70,000/year household income** → roughly **$260,000** in purchasing power. Realistic in parts of Murfreesboro, La Vergne, or Columbia at the entry tier.
+- **~$90,000/year** → roughly **$330,000**. Opens up more of Murfreesboro, Smyrna, and Columbia.
+- **~$110,000/year** → roughly **$405,000**. Nashville's median and most of Murfreesboro come into range.
+- **~$140,000/year** → roughly **$515,000**. Spring Hill, Mount Juliet, and Hendersonville open up.
+- **~$180,000/year** → roughly **$665,000**. Franklin's median becomes realistic.
+
+These are planning numbers, not a pre-approval — every lender weighs credit score, existing debt, and reserves differently, and a real pre-approval is the only number worth writing an offer around. But this gives you a realistic starting map before you talk to a lender, so you're not touring homes $150,000 outside your actual range.
+
+## The Costs Buyers Forget to Budget For
+
+The P&I number above is the headline, not the whole payment. Before you set your target price, account for:
+
+- **Property taxes** — vary meaningfully by county (Williamson County's rate is different from Rutherford's or Davidson's) and are reassessed periodically. Your lender will estimate this from the specific property's tax history.
+- **Homeowners insurance** — has risen across Tennessee in recent years; get a real quote on a specific address before you assume a number.
+- **PMI** — required on most conventional loans under 20% down; it drops off once you hit 20% equity.
+- **HOA dues** — common in newer Middle Tennessee subdivisions, and can run anywhere from $30/month to $400+/month depending on amenities.
+- **Closing costs** — typically 2–4% of the purchase price on top of your down payment, plus 2–3 months of reserves most lenders want to see in the bank.
+
+None of these show up in a simple mortgage calculator, and all of them affect what payment you can actually sustain.
+
+## Frequently Asked Questions
+
+**How much house can I afford making $100,000 a year in Tennessee?**
+Using the 28% front-end guideline at today's rates with 20% down, a $100,000 household income supports roughly $360,000–$380,000 in purchasing power before taxes, insurance, and HOA are layered on. Your exact number depends on existing debt, credit score, and down payment size — a lender's pre-approval is the only precise answer.
+
+**Is it better to put 20% down or put less down and buy sooner?**
+It depends on your timeline and the market. Waiting to save a full 20% avoids PMI and lowers your monthly payment, but home prices and rates can move while you wait. Many buyers put down less (5–10%), pay PMI temporarily, and refinance or let it drop off at 20% equity. There's no universally right answer — it's a math problem specific to your situation.
+
+**What's a comfortable mortgage payment as a percentage of income?**
+Lenders will often approve you up to 28–36% of gross income, but many financial planners recommend keeping total housing costs closer to 25% for a payment that doesn't strain the rest of your budget. The "approved" number and the "comfortable" number aren't the same, and it's worth deciding which one you want to live with for the next several years.
+
+**Does pre-qualification tell me how much I can actually afford?**
+No — pre-qualification is a rough estimate based on what you report, not what a lender verifies. A real pre-approval requires documentation (pay stubs, tax returns, bank statements) and a credit pull, and it's the number sellers and listing agents actually trust. Treat pre-qualification as a starting point, not a budget.
+
+## The Bottom Line
+
+Affordability in Middle Tennessee in 2026 is a math problem before it's a house-hunting problem: your income, your debt, your down payment, and today's rate all combine into one real number. Get a genuine pre-approval before you fall in love with anything, and pick a payment you'd be comfortable making even in a tighter month — not just the maximum the underwriting model allows.
+
+If you want a straight read on your specific numbers and which Middle Tennessee suburbs actually fit your budget, that's the first conversation I have with every buyer — no pressure, no obligation. Reach out: [615-551-2727](tel:6155512727) or [joshua@joshuafink.com](mailto:joshua@joshuafink.com). For the fuller buying process, see the [Middle Tennessee buyer's guide](/guide/buyer) and the [first-time buyer's guide](/blog/first-time-home-buyer-nashville-middle-tennessee-2026).
+    `.trim(),
+  },
 ]
 
 export function getPostBySlug(slug: string): BlogPost | undefined {
