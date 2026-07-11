@@ -30,6 +30,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Send daily tasks to Pushover
+        shell: bash
         env:
           PUSHOVER_TOKEN: ${{ secrets.PUSHOVER_TOKEN }}
           PUSHOVER_USER: ${{ secrets.PUSHOVER_USER }}
@@ -38,15 +39,61 @@ jobs:
             echo "PUSHOVER_TOKEN or PUSHOVER_USER not set — skipping (no failure)."
             exit 0
           fi
-          MSG=$(printf '%s\n%s\n%s\n\n%s' \
-            "1) Work new CRM leads FAST - call/text, update status" \
+
+          # Items 1 & 2 are the standing reminders (follow up, ask for a review).
+          # Items 3-5 rotate through a real backlog so the list never repeats the
+          # same generic lines two mornings running. Day-of-year drives the
+          # rotation; each slot pulls from a different themed bank, so every
+          # morning is a balanced, specific set of tasks Josh can actually finish.
+          # 10# forces base-10 so days like 08/09 don't parse as bad octal.
+          DOY=$(( 10#$(date -u +%j) ))
+
+          # Slot 3 — Local SEO / Google Business Profile (the map-pack lever)
+          GBP=(
+            "Add 3 fresh geo-tagged photos to your Google Business Profile"
+            "Post a Just Listed / Just Sold to GBP with 2-3 photos"
+            "Reply to your 3 most recent Google reviews with a personal thank-you"
+            "Answer 1 question in your GBP Q&A (seed one if it's empty)"
+            "Post this week's Brentwood market stat to GBP as an update"
+            "Confirm your name/address/phone match on Zillow, Realtor.com & Homes.com"
+            "Refresh 3 photos on your Zillow agent profile"
+          )
+          # Slot 4 — Content / visibility
+          CONTENT=(
+            "Record a 30-sec Brentwood market-update video for a Reel/Short"
+            "Screenshot a 5-star review and post it as a graphic to FB + IG"
+            "Share a neighborhood guide link to a local Facebook group (add context)"
+            "Post a recent client win or testimonial to LinkedIn"
+            "Shoot 5 listing/neighborhood photos for your content bank"
+            "Post 3 lines on why buyers love a specific Brentwood neighborhood"
+          )
+          # Slot 5 — Outreach / referrals / pipeline
+          OUTREACH=(
+            "Text 3 past clients a genuine check-in — no ask"
+            "Re-contact 3 leads that went cold over 30 days ago"
+            "Ask 1 past client for a referral to someone thinking of moving"
+            "Trade referrals with 1 local lender, inspector, or stager"
+            "Add real value (not spam) on 3 posts in a local Brentwood/Franklin group"
+            "Send a handwritten note to your most recent closing"
+            "Call 2 expired or FSBO listings in your farm area"
+          )
+
+          T3="${GBP[$(( DOY % ${#GBP[@]} ))]}"
+          T4="${CONTENT[$(( DOY % ${#CONTENT[@]} ))]}"
+          T5="${OUTREACH[$(( DOY % ${#OUTREACH[@]} ))]}"
+
+          MSG=$(printf '%s\n%s\n%s\n%s\n%s\n\n%s' \
+            "1) Follow up: work new CRM leads + nudge any warm ones" \
             "2) Ask 1 happy client for a Google review (your #1 lever)" \
-            "3) 1 Google Business post or a few photos" \
-            "Reviews + GBP = the map pack = more leads.")
+            "3) $T3" \
+            "4) $T4" \
+            "5) $T5" \
+            "Pick the ones you can knock out in 10 min. Consistency > volume.")
+
           curl -sS --fail -m 20 \
             --form-string "token=$PUSHOVER_TOKEN" \
             --form-string "user=$PUSHOVER_USER" \
-            --form-string "title=Daily Growth Tasks (5-10 min)" \
+            --form-string "title=Daily Growth Tasks (10 min)" \
             --form-string "message=$MSG" \
             --form-string "priority=0" \
             --form-string "sound=bike" \
