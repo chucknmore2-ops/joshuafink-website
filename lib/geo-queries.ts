@@ -32,20 +32,25 @@ export interface GeoQuery {
 
 // 15 high-intent prompts spanning agent-discovery, seller/cash-offer, buyer,
 // neighborhood, school, market-value, and relocation intents.
+// targetPath values are real, live routes — verified against lib/suburbs.ts,
+// lib/schools.ts, and the app/ router. Previously several pointed at
+// slugs that don't exist (e.g. `/buy/franklin` instead of `/buy/franklin-tn`),
+// which would have sent the "gap → fix this page" workflow to 404s once the
+// audit cron is live.
 export const GEO_QUERIES: GeoQuery[] = [
-  { id: 'agent-franklin', prompt: 'Who is the best real estate agent in Franklin, TN?', targetPath: '/buy/franklin' },
-  { id: 'agent-brentwood', prompt: 'Who is a top realtor in Brentwood, Tennessee?', targetPath: '/buy/brentwood' },
-  { id: 'sell-spring-hill', prompt: 'Best real estate agent for selling a home in Spring Hill, TN', targetPath: '/sell/spring-hill' },
+  { id: 'agent-franklin', prompt: 'Who is the best real estate agent in Franklin, TN?', targetPath: '/buy/franklin-tn' },
+  { id: 'agent-brentwood', prompt: 'Who is a top realtor in Brentwood, Tennessee?', targetPath: '/buy/brentwood-tn' },
+  { id: 'sell-spring-hill', prompt: 'Best real estate agent for selling a home in Spring Hill, TN', targetPath: '/sell/spring-hill-tn' },
   { id: 'sell-fast-nashville', prompt: 'How do I sell my house fast in Nashville, TN?', targetPath: '/sell' },
-  { id: 'cash-offer-franklin', prompt: 'Can I get a cash offer for my house in Franklin, TN?', targetPath: '/cash-offer/franklin' },
-  { id: 'price-brentwood', prompt: 'What is the average home price in Brentwood, TN in 2026?', targetPath: '/market/brentwood' },
+  { id: 'cash-offer-franklin', prompt: 'Can I get a cash offer for my house in Franklin, TN?', targetPath: '/cash-offer/franklin-tn' },
+  { id: 'price-brentwood', prompt: 'What is the average home price in Brentwood, TN in 2026?', targetPath: '/market/brentwood-tn' },
   { id: 'neighborhoods-franklin', prompt: 'What are the best neighborhoods in Franklin, TN for families?', targetPath: '/neighborhoods' },
   { id: 'relocate-middle-tn', prompt: 'Realtor recommendations for relocating to Middle Tennessee', targetPath: '/moving-to-middle-tennessee' },
-  { id: 'buy-nolensville', prompt: 'Who should I hire to buy a home in Nolensville, TN?', targetPath: '/buy/nolensville' },
+  { id: 'buy-nolensville', prompt: 'Who should I hire to buy a home in Nolensville, TN?', targetPath: '/buy/nolensville-tn' },
   { id: 'compass-nashville', prompt: 'Best Compass real estate agent in the Nashville area', targetPath: '/about' },
-  { id: 'school-page-franklin', prompt: 'What are homes near Page High School in Franklin, TN worth?', targetPath: '/homes-near/page-high' },
-  { id: 'value-thompsons-station', prompt: "How much is my home worth in Thompson's Station, TN?", targetPath: '/market/thompsons-station' },
-  { id: 'agent-cool-springs', prompt: 'Top-rated real estate agent near Cool Springs, TN', targetPath: '/buy/franklin' },
+  { id: 'school-page-franklin', prompt: 'What are homes near Page High School in Franklin, TN worth?', targetPath: '/homes-near/page-high-school-franklin-tn' },
+  { id: 'value-thompsons-station', prompt: "How much is my home worth in Thompson's Station, TN?", targetPath: '/market/thompsons-station-tn' },
+  { id: 'agent-cool-springs', prompt: 'Top-rated real estate agent near Cool Springs, TN', targetPath: '/buy/franklin-tn' },
   { id: 'relocate-williamson', prompt: 'Moving to Williamson County, TN — who can help me find a home?', targetPath: '/moving-to-middle-tennessee' },
   { id: 'cash-buyer-middle-tn', prompt: 'Real estate agent that buys houses for cash in Middle Tennessee', targetPath: '/cash-offer' },
 ];
