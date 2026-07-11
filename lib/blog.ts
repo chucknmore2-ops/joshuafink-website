@@ -24,23 +24,23 @@ export const blogPosts: BlogPost[] = [
   {
     slug: "middle-tennessee-real-estate-market-july-2026-update",
     title: "Middle Tennessee Real Estate Market: July 2026 Update",
-    date: "July 8, 2026",
-    dateModified: "July 8, 2026",
+    date: "July 11, 2026",
+    dateModified: "July 11, 2026",
     excerpt:
       "Mortgage rates have settled into the mid-6% range and inventory keeps expanding across Middle Tennessee. Here's an honest, county-by-county read on Williamson, Davidson, and Rutherford for July 2026 — and what it means if you're buying or selling this summer.",
     category: "Market Updates",
     faq: [
       {
         q: "Is Middle Tennessee a buyer's or seller's market in July 2026?",
-        a: "It depends on the price point and the county more than any single metro-wide label. Middle Tennessee in July 2026 is best described as balanced, with meaningfully more inventory and buyer leverage than 2021-2022, but well-priced, well-presented homes in strong school zones are still moving quickly. [VERIFY: Greater Nashville REALTORS® months-of-supply figure, June 2026] gives the precise read for a specific county.",
+        a: "It depends on the price point and the county more than any single metro-wide label. As of the June 2026 Greater Nashville REALTORS® report, the region reached about six months of inventory for the first sustained stretch in years — the classic dividing line between a seller's market and a balanced one. So 'balanced' is now the honest metro-wide label: there's meaningfully more inventory and buyer leverage than in 2021-2022, yet well-priced, well-presented homes in strong school zones are still moving quickly, and individual counties vary around that regional average.",
       },
       {
         q: "What's the average home price in Williamson County right now?",
-        a: "[VERIFY: Greater Nashville REALTORS®/RealTracs median sale price for Williamson County, June 2026]. Franklin-specific figures are on our Franklin market page, which we update as new data comes in.",
+        a: "Williamson County remains the most expensive submarket in the region — cities like Franklin and Brentwood sit well above the region-wide median single-family price of $537,000 reported by Greater Nashville REALTORS® for June 2026. For current Franklin- and Brentwood-specific numbers, see our Franklin market page, which we update as new data comes in.",
       },
       {
         q: "Are mortgage rates going up or down in mid-2026?",
-        a: "Rates have been essentially flat through early summer 2026. Freddie Mac's Primary Mortgage Market Survey averaged 6.43% for a 30-year fixed the week of July 2, 2026 — down modestly from the 7%+ rates of late 2023 but still well above the sub-4% era of 2020-2021.",
+        a: "Rates have been essentially flat through early summer 2026. Freddie Mac's Primary Mortgage Market Survey averaged 6.49% for a 30-year fixed the week of July 9, 2026 (up slightly from 6.43% the prior week) — down modestly from the 7%+ rates of late 2023 but still well above the sub-4% era of 2020-2021.",
       },
       {
         q: "Is Nashville real estate slowing down in 2026?",
@@ -58,25 +58,25 @@ Here's an honest, county-by-county read on where things stand heading into July 
 
 ## What Are Mortgage Rates Doing This Summer?
 
-Rates have settled into what most buyers and agents across the metro are now calling the "new normal" — the mid-6% range, rather than the sub-3% rates of 2021. Freddie Mac's Primary Mortgage Market Survey put the average 30-year fixed rate at 6.43% for the week of July 2, 2026, essentially flat over the prior month (source: [Freddie Mac PMMS](https://www.freddiemac.com/pmms), week of July 2, 2026). That's meaningfully below the 7%+ rates buyers faced in late 2023, which is part of why more buyers are active in the market again this summer — and part of why sellers are seeing steadier, if less frantic, traffic than the peak pandemic years.
+Rates have settled into what most buyers and agents across the metro are now calling the "new normal" — the mid-6% range, rather than the sub-3% rates of 2021. Freddie Mac's Primary Mortgage Market Survey put the average 30-year fixed rate at 6.49% for the week of July 9, 2026, up only slightly from 6.43% the week before and essentially flat over the prior month (source: [Freddie Mac PMMS](https://www.freddiemac.com/pmms), week of July 9, 2026). That's meaningfully below the 7%+ rates buyers faced in late 2023, which is part of why more buyers are active in the market again this summer — and part of why sellers are seeing steadier, if less frantic, traffic than the peak pandemic years.
 
 ## Is Middle Tennessee a Buyer's or Seller's Market Right Now?
 
-There isn't one honest answer for the whole metro — it genuinely varies by county, price point, and even by subdivision. [VERIFY: Greater Nashville REALTORS® active listing count and months-of-supply, June 2026] would give the precise, sourced read. Qualitatively, what I'm seeing on the ground: buyers have more choices and more negotiating room than at any point since before the pandemic, while sellers who present and price a home correctly are still fielding competitive offers, sometimes multiple, in the first two weeks.
+There isn't one honest answer for the whole metro — it genuinely varies by county, price point, and even by subdivision. But the June 2026 Greater Nashville REALTORS® report gives the clearest metro-wide read: active listings grew about 8% year over year to 15,617 homes, pushing the region to roughly six months of supply for the first sustained stretch in years — right at the line economists use to separate a seller's market from a balanced one. Closed sales actually rose 8% over last June to 3,459, so demand is healthy; there's simply more to choose from. What I'm seeing on the ground matches the data: buyers have more choices and more negotiating room than at any point since before the pandemic, while sellers who present and price a home correctly are still fielding competitive offers, sometimes multiple, in the first two weeks.
 
 If you're weighing whether to act now or wait, the honest answer is that timing the market perfectly is close to impossible. What you can control is preparation — pricing strategy if you're selling, and pre-approval plus clear priorities if you're buying.
 
 ## Williamson County: Franklin, Brentwood & Spring Hill
 
-Williamson County continues to carry the strongest price premium in Middle Tennessee, and Franklin in particular remains one of the more competitive submarkets for move-in-ready homes in a strong school zone. [VERIFY: Greater Nashville REALTORS®/RealTracs — Williamson County median price, days on market, and year-over-year change, June 2026]. Williamson County's 2026 property-tax reappraisal is also part of the seller math this year — we'll cover exactly how that shakes out at the closing table in a future post. For the current day-to-day snapshot on pricing and pace, see our [Franklin market page](/market/franklin-tn).
+Williamson County continues to carry the strongest price premium in Middle Tennessee, and Franklin in particular remains one of the more competitive submarkets for move-in-ready homes in a strong school zone. Region-wide, Greater Nashville REALTORS® reported a June 2026 median single-family price of $537,000 with homes averaging 51 days to sell — and Williamson's cities price well above that regional median, with the fastest movement at the well-prepared, correctly-priced end and the longest waits on aspirational, over-ambitious listings. Williamson County's 2026 property-tax reappraisal is also part of the seller math this year — we'll cover exactly how that shakes out at the closing table in a future post. For the current day-to-day snapshot on Franklin pricing and pace, see our [Franklin market page](/market/franklin-tn).
 
 ## Davidson County: Nashville's Urban Core
 
-Nashville's urban neighborhoods — East Nashville, 12 South, Germantown, Sylvan Park — continue to see more measured pricing behavior than the frenzy years, with the biggest differentiator between a home that sells fast and one that sits being presentation and an accurate price from day one. [VERIFY: Greater Nashville REALTORS® — Davidson County median price and active inventory, June 2026]. For the current numbers, visit our [Nashville market page](/market/nashville-tn).
+Nashville's urban neighborhoods — East Nashville, 12 South, Germantown, Sylvan Park — continue to see more measured pricing behavior than the frenzy years, with the biggest differentiator between a home that sells fast and one that sits being presentation and an accurate price from day one. That's consistent with the region-wide picture in the June 2026 Greater Nashville REALTORS® report: inventory up about 8% year over year to 15,617 active listings, a median single-family price of $537,000, and an average of 51 days on market — more choice for urban buyers than they've had in years. For the current Nashville-specific numbers, visit our [Nashville market page](/market/nashville-tn).
 
 ## Rutherford County: Murfreesboro's Value Play
 
-Murfreesboro remains one of the strongest value plays in the metro — more square footage per dollar than the Williamson County suburbs, with steady demand tied to MTSU and the area's healthcare employment base. [VERIFY: Greater Nashville REALTORS® — Rutherford County median price and days on market, June 2026]. Details are on our [Murfreesboro market page](/market/murfreesboro-tn).
+Murfreesboro remains one of the strongest value plays in the metro — more square footage per dollar than the Williamson County suburbs, with steady demand tied to MTSU and the area's healthcare employment base. With the region-wide median single-family price at $537,000 and homes averaging 51 days on market (Greater Nashville REALTORS®, June 2026), Rutherford County typically prices below that regional median — the core of its value-play appeal for budget-conscious buyers who still want quick access to Nashville. For the current Murfreesboro figures, see our [Murfreesboro market page](/market/murfreesboro-tn).
 
 ## What This Means If You're Buying This Month
 
