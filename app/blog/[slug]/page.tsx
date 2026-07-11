@@ -209,7 +209,19 @@ function buildJsonLd(post: BlogPost) {
     ],
   }
 
-  return { blogPosting, breadcrumb }
+  const faqSchema = post.faq
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: post.faq.map((f) => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a },
+        })),
+      }
+    : undefined
+
+  return { blogPosting, breadcrumb, faqSchema }
 }
 
 export default function BlogPostPage({ params }: Props) {
@@ -217,7 +229,7 @@ export default function BlogPostPage({ params }: Props) {
   if (!post) notFound()
 
   const otherPosts = getRelatedPosts(params.slug, 3)
-  const { blogPosting, breadcrumb } = buildJsonLd(post)
+  const { blogPosting, breadcrumb, faqSchema } = buildJsonLd(post)
   const modifiedDifferent = post.dateModified && post.dateModified !== post.date
 
   return (
@@ -293,6 +305,24 @@ export default function BlogPostPage({ params }: Props) {
             </p>
             <p className="text-sm text-neutral-700 leading-relaxed">{post.disclosure}</p>
           </aside>
+        )}
+
+        {/* FAQ */}
+        {post.faq && post.faq.length > 0 && (
+          <div className="mt-14 border-t border-[#E8E8E8] pt-10">
+            <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
+              Common Questions
+            </p>
+            <h2 className="text-2xl font-black text-black mb-6">Frequently Asked Questions</h2>
+            <div className="space-y-6">
+              {post.faq.map((f, i) => (
+                <div key={i} className="bg-[#F5F5F5] p-6 border-l-4 border-black rounded-r-lg">
+                  <h3 className="text-base font-black text-black mb-2">{f.q}</h3>
+                  <p className="text-sm text-[#444] leading-relaxed">{parseInlineMarkdown(f.a)}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
 
         {/* Author CTA */}
@@ -424,6 +454,12 @@ export default function BlogPostPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
     </div>
   )
 }
