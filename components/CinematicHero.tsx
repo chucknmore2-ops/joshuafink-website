@@ -138,9 +138,6 @@ export default function CinematicHero({ slides }: { slides: HeroSlide[] }) {
           >
             Find Your Next Home <span aria-hidden="true">→</span>
           </Link>
-          {/* First-viewport lead capture — jumps to the on-page contact form.
-              The tel button below is desktop-only, so this is the primary
-              direct-contact path for mobile visitors without scrolling. */}
           <a
             href="#contact-form"
             className="inline-flex items-center justify-center gap-2 bg-transparent border border-white/50 text-white text-sm font-semibold px-8 py-4 rounded-full tracking-wide transition-all duration-200 hover:bg-white/10 hover:border-white active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
@@ -150,7 +147,7 @@ export default function CinematicHero({ slides }: { slides: HeroSlide[] }) {
           </a>
           <TrackedTelLink
             href="tel:6155512727"
-            className="hidden sm:inline-flex items-center justify-center gap-2 bg-transparent border border-white/50 text-white text-sm font-semibold px-8 py-4 rounded-full tracking-wide transition-all duration-200 hover:bg-white/10 hover:border-white active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="inline-flex items-center justify-center gap-2 bg-transparent border border-white/50 text-white text-sm font-semibold px-8 py-4 rounded-full tracking-wide transition-all duration-200 hover:bg-white/10 hover:border-white active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             aria-label="Call Joshua Fink at (615) 551-2727"
             data-cta="hero-call"
           >
