@@ -20,6 +20,73 @@ export interface BlogPost {
 
 export const blogPosts: BlogPost[] = [
   {
+    slug: "july-2026-brentwood-market-update",
+    title: "Brentwood, TN Real Estate Market Update — July 2026: What the Data Actually Says",
+    date: "July 11, 2026",
+    dateModified: "July 11, 2026",
+    excerpt:
+      "A clear-eyed read on Brentwood's 37027 market as of mid-July 2026 — median asking prices, days on market, inventory, and the one distinction that trips up almost everyone looking at Brentwood online: why the 'list price' you see is nearly double what homes actually close for.",
+    category: "Market Updates",
+    content: `
+Every few weeks I pull the current market data for Brentwood's 37027 ZIP and read past the headline number to what's actually happening on the ground. Here's the mid-July 2026 read — the real figures, what they mean, and the single distinction that trips up nearly every buyer and seller looking at Brentwood online.
+
+## The Snapshot: Brentwood 37027, Mid-July 2026
+
+As of July 10, 2026, here's where the *active* market sits:
+
+- **Median asking price:** ~$1,985,000 across 313 homes currently listed
+- **Median price of *new* listings:** ~$1,494,000
+- **Price per square foot (asking):** ~$412
+- **Days on market:** 98 average / 49 median
+- **Active inventory:** 313 homes
+- **Median rent:** ~$2,970/month
+- **Market Action Index:** 32 — squarely in seller's-market territory
+
+Week over week, almost everything is flat-to-slightly-down: the median asking price eased about $11,500, price per square foot slipped a couple of dollars, and days on market actually improved by around five. Nothing dramatic — and that steadiness is itself the headline. Prices haven't pushed higher for several weeks, but inventory is low enough that we haven't tipped out of the seller's zone either.
+
+## The Number Everyone Misreads: Asking Price vs. Sale Price
+
+If you just saw "$1,985,000 median" and felt your stomach drop, take a breath. That is the median *asking* price of the homes sitting on the market right now — not what Brentwood homes actually sell for. Closed sales run meaningfully lower; our regularly updated [Brentwood market report](/market/brentwood-tn) tracks a closed-sale median closer to $900,000.
+
+Why is the gap so wide? Two reasons, and both are useful to understand:
+
+1. **The active pool is skewed by luxury listings that sit.** Look at the days-on-market split: a 49-day *median* but a 98-day *average*. That spread only happens when a long tail of high-end homes sits on the market for months, dragging the average — and the standing "median list price" — way up. The homes that actually close are the more moderate, correctly priced ones that clear quickly and never pile up in the active count.
+2. **Fresh inventory is pricing more realistically.** New listings are coming to market at a median around $1,494,000 — nearly half a million *below* the standing inventory median. That tells you sellers listing today are anchoring closer to reality, while the aspirational ultra-luxury listings from months ago are the ones lingering.
+
+So the "$2M median" is the shelf price of what's sitting, not the checkout price of what's selling. Judge Brentwood by closed comps in your specific subdivision, never by the city-wide asking average.
+
+## If You're Selling in Brentwood
+
+A Market Action Index of 32 says this is still a seller's market — but a disciplined one. That 49-day-median / 98-day-average spread is the whole ballgame: **correctly priced homes are gone in roughly seven weeks; aspirational ones sit for three-plus months** and then cut price anyway. The fact that new listings are entering ~$500K below the standing median is the market telling you, out loud, that it rewards realism.
+
+- **Price to your closed comps, not the active asking medians.** At $400+/sq ft, every 5% of overpricing is six figures of buyer hesitation.
+- **Presentation is non-negotiable at this price point.** Professional HDR photography, a 3D tour, and a genuinely deconstructed, de-cluttered home are what generate competitive offers from Brentwood's executive and relocation buyers.
+- **The first two weeks are your peak attention window.** Waste them at the wrong number and you inherit days-on-market stigma that costs more than pricing right would have.
+
+If you're weighing a sale, here's [how I market Brentwood homes](/sell/brentwood-tn).
+
+## If You're Buying in Brentwood
+
+There are 313 homes on the market and inventory has ticked up slightly — more choice than buyers had a year ago. And that long tail of 90-day-plus luxury listings? **That's exactly where negotiating room lives.** A home that has sat for three months is a conversation, not a bidding war.
+
+- Use the days-on-market data as a filter. A fresh, well-priced listing in a strong school zone will still move fast — but the stale high-end inventory is where sellers are motivated.
+- With median rent around $2,970, run the real rent-vs-buy math for your situation before you assume renting is cheaper.
+- If the 37027 premium is stretching your budget, the value one ring out is real — compare [Franklin](/buy/franklin-tn), [Nolensville](/buy/nolensville-tn), and [Thompson's Station](/buy/thompsons-station-tn), often with comparable school zones. Start your search on the [Brentwood buyer guide](/buy/brentwood-tn).
+
+## Where This Goes Next
+
+The market's in a genuine stasis: sales-to-inventory balanced, prices flat for several weeks, but inventory low enough to keep sellers favored. The number I'm watching is the **Market Action Index**. If it climbs back toward the high 30s and 40s, expect prices to resume their upward climb. If inventory keeps building through late summer, buyers will pick up leverage heading into fall. As always, mortgage rates are the wildcard that can reprice every deal in a week.
+
+## The Bottom Line
+
+Brentwood in July 2026 is a seller's market that rewards precision — and the averages you see online will mislead you in *both* directions. The "$2M median" overstates what homes sell for; the "seller's market" label understates how quickly an overpriced home gets punished. The only number that matters is the one specific to your street, your subdivision, and your timeline.
+
+I'm happy to pull the exact closed comps for your block and give you an honest read. Reach out anytime: [615-551-2727](tel:6155512727) or [joshua@joshuafink.com](mailto:joshua@joshuafink.com), and see the always-current figures on the [Brentwood market report](/market/brentwood-tn).
+
+*Figures reflect active-listing market data for ZIP 37027 as of July 10, 2026; closed-sale medians come from our regularly updated Brentwood market report and will differ from asking-price medians for the reasons explained above.*
+    `.trim(),
+  },
+  {
     slug: "avoid-foreclosure-nashville-tennessee",
     title: "How to Avoid Foreclosure in Nashville & Middle Tennessee: Your Options in 2026",
     date: "May 28, 2026",
