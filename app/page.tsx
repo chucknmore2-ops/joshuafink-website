@@ -6,6 +6,7 @@ import SuburbLeadForm from '@/components/SuburbLeadForm'
 import { heroSlides } from '@/lib/hero-slides'
 import { listings as featuredListings } from '@/lib/listings'
 import { buildListingItemList } from '@/lib/listing-schema'
+import { isAvailable } from '@/app/listings/page'
 
 export const metadata: Metadata = {
   alternates: { canonical: 'https://www.joshuafink.com' },
@@ -99,7 +100,7 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredListings.slice(0, 6).map((listing) => (
+            {featuredListings.filter((l) => isAvailable(l.status)).slice(0, 6).map((listing) => (
               <ListingCard key={listing.address} listing={listing} featured />
             ))}
           </div>
