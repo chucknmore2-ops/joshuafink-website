@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import SellForm from './SellForm'
+import TrackedTelLink from '@/components/TrackedTelLink'
 import TrustBadges from '@/components/TrustBadges'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 
@@ -190,12 +191,13 @@ export default function SellPage() {
             >
               Text 615-551-2727
             </a>
-            <a
+            <TrackedTelLink
               href="tel:6155512727"
               className="inline-flex items-center justify-center border border-neutral-600 text-white text-sm font-bold px-8 py-3 rounded-full tracking-wide transition-all duration-200 hover:border-white hover:bg-white/10 active:scale-[0.98] text-center"
+              data-cta="sell-cta-call"
             >
               Call 615-551-2727
-            </a>
+            </TrackedTelLink>
           </div>
         </div>
       </div>
@@ -278,9 +280,13 @@ export default function SellPage() {
             <div className="space-y-5">
               <div className="border-l-2 border-black pl-5">
                 <p className="text-xs text-neutral-400 uppercase tracking-widest font-semibold mb-1">Phone</p>
-                <a href="tel:6155512727" className="text-xl font-black text-black hover:underline">
+                <TrackedTelLink
+                  href="tel:6155512727"
+                  className="text-xl font-black text-black hover:underline"
+                  data-cta="sell-contact-panel-call"
+                >
                   615-551-2727
-                </a>
+                </TrackedTelLink>
               </div>
               <div className="border-l-2 border-black pl-5">
                 <p className="text-xs text-neutral-400 uppercase tracking-widest font-semibold mb-1">Email</p>

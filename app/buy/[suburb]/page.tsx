@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated, type Suburb } from '@/lib/suburbs'
+import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated, suburbCityGeo, type Suburb } from '@/lib/suburbs'
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
 import { linkifyNeighborhoods } from '@/lib/linkify-neighborhoods'
 import { reviewStats } from '@/lib/reviews'
@@ -61,7 +61,7 @@ export default async function BuySuburbPage({ params }: Props) {
         telephone: '+16155512727',
         email: 'joshua@joshuafink.com',
         image: 'https://www.joshuafink.com/headshot.webp',
-        description: `Joshua Fink is a buyer&apos;s agent at Compass Real Estate specializing in ${suburb.displayName} home purchases. Local market expert, off-market access, proven negotiator.`,
+        description: `Joshua Fink is a buyer's agent at Compass Real Estate specializing in ${suburb.displayName} home purchases. Local market expert, off-market access, proven negotiator.`,
         address: {
           '@type': 'PostalAddress',
           streetAddress: '8119 Isabella Lane, Suite 105',
@@ -97,11 +97,48 @@ export default async function BuySuburbPage({ params }: Props) {
           worstRating: '1',
         },
       },
+      {
+        '@type': 'Place',
+        '@id': `https://www.joshuafink.com/buy/${slug}#place`,
+        name: `${suburb.schemaCity}, ${suburb.schemaState}`,
+        url: `https://www.joshuafink.com/buy/${slug}`,
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: suburb.schemaCity,
+          addressRegion: suburb.schemaState,
+          addressCountry: 'US',
+        },
+        ...(suburbCityGeo[slug]
+          ? {
+              geo: {
+                '@type': 'GeoCoordinates',
+                latitude: suburbCityGeo[slug].latitude,
+                longitude: suburbCityGeo[slug].longitude,
+              },
+            }
+          : {}),
+        containedInPlace: {
+          '@type': 'AdministrativeArea',
+          name: suburb.county,
+          containedInPlace: {
+            '@type': 'State',
+            name: 'Tennessee',
+          },
+        },
+      },
     ],
   }
 
   const whyBullets = suburb.buyerWhyBullets || suburb.whyBullets
-  const faqs = suburb.buyerFaqs || suburb.faqs
+  // Lead with a literal, extractable answer to the "who's a good agent in
+  // [city]" question — the exact phrasing AI answer engines get asked
+  // (see lib/geo-queries.ts) — before the suburb-specific buyer FAQs. Facts
+  // reused verbatim from the published /about bio, not new claims.
+  const agentFaq = {
+    q: `Who is a top real estate agent in ${suburb.name}, TN?`,
+    a: `Joshua Fink is an Affiliate Broker with Compass Real Estate who personally sells 100+ homes a year across Middle Tennessee, including ${suburb.name}. With 17+ years of experience, he knows ${suburb.name}'s neighborhoods, school zones, and pricing in detail, and gives buyers early access to Compass Coming Soon and off-market listings. Call 615-551-2727 or visit joshuafink.com to start your ${suburb.name} home search.`,
+  }
+  const faqs = [agentFaq, ...(suburb.buyerFaqs || suburb.faqs)]
   const description = suburb.buyerDescription || suburb.description
   const cityGuides = getNeighborhoodsByCitySlug(slug)
 

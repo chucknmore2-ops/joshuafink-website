@@ -79,7 +79,7 @@ export default async function ComparePage({ params }: Props) {
     },
     {
       q: `Which is more affordable, ${a.name} or ${b.name}?`,
-      a: `${cheaper.displayName} is more affordable, with a median sale price of ${cheaper.medianPrice} compared to ${pricier.displayName}&apos;s ${pricier.medianPrice} — a difference of roughly ${priceDiffPct}%. ${verdict.forValue}`,
+      a: `${cheaper.displayName} is more affordable, with a median sale price of ${cheaper.medianPrice} compared to ${pricier.displayName}'s ${pricier.medianPrice} — a difference of roughly ${priceDiffPct}%. ${verdict.forValue}`,
     },
     {
       q: `Which has the faster market — ${a.name} or ${b.name}?`,
@@ -87,11 +87,11 @@ export default async function ComparePage({ params }: Props) {
     },
     {
       q: `Which is appreciating faster — ${a.name} or ${b.name}?`,
-      a: `${aYoy > bYoy ? a.displayName : b.displayName} is appreciating faster at ${aYoy > bYoy ? a.yoyChange : b.yoyChange}, compared to ${aYoy > bYoy ? b.yoyChange : a.yoyChange} in ${aYoy > bYoy ? b.displayName : a.displayName}. Past appreciation isn&apos;t a guarantee of future returns, but it&apos;s a reasonable proxy for market demand right now.`,
+      a: `${aYoy > bYoy ? a.displayName : b.displayName} is appreciating faster at ${aYoy > bYoy ? a.yoyChange : b.yoyChange}, compared to ${aYoy > bYoy ? b.yoyChange : a.yoyChange} in ${aYoy > bYoy ? b.displayName : a.displayName}. Past appreciation isn't a guarantee of future returns, but it's a reasonable proxy for market demand right now.`,
     },
     {
       q: `Should I choose ${a.name} or ${b.name} for relocation?`,
-      a: `Depends on budget, schools, and commute. ${a.name} is in ${a.county} (${a.commuteNote || 'standard Nashville-area commute'}); ${b.name} is in ${b.county} (${b.commuteNote || 'standard Nashville-area commute'}). Most relocating buyers benefit from touring both with a local agent who can show the lifestyle differences side-by-side — that&apos;s exactly what Joshua does for out-of-state clients.`,
+      a: `Depends on budget, schools, and commute. ${a.name} is in ${a.county} (${a.commuteNote || 'standard Nashville-area commute'}); ${b.name} is in ${b.county} (${b.commuteNote || 'standard Nashville-area commute'}). Most relocating buyers benefit from touring both with a local agent who can show the lifestyle differences side-by-side — that's exactly what Joshua does for out-of-state clients.`,
     },
   ]
 

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import TrackedTelLink from '@/components/TrackedTelLink'
 
 const SITE = 'https://www.joshuafink.com'
 
@@ -490,13 +491,14 @@ export default function BuyerGuidePage() {
               situation — even if the answer is &ldquo;not yet.&rdquo;
             </p>
             <div className="flex flex-col sm:flex-row gap-3">
-              <a
+              <TrackedTelLink
                 href="tel:6155512727"
                 className="inline-flex items-center justify-center text-white text-sm font-bold px-6 py-3 tracking-wide transition-colors"
                 style={{ backgroundColor: '#C41E3A' }}
+                data-cta="buyer-guide-cta-call"
               >
                 Call 615-551-2727
-              </a>
+              </TrackedTelLink>
               <Link
                 href="/contact"
                 className="inline-flex items-center justify-center border border-black text-black text-sm font-bold px-6 py-3 tracking-wide hover:bg-black hover:text-white transition-colors"

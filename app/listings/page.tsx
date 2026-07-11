@@ -38,9 +38,9 @@ export const metadata: Metadata = {
 // Statuses that mean the home is genuinely available to a new buyer.
 // Excludes "Active Under Contract", "Active Contingent", "Pending", etc. — those
 // are under contract and must not be counted as available inventory.
-const AVAILABLE_STATUSES = new Set(['Active', 'Coming Soon'])
+export const AVAILABLE_STATUSES = new Set(['Active', 'Coming Soon'])
 
-function isAvailable(status: string): boolean {
+export function isAvailable(status: string): boolean {
   return AVAILABLE_STATUSES.has(status) || status.startsWith('Open House')
 }
 

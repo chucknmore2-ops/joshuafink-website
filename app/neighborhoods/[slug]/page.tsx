@@ -10,6 +10,7 @@ import { getSuburb, getSuburbSlugForListing } from '@/lib/suburbs'
 import { reviewStats } from '@/lib/reviews'
 import { withUtm } from '@/lib/utm'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
+import TrackedTelLink from '@/components/TrackedTelLink'
 import ListingCard from '@/components/ListingCard'
 import { listings } from '@/lib/listings'
 
@@ -337,16 +338,26 @@ export default async function NeighborhoodPage({ params }: Props) {
                   Get same-day answers from Joshua.
                 </h2>
               </div>
-              <a href="tel:6155512727" className="text-sm font-semibold text-black hover:underline whitespace-nowrap">
+              <TrackedTelLink
+                href="tel:6155512727"
+                className="text-sm font-semibold text-black hover:underline whitespace-nowrap"
+                data-cta="neighborhood-inline-call"
+              >
                 Or call 615-551-2727
-              </a>
+              </TrackedTelLink>
             </div>
             <SuburbLeadForm
               successTitle="Request Sent!"
               successMessage={
                 <>
                   Joshua will reach out same-day with {n.name} insights. For anything urgent, call{' '}
-                  <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                  <TrackedTelLink
+                    href="tel:6155512727"
+                    className="text-black font-semibold underline"
+                    data-cta="neighborhood-success-call"
+                  >
+                    615-551-2727
+                  </TrackedTelLink>.
                 </>
               }
               resetLabel="Submit Another"
@@ -467,9 +478,13 @@ export default async function NeighborhoodPage({ params }: Props) {
 
               <div className="border border-[#E8E8E8] p-6 bg-white">
                 <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">Talk to Joshua</p>
-                <a href="tel:6155512727" className="block text-2xl font-black text-black hover:underline mb-1">
+                <TrackedTelLink
+                  href="tel:6155512727"
+                  className="block text-2xl font-black text-black hover:underline mb-1"
+                  data-cta="neighborhood-panel-call"
+                >
                   615-551-2727
-                </a>
+                </TrackedTelLink>
                 <a href="sms:+16155512727" className="block text-sm font-semibold text-black hover:underline mb-1">
                   Text 615-551-2727
                 </a>
@@ -512,7 +527,13 @@ export default async function NeighborhoodPage({ params }: Props) {
               successMessage={
                 <>
                   Joshua will reach out same-day with {n.name} insights and listings that fit. For anything urgent, call{' '}
-                  <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                  <TrackedTelLink
+                    href="tel:6155512727"
+                    className="text-black font-semibold underline"
+                    data-cta="neighborhood-midpage-success-call"
+                  >
+                    615-551-2727
+                  </TrackedTelLink>.
                 </>
               }
               resetLabel="Submit Another"
@@ -668,12 +689,13 @@ export default async function NeighborhoodPage({ params }: Props) {
               >
                 See Live Listings →
               </a>
-              <a
+              <TrackedTelLink
                 href="tel:6155512727"
                 className="inline-block border border-white text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-white hover:text-black transition-colors text-center"
+                data-cta="neighborhood-final-cta-call"
               >
                 Call 615-551-2727
-              </a>
+              </TrackedTelLink>
               <a
                 href="sms:+16155512727"
                 className="inline-block border border-white text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-white hover:text-black transition-colors text-center"
