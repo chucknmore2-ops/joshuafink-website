@@ -83,6 +83,9 @@ export const reviewStats = {
   total: 218,
   rating: 5.0,
   zillowUrl: "https://www.zillow.com/profile/JoshuaFinkGroup",
+  // Direct link to Joshua Fink Group's Google Business Profile reviews — the
+  // Google reviews that feed the local map pack. Lands on the reviews view.
+  googleUrl: "https://maps.app.goo.gl/vKrx4u6c6x9gwoHFA",
 };
 
 /**

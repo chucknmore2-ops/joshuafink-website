@@ -25,6 +25,9 @@ export default function ReviewStrip({
 }) {
   const picked = (filter ? reviews.filter(filter) : reviews).slice(0, limit)
   const isDark = variant === 'dark'
+  const linkClass = `inline-flex text-sm font-semibold underline underline-offset-4 hover:no-underline focus-visible:outline-none focus-visible:ring-2 rounded-sm ${
+    isDark ? 'text-white focus-visible:ring-white' : 'text-black focus-visible:ring-black'
+  }`
 
   return (
     <section
@@ -50,18 +53,26 @@ export default function ReviewStrip({
                 </span> across {reviewStats.total}+ reviews
               </h2>
             </div>
-            <a
-              href={reviewStats.zillowUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`inline-flex text-sm font-semibold underline underline-offset-4 hover:no-underline self-start sm:self-auto focus-visible:outline-none focus-visible:ring-2 rounded-sm ${
-                isDark
-                  ? 'text-white focus-visible:ring-white'
-                  : 'text-black focus-visible:ring-black'
-              }`}
-            >
-              Read all {reviewStats.total}+ reviews on Zillow →
-            </a>
+            <div className="flex flex-col items-start gap-2 self-start sm:self-auto sm:items-end">
+              {reviewStats.googleUrl && (
+                <a
+                  href={reviewStats.googleUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={linkClass}
+                >
+                  Read our 5-star reviews on Google →
+                </a>
+              )}
+              <a
+                href={reviewStats.zillowUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={linkClass}
+              >
+                Read all {reviewStats.total}+ reviews on Zillow →
+              </a>
+            </div>
           </div>
         )}
 
