@@ -45,13 +45,21 @@ export function isAvailable(status: string): boolean {
 }
 
 export default function ListingsPage() {
-  // Only genuinely-available homes belong in the "Active Listings" grid, the
-  // count, and the availability schema. A Pending/Contingent/Under-Contract
-  // listing must not be rendered as active inventory. Today every listing is
-  // "Active" so this is a no-op, but it makes the page correct the moment a
-  // non-Active status appears in the Compass sync.
+  // Only genuinely-available homes count as "active": they drive the active
+  // count in the header and the availability ItemList schema, so a
+  // Pending/Contingent/Under-Contract home is never published as available
+  // inventory (InStock).
   const availableListings = listings.filter((l) => isAvailable(l.status))
   const activeCount = availableListings.length
+
+  // ...but under-contract / pending homes are still real listings buyers want to
+  // see (agent activity + backup-offer interest), so we DO render them — in the
+  // same grid, available first then under-contract, each ListingCard showing its
+  // own status badge (amber for under contract). Display ≠ availability: the
+  // count and schema above stay available-only.
+  const underContractListings = listings.filter((l) => !isAvailable(l.status))
+  const underContractCount = underContractListings.length
+  const gridListings = [...availableListings, ...underContractListings]
 
   const soldTotal = soldListings.reduce((sum, l) => sum + l.price, 0)
 
@@ -141,7 +149,8 @@ export default function ListingsPage() {
           </p>
           <h1 className="text-5xl font-black tracking-tight mb-4">Listings</h1>
           <p className="text-[#A0A0A0] text-lg">
-            {activeCount} active {activeCount === 1 ? 'listing' : 'listings'} · {soldListings.length} recently sold across Middle Tennessee
+            {activeCount} active {activeCount === 1 ? 'listing' : 'listings'}
+            {underContractCount > 0 ? ` · ${underContractCount} under contract` : ''} · {soldListings.length} recently sold across Middle Tennessee
           </p>
           <p className="text-[#6B6B6B] text-sm mt-2">
             Listings updated <time dateTime={listingsSyncedAt}>{listingsUpdatedLabel}</time>
@@ -193,7 +202,7 @@ export default function ListingsPage() {
 
       {/* Active Listings */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <h2 className="text-3xl font-black text-black mb-8 tracking-tight">Active Listings</h2>
+        <h2 className="text-3xl font-black text-black mb-8 tracking-tight">Current Listings</h2>
         {isListingsStale && (
           <div className="mb-8 border border-amber-300 bg-amber-50 text-amber-900 p-4 rounded-2xl">
             <p className="text-sm leading-relaxed">
@@ -204,7 +213,7 @@ export default function ListingsPage() {
           </div>
         )}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {availableListings.map((listing) => (
+          {gridListings.map((listing) => (
             <ListingCard key={listing.compassUrl} listing={listing} />
           ))}
         </div>
