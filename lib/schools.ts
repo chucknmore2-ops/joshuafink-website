@@ -385,6 +385,32 @@ export const schools: Record<string, School> = {
       },
     ],
   },
+
+  'mount-juliet-high-school-mount-juliet-tn': {
+    slug: 'mount-juliet-high-school-mount-juliet-tn',
+    name: 'Mount Juliet High School',
+    level: 'High',
+    district: 'Wilson County Schools',
+    suburbSlug: 'mount-juliet-tn',
+    ratingNote: 'One of Wilson County Schools’ two comprehensive high schools, serving the fast-growing core of Mount Juliet east of Nashville.',
+    blurb:
+      'Mount Juliet High School serves the core of Mount Juliet, a Wilson County city that has become one of the busiest relocation destinations east of Nashville thanks to its direct I-40 commute, newer master-planned communities, and lower price point than Williamson County. The Mount Juliet zone covers a mix of established neighborhoods and large newer developments, including the Providence corridor that has grown into its own shopping and dining hub. As with any fast-growing county, Wilson County periodically adjusts attendance lines as new schools come online, so confirming the current zone for a specific address is a necessary step before writing an offer.',
+    neighborhoods: ['Providence', 'Del Webb Lake Providence', 'Nichols Vale', 'Willoughby Station'],
+    faqs: [
+      {
+        q: 'What neighborhoods are zoned to Mount Juliet High School?',
+        a: 'The Mount Juliet High School zone draws from communities across the city core, including Providence, Del Webb Lake Providence (a 55+ community), Nichols Vale, and Willoughby Station. Wilson County has added schools as the area has grown, which can shift attendance lines, so always confirm the current zone assignment with Wilson County Schools for any specific address before writing an offer.',
+      },
+      {
+        q: 'How much do homes near Mount Juliet High School cost?',
+        a: 'Mount Juliet High School-zoned homes are part of the broader Mount Juliet market — see the current Mount Juliet market report for up-to-date medians and price-per-square-foot. Joshua can pull exact, current comps for any specific street or subdivision.',
+      },
+      {
+        q: 'Why are buyers targeting Mount Juliet over Nashville or Williamson County?',
+        a: 'Mount Juliet offers a direct I-40 commute into Nashville, newer inventory, and meaningfully lower price points than Franklin or Brentwood, while still delivering fast-moving demand and strong days-on-market performance. It is one of the most frequently shortlisted trade-offs for buyers who want space and value without giving up an easy commute.',
+      },
+    ],
+  },
 }
 
 export function getSchool(slug: string): School | undefined {
