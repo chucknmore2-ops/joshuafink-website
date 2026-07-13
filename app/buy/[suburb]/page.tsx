@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated, suburbCityGeo, type Suburb } from '@/lib/suburbs'
+import { getSuburb, getAllSuburbSlugs, getSuburbSlugForListing, marketStatsLastUpdated, suburbCityGeo, type Suburb } from '@/lib/suburbs'
+import { listings } from '@/lib/listings'
+import ListingCard from '@/components/ListingCard'
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
 import { linkifyNeighborhoods } from '@/lib/linkify-neighborhoods'
 import { reviewStats } from '@/lib/reviews'
@@ -141,6 +143,10 @@ export default async function BuySuburbPage({ params }: Props) {
   const faqs = [agentFaq, ...(suburb.buyerFaqs || suburb.faqs)]
   const description = suburb.buyerDescription || suburb.description
   const cityGuides = getNeighborhoodsByCitySlug(slug)
+  // Live homes Joshua has listed in this suburb (matched via city → slug). Only
+  // rendered when there are matches, so the grid appears on suburbs where he
+  // actually has inventory and stays hidden elsewhere. ListingCard badges status.
+  const suburbListings = listings.filter((l) => getSuburbSlugForListing(l.city) === slug)
 
   const nearbyByCity: Record<string, string[]> = {
     'franklin-tn': ['brentwood-tn', 'nolensville-tn', 'spring-hill-tn', 'thompsons-station-tn', 'nashville-tn'],
@@ -537,6 +543,32 @@ export default async function BuySuburbPage({ params }: Props) {
             </div>
           </div>
         </div>
+
+        {/* Homes Joshua has for sale in this suburb (hidden when none match) */}
+        {suburbListings.length > 0 && (
+          <div className="bg-white border-t border-[#E8E8E8] py-16 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+              <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
+                Available Now
+              </p>
+              <h2 className="text-3xl font-black text-black tracking-tight mb-3">
+                Homes for Sale in {suburb.name}
+              </h2>
+              <p className="text-[#6B6B6B] max-w-2xl mb-10">
+                {suburbListings.length === 1
+                  ? `A current listing Joshua represents in ${suburb.name}.`
+                  : `Current listings Joshua represents in ${suburb.name}.`}{' '}
+                For off-market and Coming Soon homes that never hit the public sites,
+                ask Joshua directly using the form above.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {suburbListings.map((listing) => (
+                  <ListingCard key={listing.compassUrl} listing={listing} />
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Neighborhood guides for this city */}
         {cityGuides.length > 0 && (
