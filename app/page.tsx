@@ -36,7 +36,7 @@ export default function HomePage() {
     '@graph': [
       {
         '@type': 'RealEstateAgent',
-        '@id': 'https://joshuafink.com/#agent',
+        '@id': 'https://www.joshuafink.com/#agent',
       },
       {
         '@type': 'BreadcrumbList',
@@ -45,7 +45,7 @@ export default function HomePage() {
             '@type': 'ListItem',
             position: 1,
             name: 'Home',
-            item: 'https://joshuafink.com/',
+            item: 'https://www.joshuafink.com/',
           },
         ],
       },
