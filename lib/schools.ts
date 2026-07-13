@@ -411,6 +411,36 @@ export const schools: Record<string, School> = {
       },
     ],
   },
+
+  'beech-high-school-hendersonville-tn': {
+    slug: 'beech-high-school-hendersonville-tn',
+    name: 'Beech Senior High School',
+    level: 'High',
+    district: 'Sumner County Schools',
+    suburbSlug: 'hendersonville-tn',
+    ratingNote: 'A top-five Sumner County public high school on Niche, with a 97%+ graduation rate and strong AP participation.',
+    blurb:
+      'Beech Senior High School serves the growing north Hendersonville area, including the Drakes Creek corridor and newer master-planned communities like Durham Farms. It consistently ranks among the top public high schools in Sumner County, giving buyers a strong-schools option on the Nashville side of the lake without the price premium of Williamson County. For families targeting new construction with an amenity-rich lifestyle and a top-tier school zone, the Beech feeder path is one of the most frequently shortlisted areas in Hendersonville.',
+    neighborhoods: ['Durham Farms', 'Saundersville Road communities', 'Shackle Island area'],
+    faqs: [
+      {
+        q: 'What neighborhoods are zoned to Beech High School?',
+        a: 'Beech commonly serves north Hendersonville and the Drakes Creek corridor, including the Durham Farms master-planned community. Sumner County sets attendance zones by address, so always confirm the current assignment with Sumner County Schools before writing an offer.',
+      },
+      {
+        q: 'Is Beech High School a good school?',
+        a: 'Yes. Beech ranks among the top public high schools in Sumner County on Niche, with a strong graduation rate and solid AP participation — one of the reasons the Durham Farms and north Hendersonville area has drawn steady new-construction demand.',
+      },
+      {
+        q: 'How much do homes in the Beech High zone cost?',
+        a: 'Beech-zoned homes are part of the broader Hendersonville market — see the current Hendersonville market report for up-to-date medians. New construction in Durham Farms specifically has ranged from roughly the $375Ks to over $1M depending on section and builder. Joshua can pull exact comps for any specific street.',
+      },
+      {
+        q: 'How does Hendersonville compare to Williamson County for school-driven buyers?',
+        a: "Hendersonville delivers a top-tier Sumner County school zone in Beech at a meaningfully lower price point than Franklin or Brentwood, while keeping a straightforward commute into Nashville via Old Hickory Lake's north shore. It's a frequent trade-off for families who want strong schools without the Williamson County price tag.",
+      },
+    ],
+  },
 }
 
 export function getSchool(slug: string): School | undefined {
