@@ -77,17 +77,33 @@ jobs:
             "Send a handwritten note to your most recent closing"
             "Call 2 expired or FSBO listings in your farm area"
           )
+          # Slot 6 — Off-site authority ladder (GEO/citation reps). These feed the
+          # AI-visibility score. Mostly one-time claims — prune each line as Josh
+          # completes it so the bank stays current.
+          CITATIONS=(
+            "Set your Compass profile Website field to joshuafink.com + paste your new bio"
+            "Change your Google Business Profile Website to joshuafink.com (fixes the Bing sync)"
+            "Re-sync Bing from Google at bing.com/forbusiness + confirm it shows Published"
+            "Claim Joshua Fink Group on Apple Business Connect (businessconnect.apple.com)"
+            "Claim/complete your Yelp business page (biz.yelp.com/claim) + add your website"
+            "Complete your Zillow agent profile: all service areas + website = joshuafink.com"
+            "Claim your Realtor.com agent profile (needs MLS ID) + set the website"
+            "Complete your Homes.com agent profile + set website to joshuafink.com"
+            "Create your free Nextdoor Business Page (business.nextdoor.com/local)"
+          )
 
           T3="${GBP[$(( DOY % ${#GBP[@]} ))]}"
           T4="${CONTENT[$(( DOY % ${#CONTENT[@]} ))]}"
           T5="${OUTREACH[$(( DOY % ${#OUTREACH[@]} ))]}"
+          T6="${CITATIONS[$(( DOY % ${#CITATIONS[@]} ))]}"
 
-          MSG=$(printf '%s\n%s\n%s\n%s\n%s\n\n%s' \
+          MSG=$(printf '%s\n%s\n%s\n%s\n%s\n%s\n\n%s' \
             "1) Follow up: work new CRM leads + nudge any warm ones" \
             "2) Ask 1 happy client for a Google review (your #1 lever)" \
             "3) $T3" \
             "4) $T4" \
             "5) $T5" \
+            "6) Authority ladder: $T6" \
             "Pick the ones you can knock out in 10 min. Consistency > volume.")
 
           curl -sS --fail -m 20 \
