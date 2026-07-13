@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-07-12T09:54:17.171Z
+// AUTO-GENERATED — Last synced: 2026-07-13T11:15:56.472Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -21,7 +21,7 @@ export interface Listing {
 
 // Mirrors the header timestamp so server components can compute sync staleness
 // without parsing comments. Updated by scripts/fetch-images.mjs each sync.
-export const listingsSyncedAt = "2026-07-12T09:54:17.171Z";
+export const listingsSyncedAt = "2026-07-13T11:15:56.472Z";
 
 export const listings: Listing[] = [
   {
@@ -98,12 +98,12 @@ export const listings: Listing[] = [
   },
   {
     address: "870 Reeves Rd",
-    city: "Antioch, TN 37013 | MLS #3231793",
-    price: 339900,
+    city: "Antioch, TN 37013",
+    price: 349900,
     beds: 3,
     baths: 2,
     sqft: 1134,
-    status: "Active",
+    status: "Active Under Contract",
     compassUrl: "https://www.compass.com/homedetails/870-Reeves-Rd-Antioch-TN-37013/SW1BU_pid/",
     imageUrl: "https://www.compass.com/m/a7ef33f971b3f98f9c9df198198d003671a4c04ee14a9a100ddb182a937911e6/2048x1536.webp",
     lastVerified: listingsSyncedAt,
