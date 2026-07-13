@@ -36,7 +36,7 @@ export const blogPosts: BlogPost[] = [
       },
       {
         q: "What's the average home price in Williamson County right now?",
-        a: "Williamson County remains the most expensive submarket in the region — cities like Franklin and Brentwood sit well above the region-wide median single-family price of $537,000 reported by Greater Nashville REALTORS® for June 2026. For current Franklin- and Brentwood-specific numbers, see our Franklin market page, which we update as new data comes in.",
+        a: "Williamson County remains the most expensive submarket in the region — cities like Franklin and Brentwood sit well above the region-wide median single-family price of $537,000 reported by Greater Nashville REALTORS® for June 2026. For current city-specific numbers, see our [Franklin market page](/market/franklin-tn) and [Brentwood market page](/market/brentwood-tn), which we update as new data comes in.",
       },
       {
         q: "Are mortgage rates going up or down in mid-2026?",

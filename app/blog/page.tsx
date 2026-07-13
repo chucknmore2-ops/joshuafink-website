@@ -53,6 +53,37 @@ export default function BlogPage() {
           ))}
         </div>
 
+        {/* Related location pages — pushes blog readers into conversion-optimized
+            /market and /buy pages so PageRank flows to the lead-form pages. */}
+        <div className="mt-16 pt-10 border-t border-[#E8E8E8]">
+          <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-4 text-center">
+            Related Location Pages
+          </p>
+          <h2 className="text-2xl font-black text-black mb-6 text-center">
+            Explore Middle Tennessee by City
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 max-w-4xl mx-auto">
+            {[
+              { label: 'Franklin market', href: '/market/franklin-tn' },
+              { label: 'Brentwood market', href: '/market/brentwood-tn' },
+              { label: 'Nashville market', href: '/market/nashville-tn' },
+              { label: 'Murfreesboro market', href: '/market/murfreesboro-tn' },
+              { label: 'Buy in Franklin', href: '/buy/franklin-tn' },
+              { label: 'Buy in Spring Hill', href: '/buy/spring-hill-tn' },
+              { label: 'Buy in Nolensville', href: '/buy/nolensville-tn' },
+              { label: 'All neighborhoods', href: '/neighborhoods' },
+            ].map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="text-sm font-semibold text-center px-4 py-3 border border-[#E8E8E8] text-[#444] tracking-wide hover:border-black hover:text-black transition-colors"
+              >
+                {l.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+
         {/* CTA */}
         <div className="mt-16 border border-[#E8E8E8] p-8 sm:p-12 text-center max-w-2xl mx-auto">
           <h2 className="text-2xl font-black text-black mb-3">
