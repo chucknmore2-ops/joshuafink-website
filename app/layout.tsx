@@ -160,6 +160,48 @@ export default function RootLayout({
                     'https://www.zillow.com/profile/JoshuaFinkGroup',
                   ],
                   priceRange: '$300000-$2500000',
+                  hasOfferCatalog: {
+                    '@type': 'OfferCatalog',
+                    name: 'Joshua Fink Group Real Estate Services',
+                    itemListElement: [
+                      {
+                        '@type': 'Offer',
+                        itemOffered: {
+                          '@type': 'Service',
+                          name: 'Buyer Representation',
+                          description:
+                            'Full-service buyer representation across Middle Tennessee — home search, showings, offer strategy, negotiation, and closing coordination.',
+                          url: 'https://www.joshuafink.com/buy',
+                          serviceType: 'Real Estate Buyer Agent',
+                          provider: { '@id': 'https://www.joshuafink.com/#agent' },
+                        },
+                      },
+                      {
+                        '@type': 'Offer',
+                        itemOffered: {
+                          '@type': 'Service',
+                          name: 'Seller Representation',
+                          description:
+                            'Listing and seller representation with pricing strategy, professional marketing, staging guidance, and negotiation to maximize net proceeds.',
+                          url: 'https://www.joshuafink.com/sell',
+                          serviceType: 'Real Estate Listing Agent',
+                          provider: { '@id': 'https://www.joshuafink.com/#agent' },
+                        },
+                      },
+                      {
+                        '@type': 'Offer',
+                        itemOffered: {
+                          '@type': 'Service',
+                          name: 'Cash Offer Program',
+                          description:
+                            'Instant cash offer program for Middle Tennessee homeowners — sell without listing, showings, or repairs, with a flexible closing timeline.',
+                          url: 'https://www.joshuafink.com/cash-offer',
+                          serviceType: 'Cash Offer for Homes',
+                          provider: { '@id': 'https://www.joshuafink.com/#agent' },
+                        },
+                      },
+                    ],
+                  },
                   // AggregateRating sourced from Joshua's Zillow review profile
                   // (218 reviews, 5.0 average as of latest sync). The reviewCount
                   // includes off-site reviews collected on Zillow over 17+ years
