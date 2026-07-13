@@ -132,7 +132,7 @@ export const suburbs: Record<string, Suburb> = {
       { q: 'Are Brentwood schools as good as advertised?', a: 'Yes. Brentwood Academy, Ravenwood High School, and the broader Williamson County school system consistently rank among the top in Tennessee and nationally. School assignment is a major value driver and Joshua factors it into every buyer consultation.' },
       { q: 'How do I compete in Brentwood\'s luxury market?', a: 'Preparation is everything. Have your financing tight (pre-approval or proof of funds), know your must-haves vs. nice-to-haves, and be ready to move when the right home appears. Joshua\'s off-market network also means you can find homes before the competition does.' },
     ],
-    topNeighborhoods: ['Governors Club', 'Otter Creek', 'Annandale', 'Brentwood Hills', 'Murray Lane'],
+    topNeighborhoods: ['Governors Club', 'Witherspoon', 'Otter Creek', 'Annandale', 'The Laurels', 'Brentwood Hills', 'Murray Lane'],
     schoolDistrict: 'Williamson County Schools',
     commuteNote: '15 min to downtown Nashville via I-65',
   },
