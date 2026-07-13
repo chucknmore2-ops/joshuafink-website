@@ -20,10 +20,6 @@
     {
       "path": "/api/cron/agent-briefing",
       "schedule": "0 12 * * 1"
-    },
-    {
-      "path": "/api/cron/geo-audit",
-      "schedule": "0 13 * * *"
     }
   ]
 }
