@@ -145,14 +145,26 @@ export default function ReviewsPage() {
           <p className="text-[#A0A0A0] mb-8 max-w-xl mx-auto">
             These are just a sample. Read all {reviewStats.total} verified client reviews on Zillow to see why Joshua Fink is Middle Tennessee&apos;s most trusted realtor.
           </p>
-          <a
-            href={reviewStats.zillowUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block bg-white text-black text-sm font-black px-10 py-4 tracking-wide hover:bg-[#E8E8E8] transition-colors"
-          >
-            Read All Reviews on Zillow →
-          </a>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <a
+              href={reviewStats.zillowUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block bg-white text-black text-sm font-black px-10 py-4 tracking-wide hover:bg-[#E8E8E8] transition-colors"
+            >
+              Read All Reviews on Zillow →
+            </a>
+            {reviewStats.googleUrl && (
+              <a
+                href={reviewStats.googleUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block border-2 border-white text-white text-sm font-black px-10 py-4 tracking-wide hover:bg-white hover:text-black transition-colors"
+              >
+                ★ Read Our Google Reviews →
+              </a>
+            )}
+          </div>
         </div>
 
         {/* Leave a Google review — renders only once GOOGLE_REVIEW_URL is set

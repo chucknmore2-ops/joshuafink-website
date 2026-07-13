@@ -25,14 +25,14 @@ Let's break down some key expenses to see where the differences lie:
 * Median home price in Nashville: $340,000 (Source: Zillow)
 * Median home price in Austin: $420,000 (Source: Redfin)
 
-Nashville offers a more affordable housing market, with a median home price significantly lower than Austin's. Plus, neighborhoods like [Germantown](/listings?neighborhood=germantown) and [12 South](/listings?neighborhood=12-south) offer a unique blend of affordability and charm.
+Nashville offers a more affordable housing market, with a median home price significantly lower than Austin's. Plus, neighborhoods like [Germantown](/neighborhoods/germantown-nashville-tn) and [12 South](/neighborhoods/12-south-nashville-tn) offer a unique blend of affordability and charm.
 
 ### Food
 
 * Average meal price in Nashville: $15-20 per person (Source: Numbeo)
 * Average meal price in Austin: $18-25 per person (Source: Numbeo)
 
-While both cities have a thriving food scene, Nashville's prices are generally more affordable. Grab a bite at [Hattie B's Hot Chicken](/listings?neighborhood=germantown) or try some classic Southern comfort food without breaking the bank.
+While both cities have a thriving food scene, Nashville's prices are generally more affordable. Grab a bite at [Hattie B's Hot Chicken](/neighborhoods/germantown-nashville-tn) or try some classic Southern comfort food without breaking the bank.
 
 ### Utilities
 
@@ -64,7 +64,7 @@ Austin's public schools are highly regarded, but so are Nashville's. Both cities
 * Average commute time in Nashville: 25-30 minutes (Source: US Census)
 * Average commute time in Austin: 30-40 minutes (Source: US Census)
 
-While both cities have their share of traffic, Nashville's commute times are generally shorter. Plus, neighborhoods like [Oak Hill](/listings?neighborhood=oak-hill) and [Green Hills](/listings?neighborhood=green-hills) offer easy access to downtown.
+While both cities have their share of traffic, Nashville's commute times are generally shorter. Plus, neighborhoods like Oak Hill and Green Hills offer easy access to downtown — [see all Nashville buy resources](/buy/nashville-tn) for more.
 
 ## The Verdict: Which City Fits Your Budget?
 
@@ -80,9 +80,9 @@ But don't just take our word for it! Here are some real-life examples of how muc
 
 If you're considering making the move from Austin to Nashville, here are some actionable tips to help you make the most of your relocation:
 
-1.  **Research, research, research**: Look into neighborhoods like [Germantown](/listings?neighborhood=germantown) and [12 South](/listings?neighborhood=12-south) to find affordable housing options.
+1.  **Research, research, research**: Look into neighborhoods like [Germantown](/neighborhoods/germantown-nashville-tn) and [12 South](/neighborhoods/12-south-nashville-tn) to find affordable housing options.
 2.  **Plan ahead for utilities**: Set up automatic payments or budgeting tools to manage your utility bills in Nashville.
-3.  **Take advantage of Nashville's food scene**: Try out local eateries like [Hattie B's Hot Chicken](/listings?neighborhood=germantown) and explore the city's many food trucks.
+3.  **Take advantage of Nashville's food scene**: Try out local eateries like [Hattie B's Hot Chicken](/neighborhoods/germantown-nashville-tn) and explore the city's many food trucks.
 4.  **Explore public transportation options**: Nashville's public transportation system is growing, but you may still need a car to get around. Research parking options and budget accordingly.
 
 ## Conclusion
