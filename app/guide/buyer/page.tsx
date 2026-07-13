@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import TrackedTelLink from '@/components/TrackedTelLink'
+import SuburbLeadForm from '@/components/SuburbLeadForm'
 
 const SITE = 'https://www.joshuafink.com'
 
@@ -103,34 +104,45 @@ export default function BuyerGuidePage() {
               <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
                 <div className="lg:col-span-2">
                   <p className="text-xs font-semibold tracking-widest text-[#C41E3A] uppercase mb-3">
-                    Optional — Want the Email Version?
+                    Optional — Get Joshua&apos;s Off-Market List
                   </p>
                   <h2 className="text-2xl font-black text-black tracking-tight mb-3">
-                    Get the printable PDF + Joshua&apos;s first-look list
+                    See homes before they hit Zillow
                   </h2>
                   <p className="text-sm text-[#6B6B6B] leading-relaxed">
-                    Drop your email and Joshua will send you:
+                    The full guide above is free to read — no sign-up. Drop your email and Joshua
+                    will also send you:
                   </p>
                   <ul className="mt-3 space-y-2 text-sm text-[#444]">
                     <li className="flex items-start gap-2">
                       <span style={{ color: '#C41E3A' }} className="mt-0.5">→</span>
-                      <span>A printable PDF of this guide for your fridge or laptop bag</span>
+                      <span>His weekly off-market &amp; Coming Soon list — Compass-exclusive homes you won&apos;t find on Zillow</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span style={{ color: '#C41E3A' }} className="mt-0.5">→</span>
-                      <span>Joshua&apos;s weekly off-market &amp; Coming Soon list (Compass-exclusive)</span>
+                      <span>A personal, same-day reply — tell him your budget &amp; timeline and he&apos;ll narrow it to the right 2-3 neighborhoods</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span style={{ color: '#C41E3A' }} className="mt-0.5">→</span>
-                      <span>A personal intro reply within a few hours — no pressure</span>
+                      <span>No spam, no pressure — unsubscribe anytime</span>
                     </li>
                   </ul>
                 </div>
                 <div className="lg:col-span-3">
-                  <form action="/api/contact" method="POST" className="space-y-4">
+                  <SuburbLeadForm
+                    successTitle="You're on the list!"
+                    successMessage={
+                      <>
+                        Joshua will email you his off-market list and a personal reply — usually
+                        same-day. For anything urgent, call{' '}
+                        <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                      </>
+                    }
+                    resetLabel="Submit Another"
+                  >
                     <input type="hidden" name="lead_type" value="buyer-guide" />
                     <input type="hidden" name="source" value="buyer-guide" />
-                    <input type="hidden" name="subject" value="buyer-guide-download" />
+                    <input type="hidden" name="subject" value="buyer-guide-offmarket-list" />
                     {/* Honeypot — bots fill, humans don't see */}
                     <input
                       type="text"
@@ -217,9 +229,9 @@ export default function BuyerGuidePage() {
                       className="w-full sm:w-auto text-white text-sm font-bold px-8 py-4 tracking-wide transition-colors"
                       style={{ backgroundColor: '#C41E3A' }}
                     >
-                      Send Me the Guide →
+                      Get the Off-Market List →
                     </button>
-                  </form>
+                  </SuburbLeadForm>
                 </div>
               </div>
             </div>
@@ -509,7 +521,7 @@ export default function BuyerGuidePage() {
                 href="#get-guide"
                 className="inline-flex items-center justify-center text-sm font-bold px-6 py-3 tracking-wide text-black underline underline-offset-4"
               >
-                Or get the email version →
+                Or get the off-market list →
               </a>
             </div>
           </div>
