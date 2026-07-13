@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getSuburb, getAllSuburbSlugs, getSuburbSlugForListing, marketStatsLastUpdated, suburbCityGeo, type Suburb } from '@/lib/suburbs'
 import { listings } from '@/lib/listings'
+import { schools } from '@/lib/schools'
 import ListingCard from '@/components/ListingCard'
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
 import { linkifyNeighborhoods } from '@/lib/linkify-neighborhoods'
@@ -147,6 +148,9 @@ export default async function BuySuburbPage({ params }: Props) {
   // rendered when there are matches, so the grid appears on suburbs where he
   // actually has inventory and stays hidden elsewhere. ListingCard badges status.
   const suburbListings = listings.filter((l) => getSuburbSlugForListing(l.city) === slug)
+  // Top-rated schools physically in this suburb, linked to their /homes-near
+  // pages (internal-link equity + a top buyer concern). Hidden when none match.
+  const suburbSchools = Object.values(schools).filter((s) => s.suburbSlug === slug)
 
   const nearbyByCity: Record<string, string[]> = {
     'franklin-tn': ['brentwood-tn', 'nolensville-tn', 'spring-hill-tn', 'thompsons-station-tn', 'nashville-tn'],
@@ -564,6 +568,46 @@ export default async function BuySuburbPage({ params }: Props) {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {suburbListings.map((listing) => (
                   <ListingCard key={listing.compassUrl} listing={listing} />
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Top-rated schools in this suburb — internal links to /homes-near (hidden when none) */}
+        {suburbSchools.length > 0 && (
+          <div className="bg-neutral-50 border-t border-[#E8E8E8] py-16 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+              <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
+                Schools
+              </p>
+              <h2 className="text-3xl font-black text-black tracking-tight mb-3">
+                Top-Rated Schools in {suburb.name}
+              </h2>
+              <p className="text-[#6B6B6B] max-w-2xl mb-10">
+                School zones drive both quality of life and resale value in {suburb.name}.
+                Explore homes near each — with zoning notes, price ranges, and current listings.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {suburbSchools.map((school) => (
+                  <Link
+                    key={school.slug}
+                    href={`/homes-near/${school.slug}`}
+                    className="group block border border-[#E8E8E8] rounded-2xl p-6 bg-white hover:border-black transition-colors"
+                  >
+                    <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-2">
+                      {school.level} · {school.district}
+                    </p>
+                    <h3 className="text-lg font-black text-black tracking-tight mb-2 group-hover:underline underline-offset-4">
+                      {school.name}
+                    </h3>
+                    <p className="text-sm text-[#6B6B6B] leading-relaxed">
+                      {school.ratingNote}
+                    </p>
+                    <span className="mt-4 inline-flex text-sm font-semibold text-black">
+                      Homes near {school.name} →
+                    </span>
+                  </Link>
                 ))}
               </div>
             </div>
