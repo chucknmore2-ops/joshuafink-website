@@ -165,7 +165,10 @@ function buildJsonLd(post: BlogPost) {
     timeRequired: `PT${readingTimeMinutes(post.content)}M`,
     author: {
       '@type': 'Person',
-      '@id': `${SITE_URL}#joshua-fink`,
+      // Must match the canonical Person node's @id in app/layout.tsx
+      // (…/#joshua-fink WITH the slash) so every post's author merges into
+      // the same entity in the knowledge graph instead of dangling.
+      '@id': `${SITE_URL}/#joshua-fink`,
       name: AUTHOR_NAME,
       url: AUTHOR_URL,
       jobTitle: 'Affiliate Broker',

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { reviews, reviewStats } from '@/lib/reviews'
+import { reviews, reviewStats, reviewDateToIso } from '@/lib/reviews'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 import GoogleReviewCTA from '@/components/GoogleReviewCTA'
 
@@ -46,7 +46,7 @@ export default function ReviewsPage() {
         '@type': 'Person',
         name: review.reviewer,
       },
-      datePublished: review.date,
+      datePublished: reviewDateToIso(review.date),
       reviewRating: {
         '@type': 'Rating',
         ratingValue: review.rating,
