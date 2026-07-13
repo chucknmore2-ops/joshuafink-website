@@ -475,6 +475,138 @@ export const neighborhoods: Record<string, Neighborhood> = {
     longitude: -86.7610,
   },
 
+  'witherspoon-brentwood-tn': {
+    slug: 'witherspoon-brentwood-tn',
+    name: 'Witherspoon',
+    city: 'Brentwood',
+    citySlug: 'brentwood-tn',
+    county: 'Williamson County',
+    metaTitle: 'Witherspoon Neighborhood Guide — Brentwood, TN',
+    metaDescription:
+      'Witherspoon is a 263-acre luxury enclave in east Brentwood, TN, near Crockett Park — custom estates by a builders’ guild, resort amenities, and the Ravenwood school zone. Local insight from Compass agent Joshua Fink.',
+    intro:
+      'Witherspoon is one of Brentwood’s premier luxury communities — a 263-acre master-planned enclave of custom estate homes on the east side of town, laced with walking trails that connect straight to Crockett Park. A buyer searching “Witherspoon Brentwood homes for sale” is after new-construction luxury with resort amenities and a top school zone.',
+    about:
+      'Witherspoon sits in east Brentwood with a Brentwood mailing address and Williamson County Schools assignment. Master-planned across roughly 150 large home sites on 263 acres, it is built by a guild of Middle Tennessee’s premier custom builders — Castle Homes, Ford Classic Homes, Turnberry Homes, and others — so architecture ranges from transitional and modern farmhouse to traditional Southern, each home custom rather than production. The community centers on a resort-style amenity complex (clubhouse, adult and children’s pools, a neighborhood green and pavilion) and a stately pond-and-roundabout entrance, with miles of paved and natural paths that link to Brentwood’s Crockett Park. The buyer profile skews executive — physicians, business owners, and corporate transferees who want new construction, amenities, and the Ravenwood zone in one address.',
+    vibe: 'Master-planned luxury — new-construction estates, resort amenities, and trails to Crockett Park.',
+    priceBand: '$1.9M – $8.5M+',
+    buildYears: 'Mid-2010s to present',
+    hoa: 'HOA dues fund the amenity center, pools, trails, common areas, and entrance. A resort-style amenity structure like this carries meaningful dues — confirm current amounts with the HOA before writing an offer.',
+    schoolNotes:
+      'Witherspoon is zoned to Williamson County Schools — typically Crockett Elementary, Woodland Middle, and Ravenwood High School, with Crockett and Woodland close enough that many families walk. WCS routinely tops Tennessee rankings, and the Ravenwood zone is a real driver of resale value here. Always verify the current zoning for a specific address.',
+    amenities: [
+      'Resort-style amenity complex with clubhouse',
+      'Adult and children’s pools',
+      'Neighborhood green and pavilion',
+      'Miles of paved and natural walking/bike paths',
+      'Direct trail connection to Brentwood’s Crockett Park',
+      'Stately pond-and-roundabout entrance',
+    ],
+    homeStyles: [
+      'Custom transitional estates',
+      'Modern farmhouse',
+      'Traditional Southern brick and stone',
+      'Selected contemporary custom builds',
+    ],
+    whyBullets: [
+      'New construction is the draw — and it’s nuanced: buying a to-be-built or just-finished custom home means builder contracts, allowances, and change-order dynamics a resale agent alone won’t catch. Joshua represents buyers through builder negotiations so you don’t sign the builder’s paper unrepresented.',
+      'The Ravenwood + Crockett Park combination is rare: top schools within walking distance and a regional park at your back fence is a specific, defensible resale story — which cuts both ways at the negotiating table.',
+      'Off-market moves fast at this tier: a meaningful share of Witherspoon activity is Coming Soon or quiet listings. Joshua’s Compass network surfaces homes here that Zillow-only buyers never see.',
+    ],
+    faqs: [
+      {
+        q: 'How much do homes in Witherspoon cost in 2026?',
+        a: 'Witherspoon is a luxury enclave — recent activity has ranged from roughly $1.9M to well over $8M, with a median in the high-$2M range. Pricing is highly lot- and builder-driven; larger custom homes and premium home sites carry significant premiums. Joshua can pull exact recent comps for any street or builder.',
+      },
+      {
+        q: 'What schools are zoned to Witherspoon?',
+        a: 'Witherspoon is zoned to Williamson County Schools — typically Crockett Elementary, Woodland Middle, and Ravenwood High School. Crockett and Woodland are close enough that many families walk. WCS schools are routinely top-ranked in Tennessee. Always verify the current zoning for a specific address before writing an offer.',
+      },
+      {
+        q: 'Is Witherspoon new construction or resale?',
+        a: 'Both. Witherspoon is built by a guild of custom builders, so you’ll find to-be-built and just-completed new homes alongside resales as the community matures. Buying new here means builder contracts and allowances — Joshua represents buyers through that process so you aren’t negotiating against the builder alone.',
+      },
+      {
+        q: 'How does Witherspoon compare to Governors Club?',
+        a: 'Both are top Brentwood luxury communities, but they’re different: Governors Club is gated with a private Greg Norman golf course; Witherspoon is not gated and is oriented around new construction, resort amenities, and walkable trail access to Crockett Park. If new construction and amenities matter more than golf and gating, Witherspoon is the stronger fit.',
+      },
+      {
+        q: 'Are there off-market opportunities in Witherspoon?',
+        a: 'Yes. A meaningful share of Witherspoon transactions happen off-market or as Compass Coming Soon listings, and new-construction inventory often trades before it hits public MLS. Joshua monitors the community directly — if Witherspoon is your target, working with an agent who has the off-market layer is the difference.',
+      },
+    ],
+    schemaCity: 'Brentwood',
+    schemaState: 'TN',
+    latitude: 36.0020,
+    longitude: -86.7605,
+  },
+
+  'the-laurels-brentwood-tn': {
+    slug: 'the-laurels-brentwood-tn',
+    name: 'The Laurels',
+    city: 'Brentwood',
+    citySlug: 'brentwood-tn',
+    county: 'Williamson County',
+    metaTitle: 'The Laurels Neighborhood Guide — Brentwood, TN',
+    metaDescription:
+      'The Laurels is an established estate community in east Brentwood, TN, off Split Log Road — custom homes on 1-acre+ wooded lots, a light HOA, and the Ravenwood school zone. Local insight from Compass agent Joshua Fink.',
+    intro:
+      'The Laurels is one of east Brentwood’s established estate neighborhoods — large custom homes on wooded one-acre-plus lots off Split Log Road, with mature trees, quiet streets, and a rare-for-Brentwood mix of acreage, a light HOA, and top schools. Buyers searching “The Laurels Brentwood” usually want space and privacy without leaving the Ravenwood zone.',
+    about:
+      'The Laurels sits in east Brentwood off Split Log Road at Charity Drive, with a Brentwood mailing address and Williamson County Schools assignment. Established in the mid-1990s and largely built out between 1998 and 2005, it is a smaller, intentionally low-density community — roughly 45 estate homes on one-acre-and-larger lots shaded by old-growth trees. Homes tend to run large (often in the 4,300–6,200+ square-foot range) with custom millwork, upgraded kitchens, and open floor plans. There is no big amenity center here; the appeal is the land, the maturity of the neighborhood, and the location — easy I-65 access north to Nashville and quick reach to Cool Springs, with golf and country clubs nearby. The HOA is deliberately light.',
+    vibe: 'Established estate living — acre-plus wooded lots, mature trees, and quiet privacy.',
+    priceBand: '$1.1M – $2.5M+ (lot- and size-driven)',
+    buildYears: '1996–2005',
+    hoa: 'A light HOA (historically around $200/year) covering common-area basics rather than a big amenity structure — part of the appeal for buyers who want acreage without resort-community dues. Confirm the current amount and covenants before closing.',
+    schoolNotes:
+      'The Laurels is zoned to Williamson County Schools — typically Kenrose Elementary, Woodland Middle, and Ravenwood High School. WCS is Tennessee’s top-ranked district and the Ravenwood zone is a meaningful piece of the resale story. Always verify the current zoning for a specific address.',
+    amenities: [
+      'One-acre-and-larger wooded home sites',
+      'Mature old-growth trees and established landscaping',
+      'Quiet, low-density estate layout',
+      'Light HOA — no resort-community dues',
+      'Easy I-65 access to Nashville; Cool Springs nearby',
+      'Close to area golf and country clubs',
+    ],
+    homeStyles: [
+      'Custom Southern traditional estates',
+      'Brick and stone exteriors',
+      'Large open floor plans (roughly 4,300–6,200+ sq ft)',
+      'Upgraded kitchens and custom millwork',
+    ],
+    whyBullets: [
+      'Acreage in Brentwood is scarce — and specific: one-acre-plus lots inside the Ravenwood zone are a limited, sought-after niche. When a Laurels home comes up it moves; being ready (and represented) matters.',
+      'Established beats new for some buyers: mature trees, settled landscaping, and a proven street can’t be built overnight. Joshua helps buyers weigh a Laurels resale against newer nearby construction on the things that actually drive long-term value.',
+      'Low-HOA estate neighborhoods reward local knowledge: with only ~45 homes and few public listings at a time, a lot of activity here is word-of-mouth and off-market. Joshua’s Compass network and neighborhood relationships surface homes buyers won’t find on Zillow.',
+    ],
+    faqs: [
+      {
+        q: 'How much do homes in The Laurels cost in 2026?',
+        a: 'The Laurels is an estate neighborhood, so pricing is driven by lot size and square footage — most homes trade in the low-seven-figure range, with larger or updated homes pushing higher. Because so few come up for sale at once, comps matter a lot; Joshua can pull exact recent sales for any address.',
+      },
+      {
+        q: 'What schools are zoned to The Laurels?',
+        a: 'The Laurels is zoned to Williamson County Schools — typically Kenrose Elementary, Woodland Middle, and Ravenwood High School. WCS schools are routinely top-ranked in Tennessee. Always verify the current zoning for a specific address before writing an offer.',
+      },
+      {
+        q: 'How big are the lots in The Laurels?',
+        a: 'Most home sites in The Laurels are one acre or larger, shaded by mature trees — rare for Brentwood at this price point and a big part of the neighborhood’s appeal. It’s an established, low-density community of roughly 45 homes.',
+      },
+      {
+        q: 'Does The Laurels have an HOA and amenities?',
+        a: 'The HOA is intentionally light (historically around $200/year) and there’s no large amenity center — the draw is the land, the mature setting, and the location rather than pools and a clubhouse. Confirm the current dues and any covenants before closing.',
+      },
+      {
+        q: 'Are there off-market opportunities in The Laurels?',
+        a: 'Often, yes. With only about 45 homes and few public listings at any time, a meaningful share of activity here is off-market or word-of-mouth. Joshua monitors the neighborhood and can flag quiet or Coming Soon opportunities before they hit MLS.',
+      },
+    ],
+    schemaCity: 'Brentwood',
+    schemaState: 'TN',
+    latitude: 35.9830,
+    longitude: -86.7420,
+  },
+
   'mckays-mill-franklin-tn': {
     slug: 'mckays-mill-franklin-tn',
     name: "McKay's Mill",
