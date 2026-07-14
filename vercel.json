@@ -6,18 +6,6 @@
       "schedule": "0 2 * * *"
     },
     {
-      "path": "/api/cron/gbp-post",
-      "schedule": "0 14 * * 2"
-    },
-    {
-      "path": "/api/cron/linkedin-post",
-      "schedule": "0 14 * * 4"
-    },
-    {
-      "path": "/api/cron/instagram-post",
-      "schedule": "0 14 * * 3"
-    },
-    {
       "path": "/api/cron/agent-briefing",
       "schedule": "0 12 * * 1"
     }

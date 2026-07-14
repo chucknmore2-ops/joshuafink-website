@@ -13,10 +13,13 @@ name: Social Autopost
 #
 # Cadence (9am Central = 14:00 UTC):
 #   Thu — LinkedIn   (token verified 2026-06-26, LIVE)
-#   Wed — Instagram  (commented out until IG_ACCESS_TOKEN is refreshed)
+#   Wed — Instagram  (token verified 2026-06-26, LIVE — posts real listings;
+#                     confirmed HTTP 200 with a published mediaId on 2026-07-08)
 #   Tue — GBP        (commented out until the GBP token is refreshed)
-# To enable IG/GBP once their tokens are confirmed, uncomment the matching
-# schedule line below — the routing + manual trigger already support them.
+# To enable GBP once its token is confirmed, uncomment the matching schedule
+# line below — the routing + manual trigger already support it. NOTE: these
+# social posts run ONLY here, not on Vercel Cron (see vercel.json) — don't add
+# duplicate cron entries there or Instagram will double-post.
 
 on:
   schedule:
