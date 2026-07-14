@@ -60,6 +60,10 @@ export function getSiteUrlCatalog(): SiteUrlEntry[] {
     { path: '/homes-near', priority: 0.8, changeFrequency: 'monthly' },
     { path: '/guide/buyer', priority: 0.7, changeFrequency: 'monthly' },
     { path: '/moving-to-middle-tennessee', priority: 0.85, changeFrequency: 'monthly' },
+    // Legal page — indexable and footer-linked, so include it here to keep this
+    // catalog a true single source of truth for the sitemap + IndexNow. Low
+    // priority / yearly so it doesn't compete with commercial pages.
+    { path: '/privacy', priority: 0.3, changeFrequency: 'yearly' },
   ]
 
   // ── Blog posts — parse date strings with a defensive fallback ─────

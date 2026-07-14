@@ -103,6 +103,7 @@ export default function Footer() {
               {[
                 { href: '/listings', label: 'Active Listings' },
                 { href: '/guide/buyer', label: "Free Buyer's Guide" },
+                { href: '/moving-to-middle-tennessee', label: 'Moving to Middle TN' },
                 { href: '/homes-near', label: 'Homes by School Zone' },
                 { href: '/buy/franklin-tn', label: 'Buy in Franklin' },
                 { href: '/buy/brentwood-tn', label: 'Buy in Brentwood' },
