@@ -16,20 +16,23 @@ Email:          joshua@joshuafink.com
 Category:       Real Estate Agent
 ```
 
-**Name nuance (important):** On *business* citation platforms (Apple, Bing, Yelp, Data Axle, general directories) use **"Joshua Fink Group."** On *agent* platforms (Zillow, Realtor.com, Homes.com) the profile is the person — **"Joshua Fink," brokerage "Compass."** Never mix phone numbers or address formats; use `615-551-2727` and `Suite 105` (not `Ste 105` / `#105`) everywhere so Google clusters them as one entity.
+**Name nuance (important):** On *business* citation platforms (Apple, Bing, Yelp, Data Axle, general directories) use **"Joshua Fink Group."** On *agent* platforms (Zillow, Realtor.com, Homes.com) the profile is the person — **"Joshua Fink," brokerage "Compass."** Never mix phone numbers or address formats; use `615-551-2727` and `Suite 105` (not `Ste 105` / `#105`) everywhere so Google clusters them as one entity. The `615-551-2727` cell is the **primary** number (it matches the whole site); the Compass office line `615-370-8669` is a real **secondary** — only add it in a platform's dedicated second-phone field, never as the primary. Ignore/purge the bogus `(888) 586-2349`.
 
 ---
 
 ## 🧹 STEP 0 — Fix conflicting OLD profiles FIRST (the single biggest win)
 
-A deep off-site audit (2026-07-14) found Josh's identity is fragmented across **three brokerage eras — RE/MAX → Parks → Compass** — and the old profiles are still live with **conflicting phone numbers and brokerages.** Google and the LLMs can't confidently resolve one entity when the web says three different things about it. Cleaning this up is higher-ROI than any single new citation, because it makes every *existing* signal count.
+A deep off-site audit (2026-07-14) found Josh's identity is fragmented across **three brokerage eras — RE/MAX → Parks → Compass** — and the old profiles are still live with **conflicting brokerages and phone numbers.** Google and the LLMs can't confidently resolve one entity when the web says three different things about it. Cleaning this up is higher-ROI than any single new citation, because it makes every *existing* signal count. **Compass acquired Parks**, so the Parks history is legit lineage — but every profile should now read **Compass** for uniformity.
 
-**Conflicts found live in search results:**
-- **Phone:** `615-551-2727` (correct) vs `615-370-8669` vs `(888) 586-2349`
-- **Brokerage:** Compass (correct) vs "Parks Brentwood/Cool Springs" vs "RE/MAX Fine Homes / Hall of Fame"
-- **Name:** "Joshua Fink Group" (correct) vs "Joshua Fink Group **of Parks**"
+**Conflicts found live in search results (with Josh's clarification, 2026-07-14):**
+- **Phone — two are real, one is bogus:**
+  - `615-551-2727` = Josh's **cell** — the number used everywhere on the site and all CTAs. **Keep this as the canonical/primary** on every listing so Google clusters one entity.
+  - `615-370-8669` = the **Compass office** line — real, fine as a *secondary* number only (use a platform's dedicated second-phone field if it has one; don't let it replace the cell as primary).
+  - `(888) 586-2349` = **bogus** (shows on realestateagents.com) — purge wherever it appears.
+- **Brokerage:** standardize on **Compass** everywhere. "Parks" = predecessor (Compass bought it); "RE/MAX" = the older era. Neither should still be shown.
+- **Name:** use **"Joshua Fink Group"** (brokerage field = Compass); where a combined name is shown, **"Joshua Fink Group of Compass"** — never "…of Parks."
 
-Fix each to the canonical NAP above. Prioritize the ones showing the wrong brokerage/phone:
+Fix each to the canonical NAP above (Compass + cell `615-551-2727` + joshuafink.com). Prioritize the ones showing the wrong brokerage or the bogus phone:
 
 | Profile | Problem | Action |
 |---|---|---|
