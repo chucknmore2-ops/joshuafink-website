@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { reviews, reviewStats } from '@/lib/reviews'
+import { reviews, reviewStats, reviewDateToIso } from '@/lib/reviews'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 
 export const metadata: Metadata = {
@@ -24,13 +24,6 @@ const awards = [
   { name: 'Titan Award', desc: 'Elite sales performance designation' },
   { name: 'Top Producing Agent of the Year', desc: 'Recognized annually for outstanding results' },
 ]
-
-function isoReviewDate(human: string): string | undefined {
-  // reviews.ts dates look like "July 2024" or "January 2024" — parse to ISO.
-  const d = new Date(`1 ${human}`)
-  if (isNaN(d.getTime())) return undefined
-  return d.toISOString().slice(0, 10)
-}
 
 const faqEntries: { question: string; answer: string }[] = [
   {
@@ -95,7 +88,7 @@ function buildProfileSchema() {
       worstRating: 1,
     },
     author: { '@type': 'Person', name: r.reviewer },
-    datePublished: isoReviewDate(r.date),
+    datePublished: reviewDateToIso(r.date),
     reviewBody: r.text,
     itemReviewed: { '@id': 'https://www.joshuafink.com/#joshua-fink' },
     publisher: {

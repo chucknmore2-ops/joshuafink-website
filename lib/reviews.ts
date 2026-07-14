@@ -79,6 +79,19 @@ export const reviews: Review[] = [
   },
 ];
 
+/**
+ * Convert a human review date ("July 2024", "January 2024") into an ISO 8601
+ * date ("2024-07-01") for schema.org `Review.datePublished`. Google's Rich
+ * Results validator requires ISO 8601 here — a raw "July 2024" is invalid and
+ * gets dropped. Returns undefined for unparseable input so callers can omit the
+ * field rather than emit garbage.
+ */
+export function reviewDateToIso(human: string): string | undefined {
+  const d = new Date(`1 ${human}`);
+  if (isNaN(d.getTime())) return undefined;
+  return d.toISOString().slice(0, 10);
+}
+
 export const reviewStats = {
   total: 218,
   rating: 5.0,

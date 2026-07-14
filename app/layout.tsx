@@ -4,7 +4,7 @@ import './globals.css'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import MobileCallCTA from '@/components/MobileCallCTA'
-import { reviews, reviewStats } from '@/lib/reviews'
+import { reviews, reviewStats, reviewDateToIso } from '@/lib/reviews'
 
 // Self-host Google Fonts via next/font — eliminates the render-blocking
 // CSS @import, preloads the required subsets, and exposes CSS variables
@@ -184,7 +184,7 @@ export default function RootLayout({
                       bestRating: 5,
                     },
                     author: { '@type': 'Person', name: r.reviewer },
-                    datePublished: r.date,
+                    datePublished: reviewDateToIso(r.date),
                     reviewBody: r.text,
                     itemReviewed: { '@id': 'https://www.joshuafink.com/#agent' },
                   })),
