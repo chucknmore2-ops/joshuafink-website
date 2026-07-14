@@ -141,6 +141,50 @@ export default async function HomesNearSchoolPage({ params }: Props) {
                 Talk to Joshua
               </Link>
             </div>
+
+            {/* Compact above-the-fold lead capture — mirrors /buy/[suburb] hero form */}
+            <div className="mt-10 max-w-xl bg-white p-6 sm:p-7">
+              <p className="text-xs font-semibold tracking-widest uppercase mb-1" style={{ color: '#A0A0A0' }}>
+                Quick start — text Joshua
+              </p>
+              <p className="text-sm font-semibold text-black mb-4">
+                He&apos;ll reply same-day with zone-verified {s.name} listings.
+              </p>
+              <SuburbLeadForm
+                successTitle="Got it!"
+                successMessage={
+                  <>
+                    Joshua will text you shortly with {s.name}-zoned listings. Or call{' '}
+                    <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                  </>
+                }
+                resetLabel="Send another"
+              >
+                <input type="hidden" name="lead_type" value="school-zone" />
+                <input type="hidden" name="school" value={s.name} />
+                {suburb && <input type="hidden" name="suburb" value={suburb.name} />}
+                <input type="hidden" name="source" value={`homes-near-hero:${slug}`} />
+
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <input
+                    type="text" name="name" required placeholder="First name" autoComplete="given-name"
+                    className="flex-1 border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors"
+                  />
+                  <input
+                    type="tel" name="phone" required placeholder="615-555-0000" autoComplete="tel"
+                    className="flex-1 border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full text-white text-sm font-bold px-6 py-3 tracking-wide transition-colors"
+                  style={{ backgroundColor: '#C41E3A' }}
+                >
+                  Text Me {s.name} Zone Listings →
+                </button>
+              </SuburbLeadForm>
+            </div>
           </div>
         </div>
 
