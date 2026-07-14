@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { blogPosts } from '@/lib/blog'
 import { listings } from '@/lib/listings'
+import { listingSlug } from '@/lib/listing-detail'
 import { withUtm } from '@/lib/utm'
 
 export const dynamic = 'force-dynamic'
@@ -47,9 +48,12 @@ function isoWeekNumber(d: Date = new Date()): number {
 function buildFromListing(): PostPayload | null {
   const l = listings.find((x) => x.imageUrl && x.price && x.compassUrl)
   if (!l) return null
-  const cityShort = l.city.split('|')[0].trim()
+  // Locality only ("Brentwood"), not "Brentwood, TN 37027", so the caption
+  // reads "in Brentwood, TN".
+  const locality = l.city.split('|')[0].split(',')[0].trim()
   const price = `$${l.price.toLocaleString()}`
-  const cityHashtag = cityShort.replace(/[,\s]+/g, '')
+  const cityHashtag = locality.replace(/[,\s]+/g, '')
+  const slug = listingSlug(l)
   const features = [
     l.beds ? `${l.beds} bed` : '',
     l.baths ? `${l.baths} bath` : '',
@@ -57,16 +61,19 @@ function buildFromListing(): PostPayload | null {
   ]
     .filter(Boolean)
     .join(' · ')
-  const url = withUtm(l.compassUrl, {
+  // Link to the on-site listing page (traffic to the money site), not Compass.
+  const url = withUtm(`${SITE}/listings/${slug}`, {
     source: 'instagram',
     medium: 'auto',
     campaign: 'listing-spotlight',
-    content: l.address.toLowerCase().replace(/[^\w]+/g, '-'),
+    content: slug,
   })
+  // Entity-first + location keyword up front so the post indexes/seeds AI for
+  // the right terms. Hashtags are fine on Instagram (unlike LinkedIn).
   const caption =
-    `Just listed — ${l.address}, ${cityShort}\n\n` +
+    `Joshua Fink Group just listed a home in ${locality}, TN — ${l.address}.\n\n` +
     `${features}\n${price}\n\n` +
-    `Call Joshua Fink at 615-551-2727 for a private showing. Link in bio for the full listing on Compass.\n\n` +
+    `Call or text Joshua Fink at 615-551-2727 for a private showing. Full details at joshuafink.com — link in bio.\n\n` +
     `#${cityHashtag} #JustListed #JoshuaFinkGroup #Compass #NashvilleRealEstate #MiddleTennessee #TennesseeRealEstate`
   return {
     caption: caption.slice(0, MAX_CAPTION),
@@ -94,7 +101,7 @@ function buildFromBlog(): PostPayload | null {
   const caption =
     `${p.title}\n\n` +
     `${p.excerpt.slice(0, 1500)}${p.excerpt.length > 1500 ? '…' : ''}\n\n` +
-    `Read the full post — link in bio.\n\n` +
+    `Joshua Fink Group — Compass Real Estate, Middle Tennessee. Read the full post — link in bio.\n\n` +
     `#NashvilleRealEstate #MiddleTennessee #JoshuaFinkGroup #Compass`
   return {
     caption: caption.slice(0, MAX_CAPTION),

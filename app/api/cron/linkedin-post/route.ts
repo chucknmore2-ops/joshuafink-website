@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { blogPosts } from '@/lib/blog'
 import { listings } from '@/lib/listings'
+import { listingSlug } from '@/lib/listing-detail'
 import { logPost } from '@/lib/admin-db'
 import { withUtm } from '@/lib/utm'
 
@@ -58,11 +59,13 @@ function buildFromLatestBlog(): PostPayload | null {
     campaign: 'blog-syndication',
     content: p.slug,
   })
+  // Blog title is already the keyword target (it becomes LinkedIn's title tag),
+  // so lead with it. No hashtags on LinkedIn — a hashtag would hijack the title
+  // tag away from the title's keywords (James Dooley / Sterling Sky, 2026).
   const text =
     `${p.title}\n\n` +
     `${p.excerpt.slice(0, 280)}${p.excerpt.length > 280 ? '…' : ''}\n\n` +
-    `Read the full post: ${url}\n\n` +
-    `#NashvilleRealEstate #MiddleTennessee #JoshuaFinkGroup #Compass`
+    `From Joshua Fink Group — Compass Real Estate serving Nashville & Middle Tennessee. Read the full post: ${url}`
   return {
     text,
     url,
@@ -76,9 +79,20 @@ function buildFromLatestBlog(): PostPayload | null {
 function buildFromListing(): PostPayload | null {
   const l = listings.find((x) => x.imageUrl && x.price && x.compassUrl)
   if (!l) return null
-  const cityShort = l.city.split('|')[0].trim()
+  // Locality only (strip ", TN 37027 | MLS #…") so the caption reads
+  // "in Brentwood, TN", not "in Brentwood, TN 37027, TN".
+  const locality = l.city.split('|')[0].split(',')[0].trim()
   const price = `$${l.price.toLocaleString()}`
-  const title = `${l.address}, ${cityShort} — ${price}`
+  const slug = listingSlug(l)
+  // Link to the on-site listing page, not compass.com — real clicks to the
+  // money site are a ranking signal (traffic/nav-boost), and we keep the
+  // visitor on joshuafink.com instead of ceding them to Compass.
+  const url = withUtm(`${SITE}/listings/${slug}`, {
+    source: 'linkedin',
+    medium: 'auto',
+    campaign: 'listing-spotlight',
+    content: slug,
+  })
   const description = [
     l.beds ? `${l.beds} bed` : '',
     l.baths ? `${l.baths} bath` : '',
@@ -86,18 +100,22 @@ function buildFromListing(): PostPayload | null {
   ]
     .filter(Boolean)
     .join(' · ')
+  // Entity-first + location keyword in the first ~9 words (that opening line
+  // becomes the post's title tag and is what Gemini/Claude pull via Google
+  // search). Semantic-triple phrasing (entity → predicate → object). No
+  // hashtags on LinkedIn.
   const text =
-    `Featured listing — ${title}\n\n` +
+    `Joshua Fink Group just listed a home in ${locality}, TN — ${l.address}, ${price}.\n\n` +
     `${description}\n\n` +
-    `Call Joshua Fink at 615-551-2727 for a private showing, or see the full listing on Compass.\n\n` +
-    `#${cityShort.replace(/[,\s]+/g, '')} #JustListed #JoshuaFinkGroup #Compass`
+    `Joshua Fink Group helps buyers and sellers across ${locality} and Middle Tennessee. ` +
+    `Call or text Joshua Fink at 615-551-2727 for a private showing, or see the full listing at joshuafink.com.`
   return {
     text,
-    url: l.compassUrl,
-    title,
+    url,
+    title: `Homes for sale in ${locality}, TN — ${l.address}`,
     description: description || 'Middle Tennessee real estate',
     kind: 'listing',
-    refKey: l.address.toLowerCase().replace(/[^\w]+/g, '-'),
+    refKey: slug,
   }
 }
 
