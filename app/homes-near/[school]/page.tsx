@@ -325,7 +325,7 @@ export default async function HomesNearSchoolPage({ params }: Props) {
                   curated, zone-verified listings — no Zestimate guessing on zoning.
                 </p>
                 <Link
-                  href="/contact"
+                  href="#lead-form"
                   className="block text-center text-sm font-bold px-6 py-3 tracking-wide transition-colors"
                   style={{ backgroundColor: '#C41E3A', color: '#FFFFFF' }}
                 >
@@ -388,7 +388,7 @@ export default async function HomesNearSchoolPage({ params }: Props) {
             </div>
             <div className="flex flex-col sm:flex-row gap-4 shrink-0">
               <Link
-                href="/contact"
+                href="#lead-form"
                 className="inline-block text-sm font-bold px-8 py-4 tracking-wide transition-colors text-center"
                 style={{ backgroundColor: '#C41E3A', color: '#FFFFFF' }}
               >
@@ -405,7 +405,7 @@ export default async function HomesNearSchoolPage({ params }: Props) {
           </div>
 
           {/* Inline lead-capture form */}
-          <div className="max-w-3xl mx-auto mt-12 bg-white p-8 sm:p-10">
+          <div id="lead-form" className="max-w-3xl mx-auto mt-12 bg-white p-8 sm:p-10 scroll-mt-24">
             <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-6">
               Get Zone-Verified {s.name} Listings
             </p>
