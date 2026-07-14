@@ -72,7 +72,7 @@ Williamson County continues to carry the strongest price premium in Middle Tenne
 
 ## Davidson County: Nashville's Urban Core
 
-Nashville's urban neighborhoods — East Nashville, 12 South, Germantown, Sylvan Park — continue to see more measured pricing behavior than the frenzy years, with the biggest differentiator between a home that sells fast and one that sits being presentation and an accurate price from day one. That's consistent with the region-wide picture in the June 2026 Greater Nashville REALTORS® report: inventory up about 8% year over year to 15,617 active listings, a median single-family price of $537,000, and an average of 51 days on market — more choice for urban buyers than they've had in years. For the current Nashville-specific numbers, visit our [Nashville market page](/market/nashville-tn).
+Nashville's urban neighborhoods — [East Nashville](/neighborhoods/east-nashville-tn), [12 South](/neighborhoods/12-south-nashville-tn), [Germantown](/neighborhoods/germantown-nashville-tn), [Sylvan Park](/neighborhoods/sylvan-park-nashville-tn) — continue to see more measured pricing behavior than the frenzy years, with the biggest differentiator between a home that sells fast and one that sits being presentation and an accurate price from day one. That's consistent with the region-wide picture in the June 2026 Greater Nashville REALTORS® report: inventory up about 8% year over year to 15,617 active listings, a median single-family price of $537,000, and an average of 51 days on market — more choice for urban buyers than they've had in years. For the current Nashville-specific numbers, visit our [Nashville market page](/market/nashville-tn).
 
 ## Rutherford County: Murfreesboro's Value Play
 
