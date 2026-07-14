@@ -16,7 +16,39 @@ Email:          joshua@joshuafink.com
 Category:       Real Estate Agent
 ```
 
-**Name nuance (important):** On *business* citation platforms (Apple, Bing, Yelp, Data Axle, general directories) use **"Joshua Fink Group."** On *agent* platforms (Zillow, Realtor.com, Homes.com) the profile is the person — **"Joshua Fink," brokerage "Compass."** Never mix phone numbers or address formats; use `615-551-2727` and `Suite 105` (not `Ste 105` / `#105`) everywhere so Google clusters them as one entity.
+**Name nuance (important):** On *business* citation platforms (Apple, Bing, Yelp, Data Axle, general directories) use **"Joshua Fink Group."** On *agent* platforms (Zillow, Realtor.com, Homes.com) the profile is the person — **"Joshua Fink," brokerage "Compass."** Never mix phone numbers or address formats; use `615-551-2727` and `Suite 105` (not `Ste 105` / `#105`) everywhere so Google clusters them as one entity. The `615-551-2727` cell is the **primary** number (it matches the whole site); the Compass office line `615-370-8669` is a real **secondary** — only add it in a platform's dedicated second-phone field, never as the primary. Ignore/purge the bogus `(888) 586-2349`.
+
+---
+
+## 🧹 STEP 0 — Fix conflicting OLD profiles FIRST (the single biggest win)
+
+A deep off-site audit (2026-07-14) found Josh's identity is fragmented across **three brokerage eras — RE/MAX → Parks → Compass** — and the old profiles are still live with **conflicting brokerages and phone numbers.** Google and the LLMs can't confidently resolve one entity when the web says three different things about it. Cleaning this up is higher-ROI than any single new citation, because it makes every *existing* signal count. **Compass acquired Parks**, so the Parks history is legit lineage — but every profile should now read **Compass** for uniformity.
+
+**Conflicts found live in search results (with Josh's clarification, 2026-07-14):**
+- **Phone — two are real, one is bogus:**
+  - `615-551-2727` = Josh's **cell** — the number used everywhere on the site and all CTAs. **Keep this as the canonical/primary** on every listing so Google clusters one entity.
+  - `615-370-8669` = the **Compass office** line — real, fine as a *secondary* number only (use a platform's dedicated second-phone field if it has one; don't let it replace the cell as primary).
+  - `(888) 586-2349` = **bogus** (shows on realestateagents.com) — purge wherever it appears.
+- **Brokerage:** standardize on **Compass** everywhere. "Parks" = predecessor (Compass bought it); "RE/MAX" = the older era. Neither should still be shown.
+- **Name:** use **"Joshua Fink Group"** (brokerage field = Compass); where a combined name is shown, **"Joshua Fink Group of Compass"** — never "…of Parks."
+
+Fix each to the canonical NAP above (Compass + cell `615-551-2727` + joshuafink.com). Prioritize the ones showing the wrong brokerage or the bogus phone:
+
+| Profile | Problem | Action |
+|---|---|---|
+| `realestateagents.com/agent/joshua-fink-tn` | **Verified stale:** "Parks Brentwood/Cool Springs," "RE/MAX Hall of Fame," phone **(888) 586-2349**, no website link | Claim → correct to Compass + `615-551-2727` + joshuafink.com |
+| `remax.com/real-estate-agents/joshua-fink-franklin-tn/100106573` | Legacy **RE/MAX** profile (wrong brokerage) | Verify it's his; request removal/update via RE/MAX |
+| `parksathome.com/agent/joshua-fink/` | Former **Parks** page (404 on fetch, still indexed) | Ask Parks to fully remove it |
+| `linkedin.com/in/joshuafinkgroup` | Headline still reads "Joshua Fink - **Parks Realty**" | Update headline + experience to Compass; set Contact-Info website = joshuafink.com |
+| `facebook.com/p/Joshua-Fink-Group-of-Parks-100064076493905` | Stale "…**of Parks**" name | Rename to "Joshua Fink Group"; add website link |
+| `facebook.com/pages/.../Joshua-Fink-Group-111457913523107` | **Duplicate** Facebook page | Merge into the main page or delete — consolidate signals |
+| `homes.com/real-estate-agents/joshua-fink/qej2pry/` | Correct broker; link status unconfirmed | Claim; set website field = joshuafink.com |
+| YouTube channel / Pinterest (confirm they're his) | No site link | Add joshuafink.com to the profile / channel "About" |
+| `properstar` · `zoominfo` · `homesandland` | Auto-scraped aggregator records | Correct NAP only if easily claimable; otherwise ignore (low value) |
+
+After the manual fixes, propagate the corrected record broadly via **Data Axle** (Tier 2, #9) so downstream directories inherit it.
+
+> **Reality check on "unlinked mentions":** the audit searched news, podcasts, interviews and press for "Joshua Fink Group" / "Joshua Fink" + Compass/Brentwood/Franklin and found **essentially no genuine editorial mentions to reclaim.** (The Nashville Post "Compass launches in Nashville" piece names other agents, **not** Josh; Brentwood Home Page "Fink" property-transfer items are unrelated people.) So the off-site link gap is something to **build** — via the citations below and the charity/local-news angles in Tier 3 — not a backlog to recover.
 
 ---
 
@@ -224,6 +256,89 @@ Website: https://www.joshuafink.com  ·  615-551-2727
 Happy to expand or provide additional data on Franklin, Brentwood, Nashville,
 Spring Hill or the broader Middle TN market. Thanks for considering.
 ```
+
+### Add-a-link request (when a site mentions Josh WITHOUT linking)
+```
+Subject: Quick thank-you + a small correction
+
+Hi [Name],
+
+Thanks for mentioning [Joshua Fink / Joshua Fink Group] in your piece on
+[page/topic] — I really appreciate it.
+
+Would you be open to linking the mention to our site so readers can find us
+directly? The correct link is https://www.joshuafink.com. Happy to return the
+favor by sharing your article with our audience.
+
+Thanks either way,
+Joshua Fink · Compass Real Estate · Brentwood, TN · 615-551-2727
+```
+
+### Chamber / local-organization membership inquiry
+```
+Subject: New member interest — Joshua Fink Group (Compass, Brentwood)
+
+Hi [Name],
+
+I'm a Compass real estate agent based in Brentwood and I'd like to join
+[Chamber]. Could you send current membership options and confirm that members
+get a listing in your online business directory?
+
+Business: Joshua Fink Group — Compass Real Estate
+Address:  8119 Isabella Lane, Suite 105, Brentwood, TN 37027
+Phone:    615-551-2727   ·   Web: https://www.joshuafink.com
+
+Thanks!
+Joshua Fink
+```
+
+### Charity / sponsor listing request (natural .org backlink)
+```
+Subject: Sponsor listing for Joshua Fink Group
+
+Hi [Name],
+
+Our team supports [Children's Miracle Network / local charity] through a
+donation on every closing. If you keep a supporters or sponsors page, we'd be
+grateful to be listed:
+
+Joshua Fink Group — Compass Real Estate
+https://www.joshuafink.com  ·  615-551-2727
+
+Thank you for the work you do.
+Joshua Fink
+```
+
+### Google review request — text + email (reviews are the #1 local-SEO + AI-citation lever)
+```
+TEXT (send right after a happy closing):
+Hi [First name]! It was a pleasure helping you [buy/sell] [in <city>]. If you
+have 30 seconds, a quick Google review means the world to a local business like
+mine: https://g.page/r/CTiqMJMLGRp9EBM/review — thank you! — Joshua
+
+EMAIL subject: A quick favor, [First name]?
+Body: Congratulations again on your [new home / sale]! Reviews are how other
+Middle Tennessee families find me, and yours would genuinely help. It takes
+about 30 seconds: https://g.page/r/CTiqMJMLGRp9EBM/review
+Thank you so much — Joshua Fink, Compass Real Estate, 615-551-2727
+```
+
+---
+
+## 2026 field notes — what's actually moving rankings now
+*(Source: James Dooley × Sterling Sky / Joy Hawkins, May 2026 — test-backed.)*
+
+- **Reviews are the new link building.** Traditional backlinks are worth less each year *and increasingly risky* (toxic links/PBNs now actively harm). Prioritize Google reviews, testimonials, case studies, awards over chasing DR/dofollow links. This reorders the whole plan: **STEP 0 + citations + reviews first; "earn a link" via Tier 3 second; buying links never.**
+- **Social posts now rank in Google AND feed the LLMs.** Facebook Pages/Groups, LinkedIn, X and Instagram posts get indexed. Put target keywords in the **first 7–12 words** (that becomes the title tag), write **entity-first** ("Joshua Fink Group sells homes in Brentwood, TN…", not "Just listed! We…"), and **no hashtags on LinkedIn** (the hashtag hijacks the title tag; hashtags are fine on IG/FB/X). Since Gemini & Claude pull from Google search, a ranking social post = an AI citation.
+- **Brand + branded search is what converts now.** AI Overviews eat top-of-funnel clicks, then send informed, bottom-of-funnel buyers who search "Joshua Fink" by name. Keep building the entity (schema Person/@id, consistent NAP, reviews).
+- **Video is a top-3 2026 strategy** — YouTube + Shorts appear in local/video carousels. A current gap for Josh.
+- **Near-duplicate city pages are fine** — Sterling Sky tested it; duplicate service-area content out-ranks uniquely-spun content when intent differs by location and the brand is trusted. Josh's programmatic `/buy/[city]`, `/sell/[city]`, `/market`, `/neighborhoods` approach is validated.
+
+---
+
+## Tracking
+
+Import [`offsite-citations-tracker.csv`](./offsite-citations-tracker.csv) into the Google-Sheet CRM (or open in Sheets) to work the list and record status. It pre-lists every STEP 0 cleanup item and Tier 1–4 target with Priority / Cost / Status columns.
 
 ---
 
