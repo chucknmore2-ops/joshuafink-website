@@ -20,6 +20,23 @@ const PUSHOVER_TOKEN = process.env.PUSHOVER_TOKEN || ''
 const PUSHOVER_USER = process.env.PUSHOVER_USER || ''
 
 // ---------------------------------------------------------------------------
+// Delivery tracking
+// ---------------------------------------------------------------------------
+// Every channel that could tell Joshua a lead came in returns one of these.
+// `configured: false` means the channel's creds aren't set (an expected no-op,
+// not a failure). `ok` is only meaningful when configured. Notifiers NEVER
+// throw — a channel blowing up must not take down the others or the request.
+
+type ChannelResult = {
+  channel: string
+  configured: boolean
+  ok: boolean
+  detail?: string
+}
+
+const skip = (channel: string): ChannelResult => ({ channel, configured: false, ok: false })
+
+// ---------------------------------------------------------------------------
 // Spam detection
 // ---------------------------------------------------------------------------
 
@@ -118,7 +135,9 @@ function isSpam(lead: Record<string, string>): { spam: boolean; reason: string }
 // Slack notification
 // ---------------------------------------------------------------------------
 
-async function sendSlack(lead: Record<string, string>) {
+async function sendSlack(lead: Record<string, string>): Promise<ChannelResult> {
+  if (!SLACK_TOKEN) return skip('slack')
+
   const typeEmoji: Record<string, string> = {
     buy: '🏠', sell: '💰', both: '🔄', invest: '📈', rent: '🏢', other: '💬',
     seller: '💰', buyer: '🏠', 'cash-offer': '💵',
@@ -126,50 +145,71 @@ async function sendSlack(lead: Record<string, string>) {
   const emoji = typeEmoji[lead.subject || lead.lead_type || ''] || '📬'
   const suburb = lead.suburb ? ` · ${lead.suburb}` : ''
 
-  await fetch('https://slack.com/api/chat.postMessage', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${SLACK_TOKEN}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      channel: SLACK_CHANNEL,
-      text: `${emoji} New lead from joshuafink.com`,
-      blocks: [
-        {
-          type: 'header',
-          text: { type: 'plain_text', text: `${emoji} New Lead — joshuafink.com${suburb}` },
-        },
-        {
-          type: 'section',
-          fields: [
-            { type: 'mrkdwn', text: `*Name:*\n${lead.name || '—'}` },
-            { type: 'mrkdwn', text: `*Phone:*\n${lead.phone ? `<tel:${lead.phone.replace(/\D/g, '')}|${lead.phone}>` : '—'}` },
-            { type: 'mrkdwn', text: `*Email:*\n${lead.email || '—'}` },
-            { type: 'mrkdwn', text: `*Type:*\n${lead.subject || lead.lead_type || '—'}` },
-            ...(lead.property_address ? [{ type: 'mrkdwn', text: `*Property:*\n${lead.property_address}` }] : []),
-            ...(lead.situation ? [{ type: 'mrkdwn', text: `*Situation:*\n${lead.situation}` }] : []),
-            ...(lead.timeline ? [{ type: 'mrkdwn', text: `*Timeline:*\n${lead.timeline}` }] : []),
-          ],
-        },
-        ...(lead.body ? [{
-          type: 'section',
-          text: { type: 'mrkdwn', text: `*Message:*\n${lead.body}` },
-        }] : []),
-        {
-          type: 'actions',
-          elements: [
-            { type: 'button', text: { type: 'plain_text', text: '📞 Call' }, url: `tel:${(lead.phone || '').replace(/\D/g, '')}`, style: 'primary' },
-            ...(lead.email ? [{ type: 'button', text: { type: 'plain_text', text: '✉️ Email' }, url: `mailto:${lead.email}` }] : []),
-          ],
-        },
-      ],
-    }),
-  })
+  try {
+    const res = await fetch('https://slack.com/api/chat.postMessage', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${SLACK_TOKEN}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        channel: SLACK_CHANNEL,
+        text: `${emoji} New lead from joshuafink.com`,
+        blocks: [
+          {
+            type: 'header',
+            text: { type: 'plain_text', text: `${emoji} New Lead — joshuafink.com${suburb}` },
+          },
+          {
+            type: 'section',
+            fields: [
+              { type: 'mrkdwn', text: `*Name:*\n${lead.name || '—'}` },
+              { type: 'mrkdwn', text: `*Phone:*\n${lead.phone ? `<tel:${lead.phone.replace(/\D/g, '')}|${lead.phone}>` : '—'}` },
+              { type: 'mrkdwn', text: `*Email:*\n${lead.email || '—'}` },
+              { type: 'mrkdwn', text: `*Type:*\n${lead.subject || lead.lead_type || '—'}` },
+              ...(lead.property_address ? [{ type: 'mrkdwn', text: `*Property:*\n${lead.property_address}` }] : []),
+              ...(lead.situation ? [{ type: 'mrkdwn', text: `*Situation:*\n${lead.situation}` }] : []),
+              ...(lead.timeline ? [{ type: 'mrkdwn', text: `*Timeline:*\n${lead.timeline}` }] : []),
+            ],
+          },
+          ...(lead.body ? [{
+            type: 'section',
+            text: { type: 'mrkdwn', text: `*Message:*\n${lead.body}` },
+          }] : []),
+          {
+            type: 'actions',
+            elements: [
+              { type: 'button', text: { type: 'plain_text', text: '📞 Call' }, url: `tel:${(lead.phone || '').replace(/\D/g, '')}`, style: 'primary' },
+              ...(lead.email ? [{ type: 'button', text: { type: 'plain_text', text: '✉️ Email' }, url: `mailto:${lead.email}` }] : []),
+            ],
+          },
+        ],
+      }),
+    })
+
+    // Slack returns HTTP 200 even for logical failures — the real status is
+    // in the JSON body's `ok` field (e.g. invalid_auth, channel_not_found).
+    if (!res.ok) {
+      console.error(`Slack notify failed: HTTP ${res.status}`)
+      return { channel: 'slack', configured: true, ok: false, detail: `HTTP ${res.status}` }
+    }
+    const data = await res.json().catch(() => null)
+    if (data && data.ok === false) {
+      console.error(`Slack notify failed: ${data.error}`)
+      return { channel: 'slack', configured: true, ok: false, detail: data.error }
+    }
+    return { channel: 'slack', configured: true, ok: true }
+  } catch (err) {
+    console.error('Slack notify error:', err)
+    return { channel: 'slack', configured: true, ok: false, detail: String(err) }
+  }
 }
 
 // ---------------------------------------------------------------------------
 // Email: auto-reply to lead
 // ---------------------------------------------------------------------------
 
-async function sendAutoReply(lead: Record<string, string>) {
+async function sendAutoReply(lead: Record<string, string>): Promise<ChannelResult> {
+  if (!SENDGRID_KEY) return skip('auto-reply')
+  if (!lead.email) return skip('auto-reply')
+
   const firstName = (lead.name || 'there').split(' ')[0]
   const suburb = lead.suburb || 'Middle Tennessee'
 
@@ -206,43 +246,67 @@ async function sendAutoReply(lead: Record<string, string>) {
 </body>
 </html>`
 
-  await fetch('https://api.sendgrid.com/v3/mail/send', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${SENDGRID_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      personalizations: [{ to: [{ email: lead.email, name: lead.name }] }],
-      from: { email: FROM_EMAIL, name: 'Joshua Fink' },
-      reply_to: { email: TO_EMAIL, name: 'Joshua Fink' },
-      subject: `Got your message, ${firstName} — Joshua Fink Group`,
-      content: [{ type: 'text/html', value: html }],
-    }),
-  })
+  try {
+    const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${SENDGRID_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        personalizations: [{ to: [{ email: lead.email, name: lead.name }] }],
+        from: { email: FROM_EMAIL, name: 'Joshua Fink' },
+        reply_to: { email: TO_EMAIL, name: 'Joshua Fink' },
+        subject: `Got your message, ${firstName} — Joshua Fink Group`,
+        content: [{ type: 'text/html', value: html }],
+      }),
+    })
+    if (!res.ok) {
+      const detail = await res.text().catch(() => '')
+      console.error(`Auto-reply email failed: HTTP ${res.status} ${detail.slice(0, 200)}`)
+      return { channel: 'auto-reply', configured: true, ok: false, detail: `HTTP ${res.status}` }
+    }
+    return { channel: 'auto-reply', configured: true, ok: true }
+  } catch (err) {
+    console.error('Auto-reply email error:', err)
+    return { channel: 'auto-reply', configured: true, ok: false, detail: String(err) }
+  }
 }
 
 // ---------------------------------------------------------------------------
 // Email: forward lead details to Joshua
 // ---------------------------------------------------------------------------
 
-async function forwardToJoshua(lead: Record<string, string>) {
+async function forwardToJoshua(lead: Record<string, string>): Promise<ChannelResult> {
+  if (!SENDGRID_KEY) return skip('joshua-email')
+
   const lines = Object.entries(lead)
     .filter(([k]) => !k.startsWith('_') && k !== 'website')
     .map(([k, v]) => `<tr><td style="padding:6px 12px;color:#666;font-size:13px;width:140px;vertical-align:top;">${k}</td><td style="padding:6px 12px;font-size:13px;">${v}</td></tr>`)
     .join('')
 
-  await fetch('https://api.sendgrid.com/v3/mail/send', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${SENDGRID_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      personalizations: [{ to: [{ email: TO_EMAIL, name: 'Joshua Fink' }] }],
-      from: { email: FROM_EMAIL, name: 'joshuafink.com Lead' },
-      ...(lead.email ? { reply_to: { email: lead.email, name: lead.name } } : {}),
-      subject: `🏡 New Lead: ${lead.name || 'Unknown'} — ${lead.suburb || lead.subject || 'joshuafink.com'}`,
-      content: [{
-        type: 'text/html',
-        value: `<table style="font-family:sans-serif;border-collapse:collapse;">${lines}</table>`,
-      }],
-    }),
-  })
+  try {
+    const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${SENDGRID_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        personalizations: [{ to: [{ email: TO_EMAIL, name: 'Joshua Fink' }] }],
+        from: { email: FROM_EMAIL, name: 'joshuafink.com Lead' },
+        ...(lead.email ? { reply_to: { email: lead.email, name: lead.name } } : {}),
+        subject: `🏡 New Lead: ${lead.name || 'Unknown'} — ${lead.suburb || lead.subject || 'joshuafink.com'}`,
+        content: [{
+          type: 'text/html',
+          value: `<table style="font-family:sans-serif;border-collapse:collapse;">${lines}</table>`,
+        }],
+      }),
+    })
+    if (!res.ok) {
+      const detail = await res.text().catch(() => '')
+      console.error(`Lead email to Joshua failed: HTTP ${res.status} ${detail.slice(0, 200)}`)
+      return { channel: 'joshua-email', configured: true, ok: false, detail: `HTTP ${res.status}` }
+    }
+    return { channel: 'joshua-email', configured: true, ok: true }
+  } catch (err) {
+    console.error('Lead email to Joshua error:', err)
+    return { channel: 'joshua-email', configured: true, ok: false, detail: String(err) }
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -251,10 +315,10 @@ async function forwardToJoshua(lead: Record<string, string>) {
 // No-ops safely until GOOGLE_SHEET_WEBHOOK_URL is set.
 // ---------------------------------------------------------------------------
 
-async function pushToSheet(lead: Record<string, string>) {
+async function pushToSheet(lead: Record<string, string>): Promise<ChannelResult> {
   if (!GOOGLE_SHEET_WEBHOOK_URL) {
     console.log('Google Sheet: skipping — GOOGLE_SHEET_WEBHOOK_URL not set')
-    return
+    return skip('sheet')
   }
 
   // Drop internal fields (honeypot + timing) before logging.
@@ -279,11 +343,13 @@ async function pushToSheet(lead: Record<string, string>) {
     })
     if (!res.ok) {
       console.error('Google Sheet: non-OK response', res.status)
-    } else {
-      console.log(`Google Sheet: logged lead for ${lead.name || 'Unknown'}`)
+      return { channel: 'sheet', configured: true, ok: false, detail: `HTTP ${res.status}` }
     }
+    console.log(`Google Sheet: logged lead for ${lead.name || 'Unknown'}`)
+    return { channel: 'sheet', configured: true, ok: true }
   } catch (err) {
     console.error('Google Sheet push error:', err)
+    return { channel: 'sheet', configured: true, ok: false, detail: String(err) }
   }
 }
 
@@ -292,10 +358,10 @@ async function pushToSheet(lead: Record<string, string>) {
 // High priority (1) so it bypasses quiet hours. No-ops until creds are set.
 // ---------------------------------------------------------------------------
 
-async function sendPushover(lead: Record<string, string>) {
+async function sendPushover(lead: Record<string, string>): Promise<ChannelResult> {
   if (!PUSHOVER_TOKEN || !PUSHOVER_USER) {
     console.log('Pushover: skipping — PUSHOVER_TOKEN or PUSHOVER_USER not set')
-    return
+    return skip('pushover')
   }
 
   const type = lead.subject || lead.lead_type || 'lead'
@@ -330,9 +396,72 @@ async function sendPushover(lead: Record<string, string>) {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: params.toString(),
     })
-    if (!res.ok) console.error('Pushover: non-OK response', res.status)
+    if (!res.ok) {
+      console.error('Pushover: non-OK response', res.status)
+      return { channel: 'pushover', configured: true, ok: false, detail: `HTTP ${res.status}` }
+    }
+    return { channel: 'pushover', configured: true, ok: true }
   } catch (err) {
     console.error('Pushover push error:', err)
+    return { channel: 'pushover', configured: true, ok: false, detail: String(err) }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Emergency fallback — last-ditch Pushover alert fired ONLY when every normal
+// Joshua-facing channel failed. Emergency priority (2) so it keeps re-alerting
+// until Joshua acknowledges it on his phone. Carries the full lead contact info
+// so the lead is recoverable straight from the notification, even if it never
+// reached Slack, email, or the sheet.
+// ---------------------------------------------------------------------------
+
+async function sendEmergencyPushover(
+  lead: Record<string, string>,
+  failedChannels: string[],
+): Promise<boolean> {
+  if (!PUSHOVER_TOKEN || !PUSHOVER_USER) return false
+
+  const message = [
+    '⚠️ A LEAD DID NOT DELIVER. Contact them now:',
+    lead.name ? `👤 ${lead.name}` : null,
+    lead.phone ? `📞 ${lead.phone}` : null,
+    lead.email ? `✉️ ${lead.email}` : null,
+    lead.property_address ? `🏠 ${lead.property_address}` : null,
+    lead.suburb ? `📍 ${lead.suburb}` : null,
+    lead.body ? `“${lead.body.slice(0, 300)}”` : null,
+    `(failed: ${failedChannels.join(', ') || 'all'})`,
+  ].filter(Boolean).join('\n')
+
+  const params = new URLSearchParams({
+    token: PUSHOVER_TOKEN,
+    user: PUSHOVER_USER,
+    title: '🚨 LEAD DELIVERY FAILED — act now',
+    message,
+    priority: '2', // emergency — repeats until acknowledged
+    retry: '60', // re-alert every 60s
+    expire: '3600', // for up to 1 hour
+    sound: 'siren',
+  })
+  const digits = (lead.phone || '').replace(/\D/g, '')
+  if (digits) {
+    params.set('url', `tel:${digits}`)
+    params.set('url_title', `Call ${lead.name || 'lead'}`)
+  }
+
+  try {
+    const res = await fetch('https://api.pushover.net/1/messages.json', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString(),
+    })
+    if (!res.ok) {
+      console.error('Emergency Pushover: non-OK response', res.status)
+      return false
+    }
+    return true
+  } catch (err) {
+    console.error('Emergency Pushover error:', err)
+    return false
   }
 }
 
@@ -341,10 +470,15 @@ async function sendPushover(lead: Record<string, string>) {
 // ---------------------------------------------------------------------------
 
 export async function POST(req: NextRequest) {
-  if (!process.env.SENDGRID_API_KEY || !process.env.SLACK_BOT_TOKEN) {
-    console.error('Missing env vars: SENDGRID_API_KEY or SLACK_BOT_TOKEN')
+  // A lead reaches Joshua through Slack, the lead email, Pushover, or the
+  // Google Sheet log. As long as at least ONE of those is configured we can
+  // accept the submission; only fail closed when nothing is wired up.
+  const anyChannelConfigured =
+    !!SLACK_TOKEN || !!SENDGRID_KEY || (!!PUSHOVER_TOKEN && !!PUSHOVER_USER) || !!GOOGLE_SHEET_WEBHOOK_URL
+  if (!anyChannelConfigured) {
+    console.error('Contact API misconfigured: no lead-delivery channel is set')
     return NextResponse.json(
-      { error: 'Configuration error — contact joshua@joshuafink.com directly' },
+      { error: 'Configuration error — please call or text 615-551-2727 directly' },
       { status: 500 }
     )
   }
@@ -371,24 +505,28 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true })
     }
 
-    // ---------- Fire all integrations in parallel ----------
+    // ---------- Fire all Joshua-facing channels in parallel ----------
+    // Each of these resolves to a ChannelResult and never throws, so we can
+    // inspect exactly what got through and react when nothing did.
+    const [slackRes, joshuaEmailRes, sheetRes, pushoverRes, autoReplyRes] = await Promise.all([
+      sendSlack(lead),
+      forwardToJoshua(lead),
+      pushToSheet(lead),
+      sendPushover(lead),
+      sendAutoReply(lead), // no-ops when no email; courtesy to the lead, not a Joshua channel
+    ])
+
+    // ---------- Best-effort local integrations (n8n / webhooks) ----------
+    // These target localhost by default and usually aren't reachable from
+    // Vercel; they're fire-and-forget and never count toward delivery.
     const leadType = (lead.subject || lead.lead_type || '').toLowerCase()
     const isCashOffer = lead.source === 'cash-offer' || ['sell', 'seller'].includes(leadType)
     const isBuyerLead = ['buy', 'both', 'invest', 'rent', 'other', 'buyer'].includes(leadType)
-    const tasks: Promise<unknown>[] = [
-      sendSlack(lead),
-      forwardToJoshua(lead),
-      pushToSheet(lead), // Free Google Sheet lead log — works on Vercel
-      sendPushover(lead), // Instant phone push alert
-    ]
+    const bestEffort: Promise<unknown>[] = []
 
-    // Auto-reply only if email provided
-    if (lead.email) tasks.push(sendAutoReply(lead))
-
-    // Drip sequence (best-effort, n8n may not be reachable from Vercel)
     const isSeller = ['sell', 'seller'].includes(leadType)
     const drip = isSeller ? 'seller-lead' : 'buyer-lead'
-    tasks.push(
+    bestEffort.push(
       fetch(`${N8N_BASE}/${drip}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -396,9 +534,8 @@ export async function POST(req: NextRequest) {
       }).then(() => undefined).catch(() => undefined)
     )
 
-    // Also push to local webhook for Google Sheet (best-effort)
     if (isCashOffer) {
-      tasks.push(
+      bestEffort.push(
         fetch(`${CASH_OFFER_BASE}/cash-offer`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -408,7 +545,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (isBuyerLead) {
-      tasks.push(
+      bestEffort.push(
         fetch(`${BUYER_LEAD_WEBHOOK_BASE}/buyer-lead`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -424,7 +561,47 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    await Promise.allSettled(tasks)
+    await Promise.allSettled(bestEffort)
+
+    // ---------- Delivery detection ----------
+    // A lead "reached Joshua" if any Joshua-facing channel succeeded.
+    const joshuaChannels = [slackRes, joshuaEmailRes, sheetRes, pushoverRes]
+    const delivered = joshuaChannels.some((r) => r.configured && r.ok)
+    const failedChannels = joshuaChannels
+      .filter((r) => r.configured && !r.ok)
+      .map((r) => `${r.channel}${r.detail ? `(${r.detail})` : ''}`)
+
+    if (!delivered) {
+      // Nothing got through. Log the full lead so it's recoverable from Vercel
+      // logs, then fire the emergency Pushover as a last resort.
+      console.error(
+        'CRITICAL: lead not delivered to any Joshua channel',
+        JSON.stringify({ lead, failedChannels })
+      )
+      const rescued = await sendEmergencyPushover(lead, failedChannels)
+
+      if (!rescued) {
+        // Truly nowhere for the lead to land. Tell the visitor so they can call
+        // directly instead of walking away thinking the message was received.
+        return NextResponse.json(
+          {
+            error:
+              'We had trouble delivering your message. Please call or text Joshua directly at 615-551-2727.',
+          },
+          { status: 502 }
+        )
+      }
+      // The emergency alert reached Joshua's phone — treat as delivered so the
+      // visitor still sees the success screen (which also shows the number).
+    } else if (failedChannels.length > 0) {
+      // Partial failure — the lead is safe, but note which channels dropped it.
+      console.warn(`Contact API: lead delivered with degraded channels: ${failedChannels.join(', ')}`)
+    }
+
+    // Auto-reply failure is a courtesy miss, not a lost lead — just log it.
+    if (autoReplyRes.configured && !autoReplyRes.ok) {
+      console.warn('Contact API: auto-reply to lead did not send')
+    }
 
     return NextResponse.json({ ok: true })
   } catch (err) {
