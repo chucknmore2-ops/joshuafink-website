@@ -38,9 +38,9 @@ So what can we anticipate for the upcoming year? Based on current trends and mar
 
 As a local expert, I'd like to highlight some of Franklin's most sought-after neighborhoods and suburbs:
 
-*   **Harpswell Hill**: A highly desirable area known for its stunning views, scenic trails, and upscale homes.
-*   **Harpeth Hills**: A family-friendly neighborhood with excellent schools and plenty of outdoor recreation opportunities.
-*   **Franklin Springs**: A rapidly growing area with new developments and easy access to downtown Franklin.
+*   **Westhaven**: A highly desirable master-planned community known for its walkable town center, scenic trails, and upscale homes.
+*   **Fieldstone Farms**: A family-friendly neighborhood with excellent schools and plenty of outdoor recreation opportunities.
+*   **Berry Farms**: A rapidly growing area with new developments and easy access to downtown Franklin.
 
 ## Actionable Advice for Buyers and Sellers
 
@@ -72,7 +72,7 @@ Thinking about buying or selling in Franklin? Call or text Joshua Fink at 615-55
 
 ### Q: What are the most in-demand neighborhoods in Franklin?
 
-A: Some of the most sought-after areas include Harpswell Hill, Harpeth Hills, and Franklin Springs.
+A: Some of the most sought-after areas include Westhaven, Fieldstone Farms, and Berry Farms.
 
 ### Q: How has the pandemic affected Franklin's real estate market?
 
