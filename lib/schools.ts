@@ -411,6 +411,36 @@ export const schools: Record<string, School> = {
       },
     ],
   },
+
+  'beech-senior-high-school-hendersonville-tn': {
+    slug: 'beech-senior-high-school-hendersonville-tn',
+    name: 'Beech Senior High School',
+    level: 'High',
+    district: 'Sumner County Schools',
+    suburbSlug: 'hendersonville-tn',
+    ratingNote: 'Ranked 26th of 389 Tennessee public high schools by SchoolDigger, with a 94% graduation rate versus the state’s 90% average.',
+    blurb:
+      'Beech Senior High School is one of four distinct high school zones inside Hendersonville, and consistently the one families ask for first when newer construction and amenities matter. SchoolDigger places Beech in the top 10% of Tennessee public high schools, and its 94% graduation rate outpaces the state average. The zone overlaps some of Hendersonville’s most active newer-build corridors, including Durham Farms, alongside established Old Hickory Lake-area neighborhoods like Indian Lake and Walton Ferry.',
+    neighborhoods: ['Durham Farms', 'Indian Lake', 'Walton Ferry', 'Sanders Ferry'],
+    faqs: [
+      {
+        q: 'What neighborhoods are zoned to Beech Senior High School?',
+        a: 'The Beech zone covers a large slice of Hendersonville, including the newer-construction Durham Farms community and established areas around Indian Lake, Walton Ferry, and Sanders Ferry. Hendersonville has four separate high school zones inside one city boundary, so always confirm the current assignment with Sumner County Schools for the exact address before writing an offer.',
+      },
+      {
+        q: 'Is Beech Senior High School a good school?',
+        a: 'Yes. SchoolDigger ranks Beech 26th out of 389 Tennessee public high schools, and it carries a 94% graduation rate compared to the state’s 90% average, with a B+ rating on Niche. It’s one of the strongest-performing options in Sumner County Schools.',
+      },
+      {
+        q: 'How much do homes near Beech Senior High School cost?',
+        a: 'Beech-zoned homes are part of the broader Hendersonville market — see the current Hendersonville market report for up-to-date medians and price-per-square-foot. Joshua can pull exact, current comps for any specific street in Durham Farms, Indian Lake, or the surrounding Beech zone.',
+      },
+      {
+        q: 'Why do families choose the Beech zone over other Hendersonville school zones?',
+        a: 'Hendersonville splits into four high school zones, and Beech (along with Station Camp) tends to draw families prioritizing newer construction and updated amenities over the more established, central parts of the city. The right zone depends on whether you’re optimizing for new-build inventory or established, mature neighborhoods — Joshua walks through that trade-off before you tour.',
+      },
+    ],
+  },
 }
 
 export function getSchool(slug: string): School | undefined {
