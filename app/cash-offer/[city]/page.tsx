@@ -240,7 +240,7 @@ export default async function CashOfferCityPage({ params }: Props) {
           <h2 className="text-3xl sm:text-4xl font-black text-black tracking-tight mb-6">
             A {city.name} Cash Sale, <span className="font-display italic font-semibold">Priced Locally</span>
           </h2>
-          <p className="text-neutral-700 text-lg leading-relaxed mb-4">{city.localAngle}</p>
+          <p className="text-neutral-700 text-lg leading-relaxed mb-4">{linkifyNeighborhoods(city.localAngle, slug)}</p>
           <p className="text-neutral-600 text-base leading-relaxed">
             We buy across {linkifyNeighborhoods(city.areas, slug)} — and everywhere else in {city.displayName}.
           </p>
