@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { reviews, reviewStats, reviewDateToIso } from '@/lib/reviews'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
+import GoogleReviewCTA from '@/components/GoogleReviewCTA'
 
 export const metadata: Metadata = {
   alternates: { canonical: 'https://www.joshuafink.com/about' },
@@ -314,6 +315,16 @@ export default function AboutPage() {
               </div>
             ))}
           </dl>
+        </div>
+      </div>
+
+      {/* Leave a Google review — renders only once GOOGLE_REVIEW_URL is set in
+          lib/reviews.ts. People vetting Joshua (and past clients) land here, so
+          it's a natural, non-pushy place to ask. Google reviews drive the map
+          pack + AI citations. */}
+      <div className="bg-white py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          <GoogleReviewCTA variant="light" />
         </div>
       </div>
     </div>
