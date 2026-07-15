@@ -8,6 +8,7 @@ import TrackedTelLink from '@/components/TrackedTelLink'
 
 const navLinks = [
   { href: '/buy', label: 'Buy' },
+  { href: '/guide/buyer', label: "Buyer's Guide" },
   { href: '/listings', label: 'Listings' },
   { href: '/neighborhoods', label: 'Neighborhoods' },
   { href: '/sell', label: 'Sell' },
