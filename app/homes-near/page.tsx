@@ -7,7 +7,7 @@ const SITE = 'https://www.joshuafink.com'
 export const metadata: Metadata = {
   title: 'Homes Near Top Middle Tennessee Schools — Search by School Zone | Joshua Fink',
   description:
-    'Find homes for sale near Ravenwood, Brentwood, Page, Independence, Centennial, Nolensville, and Blackman High Schools. School-zone-first home search from Joshua Fink at Compass Real Estate.',
+    'Find homes for sale near Ravenwood, Brentwood, Page, Independence, Centennial, Nolensville, Blackman, and Beech High Schools. School-zone-first home search from Joshua Fink at Compass Real Estate.',
   alternates: { canonical: `${SITE}/homes-near` },
 }
 
@@ -18,7 +18,7 @@ const faqs = [
   },
   {
     q: 'What are the highest-rated public high schools in Middle Tennessee?',
-    a: 'In Williamson County: Ravenwood (Brentwood), Page (Franklin/Thompson’s Station), Independence (Thompson’s Station), Centennial (Franklin), Brentwood, Nolensville, and Summit (Spring Hill) all consistently rank in the top tier of Tennessee public high schools by test scores, graduation rate, and AP performance. In Rutherford County, Blackman High School (Murfreesboro) carries a 4-star SchoolDigger rating and an A on Niche. Each school page links to its current rating notes and feeder subdivisions.',
+    a: 'In Williamson County: Ravenwood (Brentwood), Page (Franklin/Thompson’s Station), Independence (Thompson’s Station), Centennial (Franklin), Brentwood, Nolensville, and Summit (Spring Hill) all consistently rank in the top tier of Tennessee public high schools by test scores, graduation rate, and AP performance. In Rutherford County, Blackman High School (Murfreesboro) carries a 4-star SchoolDigger rating and an A on Niche. In Sumner County, Beech Senior High School (Hendersonville) ranks 26th of 389 Tennessee public high schools by SchoolDigger. Each school page links to its current rating notes and feeder subdivisions.',
   },
   {
     q: 'How much do top school zones add to home prices in Middle Tennessee?',
