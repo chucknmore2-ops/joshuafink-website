@@ -43,7 +43,8 @@ Fix each to the canonical NAP above (Compass + cell `615-551-2727` + joshuafink.
 | `facebook.com/p/Joshua-Fink-Group-of-Parks-100064076493905` | Stale "…**of Parks**" name | Rename to "Joshua Fink Group"; add website link |
 | `facebook.com/pages/.../Joshua-Fink-Group-111457913523107` | **Duplicate** Facebook page | Merge into the main page or delete — consolidate signals |
 | `homes.com/real-estate-agents/joshua-fink/qej2pry/` | Correct broker; link status unconfirmed | Claim; set website field = joshuafink.com |
-| YouTube channel / Pinterest (confirm they're his) | No site link | Add joshuafink.com to the profile / channel "About" |
+| YouTube channel `UCc6j1…` — **NOT his** | It's the *other* Joshua Fink (Reno/Sparks NV agent) | **Do NOT claim or link.** Create a new "Joshua Fink Group \| Middle TN" channel instead — see [`short-form-video-playbook.md`](./short-form-video-playbook.md) STEP 0 |
+| Pinterest (confirm it's his) | No site link | Add joshuafink.com to the profile |
 | `properstar` · `zoominfo` · `homesandland` | Auto-scraped aggregator records | Correct NAP only if easily claimable; otherwise ignore (low value) |
 
 After the manual fixes, propagate the corrected record broadly via **Data Axle** (Tier 2, #9) so downstream directories inherit it.
