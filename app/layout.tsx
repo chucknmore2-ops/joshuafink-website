@@ -46,6 +46,14 @@ export const metadata: Metadata = {
     locale: 'en_US',
     siteName: 'Joshua Fink | Compass Real Estate',
   },
+  // X/Twitter Card. `card` + handles are all that's needed here: Next inherits
+  // title/description from the metadata above and the image from each route's
+  // opengraph-image.tsx, so every shared link renders a branded large-image card.
+  twitter: {
+    card: 'summary_large_image',
+    site: '@JoshuaFinkGroup',
+    creator: '@JoshuaFinkGroup',
+  },
   alternates: {
     // NOTE: intentionally NO default `canonical` here. A root-level
     // canonical: '/' is inherited by every child page that doesn't set its
