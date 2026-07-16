@@ -46,6 +46,11 @@ export const metadata: Metadata = {
     locale: 'en_US',
     siteName: 'Joshua Fink | Compass Real Estate',
   },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@JoshuaFinkGroup',
+    creator: '@JoshuaFinkGroup',
+  },
   alternates: {
     // NOTE: intentionally NO default `canonical` here. A root-level
     // canonical: '/' is inherited by every child page that doesn't set its
