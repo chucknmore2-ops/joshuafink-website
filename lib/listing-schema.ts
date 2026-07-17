@@ -96,7 +96,6 @@ export function buildListingSchema(listing: Listing, url: string) {
     url,
     name: listing.address,
     ...(listing.imageUrl ? { image: listing.imageUrl } : {}),
-    ...(listing.lastVerified ? { datePosted: listing.lastVerified } : {}),
     about: residence,
   }
 }
