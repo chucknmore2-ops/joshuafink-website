@@ -5,6 +5,7 @@ import { getSuburb, getAllSuburbSlugs, getSuburbSlugForListing, marketStatsLastU
 import { listings } from '@/lib/listings'
 import { schools } from '@/lib/schools'
 import ListingCard from '@/components/ListingCard'
+import { isAvailable } from '@/app/listings/page'
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
 import { linkifyNeighborhoods } from '@/lib/linkify-neighborhoods'
 import { reviewStats } from '@/lib/reviews'
@@ -148,6 +149,11 @@ export default async function BuySuburbPage({ params }: Props) {
   // rendered when there are matches, so the grid appears on suburbs where he
   // actually has inventory and stays hidden elsewhere. ListingCard badges status.
   const suburbListings = listings.filter((l) => getSuburbSlugForListing(l.city) === slug)
+  // Split so the "Homes for Sale in {suburb}" H2 only covers genuinely-available
+  // homes; under-contract inventory renders in its own labeled section. Mirrors
+  // /listings' AVAILABLE_STATUSES so the H2 stays truthful for buyer-intent SEO.
+  const availableSuburbListings = suburbListings.filter((l) => isAvailable(l.status))
+  const underContractSuburbListings = suburbListings.filter((l) => !isAvailable(l.status))
   // Top-rated schools physically in this suburb, linked to their /homes-near
   // pages (internal-link equity + a top buyer concern). Hidden when none match.
   const suburbSchools = Object.values(schools).filter((s) => s.suburbSlug === slug)
@@ -552,24 +558,49 @@ export default async function BuySuburbPage({ params }: Props) {
         {suburbListings.length > 0 && (
           <div className="bg-white border-t border-[#E8E8E8] py-16 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
-              <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
-                Available Now
-              </p>
-              <h2 className="text-3xl font-black text-black tracking-tight mb-3">
-                Homes for Sale in {suburb.name}
-              </h2>
-              <p className="text-[#6B6B6B] max-w-2xl mb-10">
-                {suburbListings.length === 1
-                  ? `A current listing Joshua represents in ${suburb.name}.`
-                  : `Current listings Joshua represents in ${suburb.name}.`}{' '}
-                For off-market and Coming Soon homes that never hit the public sites,
-                ask Joshua directly using the form above.
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {suburbListings.map((listing) => (
-                  <ListingCard key={listing.compassUrl} listing={listing} />
-                ))}
-              </div>
+              {availableSuburbListings.length > 0 && (
+                <>
+                  <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
+                    Available Now
+                  </p>
+                  <h2 className="text-3xl font-black text-black tracking-tight mb-3">
+                    Homes for Sale in {suburb.name}
+                  </h2>
+                  <p className="text-[#6B6B6B] max-w-2xl mb-10">
+                    {availableSuburbListings.length === 1
+                      ? `A current listing Joshua represents in ${suburb.name}.`
+                      : `Current listings Joshua represents in ${suburb.name}.`}{' '}
+                    For off-market and Coming Soon homes that never hit the public sites,
+                    ask Joshua directly using the form above.
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {availableSuburbListings.map((listing) => (
+                      <ListingCard key={listing.compassUrl} listing={listing} />
+                    ))}
+                  </div>
+                </>
+              )}
+              {underContractSuburbListings.length > 0 && (
+                <div className={availableSuburbListings.length > 0 ? 'mt-14' : ''}>
+                  <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
+                    Under Contract
+                  </p>
+                  <h2 className={`${availableSuburbListings.length > 0 ? 'text-2xl' : 'text-3xl'} font-black text-black tracking-tight mb-3`}>
+                    {suburb.name} Homes Under Contract
+                  </h2>
+                  <p className="text-[#6B6B6B] max-w-2xl mb-10">
+                    {underContractSuburbListings.length === 1
+                      ? `A recent ${suburb.name} listing Joshua has under contract.`
+                      : `Recent ${suburb.name} listings Joshua has under contract.`}{' '}
+                    Backup offers are sometimes accepted — ask Joshua for details or comparable homes coming to market.
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {underContractSuburbListings.map((listing) => (
+                      <ListingCard key={listing.compassUrl} listing={listing} />
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
