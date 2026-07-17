@@ -95,6 +95,9 @@ export default async function ListingDetailPage({ params }: Props) {
   const breadcrumb = buildBreadcrumbSchema([
     { name: 'Home', href: '/' },
     { name: 'Listings', href: '/listings' },
+    ...(suburbSlug && suburbName
+      ? [{ name: `${suburbName} homes for sale`, href: `/buy/${suburbSlug}` }]
+      : []),
     { name: `${listing.address}, ${city}`, href: `/listings/${slug}` },
   ])
 
@@ -159,6 +162,19 @@ export default async function ListingDetailPage({ params }: Props) {
               </Link>
             </li>
             <li aria-hidden className="text-neutral-300">/</li>
+            {suburbSlug && suburbName && (
+              <>
+                <li>
+                  <Link
+                    href={`/buy/${suburbSlug}`}
+                    className="hover:text-black underline-offset-4 hover:underline"
+                  >
+                    {suburbName} homes for sale
+                  </Link>
+                </li>
+                <li aria-hidden className="text-neutral-300">/</li>
+              </>
+            )}
             <li className="font-semibold text-black">{listing.address}</li>
           </ol>
         </nav>
