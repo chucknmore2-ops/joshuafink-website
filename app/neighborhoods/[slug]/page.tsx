@@ -13,6 +13,7 @@ import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import ListingCard from '@/components/ListingCard'
 import { listings } from '@/lib/listings'
+import { isAvailable } from '@/app/listings/page'
 
 type Props = {
   params: Promise<{ slug: string }>
@@ -82,6 +83,11 @@ export default async function NeighborhoodPage({ params }: Props) {
     (l) => getSuburbSlugForListing(l.city) === n.citySlug,
   )
   const hasCityListings = cityListings.length > 0
+  // Split so the "Homes for Sale in {city}" H2 only covers genuinely-available
+  // homes; under-contract inventory renders in its own labeled section. Mirrors
+  // /listings' AVAILABLE_STATUSES so the H2 stays truthful for buyer-intent SEO.
+  const availableCityListings = cityListings.filter((l) => isAvailable(l.status))
+  const underContractCityListings = cityListings.filter((l) => !isAvailable(l.status))
 
   const placeSchema = {
     '@context': 'https://schema.org',
@@ -340,23 +346,45 @@ export default async function NeighborhoodPage({ params }: Props) {
         {hasCityListings && (
           <div id="listings" className="bg-white border-b border-[#E8E8E8] py-16 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
-              <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
-                Active Listings
-              </p>
-              <h2 className="text-3xl font-black text-black tracking-tight mb-3">
-                Homes for Sale in {n.city}, TN
-              </h2>
-              <p className="text-[#6B6B6B] text-sm leading-relaxed max-w-3xl mb-10">
-                {cityListings.length === 1 ? 'A current' : 'Current'} {n.city} {cityListings.length === 1 ? 'listing' : 'listings'} represented by
-                Joshua at Compass — view full details on-site, then reach out for a private showing.
-                Searching specifically in {n.name}? Text Joshua and he&apos;ll send matching homes as
-                they hit the market.
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {cityListings.map((listing) => (
-                  <ListingCard key={listing.compassUrl} listing={listing} />
-                ))}
-              </div>
+              {availableCityListings.length > 0 && (
+                <>
+                  <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
+                    Available Now
+                  </p>
+                  <h2 className="text-3xl font-black text-black tracking-tight mb-3">
+                    Homes for Sale in {n.city}, TN
+                  </h2>
+                  <p className="text-[#6B6B6B] text-sm leading-relaxed max-w-3xl mb-10">
+                    {availableCityListings.length === 1 ? 'A current' : 'Current'} {n.city} {availableCityListings.length === 1 ? 'listing' : 'listings'} represented by
+                    Joshua at Compass — view full details on-site, then reach out for a private showing.
+                    Searching specifically in {n.name}? Text Joshua and he&apos;ll send matching homes as
+                    they hit the market.
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {availableCityListings.map((listing) => (
+                      <ListingCard key={listing.compassUrl} listing={listing} />
+                    ))}
+                  </div>
+                </>
+              )}
+              {underContractCityListings.length > 0 && (
+                <div className={availableCityListings.length > 0 ? 'mt-14' : ''}>
+                  <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
+                    Under Contract
+                  </p>
+                  <h2 className={`${availableCityListings.length > 0 ? 'text-2xl' : 'text-3xl'} font-black text-black tracking-tight mb-3`}>
+                    {n.city} Homes Under Contract
+                  </h2>
+                  <p className="text-[#6B6B6B] text-sm leading-relaxed max-w-3xl mb-8">
+                    {underContractCityListings.length === 1 ? 'A recent' : 'Recent'} {n.city} {underContractCityListings.length === 1 ? 'listing' : 'listings'} Joshua has under contract — backup offers are sometimes accepted. Ask Joshua about comparable homes coming to market in {n.name}.
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {underContractCityListings.map((listing) => (
+                      <ListingCard key={listing.compassUrl} listing={listing} />
+                    ))}
+                  </div>
+                </div>
+              )}
               <div className="mt-10">
                 <Link
                   href="/listings"
