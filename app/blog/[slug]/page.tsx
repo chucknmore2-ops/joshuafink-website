@@ -72,7 +72,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 function parseInlineMarkdown(text: string) {
-  const tokens = text.split(/(\*\*[^*]+\*\*|\[[^\]]+\]\([^\)]+\))/g)
+  const tokens = text.split(/(\*\*[^*]+\*\*|\[[^\]]+\]\([^\)]+\)|\b\d{3}-\d{3}-\d{4}\b)/g)
 
   return tokens.map((token, idx) => {
     if (token.startsWith('**') && token.endsWith('**')) {
@@ -89,6 +89,14 @@ function parseInlineMarkdown(text: string) {
         <Link key={idx} href={linkMatch[2]} className="text-black underline hover:no-underline">
           {linkMatch[1]}
         </Link>
+      )
+    }
+
+    if (/^\d{3}-\d{3}-\d{4}$/.test(token)) {
+      return (
+        <a key={idx} href={`tel:${token.replace(/-/g, '')}`} className="text-black underline hover:no-underline">
+          {token}
+        </a>
       )
     }
 
