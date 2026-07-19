@@ -22,8 +22,17 @@ function statusColor(status: string): string {
   if (status === 'Sold') return 'bg-red-600 text-white'
   // Pending / Contingent / Under Contract → amber so buyers don't mistake these
   // for available inventory (MLS accuracy + lead-intent quality).
-  if (/pending|contingent|under contract/i.test(status)) return 'bg-amber-500 text-white'
+  if (/pending|contingent|under contract/i.test(status))
+    return 'bg-amber-600 text-white border border-amber-800'
   return 'bg-neutral-100 text-neutral-600'
+}
+
+// The raw MLS label "Active Under Contract" reads to buyers as "still active" —
+// relabel it to the plain "Under Contract" so the badge doesn't invite inquiries
+// on unavailable inventory.
+function statusLabel(status: string): string {
+  if (/active under contract/i.test(status)) return 'Under Contract'
+  return status
 }
 
 interface Props {
@@ -88,7 +97,7 @@ export default function ListingCard({ listing, featured }: Props) {
             listing.status
           )}`}
         >
-          {listing.status}
+          {statusLabel(listing.status)}
         </span>
       </div>
 
