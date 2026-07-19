@@ -31,7 +31,7 @@ interface Props {
   featured?: boolean
 }
 
-export default function ListingCard({ listing }: Props) {
+export default function ListingCard({ listing, featured }: Props) {
   const suburbSlug = getSuburbSlugForListing(listing.city)
   const suburbName = suburbSlug ? getSuburb(suburbSlug)?.name : undefined
   // Active listings have an on-site detail page; sold homes don't, so their card
@@ -49,6 +49,8 @@ export default function ListingCard({ listing }: Props) {
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-300"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            priority={featured}
+            fetchPriority={featured ? 'high' : undefined}
           />
         ) : (
           <div className="text-center text-neutral-400 px-4">
