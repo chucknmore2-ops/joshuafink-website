@@ -441,6 +441,36 @@ export const schools: Record<string, School> = {
       },
     ],
   },
+
+  'station-camp-high-school-gallatin-tn': {
+    slug: 'station-camp-high-school-gallatin-tn',
+    name: 'Station Camp High School',
+    level: 'High',
+    district: 'Sumner County Schools',
+    suburbSlug: 'gallatin-tn',
+    ratingNote: 'Ranked 30th of 389 Tennessee public high schools by SchoolDigger (5-star rating, 3rd among Sumner County high schools), with a 95.9% four-year graduation rate and a Niche A- grade.',
+    blurb:
+      'Station Camp High School sits off Long Hollow Pike in Gallatin and is consistently the first school families ask about when comparing Sumner County zones. SchoolDigger ranks it 30th out of 389 Tennessee public high schools and 3rd among Sumner County’s nine ranked high schools, while Niche grades it an A- and puts it at #2 countywide. Its 95.9% four-year graduation rate outpaces both the Sumner County and Tennessee state averages. The zone runs through the heart of Gallatin’s 37066 ZIP and reaches into the eastern edge of Hendersonville’s 37075 — the same overlap referenced on the Beech Senior High School zone page, since the two schools split Sumner County’s fastest-growing corridor.',
+    neighborhoods: ['Station Camp', 'Sanders Ferry', 'Lakeside'],
+    faqs: [
+      {
+        q: 'What neighborhoods are zoned to Station Camp High School?',
+        a: 'The Station Camp zone covers the Station Camp, Sanders Ferry, and Lakeside areas of Gallatin, and extends into a slice of eastern Hendersonville near Drakes Creek. Sumner County has adjusted attendance lines in this corridor as it has grown, so always confirm the current zone assignment with Sumner County Schools for a specific address before writing an offer.',
+      },
+      {
+        q: 'Is Station Camp High School a good school?',
+        a: 'Yes. SchoolDigger ranks Station Camp 30th out of 389 Tennessee public high schools with a 5-star rating — 3rd among Sumner County’s high schools — and Niche grades it an A-, ranking it #2 in the county. Its four-year graduation rate of 95.9% is well above both the county and state averages.',
+      },
+      {
+        q: 'How much do homes near Station Camp High School cost?',
+        a: 'Station Camp-zoned homes are part of the broader Gallatin market — see the current Gallatin market report for up-to-date medians and price-per-square-foot, including the Old Hickory Lake waterfront premium in nearby Station Camp and Sanders Ferry. Joshua can pull exact, current comps for any specific street.',
+      },
+      {
+        q: 'How does Station Camp compare to Beech Senior High School in Hendersonville?',
+        a: 'Both are strong Sumner County Schools options with overlapping catchment near the Gallatin/Hendersonville line — Station Camp ranks 3rd and Beech 26th-to-30th-range among the county’s high schools depending on the year, and both carry graduation rates well above the state average. The right one usually comes down to which side of that boundary a specific address falls on, plus whether new-construction inventory (more common near Station Camp) or established neighborhoods (more common near Beech) matter more to you.',
+      },
+    ],
+  },
 }
 
 export function getSchool(slug: string): School | undefined {
