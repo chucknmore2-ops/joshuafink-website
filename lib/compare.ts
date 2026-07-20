@@ -17,6 +17,7 @@ export const FEATURED_PAIRS: Array<[string, string]> = [
   ['gallatin-tn', 'hendersonville-tn'],
   ['mount-juliet-tn', 'lebanon-tn'],
   ['columbia-tn', 'spring-hill-tn'],
+  ['franklin-tn', 'nashville-tn'],
 ]
 
 export type ComparePair = {
