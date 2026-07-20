@@ -166,6 +166,8 @@ export default function RootLayout({
                     'https://x.com/JoshuaFinkGroup',
                     'https://www.compass.com/agents/joshua-fink/',
                     'https://www.zillow.com/profile/JoshuaFinkGroup',
+                    'https://www.realtor.com/realestateagents/56aa7a5489a68901006bed2d',
+                    'https://www.homes.com/real-estate-agents/joshua-fink/qej2pry/',
                   ],
                   priceRange: '$300000-$2500000',
                   hasOfferCatalog: {
@@ -278,6 +280,8 @@ export default function RootLayout({
                     'https://x.com/JoshuaFinkGroup',
                     'https://www.compass.com/agents/joshua-fink/',
                     'https://www.zillow.com/profile/JoshuaFinkGroup',
+                    'https://www.realtor.com/realestateagents/56aa7a5489a68901006bed2d',
+                    'https://www.homes.com/real-estate-agents/joshua-fink/qej2pry/',
                   ],
                 },
                 {
