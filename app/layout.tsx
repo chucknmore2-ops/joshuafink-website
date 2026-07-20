@@ -166,32 +166,38 @@ export default function RootLayout({
                     itemListElement: [
                       {
                         '@type': 'Offer',
+                        availability: 'https://schema.org/InStock',
                         itemOffered: {
                           '@type': 'Service',
                           name: 'Home Buying',
                           serviceType: 'Buyer Representation',
                           areaServed: 'Middle Tennessee',
                           url: 'https://www.joshuafink.com/buy',
+                          provider: { '@id': 'https://www.joshuafink.com/#agent' },
                         },
                       },
                       {
                         '@type': 'Offer',
+                        availability: 'https://schema.org/InStock',
                         itemOffered: {
                           '@type': 'Service',
                           name: 'Home Selling',
                           serviceType: 'Listing Agent',
                           areaServed: 'Middle Tennessee',
                           url: 'https://www.joshuafink.com/sell',
+                          provider: { '@id': 'https://www.joshuafink.com/#agent' },
                         },
                       },
                       {
                         '@type': 'Offer',
+                        availability: 'https://schema.org/InStock',
                         itemOffered: {
                           '@type': 'Service',
                           name: 'Cash Offer',
                           serviceType: 'Instant Cash Offer',
                           areaServed: 'Middle Tennessee',
                           url: 'https://www.joshuafink.com/cash-offer',
+                          provider: { '@id': 'https://www.joshuafink.com/#agent' },
                         },
                       },
                     ],
