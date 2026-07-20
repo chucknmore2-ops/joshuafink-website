@@ -168,6 +168,48 @@ export default function RootLayout({
                     'https://www.zillow.com/profile/JoshuaFinkGroup',
                   ],
                   priceRange: '$300000-$2500000',
+                  hasOfferCatalog: {
+                    '@type': 'OfferCatalog',
+                    name: 'Real Estate Services',
+                    itemListElement: [
+                      {
+                        '@type': 'Offer',
+                        availability: 'https://schema.org/InStock',
+                        itemOffered: {
+                          '@type': 'Service',
+                          name: 'Home Buying',
+                          serviceType: 'Buyer Representation',
+                          areaServed: 'Middle Tennessee',
+                          url: 'https://www.joshuafink.com/buy',
+                          provider: { '@id': 'https://www.joshuafink.com/#agent' },
+                        },
+                      },
+                      {
+                        '@type': 'Offer',
+                        availability: 'https://schema.org/InStock',
+                        itemOffered: {
+                          '@type': 'Service',
+                          name: 'Home Selling',
+                          serviceType: 'Listing Agent',
+                          areaServed: 'Middle Tennessee',
+                          url: 'https://www.joshuafink.com/sell',
+                          provider: { '@id': 'https://www.joshuafink.com/#agent' },
+                        },
+                      },
+                      {
+                        '@type': 'Offer',
+                        availability: 'https://schema.org/InStock',
+                        itemOffered: {
+                          '@type': 'Service',
+                          name: 'Cash Offer',
+                          serviceType: 'Instant Cash Offer',
+                          areaServed: 'Middle Tennessee',
+                          url: 'https://www.joshuafink.com/cash-offer',
+                          provider: { '@id': 'https://www.joshuafink.com/#agent' },
+                        },
+                      },
+                    ],
+                  },
                   // AggregateRating sourced from Joshua's Zillow review profile
                   // (218 reviews, 5.0 average as of latest sync). The reviewCount
                   // includes off-site reviews collected on Zillow over 17+ years
