@@ -146,6 +146,14 @@ export default async function NeighborhoodPage({ params }: Props) {
       addressRegion: n.schemaState,
       addressCountry: 'US',
     },
+    sameAs: [
+      'https://www.facebook.com/profile.php?id=100064076493905',
+      'https://www.instagram.com/joshuafinkgroup',
+      'https://www.linkedin.com/in/joshuafinkgroup/',
+      'https://x.com/JoshuaFinkGroup',
+      'https://www.compass.com/agents/joshua-fink/',
+      'https://www.zillow.com/profile/JoshuaFinkGroup',
+    ],
     aggregateRating: {
       '@type': 'AggregateRating',
       ratingValue: reviewStats.rating.toFixed(1),
