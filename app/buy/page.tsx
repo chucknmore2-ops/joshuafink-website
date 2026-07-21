@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
+import TrackedTelLink from '@/components/TrackedTelLink'
 import TrustBadges from '@/components/TrustBadges'
 import ReviewStrip from '@/components/ReviewStrip'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
@@ -156,13 +157,14 @@ export default function BuyHubPage() {
                 <strong className="text-white"> off-market and Coming Soon homes</strong> you won&apos;t find online.
                 Local expertise, honest guidance, and no cost to work with a buyer&apos;s agent.
               </p>
-              <a
+              <TrackedTelLink
                 href="tel:6155512727"
                 className="inline-flex items-center gap-3 bg-brand-crimson text-white text-xl font-black px-8 py-4 rounded-full tracking-wide transition-all duration-200 hover:bg-brand-crimson-dark hover:shadow-2xl hover:-translate-y-0.5 active:scale-[0.98] mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                 aria-label="Call Joshua at 615-551-2727"
+                data-cta="buy-hero-call"
               >
                 <span aria-hidden="true">📞</span> 615-551-2727
-              </a>
+              </TrackedTelLink>
               <p className="text-neutral-400 text-sm mt-3 mb-8">Call or text anytime — Joshua answers.</p>
 
               <TrustBadges variant="dark" />
@@ -180,7 +182,7 @@ export default function BuyHubPage() {
                 successMessage={
                   <>
                     Joshua will reach out same-day with matching homes. For anything urgent, call{' '}
-                    <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                    <TrackedTelLink href="tel:6155512727" className="text-black font-semibold underline" data-cta="buy-form-success-call">615-551-2727</TrackedTelLink>.
                   </>
                 }
                 resetLabel="Submit Another"
@@ -228,12 +230,13 @@ export default function BuyHubPage() {
                     className="w-full sm:w-auto inline-flex items-center justify-center bg-black text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-[#222] transition-colors">
                     Send to Joshua →
                   </button>
-                  <a
+                  <TrackedTelLink
                     href="tel:6155512727"
                     className="w-full sm:w-auto inline-flex items-center justify-center border-2 border-black text-black text-sm font-bold px-8 py-4 tracking-wide hover:bg-black hover:text-white transition-colors"
+                    data-cta="buy-form-inline-call"
                   >
                     Or Call 615-551-2727
-                  </a>
+                  </TrackedTelLink>
                 </div>
               </SuburbLeadForm>
             </div>
@@ -378,12 +381,13 @@ export default function BuyHubPage() {
           >
             Start My Home Search <span aria-hidden="true">→</span>
           </a>
-          <a
+          <TrackedTelLink
             href="tel:6155512727"
             className="inline-flex items-center justify-center border-2 border-black text-black text-base font-black px-10 py-4 rounded-full tracking-wide transition-all duration-200 hover:bg-black hover:text-white active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+            data-cta="buy-bottom-cta-call"
           >
             <span aria-hidden="true">📞</span>&nbsp;Call 615-551-2727
-          </a>
+          </TrackedTelLink>
         </div>
         <p className="text-neutral-500 text-sm mt-6">
           Serving Nashville · Franklin · Brentwood · Spring Hill · Murfreesboro · and all of Middle Tennessee
