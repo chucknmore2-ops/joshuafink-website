@@ -3,6 +3,7 @@ import Link from 'next/link'
 import ListingCard from '@/components/ListingCard'
 import CinematicHero from '@/components/CinematicHero'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
+import TrackedTelLink from '@/components/TrackedTelLink'
 import { heroSlides } from '@/lib/hero-slides'
 import { listings as featuredListings } from '@/lib/listings'
 import { buildListingItemList } from '@/lib/listing-schema'
@@ -141,12 +142,13 @@ export default function HomePage() {
               >
                 Get My Free Valuation →
               </Link>
-              <a
+              <TrackedTelLink
                 href="tel:6155512727"
                 className="inline-flex items-center justify-center border border-neutral-600 text-white text-sm font-bold px-8 py-4 rounded-full tracking-wide transition-all duration-200 hover:border-white hover:bg-white/10 active:scale-[0.98]"
+                data-cta="home-sell-cta-call"
               >
                 Call 615-551-2727
-              </a>
+              </TrackedTelLink>
             </div>
           </div>
         </div>
@@ -175,7 +177,7 @@ export default function HomePage() {
             successMessage={
               <>
                 Joshua will reach out same-day. For anything urgent, call{' '}
-                <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                <TrackedTelLink href="tel:6155512727" className="text-black font-semibold underline" data-cta="home-form-success-call">615-551-2727</TrackedTelLink>.
               </>
             }
             resetLabel="Send Another"
@@ -243,12 +245,13 @@ export default function HomePage() {
               >
                 Learn More About Joshua
               </Link>
-              <a
+              <TrackedTelLink
                 href="tel:6155512727"
                 className="inline-flex items-center justify-center border-2 border-black text-black text-sm font-bold px-8 py-3 rounded-full tracking-wide transition-all duration-200 hover:bg-black hover:text-white active:scale-[0.98]"
+                data-cta="home-about-cta-call"
               >
                 Call 615-551-2727
-              </a>
+              </TrackedTelLink>
             </div>
           </div>
         </div>
