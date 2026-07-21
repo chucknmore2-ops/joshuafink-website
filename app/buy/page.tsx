@@ -168,8 +168,8 @@ export default function BuyHubPage() {
               <TrustBadges variant="dark" />
             </div>
 
-            {/* Right — inline lead form */}
-            <div id="buyer-form" className="bg-white text-black p-8 sm:p-10 rounded-2xl">
+            {/* Right — inline lead form (mobile: shown first for lead capture) */}
+            <div id="buyer-form" className="order-first lg:order-last bg-white text-black p-8 sm:p-10 rounded-2xl">
               <h2 className="text-2xl font-black tracking-tight mb-2">Start Your Home Search</h2>
               <p className="text-sm text-neutral-600 mb-6">
                 Tell Joshua what you&apos;re after and get a same-day reply with matching homes — including
