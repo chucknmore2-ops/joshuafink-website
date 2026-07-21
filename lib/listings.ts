@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-07-20T10:56:15.056Z
+// AUTO-GENERATED — Last synced: 2026-07-21T10:28:28.744Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -21,7 +21,7 @@ export interface Listing {
 
 // Mirrors the header timestamp so server components can compute sync staleness
 // without parsing comments. Updated by scripts/fetch-images.mjs each sync.
-export const listingsSyncedAt = "2026-07-20T10:56:15.056Z";
+export const listingsSyncedAt = "2026-07-21T10:28:28.744Z";
 
 export const listings: Listing[] = [
   {
@@ -43,7 +43,7 @@ export const listings: Listing[] = [
     beds: 6,
     baths: 6,
     sqft: 4256,
-    status: "Active Under Contract",
+    status: "Pending",
     compassUrl: "https://www.compass.com/homedetails/9560-Dresden-Square-Brentwood-TN-37027/T863Z_pid/",
     imageUrl: "https://www.compass.com/m/1726667bfbabb4404e04bd62941b072da078e36ffe55a775567367f26ee41f7d/2048x1536.webp",
     lastVerified: listingsSyncedAt,
@@ -61,14 +61,14 @@ export const listings: Listing[] = [
     lastVerified: listingsSyncedAt,
   },
   {
-    address: "Undisclosed Address",
+    address: "4127 Edwards Ave",
     city: "Nashville, TN 37216 | MLS #3270404",
     price: 429900,
     beds: 3,
     baths: 1,
     sqft: 1223,
     status: "Active",
-    compassUrl: "https://www.compass.com/homedetails/Undisclosed-Address-Nashville-TN-37216/2146596257497587577_lid/",
+    compassUrl: "https://www.compass.com/homedetails/4127-Edwards-Ave-Nashville-TN-37216/THUS9_pid/",
     imageUrl: "https://www.compass.com/m/a9acaa52f1af4a5177df8b946004d09e9a06867e02336fcf803a804d4570b560/2048x1536.webp",
     lastVerified: listingsSyncedAt,
   },
