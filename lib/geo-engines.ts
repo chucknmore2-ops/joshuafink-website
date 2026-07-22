@@ -111,7 +111,12 @@ async function runClaude(query: string): Promise<EngineOutput> {
     { 'x-api-key': key, 'anthropic-version': '2023-06-01' },
     {
       model: CLAUDE_MODEL,
-      max_tokens: 1024,
+      // Web search runs a server-side loop (multiple server_tool_use rounds that
+      // count against max_tokens). 1024 could be exhausted mid-search, truncating
+      // the answer text we detect on — give it real headroom. Non-streaming, so
+      // stay well under the SDK/HTTP timeout. web_search_20260209 is the current
+      // tool version and is supported on Opus 4.8.
+      max_tokens: 4096,
       messages: [{ role: 'user', content: query }],
       tools: [{ type: 'web_search_20260209', name: 'web_search' }],
     },
