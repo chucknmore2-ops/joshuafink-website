@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-07-21T10:28:28.744Z
+// AUTO-GENERATED — Last synced: 2026-07-22T10:29:01.019Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -21,7 +21,7 @@ export interface Listing {
 
 // Mirrors the header timestamp so server components can compute sync staleness
 // without parsing comments. Updated by scripts/fetch-images.mjs each sync.
-export const listingsSyncedAt = "2026-07-21T10:28:28.744Z";
+export const listingsSyncedAt = "2026-07-22T10:29:01.019Z";
 
 export const listings: Listing[] = [
   {
@@ -34,30 +34,6 @@ export const listings: Listing[] = [
     status: "Active Under Contract",
     compassUrl: "https://www.compass.com/homedetails/1901-New-Bristol-Ln-Brentwood-TN-37027/RS25E_pid/",
     imageUrl: "https://www.compass.com/m/5e20f6de5ae242cba0b75f7227f5a4b1f5937902cfbf792d921c2e860034cf71/2048x1536.webp",
-    lastVerified: listingsSyncedAt,
-  },
-  {
-    address: "9560 Dresden Square",
-    city: "Brentwood, TN 37027",
-    price: 1299000,
-    beds: 6,
-    baths: 6,
-    sqft: 4256,
-    status: "Pending",
-    compassUrl: "https://www.compass.com/homedetails/9560-Dresden-Square-Brentwood-TN-37027/T863Z_pid/",
-    imageUrl: "https://www.compass.com/m/1726667bfbabb4404e04bd62941b072da078e36ffe55a775567367f26ee41f7d/2048x1536.webp",
-    lastVerified: listingsSyncedAt,
-  },
-  {
-    address: "1113 Linn Cv Ct",
-    city: "Gallatin, TN 37066 | MLS #3214253",
-    price: 499900,
-    beds: 4,
-    baths: 4,
-    sqft: 2869,
-    status: "Active",
-    compassUrl: "https://www.compass.com/homedetails/1113-Linn-Cv-Ct-Gallatin-TN-37066/SPCI8_pid/",
-    imageUrl: "https://www.compass.com/m/27a44fbc63c0ae824484f63820d4fad5edb0c0001545ea2e13f041c543ada11d/2048x1536.webp",
     lastVerified: listingsSyncedAt,
   },
   {
@@ -105,7 +81,7 @@ export const listings: Listing[] = [
     sqft: 1134,
     status: "Active Under Contract",
     compassUrl: "https://www.compass.com/homedetails/870-Reeves-Rd-Antioch-TN-37013/SW1BU_pid/",
-    imageUrl: "https://www.compass.com/m/a7ef33f971b3f98f9c9df198198d003671a4c04ee14a9a100ddb182a937911e6/2048x1536.webp",
+    imageUrl: "https://www.compass.com/m/ce49d43899de5afcb9e0c75704d5e6a63a12a2c584826f54faf7ebb96ef704be/2048x1536.webp",
     lastVerified: listingsSyncedAt,
   },
   {
@@ -117,7 +93,7 @@ export const listings: Listing[] = [
     sqft: 1248,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/4874-Sparta-Pike-Watertown-TN-37184/TMU6R_pid/",
-    imageUrl: "https://www.compass.com/m/187622680f986b0b05fa461aa832ce13b251e2de56a4139db9633366657b3f15/2048x1536.webp",
+    imageUrl: "https://www.compass.com/m/bbc96932a4def1b58a65235f0c21695ff8c7c77087887c7c1cdc852cf4ab3759/2048x1536.webp",
     lastVerified: listingsSyncedAt,
   }
 ];
