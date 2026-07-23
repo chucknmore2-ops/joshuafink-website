@@ -522,22 +522,24 @@ export const suburbs: Record<string, Suburb> = {
     avgDaysOnMarket: 19,
     pricePerSqft: 225,
     yoyChange: '+3.8%',
-    description: 'Mount Juliet is one of the strongest-performing suburban markets east of Nashville. Known for top amenities, family-friendly neighborhoods, and a direct commuter route into the city, Mount Juliet continues to attract high-intent buyers. With a 2026 median home price around $480,000 and only 19 average days on market, sellers benefit from a fast-moving environment where quality listings receive immediate attention. Joshua Fink and Compass bring the strategy and exposure needed to maximize outcomes in this competitive market.',
+    description: 'Mount Juliet is one of the strongest-performing suburban markets east of Nashville — and one of the fastest-growing cities in Tennessee, up from 39,682 residents at the 2020 Census to an estimated 46,000+ today (nearly 17% growth). Known for top amenities, family-friendly neighborhoods, and a direct commuter route into the city, Mount Juliet continues to attract high-intent buyers. Providence MarketPlace, the largest open-air shopping center between Nashville and Knoxville, anchors the city\'s retail and job base. With a 2026 median home price around $480,000 and only 19 average days on market, sellers benefit from a fast-moving environment where quality listings receive immediate attention. Joshua Fink and Compass bring the strategy and exposure needed to maximize outcomes in this competitive market.',
     whyBullets: [
       'Speed-focused launch strategy: With homes moving quickly, Joshua times listing prep, photography, and launch windows to capture peak buyer demand.',
       'Subdivision-level pricing expertise: Mount Juliet has meaningful price differences by community and school assignment; Joshua calibrates your pricing to your exact micro-market.',
       'Commuter and relocation buyer reach: Compass network exposure helps attract Nashville-area commuters and out-of-state transferees targeting Wilson County.',
+      'Growth-market timing: Mount Juliet\'s population has grown nearly 17% since the 2020 Census. Joshua tracks this demand curve closely so your listing is priced and positioned to capture the next wave of buyers, not just today\'s.',
     ],
     faqs: [
       { q: 'What is my Mount Juliet home worth in 2026?', a: 'The local median is about $480,000 with average pricing near $225 per square foot. Final value depends on subdivision, lot quality, updates, and school zone. Joshua provides a comp-backed valuation before listing.' },
       { q: 'How quickly do homes sell in Mount Juliet?', a: 'Average market time is approximately 19 days. Well-presented homes in desirable neighborhoods often move faster and may receive multiple offers.' },
       { q: 'Is Mount Juliet still a seller-friendly market?', a: 'Yes. Inventory remains relatively tight versus demand, especially for move-in-ready homes in popular family neighborhoods.' },
+      { q: 'Is Mount Juliet still growing?', a: 'Yes, significantly. The city grew from 39,682 residents at the 2020 Census to an estimated 46,000+ today — nearly 17% growth in just a few years, among the fastest rates in Tennessee. Providence MarketPlace, the largest open-air shopping center between Nashville and Knoxville, has grown alongside it. That population growth translates directly into steady buyer demand, a favorable backdrop for sellers.' },
       { q: 'What prep matters most before listing?', a: 'Professional photos, clean curb appeal, neutral interior touch-ups, and correct initial pricing are the biggest levers. Joshua coordinates this process end-to-end.' },
     ],
     schemaCity: 'Mount Juliet',
     schemaState: 'TN',
     schemaZip: '37122',
-    buyerDescription: 'Mount Juliet is ideal for buyers who want suburban convenience, strong schools, and quick Nashville access. The median sits around $480,000 with tight market time, so preparation matters. Joshua and Compass help buyers move quickly, evaluate value accurately, and compete effectively in one of Wilson County\'s most active markets.',
+    buyerDescription: 'Mount Juliet is ideal for buyers who want suburban convenience, strong schools, and quick Nashville access — and it\'s one of Tennessee\'s fastest-growing cities, up nearly 17% since the 2020 Census. The median sits around $480,000 with tight market time, so preparation matters. Joshua and Compass help buyers move quickly, evaluate value accurately, and compete effectively in one of Wilson County\'s most active markets.',
     buyerWhyBullets: [
       'Fast-market execution: Joshua sets up targeted alerts and rapid tours so you can act quickly on the right opportunities.',
       'Commuter-friendly guidance: Mount Juliet has multiple pockets with different commute profiles; Joshua helps you choose based on your daily routine.',
@@ -552,6 +554,7 @@ export const suburbs: Record<string, Suburb> = {
     topNeighborhoods: ['Providence', 'Nichols Vale', 'Willoughby Station', 'Wright Farms', 'Del Webb Lake Providence'],
     schoolDistrict: 'Wilson County Schools',
     commuteNote: '25-35 min to downtown Nashville depending on traffic',
+    dataUpdatedAt: '2026-07-23',
   },
 
   'lebanon-tn': {
