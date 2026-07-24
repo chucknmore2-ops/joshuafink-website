@@ -46,6 +46,9 @@ export default function ListingCard({ listing, featured }: Props) {
   // Active listings have an on-site detail page; sold homes don't, so their card
   // keeps handing straight off to Compass.
   const detailHref = hasListingDetail(listing) ? `/listings/${listingSlug(listing)}` : null
+  const cityDisplay = listing.city.replace(/\s*\|\s*MLS\s*#\S+$/i, '')
+  const addressDisplay =
+    listing.address === 'Undisclosed Address' ? 'Address on request' : listing.address
 
   return (
     <article className="group border border-neutral-200 bg-white rounded-2xl flex flex-col overflow-hidden transition-all duration-200 ease-out hover:shadow-xl hover:-translate-y-1">
@@ -112,12 +115,12 @@ export default function ListingCard({ listing, featured }: Props) {
               href={detailHref}
               className="text-sm font-semibold text-black mt-1 block underline-offset-4 hover:underline"
             >
-              {listing.address}
+              {addressDisplay}
             </Link>
           ) : (
-            <p className="text-sm font-semibold text-black mt-1">{listing.address}</p>
+            <p className="text-sm font-semibold text-black mt-1">{addressDisplay}</p>
           )}
-          <p className="text-xs text-neutral-500 mt-0.5">{listing.city}</p>
+          <p className="text-xs text-neutral-500 mt-0.5">{cityDisplay}</p>
         </div>
 
         {listing.note ? (
@@ -181,7 +184,7 @@ export default function ListingCard({ listing, featured }: Props) {
           ) : (
             <a
               href={`sms:+16155512727?body=${encodeURIComponent(
-                `Hi Joshua — I'm interested in ${listing.address}. Can you tell me more?`
+                `Hi Joshua — I'm interested in ${addressDisplay}. Can you tell me more?`
               )}`}
               className="text-center text-sm font-semibold bg-black text-white py-2.5 rounded-full tracking-wide transition-all duration-200 hover:bg-neutral-800"
               data-cta="listing-card-ask"
@@ -194,7 +197,7 @@ export default function ListingCard({ listing, featured }: Props) {
           {detailHref && (
             <a
               href={`sms:+16155512727?body=${encodeURIComponent(
-                `Hi Joshua — I'm interested in ${listing.address}. Can you tell me more?`
+                `Hi Joshua — I'm interested in ${addressDisplay}. Can you tell me more?`
               )}`}
               className="text-center text-sm font-semibold border border-black text-black py-2.5 rounded-full tracking-wide transition-all duration-200 hover:bg-black hover:text-white"
               data-cta="listing-card-ask"
