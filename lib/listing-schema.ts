@@ -71,6 +71,16 @@ export function buildListingItemList(items: Listing[], name: string) {
  * visible page, not in the markup. `url` should be the on-site detail URL (not
  * the Compass URL) so this page is the canonical entity for the address.
  */
+// Map Compass listing status → schema.org ItemAvailability so Google can tell
+// sold / under-contract homes apart from active ones in rich results.
+function availabilityFor(status: string): string {
+  const s = status.toLowerCase()
+  if (s.includes('sold') || s.includes('closed')) return 'https://schema.org/SoldOut'
+  if (s.includes('coming soon') || s.includes('under contract'))
+    return 'https://schema.org/PreOrder'
+  return 'https://schema.org/InStock'
+}
+
 export function buildListingSchema(listing: Listing, url: string) {
   const residence: Record<string, unknown> = {
     '@type': 'SingleFamilyResidence',
@@ -96,6 +106,10 @@ export function buildListingSchema(listing: Listing, url: string) {
     url,
     name: listing.address,
     ...(listing.imageUrl ? { image: listing.imageUrl } : {}),
+    availability: availabilityFor(listing.status),
+    // Reference the canonical agent entity defined in app/layout.tsx (#agent)
+    // so each listing feeds authority back into Joshua's knowledge graph.
+    agent: { '@id': 'https://www.joshuafink.com/#agent' },
     about: residence,
   }
 }
