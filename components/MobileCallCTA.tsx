@@ -32,6 +32,11 @@ export default function MobileCallCTA() {
     pathname?.startsWith('/cash-offer') ||
     pathname?.startsWith('/sell')
 
+  // Listing detail pages have their own on-page lead form far below the fold
+  // on mobile. Point the secondary CTA at that form with an anchor jump so
+  // buyers can reach it without scrolling past the full details block.
+  const isListingDetail = /^\/listings\/[^/]+/.test(pathname ?? '')
+
   return (
     <>
     <div
@@ -57,7 +62,16 @@ export default function MobileCallCTA() {
           </svg>
           Call Joshua · {TEL_DISPLAY}
         </TrackedTelLink>
-        {preferText ? (
+        {isListingDetail ? (
+          <a
+            href="#lead"
+            className="flex items-center justify-center gap-1.5 px-4 py-3.5 border-l border-neutral-200 bg-brand-crimson text-white text-sm font-bold tracking-wide active:scale-[0.98] transition-transform"
+            aria-label="Ask Joshua about this listing"
+            data-cta="mobile-sticky-ask"
+          >
+            Ask Joshua
+          </a>
+        ) : preferText ? (
           <TrackedTelLink
             href={`sms:+1${TEL}`}
             className="flex items-center justify-center gap-1.5 px-4 py-3.5 border-l border-neutral-200 bg-brand-crimson text-white text-sm font-bold tracking-wide active:scale-[0.98] transition-transform"
