@@ -396,7 +396,7 @@ export const suburbs: Record<string, Suburb> = {
     avgDaysOnMarket: 38,
     pricePerSqft: 158,
     yoyChange: '+5.5%',
-    description: 'Gallatin is having a moment. One of the most affordable entry points into the Nashville metro, Gallatin has seen dramatic appreciation — nearly 5.5% year-over-year — as buyers priced out of Williamson County and Davidson County increasingly look north to Sumner County. The 2026 median home price is approximately $350,000, making it the value choice for families and first-time buyers who want space and community without the premium prices of Franklin or Brentwood. Gallatin offers a genuine small-town feel with a growing downtown, lakefront access to Old Hickory Lake, and easy access to Hendersonville and the Gallatin Pike corridor to Nashville.',
+    description: 'Gallatin is having a moment. One of the most affordable entry points into the Nashville metro, Gallatin has seen dramatic appreciation — nearly 5.5% year-over-year — as buyers priced out of Williamson County and Davidson County increasingly look north to Sumner County. The city\'s population has grown from about 44,400 at the 2020 Census to an estimated 53,000+ in 2026 — roughly 26% growth in five years (U.S. Census Bureau). The 2026 median home price is approximately $350,000, making it the value choice for families and first-time buyers who want space and community without the premium prices of Franklin or Brentwood. Gallatin offers a genuine small-town feel with a growing downtown, lakefront access to Old Hickory Lake, the main campus of Volunteer State Community College, and easy access to Hendersonville and the Gallatin Pike corridor to Nashville.',
     whyBullets: [
       'Sumner County value positioning: Gallatin buyers are often comparing against Hendersonville and Madison. Joshua understands how to price and position your home in this competitive set and attract the motivated buyers flowing north from Davidson County.',
       'Old Hickory Lake premium: Waterfront and lake-access properties in Gallatin command a significant premium. Joshua has experience marketing these lifestyle properties and knows how to attract the specific buyer profile that pays top dollar for lake living.',
@@ -404,28 +404,29 @@ export const suburbs: Record<string, Suburb> = {
     ],
     faqs: [
       { q: 'What is my Gallatin, TN home worth in 2026?', a: 'The median home price in Gallatin is approximately $350,000. Waterfront or lake-access properties on Old Hickory Lake can command significant premiums above median. Joshua will pull recent sold comps specific to your neighborhood and property type.' },
-      { q: 'Is Gallatin growing?', a: 'Yes — rapidly. Gallatin is one of the fastest-growing cities in Sumner County, driven by affordability relative to the Nashville core and ongoing infrastructure investment. The I-265 connector project is expected to improve commute times significantly.' },
+      { q: 'Is Gallatin growing?', a: 'Yes — rapidly. Gallatin\'s population grew from about 44,400 at the 2020 Census to an estimated 53,000+ in 2026, roughly 26% in five years (U.S. Census Bureau), driven by affordability relative to the Nashville core. The city completed a $31 million connector road from SR-109 to Dobbins Pike in 2022, built to divert downtown Gallatin traffic and support that growth.' },
       { q: 'What makes Gallatin different from Hendersonville?', a: 'Gallatin tends to be slightly more affordable than Hendersonville with a stronger small-town downtown feel. Hendersonville has more established retail and amenities. Both are in Sumner County with similar school systems. Joshua can help you understand how the differences affect value.' },
-      { q: 'How far is Gallatin from Nashville?', a: 'About 30 miles northeast of Nashville — typically 35-45 minutes via US-31E or Vietnam Veterans Blvd. The planned I-265 connector will improve this commute significantly when completed.' },
+      { q: 'How far is Gallatin from Nashville?', a: 'About 30 miles northeast of Nashville — typically 35-45 minutes via US-31E or Vietnam Veterans Blvd.' },
     ],
     schemaCity: 'Gallatin',
     schemaState: 'TN',
     schemaZip: '37066',
-    buyerDescription: 'Gallatin is where smart buyers are going in 2026. At a median of $350,000 — the lowest entry point in the Nashville metro with access to Old Hickory Lake — it offers space, community, and one of the strongest appreciation rates in Middle Tennessee at 5.5% year-over-year. Buyers who moved here 3-5 years ago are sitting on significant equity. Those buying now are positioned for the next wave of growth as Nashville\'s sprawl continues northeast and the I-265 connector project improves commute times.',
+    buyerDescription: 'Gallatin is where smart buyers are going in 2026. At a median of $350,000 — the lowest entry point in the Nashville metro with access to Old Hickory Lake — it offers space, community, and one of the strongest appreciation rates in Middle Tennessee at 5.5% year-over-year. Buyers who moved here 3-5 years ago are sitting on significant equity. Those buying now are positioned for the next wave of growth: the city\'s population is up roughly 26% since the 2020 Census (U.S. Census Bureau), and Gallatin is already home to the main campus of Volunteer State Community College.',
     buyerWhyBullets: [
       'Best value in the metro: Gallatin offers the lowest price-per-square-foot of any Nashville suburb while delivering the lifestyle and community buyers want. Joshua helps you find the right property in the right pocket to maximize your upside.',
       'Lake access expertise: Old Hickory Lake waterfront and lake-access properties require specific due diligence — dock permits, flood zones, shoreline restrictions. Joshua knows what to look for and how to evaluate lake properties correctly.',
-      'Growth timing: Gallatin is at an inflection point. The I-265 connector will change commute math significantly. Buyers who get in before that project completes are buying ahead of a likely appreciation surge.',
+      'Growth timing: Gallatin\'s population is up roughly 26% since the 2020 Census (U.S. Census Bureau). Buyers who get in now are buying ahead of a fast-growing city rather than chasing an already-priced-in market.',
     ],
     buyerFaqs: [
       { q: 'What is the average home price in Gallatin, TN in 2026?', a: 'The median is approximately $350,000 — one of the most affordable in the Nashville metro. Entry-level homes start under $280K; waterfront properties on Old Hickory Lake run $500K–$1M+.' },
       { q: 'Are there good schools in Gallatin?', a: 'Sumner County Schools serves Gallatin with several well-regarded schools. Station Camp High School is particularly well-rated. Joshua verifies school assignment for every home before you make an offer.' },
       { q: 'Can I find waterfront homes in Gallatin?', a: 'Yes — Old Hickory Lake has significant waterfront and lake-access inventory in and around Gallatin. These properties require specific inspection considerations (dock permits, flood zones, septic on waterfront). Joshua has experience navigating waterfront purchases in this market.' },
-      { q: 'Is Gallatin a good long-term investment?', a: 'Strong case for it. Affordability relative to the metro, consistent 5%+ appreciation, lakefront lifestyle appeal, and the coming I-265 infrastructure improvement all support a positive outlook. One of the best value propositions in Middle Tennessee.' },
+      { q: 'Is Gallatin a good long-term investment?', a: 'Strong case for it. Affordability relative to the metro, consistent 5%+ appreciation, lakefront lifestyle appeal, and population growth of roughly 26% since the 2020 Census (U.S. Census Bureau) all support a positive outlook. One of the best value propositions in Middle Tennessee.' },
     ],
     topNeighborhoods: ['Station Camp', 'Lakeside', 'Sanders Ferry', 'Downtown Gallatin', 'Wynbrooke'],
     schoolDistrict: 'Sumner County Schools',
     commuteNote: '35-45 min to Nashville via US-31E',
+    dataUpdatedAt: '2026-07-25',
   },
 
   'hendersonville-tn': {
