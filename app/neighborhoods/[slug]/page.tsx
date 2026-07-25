@@ -71,7 +71,7 @@ export default async function NeighborhoodPage({ params }: Props) {
       content: n.slug,
     }
   )
-  const related = getRelatedNeighborhoods(n.slug, 3)
+  const related = getRelatedNeighborhoods(n.slug, 6)
 
   // On-site inventory: the site's OWN active listings whose city maps to this
   // neighborhood's parent city. Reuses the same listing→suburb matcher as
@@ -742,6 +742,14 @@ export default async function NeighborhoodPage({ params }: Props) {
                     </div>
                   </Link>
                 ))}
+              </div>
+              <div className="mt-10">
+                <Link
+                  href="/neighborhoods"
+                  className="inline-block border border-black text-black text-sm font-bold px-6 py-3 tracking-wide hover:bg-black hover:text-white transition-colors"
+                >
+                  See all {n.city} neighborhoods →
+                </Link>
               </div>
             </div>
           </div>
