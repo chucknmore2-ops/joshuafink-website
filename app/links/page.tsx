@@ -11,10 +11,10 @@ export const metadata: Metadata = {
 
 const links = [
   {
-    href: '/home-value',
+    href: '/sell#seller-form',
     label: 'Get My Home Value',
     description: 'Find out what your home is worth today',
-    comingSoon: true,
+    comingSoon: false,
     primary: true,
   },
   {
