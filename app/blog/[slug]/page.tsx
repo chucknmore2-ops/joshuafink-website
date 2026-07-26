@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Fragment } from 'react'
 import { getPostBySlug, getAllSlugs, getRelatedPosts, type BlogPost } from '@/lib/blog'
 import { linkifyLocations } from '@/lib/linkify-neighborhoods'
+import { neighborhoods } from '@/lib/neighborhoods'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 
 interface Props {
@@ -235,11 +236,26 @@ function buildJsonLd(post: BlogPost) {
   return { blogPosting, breadcrumb, faqSchema }
 }
 
+function getMentionedNeighborhoods(
+  content: string,
+  limit = 3,
+): { slug: string; name: string }[] {
+  const mentioned: { slug: string; name: string }[] = []
+  for (const n of Object.values(neighborhoods)) {
+    if (content.includes(n.name) || content.includes(`/neighborhoods/${n.slug}`)) {
+      mentioned.push({ slug: n.slug, name: n.name })
+      if (mentioned.length >= limit) break
+    }
+  }
+  return mentioned
+}
+
 export default function BlogPostPage({ params }: Props) {
   const post = getPostBySlug(params.slug)
   if (!post) notFound()
 
   const otherPosts = getRelatedPosts(params.slug, 3)
+  const mentionedGuides = getMentionedNeighborhoods(post.content, 3)
   const { blogPosting, breadcrumb, faqSchema } = buildJsonLd(post)
   const modifiedDifferent = post.dateModified && post.dateModified !== post.date
 
@@ -433,25 +449,50 @@ export default function BlogPostPage({ params }: Props) {
         </div>
 
         {/* More posts */}
-        {otherPosts.length > 0 && (
-          <div className="mt-12">
-            <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-6">
-              Related Articles
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {otherPosts.map((p) => (
-                <Link
-                  key={p.slug}
-                  href={`/blog/${p.slug}`}
-                  className="border border-[#E8E8E8] p-5 rounded-2xl hover:shadow-md transition-shadow group"
-                >
-                  <p className="text-xs text-[#A0A0A0] mb-2">{p.date}</p>
-                  <p className="text-sm font-bold text-black leading-snug group-hover:underline">
-                    {p.title}
-                  </p>
-                </Link>
-              ))}
-            </div>
+        {(otherPosts.length > 0 || mentionedGuides.length > 0) && (
+          <div className="mt-12 space-y-10">
+            {otherPosts.length > 0 && (
+              <div>
+                <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-6">
+                  Related Articles
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                  {otherPosts.map((p) => (
+                    <Link
+                      key={p.slug}
+                      href={`/blog/${p.slug}`}
+                      className="border border-[#E8E8E8] p-5 rounded-2xl hover:shadow-md transition-shadow group"
+                    >
+                      <p className="text-xs text-[#A0A0A0] mb-2">{p.date}</p>
+                      <p className="text-sm font-bold text-black leading-snug group-hover:underline">
+                        {p.title}
+                      </p>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+            {mentionedGuides.length > 0 && (
+              <div>
+                <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-6">
+                  Explore Neighborhood Guides
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                  {mentionedGuides.map((g) => (
+                    <Link
+                      key={g.slug}
+                      href={`/neighborhoods/${g.slug}`}
+                      className="border border-[#E8E8E8] p-5 rounded-2xl hover:shadow-md transition-shadow group"
+                    >
+                      <p className="text-xs text-[#A0A0A0] mb-2">Neighborhood Guide</p>
+                      <p className="text-sm font-bold text-black leading-snug group-hover:underline">
+                        {g.name}
+                      </p>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </article>
