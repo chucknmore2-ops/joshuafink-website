@@ -244,7 +244,7 @@ export default async function NeighborhoodPage({ params }: Props) {
             )}
 
             {/* Compact above-the-fold lead capture — mirrors /buy/[suburb] hero form */}
-            <div className="mt-10 max-w-xl bg-white p-6 sm:p-7">
+            <div className="mt-10 max-w-xl bg-white p-6 sm:p-7 pb-20 md:pb-7">
               <p className="text-xs font-semibold tracking-widest uppercase mb-1" style={{ color: '#A0A0A0' }}>
                 Quick start — text Joshua
               </p>
