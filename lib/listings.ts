@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-07-26T10:04:02.429Z
+// AUTO-GENERATED — Last synced: 2026-07-27T11:28:16.641Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -21,7 +21,7 @@ export interface Listing {
 
 // Mirrors the header timestamp so server components can compute sync staleness
 // without parsing comments. Updated by scripts/fetch-images.mjs each sync.
-export const listingsSyncedAt = "2026-07-26T10:04:02.429Z";
+export const listingsSyncedAt = "2026-07-27T11:28:16.641Z";
 
 export const listings: Listing[] = [
   {
@@ -94,6 +94,18 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/4874-Sparta-Pike-Watertown-TN-37184/TMU6R_pid/",
     imageUrl: "https://www.compass.com/m/bbc96932a4def1b58a65235f0c21695ff8c7c77087887c7c1cdc852cf4ab3759/2048x1536.webp",
+    lastVerified: listingsSyncedAt,
+  },
+  {
+    address: "107 Overlook Trail",
+    city: "Goodlettsville, TN 37072 | MLS #3297936",
+    price: 339900,
+    beds: 3,
+    baths: 2,
+    sqft: 1068,
+    status: "Active",
+    compassUrl: "https://www.compass.com/homedetails/107-Overlook-Trail-Goodlettsville-TN-37072/S1YDH_pid/",
+    imageUrl: "https://www.compass.com/m/7e99b93b501a4db23703d69509d15689feafce305ecc16ae9592922c2685b41b/2048x1536.webp",
     lastVerified: listingsSyncedAt,
   }
 ];
