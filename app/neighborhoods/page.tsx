@@ -104,9 +104,23 @@ export default function NeighborhoodsIndexPage() {
           {Object.entries(byCity).map(([city, items]) => (
             <div key={city} className="mb-16 last:mb-0">
               <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">{city}</p>
-              <h2 className="text-3xl font-black text-black tracking-tight mb-8">
+              <h2 className="text-3xl font-black text-black tracking-tight mb-4">
                 {city.split(',')[0]} Neighborhoods
               </h2>
+              <div className="flex flex-wrap gap-3 mb-8">
+                <Link
+                  href={`/buy/${items[0].citySlug}`}
+                  className="text-sm font-bold px-5 py-3 tracking-wide bg-[#C41E3A] text-white hover:bg-black transition-colors"
+                >
+                  Homes for sale in {city.split(',')[0]} →
+                </Link>
+                <Link
+                  href={`/sell/${items[0].citySlug}`}
+                  className="text-sm font-bold px-5 py-3 tracking-wide border-2 border-black text-black hover:bg-black hover:text-white transition-colors"
+                >
+                  Sell your {city.split(',')[0]} home →
+                </Link>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {items.map((n) => (
                   <Link
