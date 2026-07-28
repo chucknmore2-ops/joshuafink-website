@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import SuburbLeadForm from '@/components/SuburbLeadForm'
+import TrackedTelLink from '@/components/TrackedTelLink'
 import { neighborhoods } from '@/lib/neighborhoods'
 
 export const metadata: Metadata = {
@@ -71,32 +73,107 @@ export default function NeighborhoodsIndexPage() {
       <div className="bg-white">
         <div style={{ backgroundColor: '#0A1628' }} className="text-white py-20 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
-            <p className="text-xs font-semibold tracking-widest uppercase mb-3" style={{ color: '#A0A0A0' }}>
-              Middle Tennessee · Subdivision &amp; Neighborhood Guides
-            </p>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.05] max-w-4xl">
-              Neighborhood Guides —{' '}
-              <span style={{ color: '#C41E3A' }}>Real Local Insight, Not Listing Data.</span>
-            </h1>
-            <p className="text-lg mt-5 max-w-3xl leading-relaxed" style={{ color: '#A0A0A0' }}>
-              Honest, in-depth guides to the most-searched subdivisions and neighborhoods in
-              Franklin, Brentwood, Spring Hill, Nolensville, and the broader Middle Tennessee
-              market. Schools, HOA, amenities, home styles, and current price ranges — written
-              by Compass agent Joshua Fink.
-            </p>
-            <p className="mt-3 text-sm" style={{ color: '#7B7B7B' }}>
-              Need live inventory? Each guide funnels into Joshua&apos;s Compass agent profile
-              where listings are served in real time.
-            </p>
-            <p className="mt-5 text-sm" style={{ color: '#A0A0A0' }}>
-              New to the area?{' '}
-              <Link
-                href="/moving-to-middle-tennessee"
-                className="font-semibold text-white underline underline-offset-4 hover:no-underline"
-              >
-                Start with the Moving to Middle Tennessee relocation guide →
-              </Link>
-            </p>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+              <div>
+                <p className="text-xs font-semibold tracking-widest uppercase mb-3" style={{ color: '#A0A0A0' }}>
+                  Middle Tennessee · Subdivision &amp; Neighborhood Guides
+                </p>
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.05]">
+                  Neighborhood Guides —{' '}
+                  <span style={{ color: '#C41E3A' }}>Real Local Insight, Not Listing Data.</span>
+                </h1>
+                <p className="text-lg mt-5 leading-relaxed" style={{ color: '#A0A0A0' }}>
+                  Honest, in-depth guides to the most-searched subdivisions and neighborhoods in
+                  Franklin, Brentwood, Spring Hill, Nolensville, and the broader Middle Tennessee
+                  market. Schools, HOA, amenities, home styles, and current price ranges — written
+                  by Compass agent Joshua Fink.
+                </p>
+                <p className="mt-3 text-sm" style={{ color: '#7B7B7B' }}>
+                  Need live inventory? Each guide funnels into Joshua&apos;s Compass agent profile
+                  where listings are served in real time.
+                </p>
+                <p className="mt-5 text-sm" style={{ color: '#A0A0A0' }}>
+                  New to the area?{' '}
+                  <Link
+                    href="/moving-to-middle-tennessee"
+                    className="font-semibold text-white underline underline-offset-4 hover:no-underline"
+                  >
+                    Start with the Moving to Middle Tennessee relocation guide →
+                  </Link>
+                </p>
+              </div>
+
+              {/* Inline lead form (mobile: shown first for lead capture) */}
+              <div id="neighborhoods-form" className="order-first lg:order-last bg-white text-black p-8 sm:p-10 rounded-2xl">
+                <h2 className="text-2xl font-black tracking-tight mb-2">Ask Joshua About a Neighborhood</h2>
+                <p className="text-sm text-neutral-600 mb-6">
+                  Tell Joshua which subdivision or town you&apos;re considering — get a same-day reply
+                  with school zones, HOA notes, current price range, and matching homes.
+                </p>
+                <SuburbLeadForm
+                  successTitle="Message Sent!"
+                  successMessage={
+                    <>
+                      Joshua will reach out same-day with neighborhood insight. For anything urgent, call{' '}
+                      <TrackedTelLink href="tel:6155512727" className="text-black font-semibold underline" data-cta="neighborhoods-form-success-call">615-551-2727</TrackedTelLink>.
+                    </>
+                  }
+                  resetLabel="Submit Another"
+                >
+                  <input type="hidden" name="lead_type" value="buyer" />
+                  <input type="hidden" name="source" value="neighborhoods-index" />
+                  {/* Honeypot — real users never see or fill this */}
+                  <input
+                    type="text"
+                    name="website"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    aria-hidden="true"
+                    className="absolute left-[-9999px] h-0 w-0 opacity-0"
+                  />
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div>
+                      <label htmlFor="name" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Full Name *</label>
+                      <input type="text" id="name" name="name" required placeholder="Jane Smith"
+                        className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                    </div>
+                    <div>
+                      <label htmlFor="phone" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Phone *</label>
+                      <input type="tel" id="phone" name="phone" required placeholder="(615) 555-0123" autoComplete="tel"
+                        className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="email" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Email Address *</label>
+                    <input type="email" id="email" name="email" required placeholder="you@example.com" autoComplete="email"
+                      className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                  </div>
+
+                  <div>
+                    <label htmlFor="body" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Which Neighborhood? (optional)</label>
+                    <textarea id="body" name="body" rows={3}
+                      placeholder="Subdivision or town, price range, school zone, must-haves — anything helps Joshua send the right info."
+                      className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors resize-y" />
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+                    <button type="submit"
+                      className="w-full sm:w-auto inline-flex items-center justify-center bg-black text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-[#222] transition-colors">
+                      Send to Joshua →
+                    </button>
+                    <TrackedTelLink
+                      href="tel:6155512727"
+                      className="w-full sm:w-auto inline-flex items-center justify-center border-2 border-black text-black text-sm font-bold px-8 py-4 tracking-wide hover:bg-black hover:text-white transition-colors"
+                      data-cta="neighborhoods-form-inline-call"
+                    >
+                      Or Call 615-551-2727
+                    </TrackedTelLink>
+                  </div>
+                </SuburbLeadForm>
+              </div>
+            </div>
           </div>
         </div>
 
