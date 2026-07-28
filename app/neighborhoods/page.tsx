@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { neighborhoods } from '@/lib/neighborhoods'
+import { reviewStats } from '@/lib/reviews'
 
 export const metadata: Metadata = {
   title: 'Middle Tennessee Neighborhood Guides | Joshua Fink — Compass',
@@ -53,6 +54,82 @@ export default function NeighborhoodsIndexPage() {
     ],
   }
 
+  const agentAndBusinessSchema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'RealEstateAgent',
+        '@id': 'https://www.joshuafink.com/#agent',
+        name: 'Joshua Fink — Compass Real Estate',
+        url: 'https://www.joshuafink.com/neighborhoods',
+        telephone: '+16155512727',
+        email: 'joshua@joshuafink.com',
+        image: 'https://www.joshuafink.com/headshot.webp',
+        description:
+          'Joshua Fink is a Compass Real Estate agent covering Middle Tennessee neighborhoods across Franklin, Brentwood, Spring Hill, Nolensville, Nashville, and surrounding markets.',
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: '8119 Isabella Lane, Suite 105',
+          addressLocality: 'Brentwood',
+          addressRegion: 'TN',
+          postalCode: '37027',
+          addressCountry: 'US',
+        },
+        geo: {
+          '@type': 'GeoCoordinates',
+          latitude: 36.0234,
+          longitude: -86.7838,
+        },
+        areaServed: {
+          '@type': 'AdministrativeArea',
+          name: 'Middle Tennessee',
+          addressRegion: 'TN',
+          addressCountry: 'US',
+        },
+        sameAs: [
+          'https://www.facebook.com/profile.php?id=100064076493905',
+          'https://www.instagram.com/joshuafinkgroup',
+          'https://www.linkedin.com/in/joshuafinkgroup/',
+          'https://x.com/JoshuaFinkGroup',
+          'https://www.compass.com/agents/joshua-fink/',
+          'https://www.zillow.com/profile/JoshuaFinkGroup',
+        ],
+        aggregateRating: {
+          '@type': 'AggregateRating',
+          ratingValue: reviewStats.rating.toFixed(1),
+          reviewCount: reviewStats.total,
+          bestRating: '5',
+          worstRating: '1',
+        },
+      },
+      {
+        '@type': 'LocalBusiness',
+        name: 'Joshua Fink Group — Compass Real Estate',
+        url: 'https://www.joshuafink.com/neighborhoods',
+        telephone: '+16155512727',
+        email: 'joshua@joshuafink.com',
+        parentOrganization: { '@id': 'https://www.joshuafink.com/#agent' },
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: '8119 Isabella Lane, Suite 105',
+          addressLocality: 'Brentwood',
+          addressRegion: 'TN',
+          postalCode: '37027',
+          addressCountry: 'US',
+        },
+        areaServed: {
+          '@type': 'AdministrativeArea',
+          name: 'Middle Tennessee',
+          addressRegion: 'TN',
+          addressCountry: 'US',
+        },
+        priceRange: '$$$',
+        description:
+          'Real estate agent serving Middle Tennessee neighborhoods — Franklin, Brentwood, Spring Hill, Nolensville, Nashville, and surrounding markets.',
+      },
+    ],
+  }
+
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -66,6 +143,7 @@ export default function NeighborhoodsIndexPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(agentAndBusinessSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
       <div className="bg-white">
