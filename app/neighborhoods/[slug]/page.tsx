@@ -460,6 +460,31 @@ export default async function NeighborhoodPage({ params }: Props) {
           </div>
         </div>
 
+        {/* Secondary-intent CTA — capture distressed / timeline-pressured seller
+            traffic that finds these guides while researching their own area. */}
+        <div className="bg-[#F5F1EA] border-b border-[#E8E8E8] py-10 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-2">
+                {n.city} Homeowner?
+              </p>
+              <h2 className="text-xl sm:text-2xl font-black text-black tracking-tight">
+                Need to sell fast? Get a cash offer for your {n.city} home.
+              </h2>
+              <p className="text-sm text-[#6B6B6B] mt-2">
+                No showings, no repairs, close in as little as 7 days.
+              </p>
+            </div>
+            <Link
+              href={`/cash-offer/${n.citySlug}`}
+              className="inline-block border border-black text-black text-sm font-bold px-6 py-3 tracking-wide hover:bg-black hover:text-white transition-colors whitespace-nowrap text-center"
+              data-cta="neighborhood-cash-offer"
+            >
+              Get a cash offer →
+            </Link>
+          </div>
+        </div>
+
         {/* About + sidebar */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
