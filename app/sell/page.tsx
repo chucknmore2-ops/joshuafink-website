@@ -4,6 +4,7 @@ import SellForm from './SellForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import TrustBadges from '@/components/TrustBadges'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
+import { reviewStats } from '@/lib/reviews'
 
 export const metadata: Metadata = {
   alternates: { canonical: 'https://www.joshuafink.com/sell' },
@@ -147,6 +148,41 @@ export default function SellPage() {
     { name: 'Home', href: '/' },
     { name: 'Sell', href: '/sell' },
   ])
+
+  const agentLd = {
+    '@context': 'https://schema.org',
+    '@type': 'RealEstateAgent',
+    '@id': 'https://www.joshuafink.com/#agent',
+    name: 'Joshua Fink — Compass Real Estate',
+    url: 'https://www.joshuafink.com/sell',
+    telephone: '+16155512727',
+    email: 'joshua@joshuafink.com',
+    image: 'https://www.joshuafink.com/headshot.webp',
+    description:
+      'Joshua Fink is a top-producing Affiliate Broker at Compass Real Estate helping sellers across Nashville, Franklin, Brentwood, Spring Hill, Columbia, and all of Middle Tennessee list and sell for top dollar.',
+    areaServed: {
+      '@type': 'AdministrativeArea',
+      name: 'Middle Tennessee',
+      addressRegion: 'TN',
+      addressCountry: 'US',
+    },
+    sameAs: [
+      'https://www.facebook.com/profile.php?id=100064076493905',
+      'https://www.instagram.com/joshuafinkgroup',
+      'https://www.linkedin.com/in/joshuafinkgroup/',
+      'https://x.com/JoshuaFinkGroup',
+      'https://www.compass.com/agents/joshua-fink/',
+      'https://www.zillow.com/profile/JoshuaFinkGroup',
+    ],
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: reviewStats.rating.toFixed(1),
+      reviewCount: reviewStats.total,
+      bestRating: '5',
+      worstRating: '1',
+    },
+  }
+
   return (
     <div className="bg-white">
       <script
@@ -156,6 +192,10 @@ export default function SellPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(howToLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(agentLd) }}
       />
       <script
         type="application/ld+json"
