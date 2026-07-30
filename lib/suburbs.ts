@@ -258,7 +258,7 @@ export const suburbs: Record<string, Suburb> = {
     pricePerSqft: 182,
     yoyChange: '+5.8%',
     description:
-      "Thompson's Station is one of Middle Tennessee's best-kept secrets — and that's starting to change. Located just south of Spring Hill along the I-65 corridor in Williamson County, Thompson's Station offers the county's prized school district, acreage lots not found elsewhere at this price point, and a rural character that's increasingly rare as the region grows. The 2026 median home price is approximately $420,000, making it one of the most affordable entry points into Williamson County real estate. Year-over-year appreciation is running nearly 6% — the strongest of any of the communities in this area. Buyers are actively seeking Thompson's Station for its space, its schools, and its value relative to neighboring Franklin and Spring Hill. If you own here, you own something buyers are genuinely competing for.",
+      "Thompson's Station is one of Middle Tennessee's best-kept secrets — and that's starting to change. Located just south of Spring Hill along the I-65 corridor in Williamson County, Thompson's Station offers the county's prized school district, acreage lots not found elsewhere at this price point, and a rural character that's increasingly rare as the region grows. The town's population has grown from 2,194 at the 2010 Census to 7,485 in the 2020 Census — and an estimated 9,800+ today, a roughly 30% increase in just five years — making it the fastest-growing city in Tennessee for 2026 (U.S. Census Bureau; HomeSnacks). The 2026 median home price is approximately $420,000, making it one of the most affordable entry points into Williamson County real estate. Year-over-year appreciation is running nearly 6% — the strongest of any of the communities in this area. Buyers are actively seeking Thompson's Station for its space, its schools, and its value relative to neighboring Franklin and Spring Hill. If you own here, you own something buyers are genuinely competing for.",
     whyBullets: [
       "Williamson County at a discount: Joshua positions Thompson's Station homes as the smart buyer's path into the county's school district — a compelling message that attracts motivated, qualified buyers actively comparing you to pricier alternatives.",
       "Land and space story: Many Thompson's Station homes sit on larger lots — sometimes half an acre to several acres. Joshua knows how to market this lifestyle advantage, especially to buyers moving from urban markets where space is scarce.",
@@ -271,7 +271,11 @@ export const suburbs: Record<string, Suburb> = {
       },
       {
         q: "Is Thompson's Station growing in popularity?",
-        a: "Yes — significantly. Thompson's Station is seeing some of the strongest appreciation in Williamson County, with year-over-year price gains around 5.8% in early 2026. Buyers priced out of Franklin and Spring Hill are actively looking here, and inventory remains tight.",
+        a: "Yes — significantly. The town grew from 2,194 residents at the 2010 Census to 7,485 in the 2020 Census, and HomeSnacks ranks it the #1 fastest-growing city in Tennessee for 2026. Thompson's Station is also seeing some of the strongest appreciation in Williamson County, with year-over-year price gains around 5.8% in early 2026. Buyers priced out of Franklin and Spring Hill are actively looking here, and inventory remains tight.",
+      },
+      {
+        q: "How much is my home worth in Thompson's Station, TN?",
+        a: "The median sale price in Thompson's Station is approximately $420,000 in 2026, with price per square foot near $182 — the most affordable entry point into Williamson County. Homes on larger lots (half-acre or more), with updated kitchens and primary-level living, routinely sell above the median given how fast the town is growing (the U.S. Census Bureau's 2020 count of 7,485 residents was already up from 2,194 in 2010, and HomeSnacks ranks it Tennessee's #1 fastest-growing city for 2026). National estimator tools like Zillow can vary widely on a specific address — Joshua will pull actual closed comps within a half-mile of your home for a number you can rely on.",
       },
       {
         q: "How does acreage affect my home's value in Thompson's Station?",
@@ -300,6 +304,7 @@ export const suburbs: Record<string, Suburb> = {
     topNeighborhoods: ['Bridgewater', 'Tollgate', 'Laurelbrook', 'Southbrooke', 'Rural acreage tracts'],
     schoolDistrict: 'Williamson County Schools',
     commuteNote: '35 min to downtown Nashville via I-65',
+    dataUpdatedAt: '2026-07-30',
   },
 
   'nashville-tn': {
