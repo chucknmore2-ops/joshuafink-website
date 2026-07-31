@@ -10,10 +10,13 @@ import {
   getCashOfferCity,
   getAllCashOfferCitySlugs,
   getCashOfferCityLinks,
+  cashOfferContentLastUpdated,
 } from '@/lib/cash-offer-cities'
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
 import { linkifyNeighborhoods } from '@/lib/linkify-neighborhoods'
 import { reviewStats } from '@/lib/reviews'
+
+const SITE = 'https://www.joshuafink.com'
 
 type Props = {
   params: Promise<{ city: string }>
@@ -110,6 +113,37 @@ export default async function CashOfferCityPage({ params }: Props) {
   return (
     <div className="bg-white">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+
+      {/* WebPage Schema — freshness signal (dateModified) for GEO/AI crawlers,
+          matching the pattern already used on /market/[suburb] and
+          /moving-to-middle-tennessee. Previously missing on this template. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            name: `Sell My House Fast ${city.displayName} | Cash Offer in 24 Hours`,
+            url,
+            datePublished: '2026-01-15',
+            dateModified: cashOfferContentLastUpdated,
+            inLanguage: 'en-US',
+            author: {
+              '@type': 'Person',
+              name: 'Joshua Fink',
+              url: `${SITE}/about`,
+              jobTitle: 'Affiliate Broker',
+              worksFor: { '@type': 'Organization', name: 'Compass Real Estate' },
+            },
+            publisher: {
+              '@type': 'Organization',
+              name: 'Joshua Fink Group',
+              url: SITE,
+              logo: { '@type': 'ImageObject', url: `${SITE}/compass-logo-black.png` },
+            },
+          }),
+        }}
+      />
 
       {/* FAQ Schema (matches visible content) */}
       <script
