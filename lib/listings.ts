@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-07-30T10:28:26.643Z
+// AUTO-GENERATED — Last synced: 2026-07-31T10:43:24.718Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -21,7 +21,7 @@ export interface Listing {
 
 // Mirrors the header timestamp so server components can compute sync staleness
 // without parsing comments. Updated by scripts/fetch-images.mjs each sync.
-export const listingsSyncedAt = "2026-07-30T10:28:26.643Z";
+export const listingsSyncedAt = "2026-07-31T10:43:24.718Z";
 
 export const listings: Listing[] = [
   {
@@ -34,6 +34,18 @@ export const listings: Listing[] = [
     status: "Active Under Contract",
     compassUrl: "https://www.compass.com/homedetails/1901-New-Bristol-Ln-Brentwood-TN-37027/RS25E_pid/",
     imageUrl: "https://www.compass.com/m/5e20f6de5ae242cba0b75f7227f5a4b1f5937902cfbf792d921c2e860034cf71/2048x1536.webp",
+    lastVerified: listingsSyncedAt,
+  },
+  {
+    address: "1113 Linn Cv Ct",
+    city: "Gallatin, TN 37066 | MLS #3306475",
+    price: 499900,
+    beds: 4,
+    baths: 4,
+    sqft: 2869,
+    status: "Active",
+    compassUrl: "https://www.compass.com/homedetails/1113-Linn-Cv-Ct-Gallatin-TN-37066/SPCI8_pid/",
+    imageUrl: "https://www.compass.com/m/60a6fdc8112389a3764c5cfd1daf97bdf574197abd273eaf774a732b627db89d/2048x1536.webp",
     lastVerified: listingsSyncedAt,
   },
   {
@@ -93,7 +105,7 @@ export const listings: Listing[] = [
     sqft: 1248,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/4874-Sparta-Pike-Watertown-TN-37184/TMU6R_pid/",
-    imageUrl: "https://www.compass.com/m/bbc96932a4def1b58a65235f0c21695ff8c7c77087887c7c1cdc852cf4ab3759/2048x1536.webp",
+    imageUrl: "https://www.compass.com/m/187622680f986b0b05fa461aa832ce13b251e2de56a4139db9633366657b3f15/2048x1536.webp",
     lastVerified: listingsSyncedAt,
   },
   {
