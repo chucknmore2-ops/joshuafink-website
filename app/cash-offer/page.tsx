@@ -157,8 +157,10 @@ export default function CashOfferPage() {
               <TrustBadges variant="dark" />
             </div>
 
-            {/* Right — inline form (client component) */}
-            <CashOfferForm />
+            {/* Right — inline form (mobile: shown first for lead capture) */}
+            <div className="order-first lg:order-last">
+              <CashOfferForm />
+            </div>
           </div>
         </div>
       </div>
