@@ -305,8 +305,8 @@ export default function SellPage() {
             </div>
           </div>
 
-          {/* Right — form */}
-          <div className="lg:col-span-3">
+          {/* Right — form (mobile: shown first for lead capture) */}
+          <div className="order-first lg:order-last lg:col-span-3">
             <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-6">
               Tell Us About Your Home
             </p>
