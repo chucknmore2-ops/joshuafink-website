@@ -163,6 +163,34 @@ export default async function NeighborhoodPage({ params }: Props) {
     },
   }
 
+  const localBusinessSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: 'Joshua Fink Group — Compass Real Estate',
+    url: `https://www.joshuafink.com/neighborhoods/${n.slug}`,
+    telephone: '+16155512727',
+    email: 'joshua@joshuafink.com',
+    // Canonical Brentwood office NAP — must match app/layout.tsx and the
+    // Google Business Profile so every neighborhood page reinforces the same
+    // business location (map-pack eligibility).
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: '8119 Isabella Lane, Suite 105',
+      addressLocality: 'Brentwood',
+      addressRegion: 'TN',
+      postalCode: '37027',
+      addressCountry: 'US',
+    },
+    areaServed: {
+      '@type': 'City',
+      name: n.schemaCity,
+      addressRegion: n.schemaState,
+      addressCountry: 'US',
+    },
+    priceRange: '$$$',
+    description: `Top-rated real estate agent serving buyers and sellers in the ${n.name} neighborhood of ${n.city}, ${n.schemaState}. Local expertise, honest advice, proven results.`,
+  }
+
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -182,6 +210,7 @@ export default async function NeighborhoodPage({ params }: Props) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(placeSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(agentSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
 
