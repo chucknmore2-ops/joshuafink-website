@@ -90,12 +90,20 @@ export function buildListingSchema(listing: Listing, url: string) {
       : {}),
   }
 
+  const datePosted = listing.lastVerified
+  const validThrough = datePosted
+    ? new Date(new Date(datePosted).getTime() + 60 * 24 * 60 * 60 * 1000).toISOString()
+    : undefined
+
   return {
     '@context': 'https://schema.org',
     '@type': 'RealEstateListing',
     url,
     name: listing.address,
     ...(listing.imageUrl ? { image: listing.imageUrl } : {}),
+    ...(datePosted ? { datePosted } : {}),
+    ...(validThrough ? { validThrough } : {}),
+    agent: { '@id': 'https://www.joshuafink.com/#agent' },
     about: residence,
   }
 }
