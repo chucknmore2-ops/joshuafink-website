@@ -137,6 +137,29 @@ export default function RootLayout({
                   },
                   hasMap:
                     'https://www.google.com/maps/search/?api=1&query=8119+Isabella+Lane+Suite+105+Brentwood+TN+37027',
+                  // Business hours surface in Google's map-pack + Knowledge
+                  // Panel. Sat/Sun are by-appointment (not listed as regular
+                  // open hours) — must stay consistent with Google Business
+                  // Profile hours.
+                  openingHoursSpecification: [
+                    {
+                      '@type': 'OpeningHoursSpecification',
+                      dayOfWeek: [
+                        'Monday',
+                        'Tuesday',
+                        'Wednesday',
+                        'Thursday',
+                        'Friday',
+                      ],
+                      opens: '09:00',
+                      closes: '18:00',
+                    },
+                    {
+                      '@type': 'OpeningHoursSpecification',
+                      dayOfWeek: ['Saturday', 'Sunday'],
+                      description: 'By appointment',
+                    },
+                  ],
                   areaServed: [
                     { '@type': 'City', name: 'Franklin, TN' },
                     { '@type': 'City', name: 'Brentwood, TN' },
