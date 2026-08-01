@@ -471,6 +471,36 @@ export const schools: Record<string, School> = {
       },
     ],
   },
+
+  'julia-green-elementary-nashville-tn': {
+    slug: 'julia-green-elementary-nashville-tn',
+    name: 'Julia Green Elementary School',
+    level: 'Elementary',
+    district: 'Metro Nashville Public Schools',
+    suburbSlug: 'nashville-tn',
+    ratingNote: 'A U.S. Department of Education National Blue Ribbon School, ranked in the top 5% of Tennessee elementary schools by Public School Review, with state test scores around 83% math and 85% reading proficiency.',
+    blurb:
+      'Julia Green Elementary sits at 3500 Hobbs Road and is the zoned neighborhood school for Green Hills and Belle Meade — two of Nashville’s most sought-after, highest-priced pockets. It carries a U.S. Department of Education National Blue Ribbon distinction and posts some of the strongest state test-score proficiency rates in Metro Nashville Public Schools, on top of a Gifted & Talented / IB Primary Years magnet option layered onto the zoned population. Because Green Hills and Belle Meade have essentially no vacant land left to build on, "Julia Green zone" functions less as a search filter and more as a price floor — buyers targeting this zone are competing for a fixed, rarely-growing supply of homes.',
+    neighborhoods: ['Green Hills', 'Belle Meade (partial)', 'Hillsboro-West End', 'Woodmont'],
+    faqs: [
+      {
+        q: 'What neighborhoods are zoned to Julia Green Elementary?',
+        a: 'Julia Green is the zoned elementary school for Green Hills and part of Belle Meade, plus adjacent pockets of the Hillsboro-West End and Woodmont areas of southwest Nashville. MNPS rezoned portions of several nearby elementary zones (including Julia Green) in 2024, so — more than almost any other zone on this site — confirm the current attendance assignment for a specific address with MNPS before writing an offer.',
+      },
+      {
+        q: 'Is Julia Green Elementary a good school?',
+        a: 'Yes — it holds a U.S. Department of Education National Blue Ribbon School distinction and Public School Review ranks it in the top 5% of Tennessee elementary schools, with state test proficiency running roughly 83% in math and 85% in reading, well above the Metro Nashville Public Schools average. It also offers an optional Gifted & Talented / IB Primary Years magnet strand alongside the standard zoned program.',
+      },
+      {
+        q: 'How much do homes in the Julia Green zone cost?',
+        a: 'There is no separate "Julia Green" price band — these homes are part of the broader Nashville market, and Green Hills/Belle Meade trade well above the citywide Nashville median reported in the market snapshot above, since both neighborhoods are built out with little new supply. Joshua can pull exact, current comps for any specific Green Hills or Belle Meade street.',
+      },
+      {
+        q: 'Why do Green Hills and Belle Meade command a premium over other Nashville zones?',
+        a: 'Limited buildable land, an established tree canopy and lot sizes, walkable proximity to Green Hills\' retail/dining core, and a top-tier, Blue-Ribbon-rated zoned elementary school all compound together. Buyers are paying for the address and the school assignment as much as the house itself — which is also why these zones tend to hold value well in a downturn.',
+      },
+    ],
+  },
 }
 
 export function getSchool(slug: string): School | undefined {
