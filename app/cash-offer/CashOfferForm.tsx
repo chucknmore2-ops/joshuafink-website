@@ -96,13 +96,13 @@ export default function CashOfferForm({ source = 'cash-offer', cityName }: CashO
 
         <div>
           <input
-            type="text" name="name" required placeholder="Your Name *"
+            type="text" name="name" required placeholder="Your Name *" autoComplete="name"
             className="w-full border border-neutral-200 rounded-xl px-4 py-3 text-sm text-black placeholder-neutral-400 focus:outline-none focus:border-black transition-colors duration-150"
           />
         </div>
         <div>
           <input
-            type="tel" name="phone" required placeholder="Your Phone Number *"
+            type="tel" name="phone" required placeholder="Your Phone Number *" autoComplete="tel"
             pattern="[\d\s\-\(\)\+]{7,}"
             title="Please enter a valid phone number"
             className="w-full border border-neutral-200 rounded-xl px-4 py-3 text-sm text-black placeholder-neutral-400 focus:outline-none focus:border-black transition-colors duration-150"
@@ -110,13 +110,13 @@ export default function CashOfferForm({ source = 'cash-offer', cityName }: CashO
         </div>
         <div>
           <input
-            type="email" name="email" placeholder="Email (optional)"
+            type="email" name="email" placeholder="Email (optional)" autoComplete="email"
             className="w-full border border-neutral-200 rounded-xl px-4 py-3 text-sm text-black placeholder-neutral-400 focus:outline-none focus:border-black transition-colors duration-150"
           />
         </div>
         <div>
           <input
-            type="text" name="property_address" required placeholder="Property Address *"
+            type="text" name="property_address" required placeholder="Property Address *" autoComplete="street-address"
             className="w-full border border-neutral-200 rounded-xl px-4 py-3 text-sm text-black placeholder-neutral-400 focus:outline-none focus:border-black transition-colors duration-150"
           />
         </div>
