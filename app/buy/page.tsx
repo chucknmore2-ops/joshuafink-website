@@ -202,7 +202,7 @@ export default function BuyHubPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
                     <label htmlFor="name" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Full Name *</label>
-                    <input type="text" id="name" name="name" required placeholder="Jane Smith"
+                    <input type="text" id="name" name="name" required placeholder="Jane Smith" autoComplete="name"
                       className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
                   </div>
                   <div>
