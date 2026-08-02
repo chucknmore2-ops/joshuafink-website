@@ -40,8 +40,6 @@ export default function CashOfferForm({ source = 'cash-offer', cityName }: CashO
             event_label: data.property_address || 'unknown',
             value: 1,
           })
-          // Google Ads conversion — replace AW-XXXXXXXXX/XXXXXXXXX with real conversion ID
-          // ;(window as any).gtag('event', 'conversion', { send_to: 'AW-XXXXXXXXX/XXXXXXXXX' })
         }
       } else {
         const json = await res.json().catch(() => ({}))
