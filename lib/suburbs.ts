@@ -439,7 +439,7 @@ export const suburbs: Record<string, Suburb> = {
     avgDaysOnMarket: 30,
     pricePerSqft: 178,
     yoyChange: '+4.3%',
-    description: 'Hendersonville is Sumner County\'s crown jewel — a well-established community with lakefront living on Old Hickory Lake, strong schools, and a market that consistently outperforms surrounding areas. The 2026 median home price is approximately $410,000, reflecting Hendersonville\'s reputation as a desirable, family-friendly community with strong infrastructure and a loyal buyer base. Homes here sell faster than in neighboring Gallatin — averaging 30 days on market — due to the combination of established amenities, school quality, and lake lifestyle. Hendersonville sellers benefit from a steady stream of Nashville metro buyers willing to pay a premium for what the community offers.',
+    description: 'Hendersonville is Sumner County\'s crown jewel — a well-established community with lakefront living on Old Hickory Lake, strong schools, and a market that consistently outperforms surrounding areas. The 2026 median home price is approximately $410,000, reflecting Hendersonville\'s reputation as a desirable, family-friendly community with strong infrastructure and a loyal buyer base. Homes here sell faster than in neighboring Gallatin — averaging 30 days on market — due to the combination of established amenities, school quality, and lake lifestyle. The city has grown from 61,753 residents at the 2020 Census to an estimated 64,800+ in 2026 — about 5% growth in five years, driven largely by Nashville-area buyers moving up to the lake for more space and a lower price point than Williamson County (U.S. Census Bureau). Hendersonville sellers benefit from a steady stream of Nashville metro buyers willing to pay a premium for what the community offers.',
     whyBullets: [
       'Established community premium: Hendersonville\'s mature neighborhoods, established schools, and lake lifestyle create consistent buyer demand. Joshua knows how to position your home to capture the premium buyers are willing to pay for the Hendersonville address.',
       'Old Hickory Lake expertise: Lakefront and lake-access properties are among Hendersonville\'s most sought-after. Joshua has deep experience marketing these lifestyle properties and understands the specific buyer who seeks lake living — and what they pay for it.',
@@ -450,11 +450,12 @@ export const suburbs: Record<string, Suburb> = {
       { q: 'How does Hendersonville compare to Gallatin for sellers?', a: 'Hendersonville tends to command a slightly higher price and sell faster than Gallatin — reflecting its more established infrastructure and amenities. Both markets are healthy, but Hendersonville\'s lake lifestyle creates a specific premium buyer pool.' },
       { q: 'Are Hendersonville schools good?', a: 'Sumner County Schools serves Hendersonville with several high-performing options. Beech High School and Indian Lake Elementary are well-regarded. School assignment affects value — Joshua always factors it into your pricing strategy.' },
       { q: 'Is Hendersonville a seller\'s market?', a: 'Yes. With 30 average days on market and consistent appreciation, Hendersonville leans seller-favorable. Well-priced, well-presented homes — especially with lake access — are seeing competitive offers.' },
+      { q: 'Is Hendersonville, TN growing?', a: 'Yes, steadily. The population grew from 61,753 at the 2020 Census to an estimated 64,800+ in 2026 (U.S. Census Bureau) — about 5% growth in five years. It\'s not explosive growth like some outer Middle TN suburbs, which is part of the appeal: Hendersonville\'s infrastructure and schools have kept pace with demand rather than being strained by it.' },
     ],
     schemaCity: 'Hendersonville',
     schemaState: 'TN',
     schemaZip: '37075',
-    buyerDescription: 'Hendersonville gives buyers the best of both worlds: the community feel and lake lifestyle of a small city, with the amenities and access of a Nashville suburb. At a median of $410,000, it\'s more accessible than Williamson County while offering comparable quality of life. Old Hickory Lake waterfront properties, strong schools, and established neighborhoods make it a perennial favorite for families relocating from out of state and Nashville buyers ready to slow down without leaving the metro.',
+    buyerDescription: 'Hendersonville gives buyers the best of both worlds: the community feel and lake lifestyle of a small city, with the amenities and access of a Nashville suburb. At a median of $410,000, it\'s more accessible than Williamson County while offering comparable quality of life. Its population has grown roughly 5% since the 2020 Census (61,753 to an estimated 64,800+ in 2026, per the U.S. Census Bureau) — steady, sustainable growth rather than a boom. Old Hickory Lake waterfront properties, strong schools, and established neighborhoods make it a perennial favorite for families relocating from out of state and Nashville buyers ready to slow down without leaving the metro.',
     buyerWhyBullets: [
       'Lake lifestyle access: Few Nashville suburbs offer the lake lifestyle that Hendersonville does. Old Hickory Lake waterfront and dock-access properties are rare and hold their value exceptionally well. Joshua knows this inventory intimately.',
       'School zone precision: Hendersonville\'s school assignments matter. Being in the right zone can affect home values by $15K–$25K. Joshua confirms school assignment for every property before you tour — no surprises.',
@@ -469,6 +470,7 @@ export const suburbs: Record<string, Suburb> = {
     topNeighborhoods: ['Indian Lake', 'Sanders Ferry', 'Drakes Creek', 'Walton Ferry', 'Durham Farms'],
     schoolDistrict: 'Sumner County Schools',
     commuteNote: '30-40 min to Nashville via Vietnam Veterans Blvd',
+    dataUpdatedAt: '2026-07-28',
   },
 
   'columbia-tn': {
