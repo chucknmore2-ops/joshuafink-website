@@ -77,7 +77,7 @@ const reasons = [
 const faqs = [
   {
     q: 'How do I sell my house fast in Nashville, TN?',
-    a: "Price it right from day one and pair it with real marketing — Joshua's listings average 18 days on market versus 30+ days for the broader Middle Tennessee MLS, across Nashville, Franklin, Brentwood, and surrounding suburbs. If you want to skip showings and repairs entirely, Joshua also connects sellers with vetted cash buyers who can close in as little as 7 days. Start with a free, no-obligation valuation and Joshua will lay out both timelines so you can pick the right one.",
+    a: "Price it right from day one and pair it with real marketing — professional photography, targeted digital promotion, and a pricing strategy built around current absorption in your subdivision, across Nashville, Franklin, Brentwood, and surrounding suburbs. If you want to skip showings and repairs entirely, Joshua also connects sellers with vetted cash buyers who can close in as little as 7 days. Start with a free, no-obligation valuation and Joshua will lay out both timelines so you can pick the right one.",
   },
   {
     q: 'How long does it take to sell a home in Middle Tennessee?',
