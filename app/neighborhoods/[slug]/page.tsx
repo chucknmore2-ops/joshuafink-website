@@ -71,7 +71,7 @@ export default async function NeighborhoodPage({ params }: Props) {
       content: n.slug,
     }
   )
-  const related = getRelatedNeighborhoods(n.slug, 3)
+  const related = getRelatedNeighborhoods(n.slug, 6)
 
   // On-site inventory: the site's OWN active listings whose city maps to this
   // neighborhood's parent city. Reuses the same listing→suburb matcher as
@@ -163,6 +163,34 @@ export default async function NeighborhoodPage({ params }: Props) {
     },
   }
 
+  const localBusinessSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: 'Joshua Fink Group — Compass Real Estate',
+    url: `https://www.joshuafink.com/neighborhoods/${n.slug}`,
+    telephone: '+16155512727',
+    email: 'joshua@joshuafink.com',
+    // Canonical Brentwood office NAP — must match app/layout.tsx and the
+    // Google Business Profile so every neighborhood page reinforces the same
+    // business location (map-pack eligibility).
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: '8119 Isabella Lane, Suite 105',
+      addressLocality: 'Brentwood',
+      addressRegion: 'TN',
+      postalCode: '37027',
+      addressCountry: 'US',
+    },
+    areaServed: {
+      '@type': 'City',
+      name: n.schemaCity,
+      addressRegion: n.schemaState,
+      addressCountry: 'US',
+    },
+    priceRange: '$$$',
+    description: `Top-rated real estate agent serving buyers and sellers in the ${n.name} neighborhood of ${n.city}, ${n.schemaState}. Local expertise, honest advice, proven results.`,
+  }
+
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -182,6 +210,7 @@ export default async function NeighborhoodPage({ params }: Props) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(placeSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(agentSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
 
@@ -244,7 +273,7 @@ export default async function NeighborhoodPage({ params }: Props) {
             )}
 
             {/* Compact above-the-fold lead capture — mirrors /buy/[suburb] hero form */}
-            <div className="mt-10 max-w-xl bg-white p-6 sm:p-7">
+            <div className="mt-10 max-w-xl bg-white p-6 sm:p-7 pb-20 md:pb-7">
               <p className="text-xs font-semibold tracking-widest uppercase mb-1" style={{ color: '#A0A0A0' }}>
                 Quick start — text Joshua
               </p>
@@ -281,8 +310,9 @@ export default async function NeighborhoodPage({ params }: Props) {
                   className="w-full text-white text-sm font-bold px-6 py-3 tracking-wide transition-colors"
                   style={{ backgroundColor: '#C41E3A' }}
                 >
-                  Text Me {n.name} Listings →
+                  {n.name} Insider Report — same-day reply
                 </button>
+                <p className="mt-2 text-[12px] text-[#7B7B7B]">Joshua replies same-day · no spam</p>
               </SuburbLeadForm>
             </div>
           </div>
@@ -457,6 +487,31 @@ export default async function NeighborhoodPage({ params }: Props) {
                 </button>
               </div>
             </SuburbLeadForm>
+          </div>
+        </div>
+
+        {/* Secondary-intent CTA — capture distressed / timeline-pressured seller
+            traffic that finds these guides while researching their own area. */}
+        <div className="bg-[#F5F1EA] border-b border-[#E8E8E8] py-10 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-2">
+                {n.city} Homeowner?
+              </p>
+              <h2 className="text-xl sm:text-2xl font-black text-black tracking-tight">
+                Need to sell fast? Get a cash offer for your {n.city} home.
+              </h2>
+              <p className="text-sm text-[#6B6B6B] mt-2">
+                No showings, no repairs, close in as little as 7 days.
+              </p>
+            </div>
+            <Link
+              href={`/cash-offer/${n.citySlug}`}
+              className="inline-block border border-black text-black text-sm font-bold px-6 py-3 tracking-wide hover:bg-black hover:text-white transition-colors whitespace-nowrap text-center"
+              data-cta="neighborhood-cash-offer"
+            >
+              Get a cash offer →
+            </Link>
           </div>
         </div>
 
@@ -742,6 +797,14 @@ export default async function NeighborhoodPage({ params }: Props) {
                     </div>
                   </Link>
                 ))}
+              </div>
+              <div className="mt-10">
+                <Link
+                  href="/neighborhoods"
+                  className="inline-block border border-black text-black text-sm font-bold px-6 py-3 tracking-wide hover:bg-black hover:text-white transition-colors"
+                >
+                  See all {n.city} neighborhoods →
+                </Link>
               </div>
             </div>
           </div>

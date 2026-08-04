@@ -323,8 +323,9 @@ export default async function BuySuburbPage({ params }: Props) {
                   className="w-full text-white text-sm font-bold px-6 py-3 tracking-wide transition-colors"
                   style={{ backgroundColor: '#C41E3A' }}
                 >
-                  Text Me {suburb.name} Listings →
+                  {suburb.name} Insider Report — same-day reply
                 </button>
+                <p className="mt-2 text-[12px] text-[#7B7B7B]">Joshua replies same-day · no spam</p>
               </SuburbLeadForm>
             </div>
           </div>

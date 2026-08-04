@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-07-22T10:30:11.987Z
+// AUTO-GENERATED — Last synced: 2026-08-04T10:44:31.911Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-sold.mjs
 
@@ -198,16 +198,16 @@ export const soldListings: Listing[] = [
     imageUrl: "https://www.compass.com/m/c932dca0373ffb58886dd64e8476f130223c250c_img_0_6968c/480x320.webp",
   },
   {
-    address: "1743 Stillwater Cir",
+    address: "9560 Dresden Square",
     city: "Brentwood, TN 37027",
-    price: 1100000,
-    beds: 4,
-    baths: 4,
-    sqft: 3324,
-    acres: 0.34,
+    price: 1225000,
+    beds: 6,
+    baths: 6,
+    sqft: 4256,
+    acres: 0.17,
     status: "Sold",
-    compassUrl: "https://www.compass.com/homedetails/1743-Stillwater-Cir-Brentwood-TN-37027/1191269538326923993_lid/",
-    imageUrl: "https://www.compass.com/m/abbef8264e1d5f980bd80224088f3a2b8360c857_img_0_e0986/480x320.webp",
+    compassUrl: "https://www.compass.com/homedetails/9560-Dresden-Square-Brentwood-TN-37027/2083554790607127753_lid/",
+    imageUrl: "https://www.compass.com/m/1726667bfbabb4404e04bd62941b072da078e36ffe55a775567367f26ee41f7d/480x320.webp",
   },
   {
     address: "8117 Hilldale Dr",

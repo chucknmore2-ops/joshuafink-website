@@ -203,7 +203,7 @@ export const suburbs: Record<string, Suburb> = {
     pricePerSqft: 228,
     yoyChange: '+4.7%',
     description:
-      'Nolensville has quietly become one of the most sought-after communities in Williamson County. What was once a quiet bedroom community has grown into a vibrant suburban town with top-tier schools, charming small-town character, and real estate prices to match the demand. The 2026 median home price in Nolensville sits around $580,000 — a number that reflects both Williamson County\'s premium reputation and the community\'s unique appeal to buyers who want space and quality without the congestion of Franklin or Brentwood. Homes here move quickly when priced right: the average days on market is just 22 days, and multiple-offer situations remain common for desirable properties. If you\'re considering selling in Nolensville, 2026 is a compelling moment.',
+      'Nolensville has quietly become one of the most sought-after communities in Williamson County. What was once a quiet bedroom community has grown into a vibrant suburban town with top-tier schools, charming small-town character, and real estate prices to match the demand. Founded in 1797 and still anchored by a historic downtown of 1800s buildings, Nolensville\'s population has climbed from 13,829 at the 2020 Census to an estimated 16,200+ in 2026 — roughly 17% growth in five years (U.S. Census Bureau) — even as the town works to preserve the small-town character that draws buyers here in the first place. The 2026 median home price in Nolensville sits around $580,000 — a number that reflects both Williamson County\'s premium reputation and the community\'s unique appeal to buyers who want space and quality without the congestion of Franklin or Brentwood. Homes here move quickly when priced right: the average days on market is just 22 days, and multiple-offer situations remain common for desirable properties. If you\'re considering selling in Nolensville, 2026 is a compelling moment.',
     whyBullets: [
       'Nolensville neighborhood intelligence: From Bent Creek to Scales Farmstead to Benington, Joshua knows how subdivision location, lot backing, and community amenities translate to buyer willingness to pay — and he\'ll leverage that in your favor.',
       'Small-town feel, big-city marketing: Nolensville buyers often hear about listings through word-of-mouth and community networks. Joshua is active in this market and can generate pre-listing buzz through his buyer pipeline before you even hit the MLS.',
@@ -226,11 +226,15 @@ export const suburbs: Record<string, Suburb> = {
         q: 'Are there any upcoming developments that could affect my home\'s value?',
         a: 'Nolensville has ongoing commercial and residential development. Some areas benefit from new retail and dining; others may face increased traffic. Joshua stays current on local planning and can advise on how upcoming changes affect your listing timing.',
       },
+      {
+        q: 'How much has Nolensville grown in recent years?',
+        a: 'Nolensville grew from 13,829 residents at the 2020 Census to an estimated 16,200+ in 2026 — about 17% growth in five years (U.S. Census Bureau). That steady, managed growth is a big part of why home values have held up: demand keeps climbing while the town has been deliberate about preserving its small-town feel rather than overbuilding.',
+      },
     ],
     schemaCity: 'Nolensville',
     schemaState: 'TN',
     schemaZip: '37135',
-    buyerDescription: 'Nolensville offers something increasingly rare in Middle Tennessee: small-town charm inside Williamson County. With a median price around $580,000, it sits between Franklin and Spring Hill in both price and character. Buyers are drawn to the established neighborhoods, top-tier schools, charming downtown, and the tight-knit community feel that larger suburbs can\'t replicate. Homes move fast here — averaging just 22 days on market — so buyers need to be pre-approved and decisive.',
+    buyerDescription: 'Nolensville offers something increasingly rare in Middle Tennessee: small-town charm inside Williamson County. Founded in 1797 and still centered on a historic downtown of 1800s-era buildings, the town has grown from 13,829 residents at the 2020 Census to an estimated 16,200+ in 2026 (U.S. Census Bureau) without losing that character. With a median price around $580,000, it sits between Franklin and Spring Hill in both price and character. Buyers are drawn to the established neighborhoods, top-tier schools, charming downtown, and the tight-knit community feel that larger suburbs can\'t replicate. Homes move fast here — averaging just 22 days on market — so buyers need to be pre-approved and decisive.',
     buyerWhyBullets: [
       'Hyperlocal subdivision knowledge: Nolensville has distinct neighborhoods — Bent Creek, Scales Farmstead, Benington — each with different price points and community feel. Joshua knows them all intimately and will match you to the right one.',
       'Speed advantage: Nolensville homes sell quickly. Joshua sets up instant MLS alerts and can typically get you into a showing within hours of a new listing hitting the market.',
@@ -240,11 +244,13 @@ export const suburbs: Record<string, Suburb> = {
       { q: 'What is the average home price in Nolensville, TN in 2026?', a: 'The median home price in Nolensville is approximately $580,000, with price per square foot around $228. Larger homes in premium subdivisions regularly exceed $700K.' },
       { q: 'How competitive is the Nolensville housing market?', a: 'Very competitive. With only 22 average days on market, desirable homes often receive multiple offers. Having your financing ready and a decisive mindset is critical. Joshua will help you build offers that win without overpaying.' },
       { q: 'What are the best neighborhoods in Nolensville for families?', a: 'Bent Creek and Scales Farmstead are popular for families with strong community amenities and top school assignments. Benington offers newer construction at a slight premium. Joshua will show you options based on your budget and priorities.' },
-      { q: 'Is Nolensville still growing?', a: 'Yes, but more slowly than Spring Hill or Thompson\'s Station. That controlled growth is actually a selling point — Nolensville has managed development carefully to preserve its character, which supports long-term value.' },
+      { q: 'Is Nolensville still growing?', a: 'Yes, but more slowly than Spring Hill or Thompson\'s Station. The town grew from 13,829 residents (2020 Census) to an estimated 16,200+ in 2026 — about 17% in five years. That controlled growth is actually a selling point — Nolensville has managed development carefully to preserve its character, which supports long-term value.' },
+      { q: 'Who should I hire to buy a home in Nolensville, TN?', a: 'Look for an agent with hyperlocal Nolensville subdivision knowledge — not just general Williamson County experience — since price and character shift noticeably between neighborhoods like Bent Creek, Scales Farmstead, and the historic downtown core. Joshua Fink is a Compass Affiliate Broker with 17+ years of experience personally selling 100+ homes a year across Williamson County, including Nolensville, and can move quickly on new listings given the town\'s 22-day average days on market.' },
     ],
     topNeighborhoods: ['Bent Creek', 'Scales Farmstead', 'Benington', 'Winterset Woods', 'Nolen Mill'],
     schoolDistrict: 'Williamson County Schools',
     commuteNote: '25 min to downtown Nashville via Nolensville Pike',
+    dataUpdatedAt: '2026-07-29',
   },
 
   'thompsons-station-tn': {
@@ -258,7 +264,7 @@ export const suburbs: Record<string, Suburb> = {
     pricePerSqft: 182,
     yoyChange: '+5.8%',
     description:
-      "Thompson's Station is one of Middle Tennessee's best-kept secrets — and that's starting to change. Located just south of Spring Hill along the I-65 corridor in Williamson County, Thompson's Station offers the county's prized school district, acreage lots not found elsewhere at this price point, and a rural character that's increasingly rare as the region grows. The 2026 median home price is approximately $420,000, making it one of the most affordable entry points into Williamson County real estate. Year-over-year appreciation is running nearly 6% — the strongest of any of the communities in this area. Buyers are actively seeking Thompson's Station for its space, its schools, and its value relative to neighboring Franklin and Spring Hill. If you own here, you own something buyers are genuinely competing for.",
+      "Thompson's Station is one of Middle Tennessee's best-kept secrets — and that's starting to change. Located just south of Spring Hill along the I-65 corridor in Williamson County, Thompson's Station offers the county's prized school district, acreage lots not found elsewhere at this price point, and a rural character that's increasingly rare as the region grows. The town's population has grown from 2,194 at the 2010 Census to 7,485 in the 2020 Census — and an estimated 9,800+ today, a roughly 30% increase in just five years — making it the fastest-growing city in Tennessee for 2026 (U.S. Census Bureau; HomeSnacks). The 2026 median home price is approximately $420,000, making it one of the most affordable entry points into Williamson County real estate. Year-over-year appreciation is running nearly 6% — the strongest of any of the communities in this area. Buyers are actively seeking Thompson's Station for its space, its schools, and its value relative to neighboring Franklin and Spring Hill. If you own here, you own something buyers are genuinely competing for.",
     whyBullets: [
       "Williamson County at a discount: Joshua positions Thompson's Station homes as the smart buyer's path into the county's school district — a compelling message that attracts motivated, qualified buyers actively comparing you to pricier alternatives.",
       "Land and space story: Many Thompson's Station homes sit on larger lots — sometimes half an acre to several acres. Joshua knows how to market this lifestyle advantage, especially to buyers moving from urban markets where space is scarce.",
@@ -271,7 +277,11 @@ export const suburbs: Record<string, Suburb> = {
       },
       {
         q: "Is Thompson's Station growing in popularity?",
-        a: "Yes — significantly. Thompson's Station is seeing some of the strongest appreciation in Williamson County, with year-over-year price gains around 5.8% in early 2026. Buyers priced out of Franklin and Spring Hill are actively looking here, and inventory remains tight.",
+        a: "Yes — significantly. The town grew from 2,194 residents at the 2010 Census to 7,485 in the 2020 Census, and HomeSnacks ranks it the #1 fastest-growing city in Tennessee for 2026. Thompson's Station is also seeing some of the strongest appreciation in Williamson County, with year-over-year price gains around 5.8% in early 2026. Buyers priced out of Franklin and Spring Hill are actively looking here, and inventory remains tight.",
+      },
+      {
+        q: "How much is my home worth in Thompson's Station, TN?",
+        a: "The median sale price in Thompson's Station is approximately $420,000 in 2026, with price per square foot near $182 — the most affordable entry point into Williamson County. Homes on larger lots (half-acre or more), with updated kitchens and primary-level living, routinely sell above the median given how fast the town is growing (the U.S. Census Bureau's 2020 count of 7,485 residents was already up from 2,194 in 2010, and HomeSnacks ranks it Tennessee's #1 fastest-growing city for 2026). National estimator tools like Zillow can vary widely on a specific address — Joshua will pull actual closed comps within a half-mile of your home for a number you can rely on.",
       },
       {
         q: "How does acreage affect my home's value in Thompson's Station?",
@@ -300,6 +310,7 @@ export const suburbs: Record<string, Suburb> = {
     topNeighborhoods: ['Bridgewater', 'Tollgate', 'Laurelbrook', 'Southbrooke', 'Rural acreage tracts'],
     schoolDistrict: 'Williamson County Schools',
     commuteNote: '35 min to downtown Nashville via I-65',
+    dataUpdatedAt: '2026-07-30',
   },
 
   'nashville-tn': {
@@ -323,6 +334,7 @@ export const suburbs: Record<string, Suburb> = {
       { q: 'Which Nashville neighborhoods are appreciating fastest?', a: 'Historically, East Nashville, Wedgewood-Houston, and Sylvan Park have led appreciation. Emerging areas like Bordeaux, North Nashville, and parts of Madison are showing strong momentum in 2026 as buyers seek value within city limits.' },
       { q: 'Is Nashville still a good time to sell?', a: 'Yes. Nashville\'s market has moderated from its 2021-2022 peak but remains firmly seller-favorable. Inventory is below pre-pandemic levels, corporate relocations continue, and demand from out-of-state buyers remains strong. Well-priced homes in desirable neighborhoods are still selling in 3-5 weeks.' },
       { q: 'What are closing costs for Nashville sellers?', a: 'Tennessee sellers typically pay 1-2% in closing costs plus commission. Nashville\'s transfer tax is $0.37 per $100 of value. Joshua provides a detailed net sheet before you list so you know exactly what you\'ll walk away with.' },
+      { q: 'How do I sell my house fast in Nashville, TN?', a: 'Price it correctly from day one, fix visible deferred maintenance, and get professional photography before you list — those three factors drive the majority of days-on-market variance in this city. Nashville homes are averaging 32 days on market in 2026, but well-priced, well-presented listings in strong neighborhoods routinely sell faster than that average. If you need a firm timeline, a cash-offer or as-is sale is also an option; Joshua can lay out the tradeoffs between listing and a fast, certain close so you can pick the path that fits your situation.' },
     ],
     schemaCity: 'Nashville',
     schemaState: 'TN',
@@ -354,7 +366,7 @@ export const suburbs: Record<string, Suburb> = {
     avgDaysOnMarket: 35,
     pricePerSqft: 168,
     yoyChange: '+4.8%',
-    description: 'Murfreesboro is one of the fastest-growing cities in Tennessee — and its real estate market tells the story. With a 2026 median home price of $380,000 and strong year-over-year appreciation near 5%, Murfreesboro offers buyers and sellers one of the best value propositions in Middle Tennessee. Home to MTSU and a massive healthcare employment base, the city draws young professionals, families, and investors in equal measure. Sellers benefit from a steady stream of demand driven by Murfreesboro\'s continued population growth — the city has been among the fastest-growing in the U.S. for over a decade and shows no signs of slowing.',
+    description: 'Murfreesboro is one of the fastest-growing cities in Tennessee — and its real estate market tells the story. The city has grown from 152,769 residents at the 2020 Census to an estimated 175,000+ in 2026, over 14% growth that ranked Murfreesboro the 16th fastest-growing city in the U.S. among cities over 100,000 people (U.S. Census Bureau; SmartAsset analysis). With a 2026 median home price of $380,000 and strong year-over-year appreciation near 5%, Murfreesboro offers buyers and sellers one of the best value propositions in Middle Tennessee. Home to MTSU and a massive healthcare employment base, the city draws young professionals, families, and investors in equal measure. Sellers benefit from a steady stream of demand driven by that population growth, which shows no signs of slowing.',
     whyBullets: [
       'Rutherford County market mastery: Murfreesboro spans diverse price points and neighborhoods — from starter homes near MTSU to executive properties in Oaklands and newer luxury builds in the northeast corridor. Joshua knows where value lives and how to position your home against the right competition.',
       'Growth corridor positioning: Murfreesboro\'s I-24 corridor is a major employment and commercial hub. Joshua understands how proximity to the medical center district, Amazon facilities, and downtown square affects your home\'s value and buyer appeal.',
@@ -362,14 +374,14 @@ export const suburbs: Record<string, Suburb> = {
     ],
     faqs: [
       { q: 'What is my Murfreesboro, TN home worth in 2026?', a: 'The median home price in Murfreesboro is approximately $380,000. Homes in established neighborhoods like Oaklands or newer developments in the northeast command a premium; starter homes near MTSU offer lower entry points. Joshua will pull specific comps for your address.' },
-      { q: 'Is Murfreesboro still growing?', a: 'Significantly. Murfreesboro has been one of the fastest-growing cities in the U.S. for over a decade. New employers, the MTSU effect, and proximity to Nashville continue to drive demand. Population growth translates directly to housing demand — a favorable tailwind for sellers.' },
+      { q: 'Is Murfreesboro still growing?', a: 'Significantly. Murfreesboro grew from 152,769 residents at the 2020 Census to an estimated 175,000+ in 2026 — over 14% growth, ranking it the 16th fastest-growing city in the U.S. among cities over 100,000 people (U.S. Census Bureau; SmartAsset analysis). New employers, the MTSU effect, and proximity to Nashville continue to drive demand. Population growth translates directly to housing demand — a favorable tailwind for sellers.' },
       { q: 'How does the MTSU rental market affect home values?', a: 'Rental demand near MTSU creates a strong investor buyer pool for certain price points. This is a positive for sellers — it adds another layer of buyer demand beyond traditional owner-occupants. Joshua can help you identify if your home is positioned to attract this segment.' },
       { q: 'How far is Murfreesboro from Nashville?', a: 'About 35 miles southeast of Nashville via I-24 — typically 35-45 minutes without traffic. Many residents commute to Nashville for work. The distance creates an attractive price-to-space ratio that continues to draw buyers from the Nashville metro.' },
     ],
     schemaCity: 'Murfreesboro',
     schemaState: 'TN',
     schemaZip: '37129',
-    buyerDescription: 'Murfreesboro is the value play for buyers who want space, good schools, and strong appreciation without the Williamson County price tag. At a median of $380,000, it\'s one of the most affordable markets in the Nashville metro with one of the highest appreciation rates. MTSU, a massive healthcare employment base, and a booming downtown square make it a genuinely livable city — not just a suburb. Buyers who get in now are ahead of a growth curve that shows no signs of stopping.',
+    buyerDescription: 'Murfreesboro is the value play for buyers who want space, good schools, and strong appreciation without the Williamson County price tag. At a median of $380,000, it\'s one of the most affordable markets in the Nashville metro with one of the highest appreciation rates. The population has grown over 14% since the 2020 Census — to an estimated 175,000+ in 2026 — making it the 16th fastest-growing city in the U.S. among cities over 100,000 people (U.S. Census Bureau; SmartAsset analysis). MTSU, a massive healthcare employment base, and a booming downtown square make it a genuinely livable city — not just a suburb. Buyers who get in now are ahead of a growth curve that shows no signs of stopping.',
     buyerWhyBullets: [
       'Value maximization: Murfreesboro offers more square footage per dollar than any Nashville suburb. Joshua helps buyers understand the price-to-value equation and find properties with the best upside in the market.',
       'Investment potential: Murfreesboro\'s strong rental market — driven by MTSU and healthcare employment — makes it attractive for house hackers and investors. Joshua evaluates every property through both an owner-occupant and investor lens.',
@@ -379,11 +391,12 @@ export const suburbs: Record<string, Suburb> = {
       { q: 'What is the average home price in Murfreesboro, TN in 2026?', a: 'The median is approximately $380,000. Entry-level homes start around $280K; newer construction in the northeast corridor runs $450K–$550K.' },
       { q: 'What are the best Murfreesboro neighborhoods?', a: 'Oaklands for established, tree-lined streets and proximity to the historic district. Northeast Murfreesboro for newer construction and top schools. Near downtown for walkability and the growing restaurant/bar scene. Joshua will match you based on your priorities.' },
       { q: 'Are Rutherford County schools good?', a: 'Rutherford County Schools has several highly-rated schools, particularly in the northeast and established suburban areas. Specific school assignments vary significantly by address — Joshua verifies school assignment for every home before you tour.' },
-      { q: 'Is Murfreesboro a good investment?', a: 'One of the best in Middle Tennessee. Strong population growth, MTSU rental demand, healthcare employment, and an affordable entry point make it a compelling buy-and-hold market. Appreciation has run nearly 5% year-over-year.' },
+      { q: 'Is Murfreesboro a good investment?', a: 'One of the best in Middle Tennessee. Population grew over 14% since the 2020 Census (152,769 to an estimated 175,000+ in 2026, per the U.S. Census Bureau), and that growth plus MTSU rental demand, healthcare employment, and an affordable entry point make it a compelling buy-and-hold market. Appreciation has run nearly 5% year-over-year.' },
     ],
     topNeighborhoods: ['Oaklands', 'Northfield', 'Ellendale', 'Blackman', 'Downtown Murfreesboro'],
     schoolDistrict: 'Rutherford County Schools',
     commuteNote: '35 min to Nashville via I-24',
+    dataUpdatedAt: '2026-07-24',
   },
 
   'gallatin-tn': {
@@ -396,7 +409,7 @@ export const suburbs: Record<string, Suburb> = {
     avgDaysOnMarket: 38,
     pricePerSqft: 158,
     yoyChange: '+5.5%',
-    description: 'Gallatin is having a moment. One of the most affordable entry points into the Nashville metro, Gallatin has seen dramatic appreciation — nearly 5.5% year-over-year — as buyers priced out of Williamson County and Davidson County increasingly look north to Sumner County. The 2026 median home price is approximately $350,000, making it the value choice for families and first-time buyers who want space and community without the premium prices of Franklin or Brentwood. Gallatin offers a genuine small-town feel with a growing downtown, lakefront access to Old Hickory Lake, and easy access to Hendersonville and the Gallatin Pike corridor to Nashville.',
+    description: 'Gallatin is having a moment. One of the most affordable entry points into the Nashville metro, Gallatin has seen dramatic appreciation — nearly 5.5% year-over-year — as buyers priced out of Williamson County and Davidson County increasingly look north to Sumner County. The city\'s population has grown from about 44,400 at the 2020 Census to an estimated 53,000+ in 2026 — roughly 26% growth in five years (U.S. Census Bureau). The 2026 median home price is approximately $350,000, making it the value choice for families and first-time buyers who want space and community without the premium prices of Franklin or Brentwood. Gallatin offers a genuine small-town feel with a growing downtown, lakefront access to Old Hickory Lake, the main campus of Volunteer State Community College, and easy access to Hendersonville and the Gallatin Pike corridor to Nashville.',
     whyBullets: [
       'Sumner County value positioning: Gallatin buyers are often comparing against Hendersonville and Madison. Joshua understands how to price and position your home in this competitive set and attract the motivated buyers flowing north from Davidson County.',
       'Old Hickory Lake premium: Waterfront and lake-access properties in Gallatin command a significant premium. Joshua has experience marketing these lifestyle properties and knows how to attract the specific buyer profile that pays top dollar for lake living.',
@@ -404,28 +417,29 @@ export const suburbs: Record<string, Suburb> = {
     ],
     faqs: [
       { q: 'What is my Gallatin, TN home worth in 2026?', a: 'The median home price in Gallatin is approximately $350,000. Waterfront or lake-access properties on Old Hickory Lake can command significant premiums above median. Joshua will pull recent sold comps specific to your neighborhood and property type.' },
-      { q: 'Is Gallatin growing?', a: 'Yes — rapidly. Gallatin is one of the fastest-growing cities in Sumner County, driven by affordability relative to the Nashville core and ongoing infrastructure investment. The I-265 connector project is expected to improve commute times significantly.' },
+      { q: 'Is Gallatin growing?', a: 'Yes — rapidly. Gallatin\'s population grew from about 44,400 at the 2020 Census to an estimated 53,000+ in 2026, roughly 26% in five years (U.S. Census Bureau), driven by affordability relative to the Nashville core. The city completed a $31 million connector road from SR-109 to Dobbins Pike in 2022, built to divert downtown Gallatin traffic and support that growth.' },
       { q: 'What makes Gallatin different from Hendersonville?', a: 'Gallatin tends to be slightly more affordable than Hendersonville with a stronger small-town downtown feel. Hendersonville has more established retail and amenities. Both are in Sumner County with similar school systems. Joshua can help you understand how the differences affect value.' },
-      { q: 'How far is Gallatin from Nashville?', a: 'About 30 miles northeast of Nashville — typically 35-45 minutes via US-31E or Vietnam Veterans Blvd. The planned I-265 connector will improve this commute significantly when completed.' },
+      { q: 'How far is Gallatin from Nashville?', a: 'About 30 miles northeast of Nashville — typically 35-45 minutes via US-31E or Vietnam Veterans Blvd.' },
     ],
     schemaCity: 'Gallatin',
     schemaState: 'TN',
     schemaZip: '37066',
-    buyerDescription: 'Gallatin is where smart buyers are going in 2026. At a median of $350,000 — the lowest entry point in the Nashville metro with access to Old Hickory Lake — it offers space, community, and one of the strongest appreciation rates in Middle Tennessee at 5.5% year-over-year. Buyers who moved here 3-5 years ago are sitting on significant equity. Those buying now are positioned for the next wave of growth as Nashville\'s sprawl continues northeast and the I-265 connector project improves commute times.',
+    buyerDescription: 'Gallatin is where smart buyers are going in 2026. At a median of $350,000 — the lowest entry point in the Nashville metro with access to Old Hickory Lake — it offers space, community, and one of the strongest appreciation rates in Middle Tennessee at 5.5% year-over-year. Buyers who moved here 3-5 years ago are sitting on significant equity. Those buying now are positioned for the next wave of growth: the city\'s population is up roughly 26% since the 2020 Census (U.S. Census Bureau), and Gallatin is already home to the main campus of Volunteer State Community College.',
     buyerWhyBullets: [
       'Best value in the metro: Gallatin offers the lowest price-per-square-foot of any Nashville suburb while delivering the lifestyle and community buyers want. Joshua helps you find the right property in the right pocket to maximize your upside.',
       'Lake access expertise: Old Hickory Lake waterfront and lake-access properties require specific due diligence — dock permits, flood zones, shoreline restrictions. Joshua knows what to look for and how to evaluate lake properties correctly.',
-      'Growth timing: Gallatin is at an inflection point. The I-265 connector will change commute math significantly. Buyers who get in before that project completes are buying ahead of a likely appreciation surge.',
+      'Growth timing: Gallatin\'s population is up roughly 26% since the 2020 Census (U.S. Census Bureau). Buyers who get in now are buying ahead of a fast-growing city rather than chasing an already-priced-in market.',
     ],
     buyerFaqs: [
       { q: 'What is the average home price in Gallatin, TN in 2026?', a: 'The median is approximately $350,000 — one of the most affordable in the Nashville metro. Entry-level homes start under $280K; waterfront properties on Old Hickory Lake run $500K–$1M+.' },
       { q: 'Are there good schools in Gallatin?', a: 'Sumner County Schools serves Gallatin with several well-regarded schools. Station Camp High School is particularly well-rated. Joshua verifies school assignment for every home before you make an offer.' },
       { q: 'Can I find waterfront homes in Gallatin?', a: 'Yes — Old Hickory Lake has significant waterfront and lake-access inventory in and around Gallatin. These properties require specific inspection considerations (dock permits, flood zones, septic on waterfront). Joshua has experience navigating waterfront purchases in this market.' },
-      { q: 'Is Gallatin a good long-term investment?', a: 'Strong case for it. Affordability relative to the metro, consistent 5%+ appreciation, lakefront lifestyle appeal, and the coming I-265 infrastructure improvement all support a positive outlook. One of the best value propositions in Middle Tennessee.' },
+      { q: 'Is Gallatin a good long-term investment?', a: 'Strong case for it. Affordability relative to the metro, consistent 5%+ appreciation, lakefront lifestyle appeal, and population growth of roughly 26% since the 2020 Census (U.S. Census Bureau) all support a positive outlook. One of the best value propositions in Middle Tennessee.' },
     ],
     topNeighborhoods: ['Station Camp', 'Lakeside', 'Sanders Ferry', 'Downtown Gallatin', 'Wynbrooke'],
     schoolDistrict: 'Sumner County Schools',
     commuteNote: '35-45 min to Nashville via US-31E',
+    dataUpdatedAt: '2026-07-25',
   },
 
   'hendersonville-tn': {
@@ -438,7 +452,7 @@ export const suburbs: Record<string, Suburb> = {
     avgDaysOnMarket: 30,
     pricePerSqft: 178,
     yoyChange: '+4.3%',
-    description: 'Hendersonville is Sumner County\'s crown jewel — a well-established community with lakefront living on Old Hickory Lake, strong schools, and a market that consistently outperforms surrounding areas. The 2026 median home price is approximately $410,000, reflecting Hendersonville\'s reputation as a desirable, family-friendly community with strong infrastructure and a loyal buyer base. Homes here sell faster than in neighboring Gallatin — averaging 30 days on market — due to the combination of established amenities, school quality, and lake lifestyle. Hendersonville sellers benefit from a steady stream of Nashville metro buyers willing to pay a premium for what the community offers.',
+    description: 'Hendersonville is Sumner County\'s crown jewel — a well-established community with lakefront living on Old Hickory Lake, strong schools, and a market that consistently outperforms surrounding areas. The 2026 median home price is approximately $410,000, reflecting Hendersonville\'s reputation as a desirable, family-friendly community with strong infrastructure and a loyal buyer base. Homes here sell faster than in neighboring Gallatin — averaging 30 days on market — due to the combination of established amenities, school quality, and lake lifestyle. The city has grown from 61,753 residents at the 2020 Census to an estimated 64,800+ in 2026 — about 5% growth in five years, driven largely by Nashville-area buyers moving up to the lake for more space and a lower price point than Williamson County (U.S. Census Bureau). Hendersonville sellers benefit from a steady stream of Nashville metro buyers willing to pay a premium for what the community offers.',
     whyBullets: [
       'Established community premium: Hendersonville\'s mature neighborhoods, established schools, and lake lifestyle create consistent buyer demand. Joshua knows how to position your home to capture the premium buyers are willing to pay for the Hendersonville address.',
       'Old Hickory Lake expertise: Lakefront and lake-access properties are among Hendersonville\'s most sought-after. Joshua has deep experience marketing these lifestyle properties and understands the specific buyer who seeks lake living — and what they pay for it.',
@@ -449,11 +463,12 @@ export const suburbs: Record<string, Suburb> = {
       { q: 'How does Hendersonville compare to Gallatin for sellers?', a: 'Hendersonville tends to command a slightly higher price and sell faster than Gallatin — reflecting its more established infrastructure and amenities. Both markets are healthy, but Hendersonville\'s lake lifestyle creates a specific premium buyer pool.' },
       { q: 'Are Hendersonville schools good?', a: 'Sumner County Schools serves Hendersonville with several high-performing options. Beech High School and Indian Lake Elementary are well-regarded. School assignment affects value — Joshua always factors it into your pricing strategy.' },
       { q: 'Is Hendersonville a seller\'s market?', a: 'Yes. With 30 average days on market and consistent appreciation, Hendersonville leans seller-favorable. Well-priced, well-presented homes — especially with lake access — are seeing competitive offers.' },
+      { q: 'Is Hendersonville, TN growing?', a: 'Yes, steadily. The population grew from 61,753 at the 2020 Census to an estimated 64,800+ in 2026 (U.S. Census Bureau) — about 5% growth in five years. It\'s not explosive growth like some outer Middle TN suburbs, which is part of the appeal: Hendersonville\'s infrastructure and schools have kept pace with demand rather than being strained by it.' },
     ],
     schemaCity: 'Hendersonville',
     schemaState: 'TN',
     schemaZip: '37075',
-    buyerDescription: 'Hendersonville gives buyers the best of both worlds: the community feel and lake lifestyle of a small city, with the amenities and access of a Nashville suburb. At a median of $410,000, it\'s more accessible than Williamson County while offering comparable quality of life. Old Hickory Lake waterfront properties, strong schools, and established neighborhoods make it a perennial favorite for families relocating from out of state and Nashville buyers ready to slow down without leaving the metro.',
+    buyerDescription: 'Hendersonville gives buyers the best of both worlds: the community feel and lake lifestyle of a small city, with the amenities and access of a Nashville suburb. At a median of $410,000, it\'s more accessible than Williamson County while offering comparable quality of life. Its population has grown roughly 5% since the 2020 Census (61,753 to an estimated 64,800+ in 2026, per the U.S. Census Bureau) — steady, sustainable growth rather than a boom. Old Hickory Lake waterfront properties, strong schools, and established neighborhoods make it a perennial favorite for families relocating from out of state and Nashville buyers ready to slow down without leaving the metro.',
     buyerWhyBullets: [
       'Lake lifestyle access: Few Nashville suburbs offer the lake lifestyle that Hendersonville does. Old Hickory Lake waterfront and dock-access properties are rare and hold their value exceptionally well. Joshua knows this inventory intimately.',
       'School zone precision: Hendersonville\'s school assignments matter. Being in the right zone can affect home values by $15K–$25K. Joshua confirms school assignment for every property before you tour — no surprises.',
@@ -468,6 +483,7 @@ export const suburbs: Record<string, Suburb> = {
     topNeighborhoods: ['Indian Lake', 'Sanders Ferry', 'Drakes Creek', 'Walton Ferry', 'Durham Farms'],
     schoolDistrict: 'Sumner County Schools',
     commuteNote: '30-40 min to Nashville via Vietnam Veterans Blvd',
+    dataUpdatedAt: '2026-07-28',
   },
 
   'columbia-tn': {
@@ -480,36 +496,37 @@ export const suburbs: Record<string, Suburb> = {
     avgDaysOnMarket: 28,
     pricePerSqft: 185,
     yoyChange: '+5.1%',
-    description: 'Columbia is one of Middle Tennessee\'s most compelling value markets in 2026. Located in Maury County just south of Spring Hill, Columbia blends historic charm, strong growth, and attainable price points that continue to draw both first-time buyers and move-up families. With a median home price around $340,000 and appreciation over 5%, sellers are benefiting from expanding buyer demand as Nashville-area affordability pushes more households south. Joshua Fink and Compass position Columbia listings with a data-backed strategy that highlights both lifestyle and long-term upside.',
+    description: 'Columbia anchors Maury County — Tennessee\'s #2 fastest-growing county by percentage from 2024 to 2025, adding 3,675 residents in a single year (Maury Alliance). The city itself has grown from 41,690 residents at the 2020 Census to an estimated 48,800+ in 2026, up roughly 17% (U.S. Census Bureau). That growth is backed by real jobs: Maury Regional Medical Center, flagship hospital of Maury Regional Health — the region\'s largest health system, with 3,000+ employees — is headquartered in Columbia, and continued spillover from GM\'s Ultium Cells battery plant in neighboring Spring Hill keeps demand strong. With a median home price around $340,000 and appreciation over 5%, sellers are benefiting from this expanding, employment-backed buyer pool as Nashville-area affordability pushes more households south. Joshua Fink and Compass position Columbia listings with a data-backed strategy that highlights both lifestyle and long-term upside.',
     whyBullets: [
-      'Local buyer demand is accelerating: Joshua actively markets Columbia homes to buyers relocating from Nashville and Spring Hill who want more space and better value at this price point.',
+      'Fastest-growing county tailwind: Maury County was Tennessee\'s #2 fastest-growing county by percentage in 2024–2025, adding 3,675 new residents (Maury Alliance) — Joshua markets your Columbia listing directly to that inbound buyer wave.',
       'Hyperlocal pricing strategy: From downtown Columbia historic homes to newer subdivisions off James Campbell Blvd, Joshua prices by micro-area so your home launches with precision.',
-      'Compass marketing advantage: Professional media, targeted digital campaigns, and Compass network exposure help Columbia sellers reach qualified buyers quickly.',
+      'Employer-backed demand: Maury Regional Health (3,000+ employees, headquartered in Columbia) and continued GM/Ultium Cells growth in neighboring Spring Hill keep a steady, job-driven buyer pool flowing into Columbia.',
     ],
     faqs: [
       { q: 'What is my Columbia, TN home worth in 2026?', a: 'The median price is approximately $340,000 with price per square foot near $185. Final value depends on neighborhood, updates, lot size, and proximity to downtown Columbia or key corridors. Joshua will provide a precise CMA based on nearby sold comps.' },
       { q: 'How fast are homes selling in Columbia?', a: 'Well-priced homes are averaging about 28 days on market. Updated properties and homes in desirable school zones can move faster, especially in the spring and summer selling seasons.' },
-      { q: 'Is Columbia still appreciating?', a: 'Yes. Columbia is currently showing around 5.1% year-over-year appreciation, supported by population growth and affordability relative to northern suburbs.' },
+      { q: 'Is Columbia still growing?', a: 'Yes — Maury County was Tennessee\'s second-fastest-growing county by percentage from 2024 to 2025, adding 3,675 residents (Maury Alliance), and Columbia itself has grown from 41,690 residents at the 2020 Census to an estimated 48,800+ in 2026. Maury Regional Health\'s 3,000+ local jobs and continued GM/Ultium Cells expansion in Spring Hill are a direct tailwind for home values.' },
       { q: 'Should I renovate before listing in Columbia?', a: 'Strategic updates can increase your net, especially paint, curb appeal, and light kitchen/bath improvements. Joshua will help you focus only on upgrades with clear ROI.' },
     ],
     schemaCity: 'Columbia',
     schemaState: 'TN',
     schemaZip: '38401',
-    buyerDescription: 'Columbia gives buyers strong value with meaningful upside. At a $340,000 median, it offers an attainable entry point with room to grow, while still keeping access to Spring Hill, Franklin, and Nashville job centers. Joshua and Compass help buyers identify the neighborhoods where appreciation, livability, and long-term resale value align best.',
+    buyerDescription: 'Columbia gives buyers strong value with meaningful, growth-backed upside. Maury County was Tennessee\'s #2 fastest-growing county by percentage in 2024–2025 (Maury Alliance), and Columbia has grown to an estimated 48,800+ residents — up roughly 17% since the 2020 Census. At a $340,000 median, it offers an attainable entry point while keeping access to Spring Hill, Franklin, and Nashville job centers, plus Maury Regional Health\'s 3,000+ local jobs right in town. Joshua and Compass help buyers identify the neighborhoods where appreciation, livability, and long-term resale value align best.',
     buyerWhyBullets: [
-      'Affordability with upside: Columbia offers lower entry pricing than many nearby markets while still delivering solid appreciation potential.',
+      'Growth-backed value: Columbia\'s population has grown roughly 17% since the 2020 Census, and Maury County ranked as Tennessee\'s #2 fastest-growing county by percentage in 2024–2025 — Joshua helps you buy ahead of that curve, not after it.',
       'Neighborhood matching: Joshua helps buyers compare historic districts, newer communities, and commuter-friendly pockets based on lifestyle and budget.',
       'Offer strategy that wins: In competitive segments, Joshua structures strong, clean offers that protect your interests while improving acceptance odds.',
     ],
     buyerFaqs: [
       { q: 'What is the average home price in Columbia, TN in 2026?', a: 'The median home price is around $340,000, with entry-level options below that and larger updated homes generally ranging higher.' },
-      { q: 'Is Columbia a good place for first-time buyers?', a: 'Yes. Columbia is one of the most first-time-buyer-friendly markets in Middle Tennessee due to price point, inventory variety, and growth momentum.' },
+      { q: 'Is Columbia a good place for first-time buyers?', a: 'Yes. Columbia is one of the most first-time-buyer-friendly markets in Middle Tennessee due to price point, inventory variety, and growth momentum — Maury Regional Health alone employs 3,000+ people right in town.' },
       { q: 'What are the best neighborhoods in Columbia?', a: 'Popular areas include Downtown Columbia, Sunnyside, Bear Creek Pike corridors, The Crossings, and North Columbia growth pockets. Joshua can match you to the best fit.' },
       { q: 'How long does it take to buy in Columbia?', a: 'Most buyers close within 45–75 days depending on financing and inventory. Preparation and fast showings are key in competitive price ranges.' },
     ],
     topNeighborhoods: ['Downtown Columbia', 'Sunnyside', 'North Columbia', 'The Crossings', 'Bear Creek Pike area'],
     schoolDistrict: 'Maury County Public Schools',
     commuteNote: '45 min to downtown Nashville via I-65 (varies by traffic)',
+    dataUpdatedAt: '2026-07-21',
   },
 
   'mount-juliet-tn': {
@@ -522,22 +539,24 @@ export const suburbs: Record<string, Suburb> = {
     avgDaysOnMarket: 19,
     pricePerSqft: 225,
     yoyChange: '+3.8%',
-    description: 'Mount Juliet is one of the strongest-performing suburban markets east of Nashville. Known for top amenities, family-friendly neighborhoods, and a direct commuter route into the city, Mount Juliet continues to attract high-intent buyers. With a 2026 median home price around $480,000 and only 19 average days on market, sellers benefit from a fast-moving environment where quality listings receive immediate attention. Joshua Fink and Compass bring the strategy and exposure needed to maximize outcomes in this competitive market.',
+    description: 'Mount Juliet is one of the strongest-performing suburban markets east of Nashville — and one of the fastest-growing cities in Tennessee, up from 39,682 residents at the 2020 Census to an estimated 46,000+ today (nearly 17% growth). Known for top amenities, family-friendly neighborhoods, and a direct commuter route into the city, Mount Juliet continues to attract high-intent buyers. Providence MarketPlace, the largest open-air shopping center between Nashville and Knoxville, anchors the city\'s retail and job base. With a 2026 median home price around $480,000 and only 19 average days on market, sellers benefit from a fast-moving environment where quality listings receive immediate attention. Joshua Fink and Compass bring the strategy and exposure needed to maximize outcomes in this competitive market.',
     whyBullets: [
       'Speed-focused launch strategy: With homes moving quickly, Joshua times listing prep, photography, and launch windows to capture peak buyer demand.',
       'Subdivision-level pricing expertise: Mount Juliet has meaningful price differences by community and school assignment; Joshua calibrates your pricing to your exact micro-market.',
       'Commuter and relocation buyer reach: Compass network exposure helps attract Nashville-area commuters and out-of-state transferees targeting Wilson County.',
+      'Growth-market timing: Mount Juliet\'s population has grown nearly 17% since the 2020 Census. Joshua tracks this demand curve closely so your listing is priced and positioned to capture the next wave of buyers, not just today\'s.',
     ],
     faqs: [
       { q: 'What is my Mount Juliet home worth in 2026?', a: 'The local median is about $480,000 with average pricing near $225 per square foot. Final value depends on subdivision, lot quality, updates, and school zone. Joshua provides a comp-backed valuation before listing.' },
       { q: 'How quickly do homes sell in Mount Juliet?', a: 'Average market time is approximately 19 days. Well-presented homes in desirable neighborhoods often move faster and may receive multiple offers.' },
       { q: 'Is Mount Juliet still a seller-friendly market?', a: 'Yes. Inventory remains relatively tight versus demand, especially for move-in-ready homes in popular family neighborhoods.' },
+      { q: 'Is Mount Juliet still growing?', a: 'Yes, significantly. The city grew from 39,682 residents at the 2020 Census to an estimated 46,000+ today — nearly 17% growth in just a few years, among the fastest rates in Tennessee. Providence MarketPlace, the largest open-air shopping center between Nashville and Knoxville, has grown alongside it. That population growth translates directly into steady buyer demand, a favorable backdrop for sellers.' },
       { q: 'What prep matters most before listing?', a: 'Professional photos, clean curb appeal, neutral interior touch-ups, and correct initial pricing are the biggest levers. Joshua coordinates this process end-to-end.' },
     ],
     schemaCity: 'Mount Juliet',
     schemaState: 'TN',
     schemaZip: '37122',
-    buyerDescription: 'Mount Juliet is ideal for buyers who want suburban convenience, strong schools, and quick Nashville access. The median sits around $480,000 with tight market time, so preparation matters. Joshua and Compass help buyers move quickly, evaluate value accurately, and compete effectively in one of Wilson County\'s most active markets.',
+    buyerDescription: 'Mount Juliet is ideal for buyers who want suburban convenience, strong schools, and quick Nashville access — and it\'s one of Tennessee\'s fastest-growing cities, up nearly 17% since the 2020 Census. The median sits around $480,000 with tight market time, so preparation matters. Joshua and Compass help buyers move quickly, evaluate value accurately, and compete effectively in one of Wilson County\'s most active markets.',
     buyerWhyBullets: [
       'Fast-market execution: Joshua sets up targeted alerts and rapid tours so you can act quickly on the right opportunities.',
       'Commuter-friendly guidance: Mount Juliet has multiple pockets with different commute profiles; Joshua helps you choose based on your daily routine.',
@@ -552,6 +571,7 @@ export const suburbs: Record<string, Suburb> = {
     topNeighborhoods: ['Providence', 'Nichols Vale', 'Willoughby Station', 'Wright Farms', 'Del Webb Lake Providence'],
     schoolDistrict: 'Wilson County Schools',
     commuteNote: '25-35 min to downtown Nashville depending on traffic',
+    dataUpdatedAt: '2026-07-23',
   },
 
   'lebanon-tn': {
@@ -564,32 +584,33 @@ export const suburbs: Record<string, Suburb> = {
     avgDaysOnMarket: 24,
     pricePerSqft: 195,
     yoyChange: '+4.5%',
-    description: 'Lebanon offers buyers a balanced mix of affordability, growth, and commuter access in Wilson County. With a 2026 median home price around $380,000 and solid year-over-year appreciation, Lebanon has become a go-to market for buyers seeking more space without stretching into higher-priced suburbs. Sellers benefit from steady demand and a broad buyer pool that includes first-time purchasers, move-up families, and investors. Joshua Fink and Compass deliver a strategic listing plan that captures this demand and drives strong outcomes.',
+    description: "Lebanon is one of Wilson County's fastest-growing markets — and home to a national-brand employer few buyers expect: Cracker Barrel Old Country Store has been headquartered in Lebanon since 1969, anchoring roughly 820 corporate jobs alongside a major Under Armour distribution center (1,500+ employees) and Wilson County Schools. That employment base has driven real population growth — from 38,908 residents at the 2020 Census to an estimated 56,325 in 2026, a 44%+ increase that made Lebanon one of the 12 fastest-growing cities in the U.S. between July 2023 and July 2024 (U.S. Census Bureau). With a 2026 median home price around $380,000 and solid year-over-year appreciation, Lebanon remains a go-to market for buyers seeking more space without stretching into higher-priced suburbs. Sellers benefit from steady demand and a broad buyer pool that includes first-time purchasers, move-up families, relocating employees, and investors. Joshua Fink and Compass deliver a strategic listing plan that captures this demand and drives strong outcomes.",
     whyBullets: [
-      'Broad buyer pool: Lebanon attracts commuters, families, and investors, giving sellers multiple demand channels and more pricing support.',
+      "Employer-driven buyer demand: Cracker Barrel's corporate headquarters and the Under Armour distribution center anchor a steady pipeline of relocating and promoted employees — Joshua markets directly to this built-in buyer pool.",
       'Wilson County market knowledge: Joshua tracks neighborhood-level movement and recent comps so your home is priced to attract offers quickly.',
       'Compass-backed marketing: Listing media and digital distribution are designed to maximize visibility in a market where polished presentation wins.',
     ],
     faqs: [
       { q: 'What is my Lebanon, TN home worth in 2026?', a: 'The median is roughly $380,000 with pricing around $195 per square foot. Your specific value depends on condition, location, and lot features. Joshua provides a tailored valuation using recent neighborhood comps.' },
       { q: 'How long do homes stay on market in Lebanon?', a: 'Average days on market are around 24 days. Properly priced homes in move-in-ready condition often move faster.' },
-      { q: 'Is Lebanon still appreciating?', a: 'Yes. Current year-over-year change is about +4.5%, supported by continued regional growth and commuter demand.' },
+      { q: 'What is driving Lebanon\'s growth?', a: "Cracker Barrel's national headquarters (about 820 corporate employees) and a major Under Armour distribution center (1,500+ jobs) give Lebanon a stable, diversified employment base. That's helped fuel real population growth — from 38,908 at the 2020 Census to an estimated 56,325 in 2026, making Lebanon one of the 12 fastest-growing cities in the U.S. (U.S. Census Bureau, July 2023-2024)." },
       { q: 'What improvements help sellers most in Lebanon?', a: 'Clean exterior presentation, fresh paint, lighting updates, and pre-listing maintenance checks usually deliver the best return for sellers.' },
     ],
     schemaCity: 'Lebanon',
     schemaState: 'TN',
     schemaZip: '37087',
-    buyerDescription: 'Lebanon is a strong option for buyers who want value and space with reliable access to Nashville and surrounding job centers. At a $380,000 median, it remains more attainable than many inner-ring suburbs while still offering stable appreciation. Joshua and Compass help buyers target neighborhoods with the best blend of price, lifestyle, and long-term resale value.',
+    dataUpdatedAt: '2026-07-22',
+    buyerDescription: "Lebanon is a strong option for buyers who want value and space with reliable access to Nashville and surrounding job centers. It's also a market with a genuine employment anchor: Cracker Barrel's corporate headquarters and a large Under Armour distribution center have helped drive Lebanon's population up more than 44% since the 2020 Census. At a $380,000 median, it remains more attainable than many inner-ring suburbs while still offering stable appreciation. Joshua and Compass help buyers target neighborhoods with the best blend of price, lifestyle, and long-term resale value.",
     buyerWhyBullets: [
+      "Relocation-ready guidance: Buyers moving for jobs at Cracker Barrel's headquarters or the Under Armour distribution center get neighborhood and commute recommendations tailored to their new employer's location.",
       'Value-focused search strategy: Joshua helps you prioritize neighborhoods where your budget goes further without sacrificing market strength.',
       'Commuter-aware home selection: Lebanon has multiple access points and commute profiles; Joshua helps you choose based on your schedule.',
-      'Guided transaction support: From tour strategy to inspection and contract terms, Joshua keeps the process clear and efficient.',
     ],
     buyerFaqs: [
       { q: 'What is the average home price in Lebanon, TN in 2026?', a: 'The median home price is approximately $380,000, with options across entry-level, new construction, and larger move-up inventory.' },
       { q: 'Is Lebanon a good market for first-time buyers?', a: 'Yes. Relative affordability and inventory variety make Lebanon attractive for first-time and value-driven buyers.' },
       { q: 'What neighborhoods are popular in Lebanon?', a: 'Popular areas include Five Oaks vicinity, Spence Creek, Hunters Point, Kensington, and downtown-adjacent neighborhoods.' },
-      { q: 'How competitive is Lebanon for buyers?', a: 'It is active but manageable. Well-priced homes can move quickly, so pre-approval and responsive scheduling remain important.' },
+      { q: 'Is Lebanon a good long-term investment?', a: "There's a solid case for it. A diversified employer base (Cracker Barrel's HQ, Under Armour distribution, Wilson County Schools), 44%+ population growth since the 2020 Census, and steady price appreciation all support a positive long-term outlook." },
     ],
     topNeighborhoods: ['Five Oaks area', 'Spence Creek', 'Hunters Point', 'Kensington', 'Downtown Lebanon'],
     schoolDistrict: 'Wilson County Schools',
