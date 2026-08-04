@@ -81,6 +81,9 @@ export default function SellForm() {
     <form onSubmit={handleSubmit} className="space-y-5">
       <input type="hidden" name="lead_type" value="seller" />
       <input type="hidden" name="subject" value="sell" />
+      {/* Honeypot — invisible to humans, bots auto-fill it. */}
+      <input type="text" name="website" autoComplete="off" tabIndex={-1} aria-hidden="true"
+        style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, width: 0 }} />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div>

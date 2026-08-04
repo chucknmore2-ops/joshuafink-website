@@ -69,6 +69,19 @@ export default function SuburbLeadForm({ children, successTitle, successMessage,
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5" aria-busy={state === 'submitting'}>
+      {/* Honeypot — invisible to humans, bots auto-fill it. /api/contact drops
+          any submission where this is non-empty. Living here rather than at
+          each call site means every page using SuburbLeadForm gets bot
+          protection, which is what lets the server-side heuristics stay
+          conservative instead of guessing from name/message shape. */}
+      <input
+        type="text"
+        name="website"
+        autoComplete="off"
+        tabIndex={-1}
+        aria-hidden="true"
+        style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, width: 0 }}
+      />
       {state === 'error' && (
         <div className="bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
           {errorMsg}
