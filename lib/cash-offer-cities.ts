@@ -369,6 +369,12 @@ export function getAllCashOfferCitySlugs(): string[] {
   return Object.keys(cityContent)
 }
 
+// Single source of truth for when the cash-offer city prose (intro, localAngle,
+// FAQs) was last reviewed. Mirrors `marketStatsLastUpdated` in lib/suburbs.ts —
+// update when refreshing this file's content. Feeds the WebPage `dateModified`
+// on /cash-offer/[city], a freshness signal these pages previously lacked.
+export const cashOfferContentLastUpdated = '2026-07-31'
+
 /** Lightweight list for nav/grid linking (slug + display name), in declared order. */
 export function getCashOfferCityLinks(): Array<{ slug: string; name: string }> {
   return Object.keys(cityContent)

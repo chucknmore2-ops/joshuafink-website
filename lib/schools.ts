@@ -501,6 +501,36 @@ export const schools: Record<string, School> = {
       },
     ],
   },
+
+  'wilson-central-high-school-lebanon-tn': {
+    slug: 'wilson-central-high-school-lebanon-tn',
+    name: 'Wilson Central High School',
+    level: 'High',
+    district: 'Wilson County Schools',
+    suburbSlug: 'lebanon-tn',
+    ratingNote: 'Ranked #75 among Tennessee public high schools by Niche (B+ grade), inside a Wilson County Schools district that carries a 4-star SchoolDigger rating.',
+    blurb:
+      'Wilson Central High School serves the corridor between Lebanon and Mount Juliet — all of Rural Hill and Gladeville, portions of Lebanon, and the section of Mount Juliet south of I-40. Niche grades the school a B+ and ranks it #75 among Tennessee public high schools, inside a Wilson County Schools district that itself holds a 4-star SchoolDigger rating and is ranked 25th of 139 Tennessee districts. For buyers comparing Lebanon to pricier Williamson County zones, Wilson Central is a consistently strong, established option without the premium price tag.',
+    neighborhoods: ['Rural Hill', 'Gladeville', 'South Mount Juliet (south of I-40)', 'East Lebanon'],
+    faqs: [
+      {
+        q: 'What neighborhoods are zoned to Wilson Central High School?',
+        a: 'The Wilson Central zone covers all of Rural Hill and Gladeville, a portion of Lebanon, and the part of Mount Juliet south of Interstate 40. Wilson County splits Lebanon and Mount Juliet across multiple high school zones, so always confirm the current attendance assignment with Wilson County Schools for a specific address before writing an offer.',
+      },
+      {
+        q: 'Is Wilson Central High School a good school?',
+        a: 'Yes. Niche grades Wilson Central a B+ and ranks it #75 among Tennessee public high schools. The Wilson County Schools district carries a 4-star SchoolDigger rating and is ranked 25th of 139 Tennessee districts, making Wilson Central one of the more consistent options in the county.',
+      },
+      {
+        q: 'How much do homes near Wilson Central High School cost?',
+        a: 'Wilson Central-zoned homes are part of the broader Lebanon market — see the current Lebanon market report for up-to-date medians and price-per-square-foot. Joshua can pull exact, current comps for any specific street in Rural Hill, Gladeville, or the South Mount Juliet section of the zone.',
+      },
+      {
+        q: 'Why do buyers choose Lebanon over Mount Juliet or Williamson County for schools?',
+        a: 'Lebanon and the Wilson Central zone deliver a solidly rated, 4-star-district public school at a meaningfully lower price point than Franklin, Brentwood, or even neighboring Mount Juliet in some pockets. For buyers prioritizing value alongside a dependable school, Wilson Central is one of the more frequently shortlisted zones in Wilson County.',
+      },
+    ],
+  },
 }
 
 export function getSchool(slug: string): School | undefined {

@@ -7,7 +7,7 @@ const SITE = 'https://www.joshuafink.com'
 export const metadata: Metadata = {
   title: 'Homes Near Top Middle Tennessee Schools — Search by School Zone | Joshua Fink',
   description:
-    'Find homes for sale near Ravenwood, Brentwood, Page, Independence, Centennial, Nolensville, Blackman, Station Camp, Beech, and Julia Green Elementary school zones. School-zone-first home search from Joshua Fink at Compass Real Estate.',
+    'Find homes for sale near Ravenwood, Brentwood, Page, Independence, Centennial, Nolensville, Blackman, Station Camp, Beech, Wilson Central, and Julia Green Elementary school zones. School-zone-first home search from Joshua Fink at Compass Real Estate.',
   alternates: { canonical: `${SITE}/homes-near` },
 }
 
@@ -18,7 +18,7 @@ const faqs = [
   },
   {
     q: 'What are the highest-rated public high schools in Middle Tennessee?',
-    a: 'In Williamson County: Ravenwood (Brentwood), Page (Franklin/Thompson’s Station), Independence (Thompson’s Station), Centennial (Franklin), Brentwood, Nolensville, and Summit (Spring Hill) all consistently rank in the top tier of Tennessee public high schools by test scores, graduation rate, and AP performance. In Rutherford County, Blackman High School (Murfreesboro) carries a 4-star SchoolDigger rating and an A on Niche. In Sumner County, Station Camp High School (Gallatin) ranks 30th of 389 Tennessee public high schools by SchoolDigger — 3rd in the county — and Beech Senior High School (Hendersonville) isn’t far behind. In Davidson County, Julia Green Elementary (Green Hills/Belle Meade) is a U.S. Department of Education National Blue Ribbon School ranked in the top 5% of Tennessee elementary schools by Public School Review. Each school page links to its current rating notes and feeder subdivisions.',
+    a: 'In Williamson County: Ravenwood (Brentwood), Page (Franklin/Thompson’s Station), Independence (Thompson’s Station), Centennial (Franklin), Brentwood, Nolensville, and Summit (Spring Hill) all consistently rank in the top tier of Tennessee public high schools by test scores, graduation rate, and AP performance. In Rutherford County, Blackman High School (Murfreesboro) carries a 4-star SchoolDigger rating and an A on Niche. In Sumner County, Station Camp High School (Gallatin) ranks 30th of 389 Tennessee public high schools by SchoolDigger — 3rd in the county — and Beech Senior High School (Hendersonville) isn’t far behind. In Wilson County, Wilson Central High School (Lebanon) is Niche-graded a B+ and ranked #75 statewide, inside a 4-star SchoolDigger district. In Davidson County, Julia Green Elementary (Green Hills/Belle Meade) is a U.S. Department of Education National Blue Ribbon School ranked in the top 5% of Tennessee elementary schools by Public School Review. Each school page links to its current rating notes and feeder subdivisions.',
   },
   {
     q: 'How much do top school zones add to home prices in Middle Tennessee?',
