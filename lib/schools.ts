@@ -471,6 +471,66 @@ export const schools: Record<string, School> = {
       },
     ],
   },
+
+  'julia-green-elementary-nashville-tn': {
+    slug: 'julia-green-elementary-nashville-tn',
+    name: 'Julia Green Elementary School',
+    level: 'Elementary',
+    district: 'Metro Nashville Public Schools',
+    suburbSlug: 'nashville-tn',
+    ratingNote: 'A U.S. Department of Education National Blue Ribbon School, ranked in the top 5% of Tennessee elementary schools by Public School Review, with state test scores around 83% math and 85% reading proficiency.',
+    blurb:
+      'Julia Green Elementary sits at 3500 Hobbs Road and is the zoned neighborhood school for Green Hills and Belle Meade — two of Nashville’s most sought-after, highest-priced pockets. It carries a U.S. Department of Education National Blue Ribbon distinction and posts some of the strongest state test-score proficiency rates in Metro Nashville Public Schools, on top of a Gifted & Talented / IB Primary Years magnet option layered onto the zoned population. Because Green Hills and Belle Meade have essentially no vacant land left to build on, "Julia Green zone" functions less as a search filter and more as a price floor — buyers targeting this zone are competing for a fixed, rarely-growing supply of homes.',
+    neighborhoods: ['Green Hills', 'Belle Meade (partial)', 'Hillsboro-West End', 'Woodmont'],
+    faqs: [
+      {
+        q: 'What neighborhoods are zoned to Julia Green Elementary?',
+        a: 'Julia Green is the zoned elementary school for Green Hills and part of Belle Meade, plus adjacent pockets of the Hillsboro-West End and Woodmont areas of southwest Nashville. MNPS rezoned portions of several nearby elementary zones (including Julia Green) in 2024, so — more than almost any other zone on this site — confirm the current attendance assignment for a specific address with MNPS before writing an offer.',
+      },
+      {
+        q: 'Is Julia Green Elementary a good school?',
+        a: 'Yes — it holds a U.S. Department of Education National Blue Ribbon School distinction and Public School Review ranks it in the top 5% of Tennessee elementary schools, with state test proficiency running roughly 83% in math and 85% in reading, well above the Metro Nashville Public Schools average. It also offers an optional Gifted & Talented / IB Primary Years magnet strand alongside the standard zoned program.',
+      },
+      {
+        q: 'How much do homes in the Julia Green zone cost?',
+        a: 'There is no separate "Julia Green" price band — these homes are part of the broader Nashville market, and Green Hills/Belle Meade trade well above the citywide Nashville median reported in the market snapshot above, since both neighborhoods are built out with little new supply. Joshua can pull exact, current comps for any specific Green Hills or Belle Meade street.',
+      },
+      {
+        q: 'Why do Green Hills and Belle Meade command a premium over other Nashville zones?',
+        a: 'Limited buildable land, an established tree canopy and lot sizes, walkable proximity to Green Hills\' retail/dining core, and a top-tier, Blue-Ribbon-rated zoned elementary school all compound together. Buyers are paying for the address and the school assignment as much as the house itself — which is also why these zones tend to hold value well in a downturn.',
+      },
+    ],
+  },
+
+  'wilson-central-high-school-lebanon-tn': {
+    slug: 'wilson-central-high-school-lebanon-tn',
+    name: 'Wilson Central High School',
+    level: 'High',
+    district: 'Wilson County Schools',
+    suburbSlug: 'lebanon-tn',
+    ratingNote: 'Ranked #75 among Tennessee public high schools by Niche (B+ grade), inside a Wilson County Schools district that carries a 4-star SchoolDigger rating.',
+    blurb:
+      'Wilson Central High School serves the corridor between Lebanon and Mount Juliet — all of Rural Hill and Gladeville, portions of Lebanon, and the section of Mount Juliet south of I-40. Niche grades the school a B+ and ranks it #75 among Tennessee public high schools, inside a Wilson County Schools district that itself holds a 4-star SchoolDigger rating and is ranked 25th of 139 Tennessee districts. For buyers comparing Lebanon to pricier Williamson County zones, Wilson Central is a consistently strong, established option without the premium price tag.',
+    neighborhoods: ['Rural Hill', 'Gladeville', 'South Mount Juliet (south of I-40)', 'East Lebanon'],
+    faqs: [
+      {
+        q: 'What neighborhoods are zoned to Wilson Central High School?',
+        a: 'The Wilson Central zone covers all of Rural Hill and Gladeville, a portion of Lebanon, and the part of Mount Juliet south of Interstate 40. Wilson County splits Lebanon and Mount Juliet across multiple high school zones, so always confirm the current attendance assignment with Wilson County Schools for a specific address before writing an offer.',
+      },
+      {
+        q: 'Is Wilson Central High School a good school?',
+        a: 'Yes. Niche grades Wilson Central a B+ and ranks it #75 among Tennessee public high schools. The Wilson County Schools district carries a 4-star SchoolDigger rating and is ranked 25th of 139 Tennessee districts, making Wilson Central one of the more consistent options in the county.',
+      },
+      {
+        q: 'How much do homes near Wilson Central High School cost?',
+        a: 'Wilson Central-zoned homes are part of the broader Lebanon market — see the current Lebanon market report for up-to-date medians and price-per-square-foot. Joshua can pull exact, current comps for any specific street in Rural Hill, Gladeville, or the South Mount Juliet section of the zone.',
+      },
+      {
+        q: 'Why do buyers choose Lebanon over Mount Juliet or Williamson County for schools?',
+        a: 'Lebanon and the Wilson Central zone deliver a solidly rated, 4-star-district public school at a meaningfully lower price point than Franklin, Brentwood, or even neighboring Mount Juliet in some pockets. For buyers prioritizing value alongside a dependable school, Wilson Central is one of the more frequently shortlisted zones in Wilson County.',
+      },
+    ],
+  },
 }
 
 export function getSchool(slug: string): School | undefined {

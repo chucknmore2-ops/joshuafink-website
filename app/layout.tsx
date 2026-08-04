@@ -137,6 +137,29 @@ export default function RootLayout({
                   },
                   hasMap:
                     'https://www.google.com/maps/search/?api=1&query=8119+Isabella+Lane+Suite+105+Brentwood+TN+37027',
+                  // Compass Brentwood office hours — surfaces 'Open now / Hours'
+                  // in the Google local pack and helps map-pack eligibility.
+                  // Keep in sync with the Google Business Profile hours.
+                  openingHoursSpecification: [
+                    {
+                      '@type': 'OpeningHoursSpecification',
+                      dayOfWeek: [
+                        'Monday',
+                        'Tuesday',
+                        'Wednesday',
+                        'Thursday',
+                        'Friday',
+                      ],
+                      opens: '09:00',
+                      closes: '18:00',
+                    },
+                    {
+                      '@type': 'OpeningHoursSpecification',
+                      dayOfWeek: ['Saturday', 'Sunday'],
+                      opens: '10:00',
+                      closes: '17:00',
+                    },
+                  ],
                   areaServed: [
                     { '@type': 'City', name: 'Franklin, TN' },
                     { '@type': 'City', name: 'Brentwood, TN' },

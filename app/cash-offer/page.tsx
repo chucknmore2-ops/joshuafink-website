@@ -3,6 +3,7 @@ import Link from 'next/link'
 import CashOfferForm from './CashOfferForm'
 import TrustBadges from '@/components/TrustBadges'
 import ReviewStrip from '@/components/ReviewStrip'
+import TrackedTelLink from '@/components/TrackedTelLink'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 import { getCashOfferCityLinks } from '@/lib/cash-offer-cities'
 
@@ -144,20 +145,22 @@ export default function CashOfferPage() {
               <p className="text-neutral-300 text-lg leading-relaxed mb-6">
                 Fair cash offer in <strong className="text-white">24 hours</strong>. Close in as little as <strong className="text-white">7 days</strong>. No repairs, no commissions, no showings, no hassle.
               </p>
-              <a
+              <TrackedTelLink
                 href="tel:6155512727"
                 className="inline-flex items-center gap-3 bg-brand-crimson text-white text-xl font-black px-8 py-4 rounded-full tracking-wide transition-all duration-200 hover:bg-brand-crimson-dark hover:shadow-2xl hover:-translate-y-0.5 active:scale-[0.98] mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                 aria-label="Call Joshua at 615-551-2727"
               >
                 <span aria-hidden="true">📞</span> 615-551-2727
-              </a>
+              </TrackedTelLink>
               <p className="text-neutral-400 text-sm mt-3 mb-8">Call or text anytime — Joshua answers.</p>
 
               <TrustBadges variant="dark" />
             </div>
 
-            {/* Right — inline form (client component) */}
-            <CashOfferForm />
+            {/* Right — inline form (mobile: shown first for lead capture) */}
+            <div className="order-first lg:order-last">
+              <CashOfferForm />
+            </div>
           </div>
         </div>
       </div>
@@ -405,13 +408,13 @@ export default function CashOfferPage() {
           No pressure. No obligation. Just a fair offer and a straight answer within 24 hours.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <a
+          <TrackedTelLink
             href="tel:6155512727"
             className="inline-flex items-center justify-center bg-black text-white text-base font-black px-10 py-4 rounded-full tracking-wide transition-all duration-200 hover:bg-neutral-800 hover:shadow-lg active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
             aria-label="Call Joshua at 615-551-2727"
           >
             <span aria-hidden="true">📞</span>&nbsp;Call 615-551-2727
-          </a>
+          </TrackedTelLink>
           <a
             href="#cash-offer-form"
             className="inline-flex items-center justify-center border-2 border-black text-black text-base font-black px-10 py-4 rounded-full tracking-wide transition-all duration-200 hover:bg-black hover:text-white active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"

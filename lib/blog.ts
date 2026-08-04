@@ -3973,6 +3973,87 @@ Builder incentives in Middle Tennessee are real money on the table in 2026, but 
 If you're weighing a new-construction incentive against a resale option, or just want a second set of eyes on what a builder is offering, that's a conversation worth having before you sign anything. Reach out: [615-551-2727](tel:6155512727) or [joshua@joshuafink.com](mailto:joshua@joshuafink.com).
     `.trim(),
   },
+  {
+    slug: "thda-great-choice-down-payment-assistance-tennessee-2026",
+    title: "Down Payment Assistance in Tennessee: How THDA's Great Choice Program Works for First-Time Buyers",
+    date: "July 27, 2026",
+    dateModified: "July 27, 2026",
+    excerpt:
+      "The Tennessee Housing Development Agency's Great Choice loan pairs a regular first mortgage with a second loan that helps cover your down payment — sometimes with nothing to repay if you stay in the home. Here's how the program actually works, who qualifies, and what to verify before you count on it.",
+    category: "For Buyers",
+    disclosure:
+      "This article is for general educational purposes only and is not mortgage, tax, or legal advice. THDA program terms, interest rates, income limits, purchase price limits, and down payment assistance amounts change and vary by county — confirm current figures directly with THDA (thda.org) and a THDA-participating lender before making a decision. Joshua Fink is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate and does not originate mortgages.",
+    faq: [
+      {
+        q: "Do you have to be a first-time homebuyer to use THDA's Great Choice loan?",
+        a: "Generally, yes — THDA defines a first-time homebuyer as anyone who hasn't owned and occupied a home as their principal residence in the past three years, so plenty of past owners still qualify. THDA also waives that requirement entirely in a small number of designated counties. If it's been more than three years since you owned a home, or you're not sure whether you count as a first-time buyer, ask a THDA-participating lender to check before you assume you're excluded.",
+      },
+      {
+        q: "How much down payment assistance does THDA's Great Choice Plus program provide?",
+        a: "THDA has historically offered a choice between a smaller second loan that's deferred and forgiven if you stay in the home for the full loan term, and a larger second loan (sized as a percentage of your purchase price) that you repay in monthly installments alongside your first mortgage. THDA has also periodically added or adjusted assistance options. [VERIFY: current Great Choice Plus assistance amounts and terms — thda.org, as of publish date] The exact dollar caps and structure available today should be confirmed with THDA or a participating lender, since they're adjusted from time to time.",
+      },
+      {
+        q: "What credit score do you need for a THDA loan?",
+        a: "THDA loans have run a minimum credit score in the 640 range in recent years, though the exact figure and any overlays can vary by loan type and participating lender. [VERIFY: current minimum credit score — thda.org] Treat any number you read, including this one, as a starting point and confirm the current requirement with a THDA-participating lender before you assume you do or don't qualify.",
+      },
+      {
+        q: "Is THDA down payment assistance a grant, or do you have to pay it back?",
+        a: "It depends which option you choose. The deferred option is structured as a forgivable second loan — you generally owe nothing if you keep the home for the full term, but you'd typically have to repay it if you sell or refinance early. The amortizing option is a real second loan with its own monthly payment for as long as you hold it. Neither one is free money with no strings — read the terms of your specific note carefully with your lender or a real estate attorney before closing.",
+      },
+      {
+        q: "Can you use THDA down payment assistance with any lender?",
+        a: "No — Great Choice loans are originated through a specific list of THDA-approved participating lenders, not every mortgage lender in Tennessee. You'll also need to complete a THDA-approved homebuyer education course before closing. Ask any lender you're considering whether they're an approved THDA lender before you get too far into the pre-approval process.",
+      },
+    ],
+    content: `
+**Quick answer:** THDA's Great Choice program pairs a standard 30-year fixed-rate first mortgage with a second loan — called Great Choice Plus — that helps cover your down payment. Depending on which option you pick, that second loan is either a small amount that's forgiven if you stay in the home, or a larger amount you repay monthly alongside your mortgage. It's aimed at first-time buyers (loosely defined — see below) who qualify under county-specific income and purchase-price limits, and it requires a THDA-approved lender and a homebuyer education course before closing.
+
+If saving a full down payment is the thing standing between you and buying in Middle Tennessee, this is one of the first programs worth understanding — not because it's free money, but because it can meaningfully lower the cash you need at the closing table.
+
+## What Is the THDA Great Choice Loan, Actually?
+
+The Tennessee Housing Development Agency (THDA) is the state's housing finance agency, and Great Choice is its flagship first-time buyer mortgage program. It isn't a separate loan type like FHA or VA — it's a 30-year fixed-rate conventional, FHA, VA, or USDA loan originated through a THDA-approved lender, layered with the option to add THDA's own down-payment-assistance second loan on top. The rate on the first mortgage is set by THDA and is generally competitive with the broader market, though it moves with overall rate conditions the same way any mortgage rate does.
+
+## Do You Have to Be a First-Time Buyer to Qualify?
+
+Not in the way most people assume. THDA defines a first-time homebuyer as someone who hasn't owned and occupied a home as their principal residence in the past three years — so if you owned a home a decade ago and have been renting since, you likely still qualify. THDA also designates a small number of counties where the first-time buyer requirement is waived entirely for everyone. The rest of the eligibility picture — income limits, purchase price limits, credit score, and debt ratios — applies whether or not you've owned before.
+
+## How Does Great Choice Plus Down Payment Assistance Actually Work?
+
+This is the part worth understanding closely, because the two options behave very differently:
+
+- **The deferred option** is a smaller second loan with no monthly payment. If you stay in the home through the full loan term, it's forgiven — you never repay it. If you sell or refinance before then, you typically owe the balance at that point.
+- **The amortizing option** is a larger second loan (sized as a percentage of your purchase price) that you repay in real monthly installments for as long as you hold it, generally at the same rate as your first mortgage.
+
+[VERIFY: current dollar/percentage caps and any newly added assistance options — thda.org Great Choice Plus page, as of publish date] Both options reduce the cash you need at closing, but they're not the same product — a forgivable $6,000 loan and a repayable loan worth 5% of your purchase price solve different problems depending on how long you plan to stay and how tight your monthly budget is. Run both scenarios with a THDA-participating lender before choosing.
+
+## What Are the Income and Purchase Price Limits?
+
+THDA sets maximum household income and maximum home purchase price by county, and both numbers are revised periodically — they're not the same in Williamson County as they are in Rutherford or Maury County, and they don't stay flat year to year. [VERIFY: current income limits and purchase price limits by county — thda.org Income & Purchase Price Limits chart, as of publish date] Don't assume last year's number still applies. A THDA-participating lender can check your specific county and household size against the current chart in a few minutes.
+
+## What Credit Score and Other Requirements Apply?
+
+Beyond the income and price limits, THDA loans carry their own credit and process requirements on top of whatever the underlying loan type (conventional, FHA, VA, or USDA) requires. [VERIFY: current minimum credit score and debt-to-income guidelines — thda.org] Every Great Choice and Great Choice Plus borrower also has to complete a THDA-approved homebuyer education course before closing — a modest cost and time investment that's non-negotiable, not optional paperwork.
+
+## Is the Down Payment Assistance a Grant or a Loan You Pay Back?
+
+Neither option is a no-strings grant. The deferred option can end up costing you nothing if you stay put for the full term, but it converts to a real repayment obligation if you sell or refinance early. The amortizing option is a second loan with a real monthly payment from day one. Go in understanding which scenario you're signing up for — this is exactly the kind of detail to review line by line with your lender or a real estate attorney before you're at the closing table.
+
+## How Do You Actually Apply?
+
+You don't apply to THDA directly — you work with one of THDA's approved participating lenders, who runs your income, credit, and county eligibility against the current limits and tells you which Great Choice options you qualify for. From there, the process looks like any other mortgage: pre-approval, home search, contract, underwriting, and closing, with the homebuyer education course completed somewhere along the way.
+
+## Where This Helps Most in Middle Tennessee
+
+Down payment assistance tends to matter most at the entry-level price points where THDA's purchase-price limits fit comfortably — think [Murfreesboro](/buy/murfreesboro-tn), [La Vergne](/buy/la-vergne-tn), [Smyrna](/buy/smyrna-tn), and [Columbia](/buy/columbia-tn), where median prices leave more room under the cap than Williamson County's premium suburbs. That doesn't rule out higher-priced markets entirely, since limits vary by county — it just means your odds of a purchase price fitting comfortably under the limit are better in these submarkets.
+
+## The Bottom Line
+
+THDA's Great Choice program can turn "I don't have a full down payment saved" into a real path to buying sooner in Middle Tennessee — but the exact dollar amounts, income limits, and purchase-price caps change, so treat any specific figure (including the ones flagged above) as a starting point to verify, not a promise. The move that actually matters is getting in front of a THDA-participating lender early, before you fall in love with a house that might not fit the program's current limits.
+
+If you want help figuring out whether THDA fits your situation, or which Middle Tennessee suburbs put you comfortably under the current purchase-price limits, that's a conversation worth having early. Reach out: [615-551-2727](tel:6155512727) or [joshua@joshuafink.com](mailto:joshua@joshuafink.com). For the underlying payment math, see [how much house you can actually afford](/blog/how-much-house-can-i-afford-middle-tennessee-2026); for the fuller process, see the [first-time buyer's guide](/blog/first-time-home-buyer-nashville-middle-tennessee-2026).
+    `.trim(),
+  },
 ]
 
 export function getPostBySlug(slug: string): BlogPost | undefined {

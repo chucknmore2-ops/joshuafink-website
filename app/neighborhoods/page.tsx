@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import SuburbLeadForm from '@/components/SuburbLeadForm'
+import TrackedTelLink from '@/components/TrackedTelLink'
 import { neighborhoods } from '@/lib/neighborhoods'
+import { reviewStats } from '@/lib/reviews'
 
 export const metadata: Metadata = {
   title: 'Middle Tennessee Neighborhood Guides | Joshua Fink — Compass',
@@ -53,6 +56,82 @@ export default function NeighborhoodsIndexPage() {
     ],
   }
 
+  const agentAndBusinessSchema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'RealEstateAgent',
+        '@id': 'https://www.joshuafink.com/#agent',
+        name: 'Joshua Fink — Compass Real Estate',
+        url: 'https://www.joshuafink.com/neighborhoods',
+        telephone: '+16155512727',
+        email: 'joshua@joshuafink.com',
+        image: 'https://www.joshuafink.com/headshot.webp',
+        description:
+          'Joshua Fink is a Compass Real Estate agent covering Middle Tennessee neighborhoods across Franklin, Brentwood, Spring Hill, Nolensville, Nashville, and surrounding markets.',
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: '8119 Isabella Lane, Suite 105',
+          addressLocality: 'Brentwood',
+          addressRegion: 'TN',
+          postalCode: '37027',
+          addressCountry: 'US',
+        },
+        geo: {
+          '@type': 'GeoCoordinates',
+          latitude: 36.0234,
+          longitude: -86.7838,
+        },
+        areaServed: {
+          '@type': 'AdministrativeArea',
+          name: 'Middle Tennessee',
+          addressRegion: 'TN',
+          addressCountry: 'US',
+        },
+        sameAs: [
+          'https://www.facebook.com/profile.php?id=100064076493905',
+          'https://www.instagram.com/joshuafinkgroup',
+          'https://www.linkedin.com/in/joshuafinkgroup/',
+          'https://x.com/JoshuaFinkGroup',
+          'https://www.compass.com/agents/joshua-fink/',
+          'https://www.zillow.com/profile/JoshuaFinkGroup',
+        ],
+        aggregateRating: {
+          '@type': 'AggregateRating',
+          ratingValue: reviewStats.rating.toFixed(1),
+          reviewCount: reviewStats.total,
+          bestRating: '5',
+          worstRating: '1',
+        },
+      },
+      {
+        '@type': 'LocalBusiness',
+        name: 'Joshua Fink Group — Compass Real Estate',
+        url: 'https://www.joshuafink.com/neighborhoods',
+        telephone: '+16155512727',
+        email: 'joshua@joshuafink.com',
+        parentOrganization: { '@id': 'https://www.joshuafink.com/#agent' },
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: '8119 Isabella Lane, Suite 105',
+          addressLocality: 'Brentwood',
+          addressRegion: 'TN',
+          postalCode: '37027',
+          addressCountry: 'US',
+        },
+        areaServed: {
+          '@type': 'AdministrativeArea',
+          name: 'Middle Tennessee',
+          addressRegion: 'TN',
+          addressCountry: 'US',
+        },
+        priceRange: '$$$',
+        description:
+          'Real estate agent serving Middle Tennessee neighborhoods — Franklin, Brentwood, Spring Hill, Nolensville, Nashville, and surrounding markets.',
+      },
+    ],
+  }
+
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -66,37 +145,113 @@ export default function NeighborhoodsIndexPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(agentAndBusinessSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
       <div className="bg-white">
         <div style={{ backgroundColor: '#0A1628' }} className="text-white py-20 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
-            <p className="text-xs font-semibold tracking-widest uppercase mb-3" style={{ color: '#A0A0A0' }}>
-              Middle Tennessee · Subdivision &amp; Neighborhood Guides
-            </p>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.05] max-w-4xl">
-              Neighborhood Guides —{' '}
-              <span style={{ color: '#C41E3A' }}>Real Local Insight, Not Listing Data.</span>
-            </h1>
-            <p className="text-lg mt-5 max-w-3xl leading-relaxed" style={{ color: '#A0A0A0' }}>
-              Honest, in-depth guides to the most-searched subdivisions and neighborhoods in
-              Franklin, Brentwood, Spring Hill, Nolensville, and the broader Middle Tennessee
-              market. Schools, HOA, amenities, home styles, and current price ranges — written
-              by Compass agent Joshua Fink.
-            </p>
-            <p className="mt-3 text-sm" style={{ color: '#7B7B7B' }}>
-              Need live inventory? Each guide funnels into Joshua&apos;s Compass agent profile
-              where listings are served in real time.
-            </p>
-            <p className="mt-5 text-sm" style={{ color: '#A0A0A0' }}>
-              New to the area?{' '}
-              <Link
-                href="/moving-to-middle-tennessee"
-                className="font-semibold text-white underline underline-offset-4 hover:no-underline"
-              >
-                Start with the Moving to Middle Tennessee relocation guide →
-              </Link>
-            </p>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+              <div>
+                <p className="text-xs font-semibold tracking-widest uppercase mb-3" style={{ color: '#A0A0A0' }}>
+                  Middle Tennessee · Subdivision &amp; Neighborhood Guides
+                </p>
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.05]">
+                  Neighborhood Guides —{' '}
+                  <span style={{ color: '#C41E3A' }}>Real Local Insight, Not Listing Data.</span>
+                </h1>
+                <p className="text-lg mt-5 leading-relaxed" style={{ color: '#A0A0A0' }}>
+                  Honest, in-depth guides to the most-searched subdivisions and neighborhoods in
+                  Franklin, Brentwood, Spring Hill, Nolensville, and the broader Middle Tennessee
+                  market. Schools, HOA, amenities, home styles, and current price ranges — written
+                  by Compass agent Joshua Fink.
+                </p>
+                <p className="mt-3 text-sm" style={{ color: '#7B7B7B' }}>
+                  Need live inventory? Each guide funnels into Joshua&apos;s Compass agent profile
+                  where listings are served in real time.
+                </p>
+                <p className="mt-5 text-sm" style={{ color: '#A0A0A0' }}>
+                  New to the area?{' '}
+                  <Link
+                    href="/moving-to-middle-tennessee"
+                    className="font-semibold text-white underline underline-offset-4 hover:no-underline"
+                  >
+                    Start with the Moving to Middle Tennessee relocation guide →
+                  </Link>
+                </p>
+              </div>
+
+              {/* Inline lead form (mobile: shown first for lead capture) */}
+              <div id="neighborhoods-form" className="order-first lg:order-last bg-white text-black p-8 sm:p-10 rounded-2xl">
+                <h2 className="text-2xl font-black tracking-tight mb-2">Ask Joshua About a Neighborhood</h2>
+                <p className="text-sm text-neutral-600 mb-6">
+                  Tell Joshua which subdivision or town you&apos;re considering — get a same-day reply
+                  with school zones, HOA notes, current price range, and matching homes.
+                </p>
+                <SuburbLeadForm
+                  successTitle="Message Sent!"
+                  successMessage={
+                    <>
+                      Joshua will reach out same-day with neighborhood insight. For anything urgent, call{' '}
+                      <TrackedTelLink href="tel:6155512727" className="text-black font-semibold underline" data-cta="neighborhoods-form-success-call">615-551-2727</TrackedTelLink>.
+                    </>
+                  }
+                  resetLabel="Submit Another"
+                >
+                  <input type="hidden" name="lead_type" value="buyer" />
+                  <input type="hidden" name="source" value="neighborhoods-index" />
+                  {/* Honeypot — real users never see or fill this */}
+                  <input
+                    type="text"
+                    name="website"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    aria-hidden="true"
+                    className="absolute left-[-9999px] h-0 w-0 opacity-0"
+                  />
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div>
+                      <label htmlFor="name" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Full Name *</label>
+                      <input type="text" id="name" name="name" required placeholder="Jane Smith"
+                        className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                    </div>
+                    <div>
+                      <label htmlFor="phone" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Phone *</label>
+                      <input type="tel" id="phone" name="phone" required placeholder="(615) 555-0123" autoComplete="tel"
+                        className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="email" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Email Address *</label>
+                    <input type="email" id="email" name="email" required placeholder="you@example.com" autoComplete="email"
+                      className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                  </div>
+
+                  <div>
+                    <label htmlFor="body" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Which Neighborhood? (optional)</label>
+                    <textarea id="body" name="body" rows={3}
+                      placeholder="Subdivision or town, price range, school zone, must-haves — anything helps Joshua send the right info."
+                      className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors resize-y" />
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+                    <button type="submit"
+                      className="w-full sm:w-auto inline-flex items-center justify-center bg-black text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-[#222] transition-colors">
+                      Send to Joshua →
+                    </button>
+                    <TrackedTelLink
+                      href="tel:6155512727"
+                      className="w-full sm:w-auto inline-flex items-center justify-center border-2 border-black text-black text-sm font-bold px-8 py-4 tracking-wide hover:bg-black hover:text-white transition-colors"
+                      data-cta="neighborhoods-form-inline-call"
+                    >
+                      Or Call 615-551-2727
+                    </TrackedTelLink>
+                  </div>
+                </SuburbLeadForm>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -104,9 +259,23 @@ export default function NeighborhoodsIndexPage() {
           {Object.entries(byCity).map(([city, items]) => (
             <div key={city} className="mb-16 last:mb-0">
               <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">{city}</p>
-              <h2 className="text-3xl font-black text-black tracking-tight mb-8">
+              <h2 className="text-3xl font-black text-black tracking-tight mb-4">
                 {city.split(',')[0]} Neighborhoods
               </h2>
+              <div className="flex flex-wrap gap-3 mb-8">
+                <Link
+                  href={`/buy/${items[0].citySlug}`}
+                  className="text-sm font-bold px-5 py-3 tracking-wide bg-[#C41E3A] text-white hover:bg-black transition-colors"
+                >
+                  Homes for sale in {city.split(',')[0]} →
+                </Link>
+                <Link
+                  href={`/sell/${items[0].citySlug}`}
+                  className="text-sm font-bold px-5 py-3 tracking-wide border-2 border-black text-black hover:bg-black hover:text-white transition-colors"
+                >
+                  Sell your {city.split(',')[0]} home →
+                </Link>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {items.map((n) => (
                   <Link
