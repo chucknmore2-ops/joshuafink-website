@@ -139,6 +139,32 @@ export default async function MarketSuburbPage({ params }: Props) {
     })),
   }
 
+  const localBusinessSchema = {
+    '@context': 'https://schema.org',
+    '@type': ['LocalBusiness', 'RealEstateAgent'],
+    name: 'Joshua Fink Group — Compass Real Estate',
+    url: `${SITE}/market/${slug}`,
+    telephone: '+16155512727',
+    email: 'joshua@joshuafink.com',
+    parentOrganization: { '@id': `${SITE}/#agent` },
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: '8119 Isabella Lane, Suite 105',
+      addressLocality: 'Brentwood',
+      addressRegion: 'TN',
+      postalCode: '37027',
+      addressCountry: 'US',
+    },
+    areaServed: {
+      '@type': 'City',
+      name: s.schemaCity,
+      addressRegion: s.schemaState,
+      addressCountry: 'US',
+    },
+    priceRange: '$$$',
+    description: `Local real estate agent covering the ${s.displayName} housing market. Hyperlocal comps, honest valuations, and market reads for buyers and sellers in ${s.schemaCity}, ${s.schemaState}.`,
+  }
+
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -163,6 +189,10 @@ export default async function MarketSuburbPage({ params }: Props) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
       />
       <script
         type="application/ld+json"
