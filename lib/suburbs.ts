@@ -203,7 +203,7 @@ export const suburbs: Record<string, Suburb> = {
     pricePerSqft: 228,
     yoyChange: '+4.7%',
     description:
-      'Nolensville has quietly become one of the most sought-after communities in Williamson County. What was once a quiet bedroom community has grown into a vibrant suburban town with top-tier schools, charming small-town character, and real estate prices to match the demand. The 2026 median home price in Nolensville sits around $580,000 — a number that reflects both Williamson County\'s premium reputation and the community\'s unique appeal to buyers who want space and quality without the congestion of Franklin or Brentwood. Homes here move quickly when priced right: the average days on market is just 22 days, and multiple-offer situations remain common for desirable properties. If you\'re considering selling in Nolensville, 2026 is a compelling moment.',
+      'Nolensville has quietly become one of the most sought-after communities in Williamson County. What was once a quiet bedroom community has grown into a vibrant suburban town with top-tier schools, charming small-town character, and real estate prices to match the demand. Founded in 1797 and still anchored by a historic downtown of 1800s buildings, Nolensville\'s population has climbed from 13,829 at the 2020 Census to an estimated 16,200+ in 2026 — roughly 17% growth in five years (U.S. Census Bureau) — even as the town works to preserve the small-town character that draws buyers here in the first place. The 2026 median home price in Nolensville sits around $580,000 — a number that reflects both Williamson County\'s premium reputation and the community\'s unique appeal to buyers who want space and quality without the congestion of Franklin or Brentwood. Homes here move quickly when priced right: the average days on market is just 22 days, and multiple-offer situations remain common for desirable properties. If you\'re considering selling in Nolensville, 2026 is a compelling moment.',
     whyBullets: [
       'Nolensville neighborhood intelligence: From Bent Creek to Scales Farmstead to Benington, Joshua knows how subdivision location, lot backing, and community amenities translate to buyer willingness to pay — and he\'ll leverage that in your favor.',
       'Small-town feel, big-city marketing: Nolensville buyers often hear about listings through word-of-mouth and community networks. Joshua is active in this market and can generate pre-listing buzz through his buyer pipeline before you even hit the MLS.',
@@ -226,11 +226,15 @@ export const suburbs: Record<string, Suburb> = {
         q: 'Are there any upcoming developments that could affect my home\'s value?',
         a: 'Nolensville has ongoing commercial and residential development. Some areas benefit from new retail and dining; others may face increased traffic. Joshua stays current on local planning and can advise on how upcoming changes affect your listing timing.',
       },
+      {
+        q: 'How much has Nolensville grown in recent years?',
+        a: 'Nolensville grew from 13,829 residents at the 2020 Census to an estimated 16,200+ in 2026 — about 17% growth in five years (U.S. Census Bureau). That steady, managed growth is a big part of why home values have held up: demand keeps climbing while the town has been deliberate about preserving its small-town feel rather than overbuilding.',
+      },
     ],
     schemaCity: 'Nolensville',
     schemaState: 'TN',
     schemaZip: '37135',
-    buyerDescription: 'Nolensville offers something increasingly rare in Middle Tennessee: small-town charm inside Williamson County. With a median price around $580,000, it sits between Franklin and Spring Hill in both price and character. Buyers are drawn to the established neighborhoods, top-tier schools, charming downtown, and the tight-knit community feel that larger suburbs can\'t replicate. Homes move fast here — averaging just 22 days on market — so buyers need to be pre-approved and decisive.',
+    buyerDescription: 'Nolensville offers something increasingly rare in Middle Tennessee: small-town charm inside Williamson County. Founded in 1797 and still centered on a historic downtown of 1800s-era buildings, the town has grown from 13,829 residents at the 2020 Census to an estimated 16,200+ in 2026 (U.S. Census Bureau) without losing that character. With a median price around $580,000, it sits between Franklin and Spring Hill in both price and character. Buyers are drawn to the established neighborhoods, top-tier schools, charming downtown, and the tight-knit community feel that larger suburbs can\'t replicate. Homes move fast here — averaging just 22 days on market — so buyers need to be pre-approved and decisive.',
     buyerWhyBullets: [
       'Hyperlocal subdivision knowledge: Nolensville has distinct neighborhoods — Bent Creek, Scales Farmstead, Benington — each with different price points and community feel. Joshua knows them all intimately and will match you to the right one.',
       'Speed advantage: Nolensville homes sell quickly. Joshua sets up instant MLS alerts and can typically get you into a showing within hours of a new listing hitting the market.',
@@ -240,11 +244,13 @@ export const suburbs: Record<string, Suburb> = {
       { q: 'What is the average home price in Nolensville, TN in 2026?', a: 'The median home price in Nolensville is approximately $580,000, with price per square foot around $228. Larger homes in premium subdivisions regularly exceed $700K.' },
       { q: 'How competitive is the Nolensville housing market?', a: 'Very competitive. With only 22 average days on market, desirable homes often receive multiple offers. Having your financing ready and a decisive mindset is critical. Joshua will help you build offers that win without overpaying.' },
       { q: 'What are the best neighborhoods in Nolensville for families?', a: 'Bent Creek and Scales Farmstead are popular for families with strong community amenities and top school assignments. Benington offers newer construction at a slight premium. Joshua will show you options based on your budget and priorities.' },
-      { q: 'Is Nolensville still growing?', a: 'Yes, but more slowly than Spring Hill or Thompson\'s Station. That controlled growth is actually a selling point — Nolensville has managed development carefully to preserve its character, which supports long-term value.' },
+      { q: 'Is Nolensville still growing?', a: 'Yes, but more slowly than Spring Hill or Thompson\'s Station. The town grew from 13,829 residents (2020 Census) to an estimated 16,200+ in 2026 — about 17% in five years. That controlled growth is actually a selling point — Nolensville has managed development carefully to preserve its character, which supports long-term value.' },
+      { q: 'Who should I hire to buy a home in Nolensville, TN?', a: 'Look for an agent with hyperlocal Nolensville subdivision knowledge — not just general Williamson County experience — since price and character shift noticeably between neighborhoods like Bent Creek, Scales Farmstead, and the historic downtown core. Joshua Fink is a Compass Affiliate Broker with 17+ years of experience personally selling 100+ homes a year across Williamson County, including Nolensville, and can move quickly on new listings given the town\'s 22-day average days on market.' },
     ],
     topNeighborhoods: ['Bent Creek', 'Scales Farmstead', 'Benington', 'Winterset Woods', 'Nolen Mill'],
     schoolDistrict: 'Williamson County Schools',
     commuteNote: '25 min to downtown Nashville via Nolensville Pike',
+    dataUpdatedAt: '2026-07-29',
   },
 
   'thompsons-station-tn': {
