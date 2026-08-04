@@ -25,7 +25,7 @@ on:
   schedule:
     - cron: '0 14 * * 4'   # LinkedIn — Thursdays 14:00 UTC  (token verified 2026-06-26)
     - cron: '0 14 * * 3'   # Instagram — Wednesdays 14:00 UTC (token verified 2026-06-26)
-    # - cron: '0 14 * * 2' # GBP — Tuesdays 14:00 UTC          (enable after token refresh)
+    - cron: '0 14 * * 2'   # GBP — Tuesdays 14:00 UTC        (token + API verified 2026-08-04)
   workflow_dispatch:
     inputs:
       channel:

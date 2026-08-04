@@ -37,6 +37,18 @@ const GBP_POSTS_API = (location: string) =>
 const SITE = 'https://www.joshuafink.com'
 const PHONE = '615-551-2727'
 
+// IMPORTANT — never put PHONE (or the street address) in a post `summary`.
+// Google auto-rejects local posts whose body text contains the business phone
+// number or address; contact details already live on the listing, so Google
+// treats repeating them in a post as spam. Verified on this profile 2026-08-04:
+// three posts carrying "615-551-2727" in the body were REJECTED within seconds,
+// and the byte-identical Spring Hill market update with only the phone number
+// removed went LIVE on the first poll.
+//
+// Surface the number through the structured CALL call-to-action below instead —
+// that renders as a tap-to-call button and is the supported channel for it.
+const CALL_CTA: CTA = { actionType: 'CALL', url: `tel:${PHONE.replace(/-/g, '')}` }
+
 type CTA = { actionType: 'LEARN_MORE' | 'CALL' | 'ORDER' | 'BOOK' | 'SIGN_UP'; url: string }
 
 type GbpPayloadKind = 'listing' | 'market-update' | 'tip' | 'review' | 'blog'
@@ -61,7 +73,7 @@ function buildListingPost(): PreparedPost {
     `🏡 Featured Listing — ${l.address}, ${cityShort}\n\n` +
     `${l.beds ? `${l.beds} bed · ` : ''}${l.baths ? `${l.baths} bath · ` : ''}` +
     `${l.sqft ? `${l.sqft.toLocaleString()} sq ft · ` : ''}${price}\n\n` +
-    `Call Joshua Fink at ${PHONE} for a private showing.\n\n` +
+    `Ask Joshua Fink at Compass about a private showing.\n\n` +
     `#MiddleTennessee #JoshuaFinkGroup #Compass`
   return {
     summary,
@@ -95,7 +107,7 @@ function buildMarketUpdatePost(): PreparedPost {
       `📊 ${s.name}, TN Market Update — ${month}\n\n` +
       `• Median sale price: ${s.median} (${s.yoy} YoY)\n` +
       `• Avg. days on market: ${s.dom}\n\n` +
-      `Thinking about selling in ${s.name}? Get a free, no-obligation valuation from Joshua Fink at Compass. ${PHONE} or joshuafink.com.\n\n` +
+      `Thinking about selling in ${s.name}? Get a free, no-obligation valuation from Joshua Fink at Compass.\n\n` +
       `#${s.name.replace(/\s+/g, '')}TN #NashvilleRealEstate #JoshuaFinkGroup`,
     cta: {
       actionType: 'LEARN_MORE',
@@ -113,7 +125,7 @@ function buildTipPost(): PreparedPost {
       summary:
         `💡 Buyer Tip — Pre-approval matters more than price.\n\n` +
         `In Middle Tennessee's market, a strong pre-approval letter beats an all-cash "maybe." Sellers choose buyers who can actually close. Get pre-approved before you start touring.\n\n` +
-        `Ready? Call Joshua at ${PHONE}.`,
+        `Ready? Talk to Joshua before you start touring.`,
       url: `${SITE}/buy/franklin-tn`,
     },
     {
@@ -121,7 +133,7 @@ function buildTipPost(): PreparedPost {
       summary:
         `💡 Seller Tip — Price right on day one.\n\n` +
         `Listings that test the market at an inflated number sit, go stale, and ultimately sell for less. Work with an agent who pulls real comps within a half-mile and prices strategically from day one.\n\n` +
-        `Free valuation: ${PHONE}.`,
+        `Ask Joshua for a free, comp-backed valuation.`,
       url: `${SITE}/sell`,
     },
     {
@@ -129,7 +141,7 @@ function buildTipPost(): PreparedPost {
       summary:
         `💡 Investor Tip — The 70% rule still works in Nashville.\n\n` +
         `ARV × 0.70 − repairs = your max buy price for a fix-and-flip. Zips 37206, 37115, 37013 still have deals for investors who move fast.\n\n` +
-        `Coaching on your first flip: ${PHONE}.`,
+        `Ask Joshua how the numbers pencil on your first flip.`,
       url: `${SITE}/blog/fix-and-flip-nashville-tn`,
     },
   ]
@@ -149,9 +161,9 @@ function buildReviewPost(): PreparedPost {
     summary:
       `⭐ What clients say about Joshua Fink Group:\n\n` +
       `"${r.text}"\n— ${r.reviewer}, ${r.transaction}\n\n` +
-      `Ready to buy or sell in Middle Tennessee? ${PHONE}.\n\n` +
+      `Ready to buy or sell in Middle Tennessee?\n\n` +
       `#ClientReview #NashvilleRealEstate #JoshuaFinkGroup #5Stars`,
-    cta: { actionType: 'CALL', url: `tel:${PHONE.replace(/-/g, '')}` },
+    cta: CALL_CTA,
     kind: 'review',
     refKey: r.reviewer.toLowerCase().replace(/[^\w]+/g, '-'),
   }
