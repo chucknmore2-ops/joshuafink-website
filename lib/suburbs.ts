@@ -366,7 +366,7 @@ export const suburbs: Record<string, Suburb> = {
     avgDaysOnMarket: 35,
     pricePerSqft: 168,
     yoyChange: '+4.8%',
-    description: 'Murfreesboro is one of the fastest-growing cities in Tennessee — and its real estate market tells the story. With a 2026 median home price of $380,000 and strong year-over-year appreciation near 5%, Murfreesboro offers buyers and sellers one of the best value propositions in Middle Tennessee. Home to MTSU and a massive healthcare employment base, the city draws young professionals, families, and investors in equal measure. Sellers benefit from a steady stream of demand driven by Murfreesboro\'s continued population growth — the city has been among the fastest-growing in the U.S. for over a decade and shows no signs of slowing.',
+    description: 'Murfreesboro is one of the fastest-growing cities in Tennessee — and its real estate market tells the story. The city has grown from 152,769 residents at the 2020 Census to an estimated 175,000+ in 2026, over 14% growth that ranked Murfreesboro the 16th fastest-growing city in the U.S. among cities over 100,000 people (U.S. Census Bureau; SmartAsset analysis). With a 2026 median home price of $380,000 and strong year-over-year appreciation near 5%, Murfreesboro offers buyers and sellers one of the best value propositions in Middle Tennessee. Home to MTSU and a massive healthcare employment base, the city draws young professionals, families, and investors in equal measure. Sellers benefit from a steady stream of demand driven by that population growth, which shows no signs of slowing.',
     whyBullets: [
       'Rutherford County market mastery: Murfreesboro spans diverse price points and neighborhoods — from starter homes near MTSU to executive properties in Oaklands and newer luxury builds in the northeast corridor. Joshua knows where value lives and how to position your home against the right competition.',
       'Growth corridor positioning: Murfreesboro\'s I-24 corridor is a major employment and commercial hub. Joshua understands how proximity to the medical center district, Amazon facilities, and downtown square affects your home\'s value and buyer appeal.',
@@ -374,14 +374,14 @@ export const suburbs: Record<string, Suburb> = {
     ],
     faqs: [
       { q: 'What is my Murfreesboro, TN home worth in 2026?', a: 'The median home price in Murfreesboro is approximately $380,000. Homes in established neighborhoods like Oaklands or newer developments in the northeast command a premium; starter homes near MTSU offer lower entry points. Joshua will pull specific comps for your address.' },
-      { q: 'Is Murfreesboro still growing?', a: 'Significantly. Murfreesboro has been one of the fastest-growing cities in the U.S. for over a decade. New employers, the MTSU effect, and proximity to Nashville continue to drive demand. Population growth translates directly to housing demand — a favorable tailwind for sellers.' },
+      { q: 'Is Murfreesboro still growing?', a: 'Significantly. Murfreesboro grew from 152,769 residents at the 2020 Census to an estimated 175,000+ in 2026 — over 14% growth, ranking it the 16th fastest-growing city in the U.S. among cities over 100,000 people (U.S. Census Bureau; SmartAsset analysis). New employers, the MTSU effect, and proximity to Nashville continue to drive demand. Population growth translates directly to housing demand — a favorable tailwind for sellers.' },
       { q: 'How does the MTSU rental market affect home values?', a: 'Rental demand near MTSU creates a strong investor buyer pool for certain price points. This is a positive for sellers — it adds another layer of buyer demand beyond traditional owner-occupants. Joshua can help you identify if your home is positioned to attract this segment.' },
       { q: 'How far is Murfreesboro from Nashville?', a: 'About 35 miles southeast of Nashville via I-24 — typically 35-45 minutes without traffic. Many residents commute to Nashville for work. The distance creates an attractive price-to-space ratio that continues to draw buyers from the Nashville metro.' },
     ],
     schemaCity: 'Murfreesboro',
     schemaState: 'TN',
     schemaZip: '37129',
-    buyerDescription: 'Murfreesboro is the value play for buyers who want space, good schools, and strong appreciation without the Williamson County price tag. At a median of $380,000, it\'s one of the most affordable markets in the Nashville metro with one of the highest appreciation rates. MTSU, a massive healthcare employment base, and a booming downtown square make it a genuinely livable city — not just a suburb. Buyers who get in now are ahead of a growth curve that shows no signs of stopping.',
+    buyerDescription: 'Murfreesboro is the value play for buyers who want space, good schools, and strong appreciation without the Williamson County price tag. At a median of $380,000, it\'s one of the most affordable markets in the Nashville metro with one of the highest appreciation rates. The population has grown over 14% since the 2020 Census — to an estimated 175,000+ in 2026 — making it the 16th fastest-growing city in the U.S. among cities over 100,000 people (U.S. Census Bureau; SmartAsset analysis). MTSU, a massive healthcare employment base, and a booming downtown square make it a genuinely livable city — not just a suburb. Buyers who get in now are ahead of a growth curve that shows no signs of stopping.',
     buyerWhyBullets: [
       'Value maximization: Murfreesboro offers more square footage per dollar than any Nashville suburb. Joshua helps buyers understand the price-to-value equation and find properties with the best upside in the market.',
       'Investment potential: Murfreesboro\'s strong rental market — driven by MTSU and healthcare employment — makes it attractive for house hackers and investors. Joshua evaluates every property through both an owner-occupant and investor lens.',
@@ -391,11 +391,12 @@ export const suburbs: Record<string, Suburb> = {
       { q: 'What is the average home price in Murfreesboro, TN in 2026?', a: 'The median is approximately $380,000. Entry-level homes start around $280K; newer construction in the northeast corridor runs $450K–$550K.' },
       { q: 'What are the best Murfreesboro neighborhoods?', a: 'Oaklands for established, tree-lined streets and proximity to the historic district. Northeast Murfreesboro for newer construction and top schools. Near downtown for walkability and the growing restaurant/bar scene. Joshua will match you based on your priorities.' },
       { q: 'Are Rutherford County schools good?', a: 'Rutherford County Schools has several highly-rated schools, particularly in the northeast and established suburban areas. Specific school assignments vary significantly by address — Joshua verifies school assignment for every home before you tour.' },
-      { q: 'Is Murfreesboro a good investment?', a: 'One of the best in Middle Tennessee. Strong population growth, MTSU rental demand, healthcare employment, and an affordable entry point make it a compelling buy-and-hold market. Appreciation has run nearly 5% year-over-year.' },
+      { q: 'Is Murfreesboro a good investment?', a: 'One of the best in Middle Tennessee. Population grew over 14% since the 2020 Census (152,769 to an estimated 175,000+ in 2026, per the U.S. Census Bureau), and that growth plus MTSU rental demand, healthcare employment, and an affordable entry point make it a compelling buy-and-hold market. Appreciation has run nearly 5% year-over-year.' },
     ],
     topNeighborhoods: ['Oaklands', 'Northfield', 'Ellendale', 'Blackman', 'Downtown Murfreesboro'],
     schoolDistrict: 'Rutherford County Schools',
     commuteNote: '35 min to Nashville via I-24',
+    dataUpdatedAt: '2026-07-24',
   },
 
   'gallatin-tn': {
