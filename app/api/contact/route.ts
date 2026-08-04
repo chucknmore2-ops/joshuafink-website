@@ -101,10 +101,16 @@ function isSpam(lead: Record<string, string>): { spam: boolean; reason: string }
   // Real names have spaces (First Last) or are short single words
   const name = (lead.name || '').trim()
   if (name.length > 10 && !name.includes(' ')) {
-    // Long single-token name with mixed case + digits = likely bot
+    // Long single-token name with digits, or scattered internal capitals.
+    //
+    // The previous rule flagged any mixed-case single token over 14 chars,
+    // which is just how a normally-capitalised long surname looks — a real
+    // "Konstantinopoulos" was dropped behind a fake success screen. A leading
+    // capital is not a bot signal; capitals sprinkled through the middle of
+    // the token ("xKJhsdfKJHsdf") are.
     const hasDigits = /\d/.test(name)
-    const hasMixedCase = name !== name.toLowerCase() && name !== name.toUpperCase()
-    if (hasDigits || (hasMixedCase && name.length > 14)) {
+    const internalCaps = (name.slice(1).match(/[A-Z]/g) || []).length
+    if (hasDigits || internalCaps >= 3) {
       return { spam: true, reason: 'random_name' }
     }
   }
@@ -119,11 +125,24 @@ function isSpam(lead: Record<string, string>): { spam: boolean; reason: string }
     }
   }
 
-  // Random body: no spaces or spaces < 2 (gibberish string)
+  // Random body: one long unbroken token, e.g. "asdkjhasdkjhasdkjhaskdjh".
+  //
+  // This used to key on word count (`length > 10 && wordCount < 3`), which
+  // silently dropped the most common real inquiries this site receives —
+  // "Still available?", "Interested!", "Showing tomorrow?" all match that
+  // rule. Because a spam verdict returns `{ ok: true }` (so bots don't retry),
+  // those visitors saw the success screen while the lead was discarded, which
+  // converts at zero and is invisible in every delivery channel.
+  //
+  // A short message is not a spam signal — brevity is normal from a phone.
+  // Genuine gibberish is characterised by an unbroken run of characters no
+  // human types by hand, so key on the longest token instead of word count.
   const body = (lead.body || '').trim()
   if (body.length > 10) {
-    const wordCount = body.split(/\s+/).filter(Boolean).length
-    if (wordCount < 3) {
+    const longestToken = body
+      .split(/\s+/)
+      .reduce((max, word) => Math.max(max, word.length), 0)
+    if (longestToken >= 25) {
       return { spam: true, reason: 'gibberish_body' }
     }
   }
