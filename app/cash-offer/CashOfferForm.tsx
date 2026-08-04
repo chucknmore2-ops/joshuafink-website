@@ -91,8 +91,6 @@ export default function CashOfferForm({ source = 'cash-offer', cityName }: CashO
         {/* Honeypot — invisible to humans, bots auto-fill it */}
         <input type="text" name="website" autoComplete="off" tabIndex={-1} aria-hidden="true"
           style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, width: 0 }} />
-        {/* Timestamp to detect instant bot submissions */}
-        <input type="hidden" name="_loaded" value={Date.now().toString()} />
 
         <div>
           <input

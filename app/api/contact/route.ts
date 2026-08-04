@@ -56,11 +56,26 @@ function isSpam(lead: Record<string, string>): { spam: boolean; reason: string }
     return { spam: true, reason: 'honeypot' }
   }
 
-  // Form submitted too fast (< 3 seconds)
-  const loaded = parseInt(lead._loaded || '0', 10)
-  if (loaded > 0 && Date.now() - loaded < 3000) {
-    return { spam: true, reason: 'too_fast' }
-  }
+  // NOTE: a "submitted in under 3 seconds" rule used to live here, keyed on a
+  // hidden `_loaded` timestamp. It was removed — it caught no bots and silently
+  // dropped real people.
+  //
+  // It was set on exactly one form (the cash-offer seller form, the highest
+  // intent lead on the site) as `value={Date.now()}` evaluated during render.
+  // That page is statically prerendered, so the served HTML carried the BUILD
+  // time: on a first submit the delta was hours or days and the rule never
+  // fired. Bots POSTing this endpoint directly omit `_loaded` entirely and were
+  // skipped by the `loaded > 0` guard. Net bot protection: zero.
+  //
+  // Worse, the failure mode ran the other way. After a submit error the form
+  // re-renders and stamps a FRESH timestamp into the DOM, so a seller who hit
+  // send again within three seconds was classified as a bot and discarded
+  // behind a fake success screen — at exactly the moment delivery had already
+  // failed once.
+  //
+  // The honeypot below is the rule that actually works, so timing is not
+  // needed. If timing is ever reintroduced, set the timestamp on mount in a
+  // useEffect (never during render) and keep it off statically rendered pages.
 
   // Phone: too short, all repeated, or sequential
   const phone = (lead.phone || '').replace(/\D/g, '')
