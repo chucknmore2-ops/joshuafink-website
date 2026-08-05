@@ -11,7 +11,7 @@ import TrackedTelLink from '@/components/TrackedTelLink'
 // noindex: this is a utility/share page, not organic-search content, so it's
 // kept out of the index and the sitemap (it isn't in lib/site-urls.ts).
 export const metadata: Metadata = {
-  title: 'Leave a Review | Joshua Fink Group',
+  title: 'Leave a Review',
   description:
     'Share your experience working with Joshua Fink — it takes about 30 seconds and helps other Middle Tennessee families find a realtor they can trust.',
   robots: { index: false, follow: true },

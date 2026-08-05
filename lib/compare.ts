@@ -1,4 +1,7 @@
-import { getSuburb, suburbs, type Suburb } from './suburbs'
+// Explicit .ts extension so Node's built-in test runner can resolve this
+// module directly (it does not do extensionless resolution). Webpack and
+// TypeScript both handle the explicit form fine — see compare.test.ts.
+import { getSuburb, suburbs, type Suburb } from './suburbs.ts'
 
 // Curated head-to-head pairs that capture genuine decision-stage queries
 // from Middle Tennessee buyers. These get sitemap entries + the hub page.
@@ -40,6 +43,35 @@ export function parsePairSlug(pairSlug: string): ComparePair | null {
 
 export function allFeaturedPairSlugs(): string[] {
   return FEATURED_PAIRS.map(([a, b]) => `${a}-vs-${b}`)
+}
+
+// Map either direction of a pair onto ONE canonical slug.
+//
+// Both `a-vs-b` and `b-vs-a` are built with mirrored content, and each page
+// used to declare itself canonical — so every comparison shipped as two
+// self-canonicalizing duplicates competing with each other. Each direction
+// still RENDERS in the order the visitor asked for (their wording is a real
+// intent signal), but they now agree on a single canonical URL.
+//
+// Featured pairs canonicalize to their curated order; everything else to
+// higher-median-price first, matching how the long-tail pairs are generated.
+// Alphabetical tie-break keeps it deterministic when prices are equal.
+export function canonicalPairSlug(pairSlug: string): string {
+  const p = parsePairSlug(pairSlug)
+  if (!p) return pairSlug
+
+  for (const [x, y] of FEATURED_PAIRS) {
+    if ((x === p.a.slug && y === p.b.slug) || (x === p.b.slug && y === p.a.slug)) {
+      return `${x}-vs-${y}`
+    }
+  }
+
+  const [first, second] =
+    p.a.medianPriceNum !== p.b.medianPriceNum
+      ? (p.a.medianPriceNum > p.b.medianPriceNum ? [p.a, p.b] : [p.b, p.a])
+      : (p.a.slug < p.b.slug ? [p.a, p.b] : [p.b, p.a])
+
+  return `${first.slug}-vs-${second.slug}`
 }
 
 // Generate the same comparison from either direction (a-vs-b and b-vs-a both

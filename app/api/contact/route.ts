@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { classifyLead } from '@/lib/classify-lead'
 
 const SENDGRID_KEY = process.env.SENDGRID_API_KEY
 const SLACK_TOKEN = process.env.SLACK_BOT_TOKEN
@@ -37,135 +38,6 @@ type ChannelResult = {
 const skip = (channel: string): ChannelResult => ({ channel, configured: false, ok: false })
 
 // ---------------------------------------------------------------------------
-// Spam detection
-// ---------------------------------------------------------------------------
-
-const DISPOSABLE_DOMAINS = new Set([
-  'mailinator.com', 'guerrillamail.com', 'tempmail.com', 'throwaway.email',
-  'yopmail.com', 'sharklasers.com', 'guerrillamailblock.com', 'grr.la',
-  'dispostable.com', 'maildrop.cc', 'trashmail.com', 'fakeinbox.com',
-  'temp-mail.org', '10minutemail.com', 'getnada.com', 'emailondeck.com',
-  'mohmal.com', 'mailnesia.com', 'tmail.ws', 'tmpmail.net', 'tmpmail.org',
-  'bupmail.com', 'mailcatch.com', 'mintemail.com', 'tempr.email',
-  'discard.email', 'mailnull.com', 'spamgourmet.com', 'jetable.org',
-])
-
-function isSpam(lead: Record<string, string>): { spam: boolean; reason: string } {
-  // Honeypot filled → bot
-  if (lead.website && lead.website.trim() !== '') {
-    return { spam: true, reason: 'honeypot' }
-  }
-
-  // NOTE: a "submitted in under 3 seconds" rule used to live here, keyed on a
-  // hidden `_loaded` timestamp. It was removed — it caught no bots and silently
-  // dropped real people.
-  //
-  // It was set on exactly one form (the cash-offer seller form, the highest
-  // intent lead on the site) as `value={Date.now()}` evaluated during render.
-  // That page is statically prerendered, so the served HTML carried the BUILD
-  // time: on a first submit the delta was hours or days and the rule never
-  // fired. Bots POSTing this endpoint directly omit `_loaded` entirely and were
-  // skipped by the `loaded > 0` guard. Net bot protection: zero.
-  //
-  // Worse, the failure mode ran the other way. After a submit error the form
-  // re-renders and stamps a FRESH timestamp into the DOM, so a seller who hit
-  // send again within three seconds was classified as a bot and discarded
-  // behind a fake success screen — at exactly the moment delivery had already
-  // failed once.
-  //
-  // The honeypot below is the rule that actually works, so timing is not
-  // needed. If timing is ever reintroduced, set the timestamp on mount in a
-  // useEffect (never during render) and keep it off statically rendered pages.
-
-  // Phone: too short, all repeated, or sequential
-  const phone = (lead.phone || '').replace(/\D/g, '')
-  if (phone.length > 0 && phone.length < 7) {
-    return { spam: true, reason: 'phone_too_short' }
-  }
-  if (/^(\d)\1{6,}$/.test(phone)) {
-    return { spam: true, reason: 'phone_repeated' }
-  }
-  if (/^0?1234567890?$/.test(phone) || /^9876543210?$/.test(phone)) {
-    return { spam: true, reason: 'phone_sequential' }
-  }
-
-  // Disposable email
-  if (lead.email) {
-    const domain = lead.email.split('@')[1]?.toLowerCase()
-    if (domain && DISPOSABLE_DOMAINS.has(domain)) {
-      return { spam: true, reason: 'disposable_email' }
-    }
-  }
-
-  // URLs in name or address fields
-  if (/https?:\/\//i.test(lead.name || '') || /https?:\/\//i.test(lead.property_address || '')) {
-    return { spam: true, reason: 'url_in_field' }
-  }
-
-  // Name too short
-  if ((lead.name || '').trim().length < 2) {
-    return { spam: true, reason: 'name_too_short' }
-  }
-
-  // Address too short (for cash-offer leads)
-  if (lead.source === 'cash-offer' && (lead.property_address || '').trim().length < 5) {
-    return { spam: true, reason: 'address_too_short' }
-  }
-
-  // Random-string name: no spaces, mixed upper/lower, no real vowel structure
-  // Real names have spaces (First Last) or are short single words
-  const name = (lead.name || '').trim()
-  if (name.length > 10 && !name.includes(' ')) {
-    // Long single-token name with digits, or scattered internal capitals.
-    //
-    // The previous rule flagged any mixed-case single token over 14 chars,
-    // which is just how a normally-capitalised long surname looks — a real
-    // "Konstantinopoulos" was dropped behind a fake success screen. A leading
-    // capital is not a bot signal; capitals sprinkled through the middle of
-    // the token ("xKJhsdfKJHsdf") are.
-    const hasDigits = /\d/.test(name)
-    const internalCaps = (name.slice(1).match(/[A-Z]/g) || []).length
-    if (hasDigits || internalCaps >= 3) {
-      return { spam: true, reason: 'random_name' }
-    }
-  }
-
-  // Heavily dotted gmail: bots use x.x.x.x@gmail.com pattern (4+ dots before @)
-  if (lead.email) {
-    const localPart = lead.email.split('@')[0] || ''
-    const domain = lead.email.split('@')[1]?.toLowerCase() || ''
-    const dotCount = (localPart.match(/\./g) || []).length
-    if (domain === 'gmail.com' && dotCount >= 4) {
-      return { spam: true, reason: 'dotted_gmail_bot' }
-    }
-  }
-
-  // Random body: one long unbroken token, e.g. "asdkjhasdkjhasdkjhaskdjh".
-  //
-  // This used to key on word count (`length > 10 && wordCount < 3`), which
-  // silently dropped the most common real inquiries this site receives —
-  // "Still available?", "Interested!", "Showing tomorrow?" all match that
-  // rule. Because a spam verdict returns `{ ok: true }` (so bots don't retry),
-  // those visitors saw the success screen while the lead was discarded, which
-  // converts at zero and is invisible in every delivery channel.
-  //
-  // A short message is not a spam signal — brevity is normal from a phone.
-  // Genuine gibberish is characterised by an unbroken run of characters no
-  // human types by hand, so key on the longest token instead of word count.
-  const body = (lead.body || '').trim()
-  if (body.length > 10) {
-    const longestToken = body
-      .split(/\s+/)
-      .reduce((max, word) => Math.max(max, word.length), 0)
-    if (longestToken >= 25) {
-      return { spam: true, reason: 'gibberish_body' }
-    }
-  }
-
-  return { spam: false, reason: '' }
-}
-
-// ---------------------------------------------------------------------------
 // Slack notification
 // ---------------------------------------------------------------------------
 
@@ -178,6 +50,9 @@ async function sendSlack(lead: Record<string, string>): Promise<ChannelResult> {
   }
   const emoji = typeEmoji[lead.subject || lead.lead_type || ''] || '📬'
   const suburb = lead.suburb ? ` · ${lead.suburb}` : ''
+  // Flagged leads are delivered like any other, just labelled. Treat the label
+  // as "worth a second look", not "ignore this".
+  const flag = lead.suspected_spam ? '⚠️ ' : ''
 
   try {
     const res = await fetch('https://slack.com/api/chat.postMessage', {
@@ -185,12 +60,19 @@ async function sendSlack(lead: Record<string, string>): Promise<ChannelResult> {
       headers: { Authorization: `Bearer ${SLACK_TOKEN}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         channel: SLACK_CHANNEL,
-        text: `${emoji} New lead from joshuafink.com`,
+        text: `${flag}${emoji} New lead from joshuafink.com`,
         blocks: [
           {
             type: 'header',
-            text: { type: 'plain_text', text: `${emoji} New Lead — joshuafink.com${suburb}` },
+            text: { type: 'plain_text', text: `${flag}${emoji} New Lead — joshuafink.com${suburb}` },
           },
+          ...(lead.suspected_spam ? [{
+            type: 'section',
+            text: {
+              type: 'mrkdwn',
+              text: `⚠️ *Flagged \`${lead.suspected_spam}\`* — delivered anyway because this check has false-positived on real people before. Worth a look.`,
+            },
+          }] : []),
           {
             type: 'section',
             fields: [
@@ -401,6 +283,7 @@ async function sendPushover(lead: Record<string, string>): Promise<ChannelResult
   const type = lead.subject || lead.lead_type || 'lead'
   const source = lead.source ? ` · ${lead.source}` : ''
   const message = [
+    lead.suspected_spam ? `⚠️ flagged: ${lead.suspected_spam} — check it` : null,
     lead.phone ? `📞 ${lead.phone}` : null,
     lead.email ? `✉️ ${lead.email}` : null,
     lead.property_address ? `🏠 ${lead.property_address}` : null,
@@ -411,7 +294,7 @@ async function sendPushover(lead: Record<string, string>): Promise<ChannelResult
   const params = new URLSearchParams({
     token: PUSHOVER_TOKEN,
     user: PUSHOVER_USER,
-    title: `🏡 New Lead — ${lead.name || 'Unknown'} (${type})${source}`,
+    title: `${lead.suspected_spam ? '⚠️ ' : '🏡 '}New Lead — ${lead.name || 'Unknown'} (${type})${source}`,
     message,
     priority: '1', // high priority — bypasses quiet hours
     sound: 'cashregister',
@@ -531,12 +414,32 @@ export async function POST(req: NextRequest) {
       lead.email = ''
     }
 
-    // ---------- Spam check ----------
-    const spamCheck = isSpam(lead)
-    if (spamCheck.spam) {
-      console.log(`SPAM blocked: reason=${spamCheck.reason}, name=${lead.name}, phone=${lead.phone}, email=${lead.email}`)
-      // Return success so bots don't retry, but silently drop
+    // ---------- Classify ----------
+    const verdict = classifyLead(lead)
+
+    if (verdict.kind === 'bot') {
+      // Honeypot only. Log the WHOLE submission, not just the contact fields —
+      // if this ever fires on a real person, the message text is the only way
+      // to identify and recover them, and it used to be thrown away.
+      console.log(`BOT blocked (${verdict.reason}): ${JSON.stringify(lead)}`)
+      // Return success so bots don't retry.
       return NextResponse.json({ ok: true })
+    }
+
+    if (verdict.kind === 'invalid') {
+      // A real person with a fixable mistake. Tell them, so they can correct it
+      // — every form already renders `error`.
+      console.log(`Lead rejected as invalid (${verdict.reason}): ${JSON.stringify(lead)}`)
+      return NextResponse.json({ error: verdict.message }, { status: 400 })
+    }
+
+    if (verdict.kind === 'suspect') {
+      // Deliver it anyway, tagged. This field flows automatically into the lead
+      // email and the Google Sheet (both enumerate lead fields), and is called
+      // out explicitly in Slack and Pushover below. It is deliberately NOT
+      // shown to the visitor, and the auto-reply never enumerates fields.
+      lead.suspected_spam = verdict.reason
+      console.log(`Lead flagged as suspect (${verdict.reason}), delivering anyway: ${JSON.stringify(lead)}`)
     }
 
     // ---------- Fire all Joshua-facing channels in parallel ----------

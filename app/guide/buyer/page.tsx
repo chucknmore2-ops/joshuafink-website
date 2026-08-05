@@ -6,7 +6,7 @@ import SuburbLeadForm from '@/components/SuburbLeadForm'
 const SITE = 'https://www.joshuafink.com'
 
 export const metadata: Metadata = {
-  title: 'The 2026 Middle Tennessee Buyer\'s Guide — Free | Joshua Fink, Compass',
+  title: 'The 2026 Middle Tennessee Buyer\'s Guide — Free',
   description:
     'The complete 2026 guide to buying a home in Franklin, Brentwood, Spring Hill, Nashville, and the surrounding Middle Tennessee suburbs. Pricing, schools, neighborhoods, financing, and an offer playbook from a 17-year veteran. Free.',
   alternates: { canonical: `${SITE}/guide/buyer` },

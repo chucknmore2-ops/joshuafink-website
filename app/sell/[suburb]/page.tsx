@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!suburb) return {}
 
   return {
-    title: `Sell My Home in ${suburb.displayName} | Free Market Valuation — Joshua Fink`,
+    title: `Sell My Home in ${suburb.displayName} | Free Market Valuation`,
     description: `What is my ${suburb.displayName} home worth? Get a free, no-obligation home valuation from Joshua Fink at Compass. Local ${suburb.name} market expert. Median price ${suburb.medianPrice} in 2026.`,
     keywords: [
       `sell my home in ${suburb.name}`,

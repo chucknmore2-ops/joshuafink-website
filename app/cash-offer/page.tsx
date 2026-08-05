@@ -8,7 +8,7 @@ import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 import { getCashOfferCityLinks } from '@/lib/cash-offer-cities'
 
 export const metadata: Metadata = {
-  title: 'Sell My House Fast Nashville | Cash Offer in 24 Hours | Joshua Fink',
+  title: 'Sell My House Fast Nashville | Cash Offer in 24 Hours',
   description:
     'Sell your house fast for cash in Nashville, Franklin, Brentwood, Spring Hill, Columbia, and all of Middle Tennessee. Any condition, any situation. Fair cash offer in 24 hours. Close in 7 days. No repairs, no commissions, no fees.',
   keywords:

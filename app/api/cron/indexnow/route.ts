@@ -37,7 +37,11 @@ export async function GET(request: Request) {
   const urlList = getAllSiteUrls()
 
   const payload = {
-    host: 'joshuafink.com',
+    // MUST match the host of every URL in urlList. IndexNow silently ignores
+    // URLs that don't belong to the declared host — and still returns 2xx, so
+    // this read as "submitted OK" while the submissions were being discarded.
+    // Every URL here comes from SITE, which is the www host.
+    host: 'www.joshuafink.com',
     key: INDEXNOW_KEY,
     keyLocation: `${SITE}/${INDEXNOW_KEY}.txt`,
     urlList,

@@ -10,7 +10,7 @@ import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
 import { reviewStats } from '@/lib/reviews'
 
 export const metadata: Metadata = {
-  title: "Homes for Sale in Middle Tennessee | Buyer's Agent — Joshua Fink",
+  title: "Homes for Sale in Middle Tennessee | Buyer's Agent",
   description:
     "Buy a home anywhere in Middle Tennessee with Joshua Fink at Compass. Franklin, Brentwood, Nashville, Spring Hill, Murfreesboro and every surrounding town — local market expert, off-market and Compass Private Exclusive access, school-zone guidance. Free buyer consultation, no cost to work with a buyer's agent.",
   keywords:
