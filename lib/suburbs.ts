@@ -38,7 +38,7 @@ export const suburbs: Record<string, Suburb> = {
     pricePerSqft: 248,
     yoyChange: '+4.2%',
     description:
-      'Franklin, Tennessee is one of the most desirable suburbs in the entire Southeast. Anchored by a charming historic downtown, top-rated schools, and easy access to I-65, Franklin consistently ranks among the best places to live and invest in the country. The local real estate market has shown remarkable resilience — median home prices have climbed to $650,000 in 2026, driven by continued corporate relocations, limited inventory, and overwhelming buyer demand from out-of-state movers. Sellers in Franklin are well-positioned: well-maintained homes priced correctly are routinely fielding multiple offers within the first weekend.',
+      'Franklin, Tennessee is one of the most desirable suburbs in the entire Southeast. Anchored by a charming historic downtown, top-rated schools, and easy access to I-65, Franklin consistently ranks among the best places to live and invest in the country. The city\'s population has grown from 83,454 at the 2020 Census to 88,558 in the Census Bureau\'s July 2023 estimate — about 6% growth in three years (U.S. Census Bureau QuickFacts) — and that steady influx of new residents keeps buyer demand well ahead of supply. The local real estate market has shown remarkable resilience — median home prices have climbed to $650,000 in 2026, driven by continued corporate relocations, limited inventory, and overwhelming buyer demand from out-of-state movers. Sellers in Franklin are well-positioned: well-maintained homes priced correctly are routinely fielding multiple offers within the first weekend.',
     whyBullets: [
       'Deep buyer network: Joshua works directly with buyers relocating from Atlanta, Dallas, and Chicago who are actively searching in Franklin — your home gets shown to qualified buyers before it ever hits Zillow.',
       'Franklin-specific pricing expertise: From Cool Springs condos to Fieldstone Farms single-family homes, Joshua knows how hyperlocal factors (school zone, HOA, subdivision prestige) affect your final sale price.',
@@ -61,11 +61,15 @@ export const suburbs: Record<string, Suburb> = {
         q: 'Should I make repairs before listing my Franklin home?',
         a: 'It depends on scope and your timeline. Minor cosmetic updates — paint, landscaping, light fixtures — almost always yield a return. Major systems (roof, HVAC) should be disclosed if known issues exist. Joshua will walk through your home and give you an honest list of what will move the needle vs. what\'s not worth the spend.',
       },
+      {
+        q: 'Is Franklin, TN still growing?',
+        a: 'Yes. Franklin grew from 83,454 residents at the 2020 Census to 88,558 in the Census Bureau\'s July 2023 estimate — about 6% growth in three years (U.S. Census Bureau QuickFacts). Continued corporate relocations and limited buildable land in Williamson County keep that demand concentrated on the existing housing stock, which is a durable tailwind for sellers.',
+      },
     ],
     schemaCity: 'Franklin',
     schemaState: 'TN',
     schemaZip: '37064',
-    buyerDescription: 'Franklin is one of the most competitive buyer markets in the Southeast — and for good reason. Top-rated schools, a thriving downtown, and strong appreciation make it a perennial target for buyers relocating from major metros. The 2026 median price sits at $650,000, with the most desirable neighborhoods — Cool Springs, Westhaven, Fieldstone Farms — moving fast. If you\'re buying in Franklin, preparation is everything: pre-approval before you tour, a local agent who knows which streets command a premium, and the ability to move decisively when the right home hits.',
+    buyerDescription: 'Franklin is one of the most competitive buyer markets in the Southeast — and for good reason. Top-rated schools, a thriving downtown, and strong appreciation make it a perennial target for buyers relocating from major metros. The city added roughly 5,100 residents between the 2020 Census (83,454) and the Census Bureau\'s July 2023 estimate (88,558) — about 6% growth in three years — and that inbound demand shows up directly in how fast homes move. The 2026 median price sits at $650,000, with the most desirable neighborhoods — Cool Springs, Westhaven, Fieldstone Farms — moving fast. If you\'re buying in Franklin, preparation is everything: pre-approval before you tour, a local agent who knows which streets command a premium, and the ability to move decisively when the right home hits.',
     buyerWhyBullets: [
       'Off-market access: Joshua\'s Compass network surfaces Coming Soon and pocket listings before they hit Zillow — giving you first-look advantage in a market where good homes disappear quickly.',
       'Neighborhood-level intelligence: Franklin spans dozens of distinct subdivisions. Joshua knows which offer the best resale value, which are zoned to the highest-rated schools, and which have HOA restrictions that matter to your lifestyle.',
@@ -80,6 +84,7 @@ export const suburbs: Record<string, Suburb> = {
     topNeighborhoods: ['Westhaven', 'Fieldstone Farms', 'Cool Springs', 'Crockett Park', 'Ladd Park'],
     schoolDistrict: 'Williamson County Schools',
     commuteNote: '20 min to downtown Nashville via I-65',
+    dataUpdatedAt: '2026-08-05',
   },
 
   'brentwood-tn': {
