@@ -6,7 +6,7 @@ import { getSuburb } from '@/lib/suburbs'
 const SITE = 'https://www.joshuafink.com'
 
 export const metadata: Metadata = {
-  title: 'Middle Tennessee Suburb Comparisons — Which Is Right for You? | Joshua Fink',
+  title: 'Middle Tennessee Suburb Comparisons — Which Is Right for You?',
   description:
     'Side-by-side comparisons of Middle Tennessee suburbs: Franklin vs Brentwood, Spring Hill vs Nolensville, and more. Median price, schools, commute, days on market — honest head-to-head from Joshua Fink at Compass.',
   alternates: { canonical: `${SITE}/compare` },

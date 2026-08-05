@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Joshua Fink | Compass Real Estate — Links',
+  title: { absolute: 'Joshua Fink | Compass Real Estate — Links' },
   description:
     'Joshua Fink — Compass Real Estate agent in Middle Tennessee. Get your free home value, browse listings, or connect directly.',
   robots: { index: false, follow: true },

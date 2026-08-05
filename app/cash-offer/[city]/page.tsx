@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const url = `https://www.joshuafink.com/cash-offer/${slug}`
   return {
-    title: `Sell My House Fast ${city.displayName} | Cash Offer in 24 Hours — Joshua Fink`,
+    title: `Sell My House Fast ${city.displayName} | Cash Offer in 24 Hours`,
     description: `Sell your ${city.name} house fast for cash — any condition, any situation. Fair cash offer in 24 hours, close in as little as 7 days. No repairs, no commissions, no fees. Serving all of ${city.county}.`,
     keywords: [
       `sell my house fast ${city.name} TN`,
