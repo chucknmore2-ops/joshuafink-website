@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!suburb) return {}
 
   return {
-    title: `Homes for Sale in ${suburb.displayName} | Buyer's Agent — Joshua Fink`,
+    title: `Homes for Sale in ${suburb.displayName} | Buyer's Agent`,
     description: `Looking to buy a home in ${suburb.displayName}? Joshua Fink at Compass knows every neighborhood, every school zone, and every listing. Median price ${suburb.medianPrice}. Free buyer consultation.`,
     keywords: [
       `homes for sale ${suburb.name} TN`,

@@ -4,7 +4,8 @@ import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 
 export const metadata: Metadata = {
   alternates: { canonical: 'https://www.joshuafink.com/contact' },
-  title: 'Contact Joshua Fink',
+  // `absolute` for the same reason as /about — the name is mid-phrase.
+  title: { absolute: 'Contact Joshua Fink | Compass Real Estate, Middle Tennessee' },
   description:
     'Get in touch with Joshua Fink — Affiliate Broker at Compass Real Estate. Call 615-551-2727 or send a message for buying, selling, or investment guidance in Middle Tennessee.',
 }

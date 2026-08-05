@@ -5,7 +5,7 @@ import GoogleReviewCTA from '@/components/GoogleReviewCTA'
 
 export const metadata: Metadata = {
   alternates: { canonical: 'https://www.joshuafink.com/reviews' },
-  title: 'Client Reviews | Joshua Fink | Compass Real Estate Nashville',
+  title: 'Client Reviews',
   description: `Joshua Fink has ${reviewStats.total} five-star reviews on Zillow. Read what buyers and sellers across Middle Tennessee say about working with Joshua.`,
 }
 

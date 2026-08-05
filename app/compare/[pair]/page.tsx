@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { parsePairSlug, getAllPairSlugsForBuild, pairVerdict } from '@/lib/compare'
+import { parsePairSlug, getAllPairSlugsForBuild, pairVerdict, canonicalPairSlug } from '@/lib/compare'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 
 const SITE = 'https://www.joshuafink.com'
@@ -21,9 +21,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const { a, b } = p
   return {
-    title: `${a.displayName} vs ${b.displayName} — Which Is Better in 2026? | Joshua Fink`,
+    title: `${a.displayName} vs ${b.displayName} — Which Is Better in 2026?`,
     description: `${a.name} vs ${b.name}: median ${a.medianPrice} vs ${b.medianPrice}, ${a.avgDaysOnMarket} vs ${b.avgDaysOnMarket} days on market. Schools, commute, lifestyle, and which suburb is right for you. Honest comparison from Joshua Fink at Compass.`,
-    alternates: { canonical: `${SITE}/compare/${pairSlug}` },
+    // Point BOTH directions of a pair at one URL — the reversed slug renders
+    // for the visitor but no longer competes with its mirror in the index.
+    alternates: { canonical: `${SITE}/compare/${canonicalPairSlug(pairSlug)}` },
     keywords: [
       `${a.name} vs ${b.name}`,
       `${a.name} or ${b.name}`,

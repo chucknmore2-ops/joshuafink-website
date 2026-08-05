@@ -11,7 +11,11 @@ import { isAvailable } from '@/app/listings/page'
 
 export const metadata: Metadata = {
   alternates: { canonical: 'https://www.joshuafink.com' },
-  title: 'Top Realtor in Middle Tennessee',
+  // `absolute` because Next does NOT apply a layout's title.template to the
+  // page.tsx of that same segment — so the homepage got no brand appended at
+  // all and rendered as a bare "Top Realtor in Middle Tennessee", with neither
+  // "Joshua Fink" nor "Compass" on the page that has to win brand searches.
+  title: { absolute: 'Joshua Fink | Top Realtor in Middle Tennessee | Compass Real Estate' },
   description:
     'Top-rated Compass agent serving Franklin, Brentwood, Spring Hill, Nashville, and all of Middle Tennessee. 17+ years, 100+ homes sold annually, 5★ rating from 218+ clients. Free valuation and off-market listing access.',
 }

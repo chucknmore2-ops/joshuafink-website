@@ -6,7 +6,7 @@ import { neighborhoods } from '@/lib/neighborhoods'
 import { reviewStats } from '@/lib/reviews'
 
 export const metadata: Metadata = {
-  title: 'Middle Tennessee Neighborhood Guides | Joshua Fink — Compass',
+  title: 'Middle Tennessee Neighborhood Guides',
   description:
     'In-depth neighborhood guides for the most-searched subdivisions in Franklin, Brentwood, Spring Hill, Nolensville, and the broader Middle Tennessee market. Schools, HOA, amenities, price ranges — and live listings on Compass.',
   alternates: {

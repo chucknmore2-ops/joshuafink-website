@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { suburbs } from '@/lib/suburbs'
 
 export const metadata: Metadata = {
-  title: 'Middle Tennessee Real Estate Market Reports — 2026 | Joshua Fink',
+  title: 'Middle Tennessee Real Estate Market Reports — 2026',
   description:
     'Current real estate market reports for Franklin, Brentwood, Spring Hill, Nolensville, Nashville and every Middle Tennessee suburb. Median price, days on market, year-over-year change — updated for 2026.',
   alternates: { canonical: 'https://www.joshuafink.com/market' },

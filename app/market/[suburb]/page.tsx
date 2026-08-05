@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!s) return {}
 
   return {
-    title: `${s.displayName} Real Estate Market Report 2026 — Median ${s.medianPrice} | Joshua Fink`,
+    title: `${s.displayName} Real Estate Market Report 2026 — Median ${s.medianPrice}`,
     description: `${s.displayName} housing market 2026: median sale price ${s.medianPrice}, ${s.avgDaysOnMarket} avg days on market, ${s.yoyChange} YoY change. Should you buy or sell now? Honest analysis from Joshua Fink at Compass.`,
     alternates: { canonical: `${SITE}/market/${slug}` },
     keywords: [

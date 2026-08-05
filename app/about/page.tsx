@@ -7,7 +7,9 @@ import GoogleReviewCTA from '@/components/GoogleReviewCTA'
 
 export const metadata: Metadata = {
   alternates: { canonical: 'https://www.joshuafink.com/about' },
-  title: 'About Joshua Fink',
+  // `absolute`: the name belongs mid-phrase here, so letting the template
+  // append it again would read "About Joshua Fink | Joshua Fink | Compass…".
+  title: { absolute: 'About Joshua Fink | Compass Real Estate Agent, Middle Tennessee' },
   description:
     'Learn about Joshua Fink — Affiliate Broker at Compass Real Estate with 17+ years of experience, 100+ homes sold annually, and multiple top-producer awards in Middle Tennessee.',
 }

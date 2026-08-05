@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const suburb = getSchoolSuburb(s)
 
   return {
-    title: `Homes for Sale Near ${s.name} — ${s.district} | Joshua Fink`,
+    title: `Homes for Sale Near ${s.name} — ${s.district}`,
     description: `Looking for a home in the ${s.name} zone? Browse pricing, top feeder neighborhoods${suburb ? `, and current ${suburb.displayName} market data (median ${suburb.medianPrice})` : ''}. School-zone-first home search from Joshua Fink at Compass.`,
     alternates: { canonical: `${SITE}/homes-near/${slug}` },
     keywords: [
