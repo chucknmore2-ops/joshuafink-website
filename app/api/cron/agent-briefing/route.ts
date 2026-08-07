@@ -96,7 +96,16 @@ function formatActivitySection(
   }>,
 ): string {
   const total = counts.posted_7d + counts.failed_7d + counts.dry_run_7d
-  if (total === 0 && recent.length === 0) {
+  // recentPosts() is deliberately unbounded in time — it backs /admin's
+  // all-time activity feed. `counts` is windowed to 7 days, so scope these
+  // rows the same way before summarizing them under a "Last 7 days" heading.
+  // Without this the by-channel breakdown and error list describe months of
+  // history while the totals describe a week, and Agent 02 scores live
+  // workflows off long-since-fixed failures.
+  const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000
+  const inWindow = recent.filter((r) => +new Date(r.posted_at) >= cutoff)
+
+  if (total === 0 && inWindow.length === 0) {
     return [
       '### Last 7 days — no autoposter activity in /admin Postgres',
       '',
@@ -108,7 +117,7 @@ function formatActivitySection(
   }
 
   const byChannel: Record<string, { posted: number; failed: number; dry: number }> = {}
-  for (const row of recent) {
+  for (const row of inWindow) {
     const c = (byChannel[row.channel] = byChannel[row.channel] ?? {
       posted: 0,
       failed: 0,
@@ -118,7 +127,7 @@ function formatActivitySection(
     else if (row.status === 'failed') c.failed++
     else if (row.status === 'dry_run') c.dry++
   }
-  const errors = recent
+  const errors = inWindow
     .filter((r) => r.status === 'failed' && r.error_message)
     .slice(0, 5)
     .map((r) => `- **${r.channel}/${r.job_name}** — ${r.error_message}`)
