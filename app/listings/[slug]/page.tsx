@@ -3,6 +3,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
+import TrustBadges from '@/components/TrustBadges'
+import ReviewStrip from '@/components/ReviewStrip'
 import { activeListingSlugs, getListingBySlug } from '@/lib/listing-detail'
 import { buildListingSchema } from '@/lib/listing-schema'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
@@ -227,6 +229,11 @@ export default async function ListingDetailPage({ params }: Props) {
           </span>
         </div>
 
+        {/* Trust signals — credentials and rating in view before the lead form */}
+        <div className="mt-6">
+          <TrustBadges variant="light" />
+        </div>
+
         {/* Header + two-column body */}
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-14">
           {/* Left: property info */}
@@ -321,8 +328,8 @@ export default async function ListingDetailPage({ params }: Props) {
             )}
           </div>
 
-          {/* Right: lead capture */}
-          <div className="lg:col-span-1">
+          {/* Right: lead capture — first in the mobile stack so the form is reachable without scrolling the whole page */}
+          <div className="lg:col-span-1 order-first lg:order-last">
             <div id="lead" className="lg:sticky lg:top-24 border border-[#E8E8E8] rounded-2xl p-6 sm:p-8 scroll-mt-24">
               <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-2">
                 Interested in this home?
@@ -449,6 +456,9 @@ export default async function ListingDetailPage({ params }: Props) {
           </div>
         </div>
       </div>
+
+      {/* Social proof — same strip used on /buy, /sell and /cash-offer */}
+      <ReviewStrip variant="light" limit={3} />
     </div>
   )
 }
