@@ -3,6 +3,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
+import TrustBadges from '@/components/TrustBadges'
+import ReviewStrip from '@/components/ReviewStrip'
 import { activeListingSlugs, getListingBySlug } from '@/lib/listing-detail'
 import { buildListingSchema } from '@/lib/listing-schema'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
@@ -227,6 +229,11 @@ export default async function ListingDetailPage({ params }: Props) {
           </span>
         </div>
 
+        {/* Trust signals — credentials and rating in view before the lead form */}
+        <div className="mt-6">
+          <TrustBadges variant="light" />
+        </div>
+
         {/* Header + two-column body */}
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-14">
           {/* Left: property info */}
@@ -449,6 +456,9 @@ export default async function ListingDetailPage({ params }: Props) {
           </div>
         </div>
       </div>
+
+      {/* Social proof — same strip used on /buy, /sell and /cash-offer */}
+      <ReviewStrip variant="light" limit={3} />
     </div>
   )
 }
