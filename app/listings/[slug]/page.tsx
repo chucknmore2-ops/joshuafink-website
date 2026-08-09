@@ -328,8 +328,8 @@ export default async function ListingDetailPage({ params }: Props) {
             )}
           </div>
 
-          {/* Right: lead capture */}
-          <div className="lg:col-span-1">
+          {/* Right: lead capture — first in the mobile stack so the form is reachable without scrolling the whole page */}
+          <div className="lg:col-span-1 order-first lg:order-last">
             <div id="lead" className="lg:sticky lg:top-24 border border-[#E8E8E8] rounded-2xl p-6 sm:p-8 scroll-mt-24">
               <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-2">
                 Interested in this home?
