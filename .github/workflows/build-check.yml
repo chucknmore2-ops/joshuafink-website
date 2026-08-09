@@ -10,6 +10,13 @@ name: Build check
 on:
   pull_request:
     branches: [main]
+  # "build" is the one required status check on main, and it only ran on PRs —
+  # so sync-listings' PR had no way to ever go green. Run on the sync branches
+  # too; the check lands on the branch head SHA, which is what branch
+  # protection reads. (sync-listings.yml also dispatches this workflow, because
+  # a push made with GITHUB_TOKEN does not itself trigger workflows.)
+  push:
+    branches: ['sync-listings/**']
   workflow_dispatch:
 
 permissions:

@@ -1,8 +1,12 @@
 name: Sync Compass Listings
 
-# Bi-weekly sync of Joshua's listings from https://www.compass.com/agents/joshua-fink/
+# Daily sync of Joshua's listings from https://www.compass.com/agents/joshua-fink/
 # via scripts/sync-all.sh — writes lib/listings.ts + lib/sold-listings.ts and
-# commits back if there are diffs.
+# opens an auto-merging PR if there are diffs.
+#
+# NOT a direct push to main: main is protected and requires the "build" status
+# check, so `git push origin main` from here is rejected with GH006 (that broke
+# every run from 2026-08-05 on, silently freezing the site's listings).
 
 on:
   schedule:
@@ -12,6 +16,8 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
+  actions: write # to dispatch build-check on the sync branch (see below)
 
 # actions/checkout + setup-* ship as Node 20 JS actions; GitHub forces the
 # Node 24 runtime on 2026-06-16. This env var keeps them running across
@@ -43,9 +49,10 @@ jobs:
       - name: Sync listings from Compass
         run: bash scripts/sync-all.sh
 
-      - name: Commit updated listing files
+      - name: Open auto-merging PR with updated listing files
         env:
           TZ: America/Chicago
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name  'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
@@ -54,5 +61,24 @@ jobs:
             echo 'No listing changes — nothing to commit.'
             exit 0
           fi
-          git commit -m "chore: bi-weekly listing sync from Compass [$(date +%F)]"
-          git push
+
+          BRANCH="sync-listings/$(date +%Y-%m-%d-%H%M%S)"
+          TITLE="chore: daily listing sync from Compass [$(date +%F)]"
+          git checkout -b "$BRANCH"
+          git commit -m "$TITLE"
+          git push origin "$BRANCH"
+
+          # GitHub deliberately does NOT fire push/pull_request workflows for
+          # refs pushed with GITHUB_TOKEN (recursion guard), so build-check
+          # would never report and auto-merge would hang forever. workflow_dispatch
+          # is the documented exception — dispatch it explicitly against the
+          # branch so the required "build" check lands on this SHA.
+          gh workflow run build-check.yml --ref "$BRANCH"
+
+          PR_URL=$(gh pr create \
+            --base main \
+            --head "$BRANCH" \
+            --title "$TITLE" \
+            --body 'Automated Compass listing sync. Merges itself once the `build` check is green.')
+          echo "Opened $PR_URL"
+          gh pr merge "$PR_URL" --squash --auto --delete-branch

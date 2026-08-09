@@ -42,6 +42,7 @@ on:
 
 permissions:
   contents: read
+  actions: read # read the latest run conclusion of the scheduled workflows
 
 # Don't pile up — one run at a time. If yesterday's run is somehow still
 # going, cancel it; freshness reports are only useful when current.
@@ -87,6 +88,9 @@ jobs:
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           ALERT_TO_EMAIL: ${{ secrets.ALERT_TO_EMAIL }}
           HEALTHCHECK_URL: ${{ vars.HEALTHCHECK_URL }}
+          # Auto-provisioned — no secret to configure. Without it the workflow
+          # run checks downgrade to a GAP instead of alerting.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ "${{ github.event.inputs.always_email }}" = "true" ]; then
             python scripts/morning_healthcheck.py --always-email --repo-dir "$GITHUB_WORKSPACE"

@@ -4,9 +4,10 @@
 External monitor, run from GitHub Actions on a weekday morning cron.
 Verifies every background pipeline that writes to the Railway Postgres
 `post_log` table is still producing fresh rows, plus a git freshness
-probe on the bi-weekly listings sync and an HTTPS probe on the public
-healthcheck endpoint. Emails a per-check failure report via Gmail SMTP
-when anything is stale or errors.
+probe on the daily listings sync, a run-status probe on the scheduled
+GitHub Actions workflows, and an HTTPS probe on the public healthcheck
+endpoint. Emails a per-check failure report via Gmail SMTP when anything
+is stale or errors.
 
 ============================================================================
 WHAT THIS MONITOR DOES AND DOES NOT COVER
@@ -22,6 +23,9 @@ COVERED (per `lib/admin-schedule.ts`):
     fired since post_log existed — that's expected for a freshly-cut
     branch, not a failure.
   GitHub Actions sync-listings — checked via git mtime of lib/listings.ts
+  GitHub Actions scheduled workflows — latest completed run of each must
+    have concluded 'success' (needs GITHUB_TOKEN; otherwise a GAP). This
+    is the fast signal: freshness thresholds only notice days later.
   Public uptime — GET https://joshuafink.com/api/healthcheck
 
 NOT COVERED (documented gaps — listed in every alert email):
@@ -52,6 +56,7 @@ from __future__ import annotations
 
 import argparse
 import dataclasses
+import json
 import logging
 import os
 import smtplib
@@ -71,7 +76,7 @@ log = logging.getLogger("morning_healthcheck")
 
 
 # ---------------------------------------------------------------------------
-# Schedule — mirror of lib/admin-schedule.ts plus the bi-weekly sync.
+# Schedule — mirror of lib/admin-schedule.ts plus the daily listings sync.
 # Keep these in sync by hand; tests assert the channel/job_name list against
 # the TS source on every CI run.
 # ---------------------------------------------------------------------------
@@ -142,10 +147,27 @@ EXPECTED_JOBS: tuple[ExpectedJob, ...] = (
     ),
 )
 
-# Bi-weekly Compass scrape (.github/workflows/sync-listings.yml).
-# Schedule is every other Monday 08:00 UTC, so worst case is 14d + 3d buffer.
+# Daily Compass scrape (.github/workflows/sync-listings.yml, 08:00 UTC).
+# The threshold stays generous because the sync only commits when Compass
+# actually changed — a quiet fortnight is normal and not a failure. Whether
+# the *workflow* is healthy is answered by MONITORED_WORKFLOWS below, not here.
 LISTINGS_FILE = "lib/listings.ts"
 LISTINGS_MAX_AGE_DAYS = 17
+
+# Scheduled GitHub Actions workflows. Freshness thresholds are slow by design;
+# a red workflow run is the immediate signal that an automation is broken.
+# (sync-listings failed silently for days in Aug 2026 — main's branch
+# protection rejected its push — and nothing here noticed.)
+GITHUB_API_ROOT = "https://api.github.com"
+GITHUB_REPO_DEFAULT = "chucknmore2-ops/joshuafink-website"
+GITHUB_API_TIMEOUT_S = 15
+
+MONITORED_WORKFLOWS: tuple[tuple[str, str], ...] = (
+    ("sync-listings.yml", "Sync Compass Listings"),
+    ("social-autopost.yml", "Social Autopost"),
+    ("geo-audit.yml", "GEO Audit"),
+    ("daily-tasks-pushover.yml", "Daily tasks Pushover"),
+)
 
 HEALTHCHECK_URL_DEFAULT = "https://joshuafink.com/api/healthcheck"
 HEALTHCHECK_TIMEOUT_S = 15
@@ -508,7 +530,7 @@ def check_listings_git_freshness(
     now: Optional[datetime] = None,
     run_fn: Callable[..., subprocess.CompletedProcess] = subprocess.run,
 ) -> CheckResult:
-    """Bi-weekly sync-listings workflow — verify lib/listings.ts isn't stale."""
+    """Daily sync-listings workflow — verify lib/listings.ts isn't stale."""
     now = now or datetime.now(timezone.utc)
     t0 = time.monotonic()
     try:
@@ -557,7 +579,7 @@ def check_listings_git_freshness(
     age_days = (now - commit_dt).total_seconds() / 86400.0
     detail = (
         f"last commit {age_days:.1f}d ago at {commit_dt.isoformat()} "
-        f"(threshold {LISTINGS_MAX_AGE_DAYS}d, bi-weekly Mon 08:00 UTC)"
+        f"(threshold {LISTINGS_MAX_AGE_DAYS}d, daily 08:00 UTC — commits only on a diff)"
     )
     if age_days > LISTINGS_MAX_AGE_DAYS:
         return CheckResult(
@@ -574,6 +596,102 @@ def check_listings_git_freshness(
         detail=detail,
         actual_age_days=age_days,
         expected_max_age_days=LISTINGS_MAX_AGE_DAYS,
+        duration_ms=int((time.monotonic() - t0) * 1000),
+    )
+
+
+def check_workflow_last_run(
+    workflow_file: str,
+    label: str,
+    *,
+    repo: str,
+    token: Optional[str],
+    opener: Callable[..., "urllib.request.addinfourl"] = urllib.request.urlopen,
+) -> CheckResult:
+    """Did the latest completed run of one scheduled workflow succeed?
+
+    Freshness checks are deliberately slow to fire; this is the same-morning
+    signal. Without a GITHUB_TOKEN we report a GAP rather than an alert — a
+    local run shouldn't page anyone just for lacking credentials.
+    """
+    name = f"github-actions — {label}"
+    t0 = time.monotonic()
+    if not token:
+        return CheckResult(
+            name=name,
+            status=STATUS_GAP,
+            detail="GITHUB_TOKEN not set — workflow run status not checked",
+        )
+
+    url = (
+        f"{GITHUB_API_ROOT}/repos/{repo}/actions/workflows/{workflow_file}"
+        f"/runs?status=completed&per_page=1"
+    )
+    try:
+        req = urllib.request.Request(
+            url,
+            headers={
+                "Accept": "application/vnd.github+json",
+                "Authorization": f"Bearer {token}",
+                "X-GitHub-Api-Version": "2022-11-28",
+                "User-Agent": "joshuafink-morning-healthcheck/1.0",
+            },
+        )
+        with opener(req, timeout=GITHUB_API_TIMEOUT_S) as resp:
+            http_status = getattr(resp, "status", None) or resp.getcode()
+            body = resp.read(200_000).decode("utf-8", errors="replace")
+    except Exception as exc:  # noqa: BLE001 — network/HTTP error is the signal
+        return CheckResult(
+            name=name,
+            status=STATUS_ERROR,
+            detail=f"Actions API unreachable: {type(exc).__name__}: {exc}",
+            duration_ms=int((time.monotonic() - t0) * 1000),
+        )
+
+    if http_status != 200:
+        return CheckResult(
+            name=name,
+            status=STATUS_ERROR,
+            detail=f"Actions API returned HTTP {http_status} ({body[:120]!r})",
+            duration_ms=int((time.monotonic() - t0) * 1000),
+        )
+
+    try:
+        runs = json.loads(body).get("workflow_runs") or []
+    except (ValueError, AttributeError) as exc:
+        return CheckResult(
+            name=name,
+            status=STATUS_ERROR,
+            detail=f"unparsable Actions API response: {type(exc).__name__}: {exc}",
+            duration_ms=int((time.monotonic() - t0) * 1000),
+        )
+
+    if not runs:
+        return CheckResult(
+            name=name,
+            status=STATUS_GAP,
+            detail=f"no completed runs yet for {workflow_file}",
+            duration_ms=int((time.monotonic() - t0) * 1000),
+        )
+
+    run = runs[0]
+    conclusion = run.get("conclusion")
+    detail = (
+        f"latest completed run concluded {conclusion!r} at "
+        f"{run.get('updated_at') or run.get('created_at')} "
+        f"({run.get('html_url')})"
+    )
+    if conclusion == "success":
+        status = STATUS_PASS
+    elif conclusion in ("failure", "timed_out", "startup_failure", "action_required"):
+        status = STATUS_ERROR
+    else:
+        # cancelled / skipped / neutral — worth showing, not worth paging over.
+        status = STATUS_GAP
+    return CheckResult(
+        name=name,
+        status=status,
+        detail=detail,
         duration_ms=int((time.monotonic() - t0) * 1000),
     )
 
@@ -644,6 +762,8 @@ def run_all_checks(
     healthcheck_url: str,
     repo_dir: str,
     now: Optional[datetime] = None,
+    github_token: Optional[str] = None,
+    github_repo: str = GITHUB_REPO_DEFAULT,
 ) -> list[CheckResult]:
     """Run every check; capture exceptions so one bad check doesn't abort the rest."""
     now = now or datetime.now(timezone.utc)
@@ -669,7 +789,21 @@ def run_all_checks(
             detail=f"uncaught {type(exc).__name__}: {exc}",
         ))
 
-    # 3) DB-dependent checks. If DSN missing or DB unreachable, each per-pipeline
+    # 3) Scheduled GitHub Actions runs — deliberately ahead of the DB block so a
+    #    missing DATABASE_URL (which returns early) can't hide a red workflow.
+    for workflow_file, label in MONITORED_WORKFLOWS:
+        try:
+            results.append(check_workflow_last_run(
+                workflow_file, label, repo=github_repo, token=github_token
+            ))
+        except Exception as exc:  # noqa: BLE001
+            results.append(CheckResult(
+                name=f"github-actions — {label}",
+                status=STATUS_ERROR,
+                detail=f"uncaught {type(exc).__name__}: {exc}",
+            ))
+
+    # 4) DB-dependent checks. If DSN missing or DB unreachable, each per-pipeline
     #    check downgrades to a single grouped error rather than 7 duplicate errors.
     if not dsn:
         results.append(CheckResult(
@@ -777,6 +911,15 @@ def _remediation_for(result: CheckResult) -> Optional[str]:
             "Set the DATABASE_URL secret in the GitHub repo: Settings → "
             "Secrets and variables → Actions → New repository secret. Use "
             "the DATABASE_PUBLIC_URL from Railway → Postgres → Variables."
+        )
+    # Must precede the pipeline-name matches — "github-actions — Sync Compass
+    # Listings" is about the workflow run, not the lib/listings.ts git mtime.
+    if "github-actions" in name:
+        return (
+            "Open the failing run linked in the detail above → read the red "
+            "step, fix, then Actions tab → that workflow → Re-run. A red "
+            "'Sync Compass Listings' means Compass updates are NOT reaching "
+            "the site even though the scrape itself may have worked."
         )
     if "postgres reachable" in name or "postgres" == name:
         return (
@@ -995,6 +1138,8 @@ def main(argv: Optional[list[str]] = None) -> int:
         dsn=dsn,
         healthcheck_url=args.healthcheck_url,
         repo_dir=args.repo_dir,
+        github_token=os.environ.get("GITHUB_TOKEN"),
+        github_repo=os.environ.get("GITHUB_REPOSITORY") or GITHUB_REPO_DEFAULT,
     )
     exit_code = determine_exit_code(results)
     report = format_text_report(results)
