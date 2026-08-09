@@ -463,10 +463,93 @@ def test_uptime_error_on_network():
 
 
 # ---------------------------------------------------------------------------
+# check_workflow_last_run — did the scheduled Actions job actually succeed?
+# ---------------------------------------------------------------------------
+
+def _runs_opener(payload, status=200):
+    body = json.dumps(payload).encode()
+    def opener(req, timeout=None):
+        return _FakeResponse(status, body)
+    return opener
+
+
+def _run_payload(conclusion):
+    return {"workflow_runs": [{
+        "conclusion": conclusion,
+        "updated_at": "2026-08-09T08:48:36Z",
+        "html_url": "https://github.com/o/r/actions/runs/1",
+    }]}
+
+
+def test_workflow_run_pass_on_success():
+    r = hc.check_workflow_last_run(
+        "sync-listings.yml", "Sync Compass Listings",
+        repo="o/r", token="t", opener=_runs_opener(_run_payload("success")),
+    )
+    assert r.status == hc.STATUS_PASS
+
+
+def test_workflow_run_error_on_failure():
+    """The regression this check exists for: sync-listings red every morning
+    while every freshness threshold still read green."""
+    r = hc.check_workflow_last_run(
+        "sync-listings.yml", "Sync Compass Listings",
+        repo="o/r", token="t", opener=_runs_opener(_run_payload("failure")),
+    )
+    assert r.status == hc.STATUS_ERROR
+    assert r.is_alert
+    assert "actions/runs/1" in r.detail
+
+
+def test_workflow_run_cancelled_is_gap_not_alert():
+    r = hc.check_workflow_last_run(
+        "sync-listings.yml", "Sync Compass Listings",
+        repo="o/r", token="t", opener=_runs_opener(_run_payload("cancelled")),
+    )
+    assert r.status == hc.STATUS_GAP
+
+
+def test_workflow_run_gap_without_token():
+    """No credentials must never page — and must never hit the network."""
+    def opener(req, timeout=None):
+        raise AssertionError("should not call the API without a token")
+    r = hc.check_workflow_last_run(
+        "sync-listings.yml", "Sync Compass Listings",
+        repo="o/r", token=None, opener=opener,
+    )
+    assert r.status == hc.STATUS_GAP
+    assert not r.is_alert
+
+
+def test_workflow_run_gap_when_never_run():
+    r = hc.check_workflow_last_run(
+        "sync-listings.yml", "Sync Compass Listings",
+        repo="o/r", token="t", opener=_runs_opener({"workflow_runs": []}),
+    )
+    assert r.status == hc.STATUS_GAP
+
+
+def test_workflow_run_error_on_api_failure():
+    r = hc.check_workflow_last_run(
+        "sync-listings.yml", "Sync Compass Listings",
+        repo="o/r", token="t", opener=_runs_opener({"message": "Bad creds"}, status=401),
+    )
+    assert r.status == hc.STATUS_ERROR
+    assert "HTTP 401" in r.detail
+
+
+def test_monitored_workflows_exist_on_disk():
+    """Guard against a rename silently turning a check into a permanent GAP."""
+    workflows_dir = Path(__file__).resolve().parent.parent / ".github" / "workflows"
+    for workflow_file, _label in hc.MONITORED_WORKFLOWS:
+        assert (workflows_dir / workflow_file).exists(), workflow_file
+
+
+# ---------------------------------------------------------------------------
 # Orchestration + exit codes
 # ---------------------------------------------------------------------------
 
-def _patch_dns_helpers(monkeypatch, *, healthcheck_status, git_status, latest_map=None, reach_status="pass", last_attempt_map=None):
+def _patch_dns_helpers(monkeypatch, *, healthcheck_status, git_status, latest_map=None, reach_status="pass", last_attempt_map=None, workflow_status="pass"):
     """Replace per-check functions with deterministic fakes."""
     monkeypatch.setattr(
         hc,
@@ -505,6 +588,15 @@ def _patch_dns_helpers(monkeypatch, *, healthcheck_status, git_status, latest_ma
         "_fetch_last_attempt_per_channel_job",
         lambda dsn, connect_fn=None: last_attempt_map or {},
     )
+    monkeypatch.setattr(
+        hc,
+        "check_workflow_last_run",
+        lambda wf, label, repo=None, token=None, opener=None: hc.CheckResult(
+            name=f"github-actions — {label}",
+            status=workflow_status,
+            detail="patched",
+        ),
+    )
 
 
 def test_run_all_all_green(monkeypatch):
@@ -514,8 +606,8 @@ def test_run_all_all_green(monkeypatch):
         dsn="dsn://", healthcheck_url="https://x/", repo_dir="/repo", now=NOW
     )
     assert hc.determine_exit_code(results) == 0
-    # site uptime + git + reach + 7 pipeline checks = 10 results
-    assert len(results) == 3 + len(hc.EXPECTED_JOBS)
+    # site uptime + git + reach + monitored workflows + 7 pipeline checks
+    assert len(results) == 3 + len(hc.MONITORED_WORKFLOWS) + len(hc.EXPECTED_JOBS)
 
 
 def test_run_all_misconfig_when_no_dsn(monkeypatch):
@@ -553,6 +645,33 @@ def test_run_all_stale_pipeline_triggers_exit_1(monkeypatch):
         dsn="dsn://", healthcheck_url="https://x/", repo_dir="/repo", now=NOW
     )
     assert hc.determine_exit_code(results) == 1
+
+
+def test_run_all_red_workflow_triggers_exit_1(monkeypatch):
+    latest = {(j.channel, j.job_name): _fake_latest(0.5) for j in hc.EXPECTED_JOBS}
+    _patch_dns_helpers(
+        monkeypatch,
+        healthcheck_status="pass",
+        git_status="pass",
+        latest_map=latest,
+        workflow_status="error",
+    )
+    results = hc.run_all_checks(
+        dsn="dsn://", healthcheck_url="https://x/", repo_dir="/repo", now=NOW
+    )
+    assert hc.determine_exit_code(results) == 1
+
+
+def test_run_all_checks_workflows_even_without_dsn(monkeypatch):
+    """A missing DATABASE_URL returns early — the workflow checks must run
+    before that point, or a broken automation stays invisible."""
+    _patch_dns_helpers(
+        monkeypatch, healthcheck_status="pass", git_status="pass", workflow_status="error"
+    )
+    results = hc.run_all_checks(
+        dsn=None, healthcheck_url="https://x/", repo_dir="/repo", now=NOW
+    )
+    assert any(r.name.startswith("github-actions —") and r.is_alert for r in results)
 
 
 def test_run_all_never_logged_is_not_an_alert(monkeypatch):
@@ -631,6 +750,7 @@ def test_report_no_remediation_when_all_green():
     ("postgres reachable", "DATABASE_PUBLIC_URL"),
     ("site uptime — https://example/", "vercel.com"),
     ("sync-listings — lib/listings.ts", "Sync Compass Listings"),
+    ("github-actions — Sync Compass Listings", "Re-run"),
     ("autoposter-listing (FB) — listing-spotlight", "FB_PAGE_TOKEN"),
     ("autoposter-stats (FB) — content-market-stats", "Cron Runs"),
     ("autoposter-testimonial (FB) — content-testimonial", "Cron Runs"),
@@ -760,6 +880,7 @@ def test_main_empty_healthcheck_url_env_falls_back_to_default(monkeypatch):
     )
     monkeypatch.setenv("HEALTHCHECK_URL", "")  # the broken-empty case
     monkeypatch.delenv("DATABASE_URL", raising=False)
+    monkeypatch.delenv("GITHUB_TOKEN", raising=False)  # keep the Actions API out of it
 
     hc.main(["--no-email", "--repo-dir", "/repo"])
     assert captured["url"] == hc.HEALTHCHECK_URL_DEFAULT

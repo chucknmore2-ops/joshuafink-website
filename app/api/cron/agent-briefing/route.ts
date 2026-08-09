@@ -96,7 +96,24 @@ function formatActivitySection(
   }>,
 ): string {
   const total = counts.posted_7d + counts.failed_7d + counts.dry_run_7d
-  if (total === 0 && recent.length === 0) {
+
+  // `recentPosts()` is deliberately unbounded by date — it backs the /admin
+  // activity feed, where "the last N rows" is the right thing to show. But
+  // everything below is published under a "Last 7 days" heading and handed to
+  // Agent 02 as this week's data, so it has to be clamped to the same window
+  // `activityCounts()` uses. Without this the by-channel table and the error
+  // list summarise the last 100 rows of all time: that is how a week with
+  // 4 posts and 0 failures got audited as 39 posts with a 46% LinkedIn
+  // failure rate, off errors that were already weeks stale.
+  const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000
+  const inWindow = recent.filter((r) => {
+    // pg returns timestamp columns as Date objects; the declared type says
+    // string. `new Date()` handles both.
+    const t = new Date(r.posted_at).getTime()
+    return Number.isFinite(t) && t > cutoff
+  })
+
+  if (total === 0 && inWindow.length === 0) {
     return [
       '### Last 7 days — no autoposter activity in /admin Postgres',
       '',
@@ -108,7 +125,7 @@ function formatActivitySection(
   }
 
   const byChannel: Record<string, { posted: number; failed: number; dry: number }> = {}
-  for (const row of recent) {
+  for (const row of inWindow) {
     const c = (byChannel[row.channel] = byChannel[row.channel] ?? {
       posted: 0,
       failed: 0,
@@ -118,7 +135,7 @@ function formatActivitySection(
     else if (row.status === 'failed') c.failed++
     else if (row.status === 'dry_run') c.dry++
   }
-  const errors = recent
+  const errors = inWindow
     .filter((r) => r.status === 'failed' && r.error_message)
     .slice(0, 5)
     .map((r) => `- **${r.channel}/${r.job_name}** — ${r.error_message}`)
@@ -137,6 +154,12 @@ function formatActivitySection(
     '',
     '**By channel:**',
     channelLines || '- (no rows in window)',
+    // The totals are a full SQL count; the breakdown is drawn from a capped
+    // row sample. If a week ever overflows that cap, say so instead of
+    // quietly publishing a short table under an authoritative heading.
+    inWindow.length < total
+      ? `\n_Note: totals are a full SQL count of ${total} rows; the breakdown and errors below cover only the ${inWindow.length} most recent rows in the window._`
+      : '',
     '',
     errors.length > 0 ? '**Errors worth reviewing:**' : '',
     errors.join('\n'),
