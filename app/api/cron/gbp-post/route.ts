@@ -4,6 +4,7 @@ import { blogPosts } from '@/lib/blog'
 import { reviews } from '@/lib/reviews'
 import { logPost } from '@/lib/admin-db'
 import { withUtm } from '@/lib/utm'
+import { suburbs, marketStatsLastUpdated, marketStatsSource } from '@/lib/suburbs'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,12 +13,18 @@ export const dynamic = 'force-dynamic'
 // Runs on Vercel Cron; authenticates with an offline-access refresh token stored
 // in GBP_REFRESH_TOKEN, exchanges it for a short-lived access token, and POSTs a
 // rotating localPost to the Joshua Fink Group location. The rotator uses ISO
-// week number so every week a different post type goes out:
-//   week % 5 = 0 → featured listing
-//   week % 5 = 1 → market update (rotates through suburbs)
-//   week % 5 = 2 → buyer/seller tip
-//   week % 5 = 3 → client review
-//   week % 5 = 4 → latest blog post
+// week number so a different post type goes out each week:
+//   odd  week                → Brentwood market update  (see BRENTWOOD_SLUG)
+//   even week, (week/2)%4=0  → featured listing
+//                        = 1 → buyer/seller tip
+//                        = 2 → client review
+//                        = 3 → latest blog post
+//
+// Brentwood — Joshua's core market — has its own recurring slot rather than
+// sharing a 1-in-5 "market update" week with everywhere else. The old scheme
+// nominally rotated five suburbs inside that slot, but the suburb index and
+// the slot test were both `week % 5`, so the two were locked together and
+// Brentwood was in practice the only suburb that ever posted.
 //
 // Required env vars (set in Vercel):
 //   CRON_SECRET           — same secret used by other /api/cron/* routes
@@ -92,21 +99,41 @@ const gbpUtm = (campaign: string) => ({
   campaign: `gbp-${campaign}`,
 })
 
-function buildMarketUpdatePost(): PreparedPost {
-  const suburbs = [
-    { name: 'Franklin', median: '$650,000', dom: 21, yoy: '+4.2%', slug: 'franklin-tn' },
-    { name: 'Brentwood', median: '$900,000', dom: 26, yoy: '+3.8%', slug: 'brentwood-tn' },
-    { name: 'Spring Hill', median: '$450,000', dom: 28, yoy: '+5.1%', slug: 'spring-hill-tn' },
-    { name: 'Nolensville', median: '$750,000', dom: 24, yoy: '+4.7%', slug: 'nolensville-tn' },
-    { name: 'Murfreesboro', median: '$430,000', dom: 31, yoy: '+3.9%', slug: 'murfreesboro-tn' },
-  ]
-  const s = suburbs[isoWeekNumber() % suburbs.length]
+// The market-update numbers come from lib/suburbs.ts — the same module that
+// renders /market, /buy and /sell — so a GBP post can never contradict the
+// site. (It used to keep a private copy here, which had already drifted:
+// Nolensville $750K vs the site's $580K, Murfreesboro $430K vs $380K.)
+const BRENTWOOD_SLUG = 'brentwood-tn'
+
+// Stats this old aren't worth publishing to a public profile, so the job skips
+// the week rather than posting a stale median under Joshua's name. Refreshing
+// lib/suburbs.ts (numbers + dataUpdatedAt) is what un-sticks it.
+const MAX_STATS_AGE_DAYS = 45
+
+// "As of" date for a suburb's figures: its own dataUpdatedAt, else the global
+// review date. Mirrors what /market/[suburb] and /sell/[suburb] display.
+function statsAsOf(slug: string): string {
+  return suburbs[slug]?.dataUpdatedAt ?? marketStatsLastUpdated
+}
+
+function statsAgeDays(slug: string, now: Date = new Date()): number {
+  return Math.floor((+now - +new Date(`${statsAsOf(slug)}T00:00:00Z`)) / 86_400_000)
+}
+
+function buildMarketUpdatePost(slug: string): PreparedPost {
+  const s = suburbs[slug]
+  if (!s) return buildTipPost()
   const month = new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' })
+  // Only cite a source when we actually have one — see marketStatsSource.
+  const sourceLine = marketStatsSource
+    ? `Source: ${marketStatsSource}, as of ${statsAsOf(slug)}\n\n`
+    : ''
   return {
     summary:
       `📊 ${s.name}, TN Market Update — ${month}\n\n` +
-      `• Median sale price: ${s.median} (${s.yoy} YoY)\n` +
-      `• Avg. days on market: ${s.dom}\n\n` +
+      `• Median sale price: ${s.medianPrice} (${s.yoyChange} YoY)\n` +
+      `• Avg. days on market: ${s.avgDaysOnMarket}\n\n` +
+      sourceLine +
       `Thinking about selling in ${s.name}? Get a free, no-obligation valuation from Joshua Fink at Compass.\n\n` +
       `#${s.name.replace(/\s+/g, '')}TN #NashvilleRealEstate #JoshuaFinkGroup`,
     cta: {
@@ -192,20 +219,22 @@ function buildLatestBlogPost(): PreparedPost {
   }
 }
 
-function pickPost(weekMod: number): PreparedPost {
-  switch (weekMod) {
+// Returns null when this week's slot is a market update whose figures are too
+// old to publish — the caller skips the post instead of running one.
+function pickPost(week: number): PreparedPost | null {
+  if (week % 2 === 1) {
+    if (statsAgeDays(BRENTWOOD_SLUG) > MAX_STATS_AGE_DAYS) return null
+    return buildMarketUpdatePost(BRENTWOOD_SLUG)
+  }
+  switch (Math.floor(week / 2) % 4) {
     case 0:
       return buildListingPost()
     case 1:
-      return buildMarketUpdatePost()
+      return buildTipPost()
     case 2:
-      return buildTipPost()
-    case 3:
       return buildReviewPost()
-    case 4:
-      return buildLatestBlogPost()
     default:
-      return buildTipPost()
+      return buildLatestBlogPost()
   }
 }
 
@@ -316,6 +345,35 @@ export async function GET(request: Request) {
     )
   }
 
+  // Decide what to post before spending an OAuth round-trip, so a skipped week
+  // never touches Google at all.
+  const week = isoWeekNumber()
+  const post = pickPost(week)
+  if (!post) {
+    const reason =
+      `skipped: market stats stale (as of ${statsAsOf(BRENTWOOD_SLUG)}, ` +
+      `${statsAgeDays(BRENTWOOD_SLUG)}d old > ${MAX_STATS_AGE_DAYS}d) — ` +
+      `refresh lib/suburbs.ts`
+    console.warn('[gbp-post]', reason)
+    await logPost({
+      channel: 'gbp',
+      jobName: 'gbp-post',
+      payloadKind: 'market-update',
+      refKey: BRENTWOOD_SLUG,
+      status: 'failed',
+      errorMessage: reason.slice(0, 500),
+    })
+    // 200 so the GitHub Actions job doesn't retry-then-fail on a deliberate
+    // skip; the post_log row is what surfaces it in /admin + the healthcheck.
+    return NextResponse.json({
+      posted: false,
+      skipped: 'stats_stale',
+      week,
+      statsAsOf: statsAsOf(BRENTWOOD_SLUG),
+      at: new Date().toISOString(),
+    })
+  }
+
   let accessToken: string
   try {
     accessToken = await refreshAccessToken()
@@ -337,9 +395,6 @@ export async function GET(request: Request) {
       { status: 502 },
     )
   }
-
-  const week = isoWeekNumber()
-  const post = pickPost(week % 5)
 
   const payload: Record<string, unknown> = {
     languageCode: 'en-US',
@@ -401,7 +456,7 @@ export async function GET(request: Request) {
     return NextResponse.json({
       posted: true,
       week,
-      rotator: week % 5,
+      rotator: post.kind,
       summaryPreview: post.summary.slice(0, 100),
       name: data.name,
       at: new Date().toISOString(),
