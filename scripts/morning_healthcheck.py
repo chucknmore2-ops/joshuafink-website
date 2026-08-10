@@ -17,11 +17,11 @@ COVERED (per `lib/admin-schedule.ts`):
   Railway autoposter jobs (FB channel) — listing-spotlight (M/W/F),
     content-market-stats (Tue), content-testimonial (Wed),
     content-tips (Thu), content-engagement (Fri)
-  Vercel cron LinkedIn + GBP — both routes write to post_log on every
-    fire (success and failure) since the lib/admin-db logPost wiring.
-    A channel can still show as NEVER_LOGGED if the route has never
-    fired since post_log existed — that's expected for a freshly-cut
-    branch, not a failure.
+  LinkedIn + GBP + Instagram — all three routes write to post_log on
+    every fire (success and failure) since the lib/admin-db logPost
+    wiring. A channel can still show as NEVER_LOGGED if the route has
+    never fired since post_log existed — that's expected for a
+    freshly-cut branch, not a failure.
   GitHub Actions sync-listings — checked via git mtime of lib/listings.ts
   GitHub Actions scheduled workflows — latest completed run of each must
     have concluded 'success' (needs GITHUB_TOKEN; otherwise a GAP). This
@@ -31,9 +31,6 @@ COVERED (per `lib/admin-schedule.ts`):
 NOT COVERED (documented gaps — listed in every alert email):
   /api/cron/indexnow            no DB write; signal lives in Vercel logs
   /api/cron/agent-briefing      sends email + ClickUp task, no DB write
-  /api/cron/instagram-post      currently blocked at Meta Business Suite
-                                linkage (docs/IG-SETUP-PLAYBOOK.md), not
-                                yet emitting post_log rows
   Local content engine          runs on Joshua's Mac via Ollama; out of
                                 GitHub Actions reach
   Holidays                      v1 is holiday-naive — a US federal
@@ -145,6 +142,14 @@ EXPECTED_JOBS: tuple[ExpectedJob, ...] = (
         cadence_ct="Tue 9:00am CT",
         max_age_days=9,
     ),
+    # Fired weekly by .github/workflows/social-autopost.yml (not Vercel Cron).
+    ExpectedJob(
+        label="github-actions-instagram",
+        channel="instagram",
+        job_name="instagram-post",
+        cadence_ct="Wed 9:00am CT",
+        max_age_days=9,
+    ),
 )
 
 # Daily Compass scrape (.github/workflows/sync-listings.yml, 08:00 UTC).
@@ -233,12 +238,6 @@ DOCUMENTED_GAPS: tuple[tuple[str, str], ...] = (
         "/api/cron/agent-briefing (Mon)",
         "Sends SendGrid email + creates a ClickUp task. No DB write. Signal "
         "is the email landing in Chuck's inbox.",
-    ),
-    (
-        "/api/cron/instagram-post",
-        "Currently blocked at Meta Business Suite — IG account not linked "
-        "to the FB Page (see docs/IG-SETUP-PLAYBOOK.md). Will show in "
-        "post_log once Railway autoposter ships the IG channel.",
     ),
     (
         "Holidays / DST",
@@ -970,6 +969,13 @@ def _remediation_for(result: CheckResult) -> Optional[str]:
             "/api/cron/gbp-post. GBP refresh tokens shouldn't expire; if "
             "Google returns 401 the OAuth grant was likely revoked — re-run "
             "the OAuth flow per docs/automation.md."
+        )
+    if "instagram" in name:
+        return (
+            "Actions tab → Social Autopost → Run workflow → instagram-post. "
+            "A 400/401 from the Graph API means IG_ACCESS_TOKEN expired or "
+            "lost instagram_content_publish scope — refresh it in Vercel env "
+            "(see docs/IG-SETUP-PLAYBOOK.md)."
         )
     return None  # No tip — generic alert, hand-investigate
 

@@ -142,6 +142,16 @@ export async function GET(request: Request) {
   const accessToken = process.env.LINKEDIN_ACCESS_TOKEN
   const authorUrn = process.env.LINKEDIN_AUTHOR_URN
   if (!accessToken || !authorUrn) {
+    // Log the early exit too — otherwise a channel that never even reaches
+    // LinkedIn looks identical in /admin to one that was never scheduled.
+    await logPost({
+      channel: 'linkedin',
+      jobName: 'linkedin-post',
+      payloadKind: 'none',
+      refKey: 'no-payload',
+      status: 'failed',
+      errorMessage: 'LINKEDIN_ACCESS_TOKEN or LINKEDIN_AUTHOR_URN not set',
+    })
     return NextResponse.json(
       { error: 'LINKEDIN_ACCESS_TOKEN or LINKEDIN_AUTHOR_URN not set' },
       { status: 500 },
@@ -150,6 +160,14 @@ export async function GET(request: Request) {
 
   const payload = pickPayload()
   if (!payload) {
+    await logPost({
+      channel: 'linkedin',
+      jobName: 'linkedin-post',
+      payloadKind: 'none',
+      refKey: 'no-payload',
+      status: 'failed',
+      errorMessage: 'no content available to post (no blogs or listings)',
+    })
     return NextResponse.json(
       { error: 'no content available to post (no blogs or listings)' },
       { status: 422 },

@@ -300,6 +300,16 @@ export async function GET(request: Request) {
 
   const locationId = process.env.GBP_LOCATION_ID
   if (!locationId) {
+    // Log the early exit too — otherwise a channel that never even reaches
+    // Google looks identical in /admin to one that was never scheduled.
+    await logPost({
+      channel: 'gbp',
+      jobName: 'gbp-post',
+      payloadKind: 'none',
+      refKey: 'no-payload',
+      status: 'failed',
+      errorMessage: 'GBP_LOCATION_ID not set',
+    })
     return NextResponse.json(
       { error: 'GBP_LOCATION_ID not set' },
       { status: 500 },
@@ -312,6 +322,14 @@ export async function GET(request: Request) {
   } catch (err) {
     // Server-side: structured error for debugging.
     console.error('[gbp-post] token refresh failed', (err as Error).message)
+    await logPost({
+      channel: 'gbp',
+      jobName: 'gbp-post',
+      payloadKind: 'none',
+      refKey: 'no-payload',
+      status: 'failed',
+      errorMessage: `token refresh failed: ${(err as Error).message}`.slice(0, 500),
+    })
     // Response body: opaque — callers with CRON_SECRET shouldn't see
     // upstream auth details either.
     return NextResponse.json(
