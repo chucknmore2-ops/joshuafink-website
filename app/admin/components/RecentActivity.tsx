@@ -44,6 +44,7 @@ export default function RecentActivity({ rows }: { rows: PostLogRow[] }) {
             <Th>Channel</Th>
             <Th>Job</Th>
             <Th>Reference</Th>
+            <Th>Copy</Th>
             <Th>Status</Th>
             <Th>Link</Th>
           </tr>
@@ -74,6 +75,23 @@ export default function RecentActivity({ rows }: { rows: PostLogRow[] }) {
                   <span className="block max-w-[18rem] truncate text-xs text-red-600">
                     {row.error_message}
                   </span>
+                )}
+              </Td>
+              <Td>
+                {/* The DB already stores a 200-char preview of every post —
+                    surfacing it lets Joshua spot-check the copy that actually
+                    went out without leaving /admin. */}
+                {row.message_preview ? (
+                  <details className="max-w-[22rem]">
+                    <summary className="cursor-pointer text-xs text-slate-500">
+                      view
+                    </summary>
+                    <p className="mt-1 whitespace-pre-wrap text-xs text-slate-700">
+                      {row.message_preview}
+                    </p>
+                  </details>
+                ) : (
+                  <span className="text-xs text-slate-400">—</span>
                 )}
               </Td>
               <Td>
