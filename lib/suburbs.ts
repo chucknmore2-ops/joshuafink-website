@@ -707,6 +707,17 @@ export const suburbs: Record<string, Suburb> = {
 // yoyChange/pricePerSqft figures above were last reviewed. Update when refreshing stats.
 export const marketStatsLastUpdated = '2026-06-30'
 
+// Where the figures above came from. When set, the weekly Google Business
+// Profile market-update post cites it verbatim as "Source: <name>, as of <date>".
+// Leave it empty until the numbers actually come from a citable report (e.g.
+// 'RealTracs') — an uncited post is fine, a wrongly-cited one is not.
+//
+// To refresh stats: paste the report's numbers into medianPrice /
+// avgDaysOnMarket / yoyChange above, set that suburb's dataUpdatedAt (or bump
+// marketStatsLastUpdated), and set this to the report's name. The site pages
+// and the GBP post both read from here, so they can't drift apart.
+export const marketStatsSource = ''
+
 // City-center coordinates keyed by suburb slug. Used for Place-schema `geo`
 // on /buy/[suburb] and /sell/[suburb] to strengthen local map-pack signals.
 export const suburbCityGeo: Record<string, { latitude: number; longitude: number }> = {
