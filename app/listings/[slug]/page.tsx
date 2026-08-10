@@ -3,6 +3,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
+import TrustBadges from '@/components/TrustBadges'
+import ReviewStrip from '@/components/ReviewStrip'
 import { activeListingSlugs, getListingBySlug } from '@/lib/listing-detail'
 import { buildListingSchema } from '@/lib/listing-schema'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
@@ -267,6 +269,12 @@ export default async function ListingDetailPage({ params }: Props) {
               </div>
             )}
 
+            {/* Human-visible proof up top — a buyer comparing agents sees the
+                license, tenure and review count before the details table. */}
+            <div className="mt-6">
+              <TrustBadges variant="light" />
+            </div>
+
             {listing.note && (
               <p className="mt-5 text-sm text-neutral-600 leading-relaxed">{listing.note}</p>
             )}
@@ -319,6 +327,12 @@ export default async function ListingDetailPage({ params }: Props) {
                 </Link>
               </div>
             )}
+
+            {/* Social proof — last thing before the lead form on mobile, and
+                alongside the sticky form on desktop. */}
+            <div className="mt-10 rounded-2xl overflow-hidden">
+              <ReviewStrip variant="light" limit={3} />
+            </div>
           </div>
 
           {/* Right: lead capture */}

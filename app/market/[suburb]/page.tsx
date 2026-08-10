@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated, suburbs } from '@/lib/suburbs'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
+import TrustBadges from '@/components/TrustBadges'
+import ReviewStrip from '@/components/ReviewStrip'
 
 const SITE = 'https://www.joshuafink.com'
 
@@ -250,6 +252,11 @@ export default async function MarketSuburbPage({ params }: Props) {
                 Buy a Home in {s.name} →
               </Link>
             </div>
+
+            {/* Credentials in the hero — proof before the first ask */}
+            <div className="mt-8">
+              <TrustBadges variant="dark" />
+            </div>
           </div>
         </div>
 
@@ -279,6 +286,9 @@ export default async function MarketSuburbPage({ params }: Props) {
             </div>
           </div>
         </div>
+
+        {/* Social proof — client quotes immediately above the lead form */}
+        <ReviewStrip variant="light" limit={3} />
 
         {/* Mid-page inline lead capture — catches high-intent visitors who scroll
             past the headline stats but won't reach the bottom CTA form. */}

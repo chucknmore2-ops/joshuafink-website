@@ -10,6 +10,8 @@ import { getSuburb, getSuburbSlugForListing } from '@/lib/suburbs'
 import { reviewStats } from '@/lib/reviews'
 import { withUtm } from '@/lib/utm'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
+import TrustBadges from '@/components/TrustBadges'
+import ReviewStrip from '@/components/ReviewStrip'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import ListingCard from '@/components/ListingCard'
 import { listings } from '@/lib/listings'
@@ -271,6 +273,11 @@ export default async function NeighborhoodPage({ params }: Props) {
                 Listings are served live from compass.com. Joshua Fink is your attributed agent on Compass.
               </p>
             )}
+
+            {/* Credentials in the hero — proof before the first ask */}
+            <div className="mt-8">
+              <TrustBadges variant="dark" />
+            </div>
 
             {/* Compact above-the-fold lead capture — mirrors /buy/[suburb] hero form */}
             <div className="mt-10 max-w-xl bg-white p-6 sm:p-7 pb-20 md:pb-7">
@@ -649,6 +656,9 @@ export default async function NeighborhoodPage({ params }: Props) {
             </div>
           </div>
         </div>
+
+        {/* Social proof — client quotes immediately above the main lead form */}
+        <ReviewStrip variant="light" limit={3} />
 
         {/* Mid-page lead form — surfaced after schools/HOA so engaged readers can convert without scrolling past the rest of the guide */}
         <div id="contact" className="bg-[#F9F9F9] border-y border-[#E8E8E8] py-16 px-4 sm:px-6 lg:px-8">
