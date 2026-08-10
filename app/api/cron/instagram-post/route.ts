@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { blogPosts } from '@/lib/blog'
 import { listings } from '@/lib/listings'
 import { listingSlug } from '@/lib/listing-detail'
+import { logPost } from '@/lib/admin-db'
 import { withUtm } from '@/lib/utm'
 
 export const dynamic = 'force-dynamic'
@@ -36,6 +37,32 @@ type PostPayload = {
   caption: string
   imageUrl: string
   url: string
+  // kind + refKey populate post_log columns so the morning healthcheck can
+  // see freshness per channel and /admin can dedup across reruns.
+  kind: 'blog' | 'listing'
+  refKey: string
+}
+
+// Every post_log write from this route. Kept in one helper so the early-exit
+// paths (missing token, nothing to post) leave a red row in /admin instead of
+// nothing at all — a silently dead channel used to be indistinguishable from
+// a channel that was never scheduled.
+function logIg(
+  status: 'posted' | 'failed',
+  payload: PostPayload | null,
+  extra: { externalPostId?: string | null; errorMessage?: string } = {},
+) {
+  return logPost({
+    channel: 'instagram',
+    jobName: 'instagram-post',
+    payloadKind: payload?.kind ?? 'none',
+    refKey: payload?.refKey ?? 'no-payload',
+    messagePreview: payload ? payload.caption.slice(0, 200) : null,
+    link: payload?.url ?? null,
+    externalPostId: extra.externalPostId ?? null,
+    status,
+    errorMessage: extra.errorMessage?.slice(0, 500) ?? null,
+  })
 }
 
 function isoWeekNumber(d: Date = new Date()): number {
@@ -79,6 +106,8 @@ function buildFromListing(): PostPayload | null {
     caption: caption.slice(0, MAX_CAPTION),
     imageUrl: l.imageUrl!,
     url,
+    kind: 'listing',
+    refKey: slug,
   }
 }
 
@@ -107,6 +136,8 @@ function buildFromBlog(): PostPayload | null {
     caption: caption.slice(0, MAX_CAPTION),
     imageUrl: cover,
     url,
+    kind: 'blog',
+    refKey: p.slug,
   }
 }
 
@@ -134,6 +165,9 @@ export async function GET(request: Request) {
   const igUserId = process.env.IG_BUSINESS_ACCOUNT_ID
   const accessToken = process.env.IG_ACCESS_TOKEN
   if (!igUserId || !accessToken) {
+    await logIg('failed', null, {
+      errorMessage: 'IG_BUSINESS_ACCOUNT_ID or IG_ACCESS_TOKEN not set',
+    })
     return NextResponse.json(
       { error: 'IG_BUSINESS_ACCOUNT_ID or IG_ACCESS_TOKEN not set' },
       { status: 500 },
@@ -142,6 +176,9 @@ export async function GET(request: Request) {
 
   const payload = pickPayload()
   if (!payload) {
+    await logIg('failed', null, {
+      errorMessage: 'no content available to post (no listings or blog covers)',
+    })
     return NextResponse.json(
       { error: 'no content available to post (no listings or blog covers)' },
       { status: 422 },
@@ -163,6 +200,9 @@ export async function GET(request: Request) {
     if (!containerRes.ok) {
       const snippet = await containerRes.text().then(sanitize).catch(() => '')
       console.error('[instagram-post] container error', containerRes.status, snippet)
+      await logIg('failed', payload, {
+        errorMessage: `container ${containerRes.status} ${snippet}`,
+      })
       return NextResponse.json(
         {
           error: 'instagram container creation failed',
@@ -178,6 +218,9 @@ export async function GET(request: Request) {
     const containerData = (await containerRes.json()) as { id?: string }
     const creationId = containerData.id
     if (!creationId) {
+      await logIg('failed', payload, {
+        errorMessage: 'instagram container returned no id',
+      })
       return NextResponse.json(
         { error: 'instagram container returned no id' },
         { status: 502 },
@@ -195,6 +238,9 @@ export async function GET(request: Request) {
     if (!publishRes.ok) {
       const snippet = await publishRes.text().then(sanitize).catch(() => '')
       console.error('[instagram-post] publish error', publishRes.status, snippet)
+      await logIg('failed', payload, {
+        errorMessage: `publish ${publishRes.status} ${snippet}`,
+      })
       return NextResponse.json(
         { error: 'instagram publish failed', upstreamStatus: publishRes.status },
         { status: 502 },
@@ -202,6 +248,7 @@ export async function GET(request: Request) {
     }
     const publishData = (await publishRes.json()) as { id?: string }
 
+    await logIg('posted', payload, { externalPostId: publishData.id ?? null })
     return NextResponse.json({
       posted: true,
       mediaId: publishData.id,
@@ -212,6 +259,9 @@ export async function GET(request: Request) {
     })
   } catch (err) {
     console.error('[instagram-post] network error', err)
+    await logIg('failed', payload, {
+      errorMessage: `network: ${(err as Error).message}`,
+    })
     return NextResponse.json({ error: 'instagram post failed' }, { status: 502 })
   }
 }

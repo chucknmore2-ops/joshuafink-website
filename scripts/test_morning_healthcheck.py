@@ -64,7 +64,7 @@ def test_expected_jobs_match_admin_schedule_ts():
     missing = pairs - expected_pairs
     extra = expected_pairs - pairs
     assert not missing, f"EXPECTED_JOBS is missing entries from admin-schedule.ts: {missing}"
-    # `extra` is allowed — e.g. instagram is documented but intentionally omitted.
+    # `extra` is allowed for jobs monitored here but not surfaced in /admin.
     # If you intend to add a job here without changing admin-schedule.ts,
     # update this assertion with the rationale.
 

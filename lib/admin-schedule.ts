@@ -64,6 +64,16 @@ export const scheduledJobs: ScheduledJob[] = [
     source: "vercel",
   },
   {
+    // Fired by .github/workflows/social-autopost.yml, not Vercel Cron.
+    service: "github-actions-instagram",
+    channel: "instagram",
+    jobName: "instagram-post",
+    cronUtc: "0 14 * * 3",
+    humanCt: "Wed 9:00am CT",
+    description: "Instagram alternating blog/listing",
+    source: "github-actions",
+  },
+  {
     service: "vercel-cron-gbp",
     channel: "gbp",
     jobName: "gbp-post",
