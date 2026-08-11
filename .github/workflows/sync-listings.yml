@@ -75,6 +75,21 @@ jobs:
           # branch so the required "build" check lands on this SHA.
           gh workflow run build-check.yml --ref "$BRANCH"
 
+          # If anything past the push fails, delete the branch we just created.
+          # On 2026-08-05 `gh pr create` started failing with "GitHub Actions is
+          # not permitted to create or approve pull requests" (repo setting
+          # Settings → Actions → General → "Allow GitHub Actions to create and
+          # approve pull requests"). The branch was pushed every night anyway,
+          # so six days of orphaned sync-listings/* branches piled up while the
+          # site's listings stayed frozen. Clean up so a failed run leaves no
+          # trace and the next run starts from a clean slate.
+          cleanup_branch() {
+            echo "::error::Failed to open/auto-merge the sync PR — deleting $BRANCH."
+            echo '::error::If the message above is about permissions, enable Settings → Actions → General → "Allow GitHub Actions to create and approve pull requests".'
+            git push origin --delete "$BRANCH" || true
+          }
+          trap cleanup_branch ERR
+
           PR_URL=$(gh pr create \
             --base main \
             --head "$BRANCH" \
@@ -82,3 +97,4 @@ jobs:
             --body 'Automated Compass listing sync. Merges itself once the `build` check is green.')
           echo "Opened $PR_URL"
           gh pr merge "$PR_URL" --squash --auto --delete-branch
+          trap - ERR
