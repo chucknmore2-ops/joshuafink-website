@@ -150,18 +150,6 @@ export const soldListings: Listing[] = [
     imageUrl: "https://www.compass.com/m/69c43a9b0b84b53432cb0dc91f4dda5907fdfaf2_img_0_6d404/480x320.webp",
   },
   {
-    address: "1901 New Bristol Ln",
-    city: "Brentwood, TN 37027",
-    price: 1550000,
-    beds: 5,
-    baths: 5,
-    sqft: 5855,
-    acres: 0.96,
-    status: "Sold",
-    compassUrl: "https://www.compass.com/homedetails/1901-New-Bristol-Ln-Brentwood-TN-37027/1868302669877856025_lid/",
-    imageUrl: "https://www.compass.com/m/61442b4d18a35477e1c58f5e9197b98b41583d88_img_0_41ab2/480x320.webp",
-  },
-  {
     address: "7544 Sutcliff Dr",
     city: "College Grove, TN 37046",
     price: 1401326,

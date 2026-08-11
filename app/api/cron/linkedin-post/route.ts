@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { blogPosts } from '@/lib/blog'
 import { listings } from '@/lib/listings'
+import { soldListings } from '@/lib/sold-listings'
 import { listingSlug } from '@/lib/listing-detail'
 import { logPost } from '@/lib/admin-db'
 import { withUtm } from '@/lib/utm'
@@ -36,7 +37,7 @@ type PostPayload = {
   description: string
   // kind + refKey populate post_log columns so the morning healthcheck can
   // see freshness per channel and /admin can dedup across reruns.
-  kind: 'blog' | 'listing'
+  kind: 'blog' | 'listing' | 'sold'
   refKey: string
 }
 
@@ -119,6 +120,51 @@ function buildFromListing(): PostPayload | null {
   }
 }
 
+// "Just sold" post. NOT part of the weekly rotation: lib/sold-listings.ts
+// carries no close date (Compass's transactions section doesn't publish one),
+// so nothing here can tell a sale that closed last week from one that closed in
+// 2019. It is opt-in per sale instead — ?kind=sold&address=1901+New+Bristol —
+// and pairs with ?preview=1 to read the copy back without publishing.
+function buildFromSale(addressQuery: string): PostPayload | null {
+  const needle = addressQuery.trim().toLowerCase()
+  if (!needle) return null
+  const l = soldListings.find((x) => x.address.toLowerCase().includes(needle))
+  if (!l) return null
+  const locality = l.city.split('|')[0].split(',')[0].trim()
+  const price = `$${l.price.toLocaleString()}`
+  const slug = listingSlug(l)
+  // Sold homes get no on-site detail page (see lib/listing-detail.ts), so link
+  // to the listings hub, where the sale shows in the Recently Sold grid.
+  const url = withUtm(`${SITE}/listings`, {
+    source: 'linkedin',
+    medium: 'auto',
+    campaign: 'just-sold',
+    content: slug,
+  })
+  const description = [
+    l.beds ? `${l.beds} bed` : '',
+    l.baths ? `${l.baths} bath` : '',
+    l.sqft ? `${l.sqft.toLocaleString()} sq ft` : '',
+    l.acres ? `${l.acres} acres` : '',
+  ]
+    .filter(Boolean)
+    .join(' · ')
+  const text =
+    `Joshua Fink Group just sold a home in ${locality}, TN — ${l.address}, ${price}.\n\n` +
+    `${description}\n\n` +
+    `Another ${locality} closing for Joshua Fink Group. If you're weighing a move in ${locality} ` +
+    `or anywhere in Middle Tennessee, call or text Joshua Fink at 615-551-2727 for a no-pressure ` +
+    `valuation, or see recent sales at joshuafink.com.`
+  return {
+    text,
+    url,
+    title: `Just sold in ${locality}, TN — ${l.address}`,
+    description: description || 'Middle Tennessee real estate',
+    kind: 'sold',
+    refKey: slug,
+  }
+}
+
 function pickPayload(): PostPayload | null {
   // Even weeks → latest blog. Odd weeks → featured listing.
   return isoWeekNumber() % 2 === 0
@@ -137,6 +183,20 @@ export async function GET(request: Request) {
   const bearer = request.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
   if (bearer !== expected) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+  }
+
+  // Opt-in overrides for one-off posts. With no params the route behaves
+  // exactly as the weekly cron always has (blog / active-listing rotation).
+  const params = new URL(request.url).searchParams
+  const payload =
+    params.get('kind') === 'sold'
+      ? buildFromSale(params.get('address') ?? '')
+      : pickPayload()
+
+  // ?preview=1 composes the copy and hands it back without touching LinkedIn,
+  // so a draft can be read and approved before anything is published.
+  if (params.get('preview') === '1') {
+    return NextResponse.json({ posted: false, preview: true, payload })
   }
 
   const accessToken = process.env.LINKEDIN_ACCESS_TOKEN
@@ -158,7 +218,6 @@ export async function GET(request: Request) {
     )
   }
 
-  const payload = pickPayload()
   if (!payload) {
     await logPost({
       channel: 'linkedin',

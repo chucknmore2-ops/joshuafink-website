@@ -40,6 +40,19 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      // 1901 New Bristol Ln closed 2026-08 and dropped out of lib/listings.ts,
+      // so its statically-generated detail page stopped existing. The URL was
+      // live and linked from social posts, so send it to the listings hub
+      // (where it now appears under Recently Sold) instead of a 404.
+      {
+        source: '/listings/1901-new-bristol-ln-brentwood',
+        destination: '/listings',
+        permanent: true,
+      },
+    ]
+  },
   async headers() {
     return [
       {

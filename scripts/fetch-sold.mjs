@@ -155,14 +155,31 @@ async function main() {
 
   await browser.close();
 
-  if (listings.length === 0) {
+  // De-duplicate by property, not by transaction. Compass lists every closed
+  // deal, so a home Joshua sold twice (1901 New Bristol Ln: $1.55M, then $1.8M)
+  // shows up twice — the /listings grid renders it twice and, worse, its
+  // "total sold volume" figure counts the same house twice. Cards arrive in
+  // price-descending order, so keeping the first occurrence keeps the most
+  // recent (higher) sale.
+  const byProperty = new Map();
+  for (const l of listings) {
+    const key = `${l.address}|${l.city}`.toLowerCase().replace(/[^a-z0-9|]+/g, '');
+    if (byProperty.has(key)) {
+      console.log(`  ↩︎ skipping earlier sale of ${l.address} — $${l.price.toLocaleString()}`);
+      continue;
+    }
+    byProperty.set(key, l);
+  }
+  const uniqueListings = [...byProperty.values()];
+
+  if (uniqueListings.length === 0) {
     console.log('[fetch-sold] No sold listings found.');
     process.exit(0);
   }
 
   // Generate TypeScript
   const timestamp = new Date().toISOString();
-  const listingsCode = listings.map(l => {
+  const listingsCode = uniqueListings.map(l => {
     const parts = [];
     parts.push(`    address: ${JSON.stringify(l.address)}`);
     parts.push(`    city: ${JSON.stringify(l.city)}`);
@@ -189,7 +206,7 @@ ${listingsCode}
 `;
 
   fs.writeFileSync(SOLD_FILE, tsContent, 'utf8');
-  console.log(`\n[fetch-sold] ✅ Written ${listings.length} sold listings to lib/sold-listings.ts`);
+  console.log(`\n[fetch-sold] ✅ Written ${uniqueListings.length} sold listings to lib/sold-listings.ts`);
 }
 
 main().catch(err => {
