@@ -14,9 +14,11 @@ WHAT THIS MONITOR DOES AND DOES NOT COVER
 ============================================================================
 
 COVERED (per `lib/admin-schedule.ts`):
-  Railway autoposter jobs (FB channel) — listing-spotlight (M/W/F),
-    content-market-stats (Tue), content-testimonial (Wed),
-    content-tips (Thu), content-engagement (Fri)
+  Railway autoposter (FB channel) — listing-spotlight (M/W/F)
+  Monthly market update (FB channel) — monthly-market-update, fired on the
+    5th by .github/workflows/monthly-market-update.yml, which posts the same
+    lib/market-snapshot.ts figures to Facebook, LinkedIn and GBP. Facebook is
+    the canary for all three. 35-day threshold, so one missed month pages.
   LinkedIn + GBP + Instagram — all three routes write to post_log on
     every fire (success and failure) since the lib/admin-db logPost
     wiring. A channel can still show as NEVER_LOGGED if the route has
@@ -97,37 +99,25 @@ EXPECTED_JOBS: tuple[ExpectedJob, ...] = (
         cadence_ct="Mon/Wed/Fri 9:00am CT",
         max_age_days=4,
     ),
-    # Railway autoposter — once weekly each. 7d nominal + 2d weekend buffer = 9d.
+    # Monthly market update — .github/workflows/monthly-market-update.yml fires
+    # FB + LinkedIn + GBP together on the 5th; Facebook is the canary for all
+    # three. 31d nominal + 4d buffer = 35d, so a single missed month pages but a
+    # report landing a few days late does not.
+    #
+    # This REPLACES the four Railway `autoposter-*` content jobs (market-stats,
+    # testimonial, tips, engagement) that were monitored here for months. Those
+    # Railway services were never actually created, so they could only ever
+    # report [GAP] — noise that made a real gap indistinguishable from the
+    # permanent ones.
     ExpectedJob(
-        label="autoposter-stats (FB) — content-market-stats",
+        label="monthly-market-update (FB) — market snapshot",
         channel="facebook",
-        job_name="content-market-stats",
-        cadence_ct="Tue 10:00am CT",
-        max_age_days=9,
+        job_name="monthly-market-update",
+        cadence_ct="5th of each month, 9:00am CT",
+        max_age_days=35,
     ),
-    ExpectedJob(
-        label="autoposter-testimonial (FB) — content-testimonial",
-        channel="facebook",
-        job_name="content-testimonial",
-        cadence_ct="Wed 10:00am CT",
-        max_age_days=9,
-    ),
-    ExpectedJob(
-        label="autoposter-tips (FB) — content-tips",
-        channel="facebook",
-        job_name="content-tips",
-        cadence_ct="Thu 10:00am CT",
-        max_age_days=9,
-    ),
-    ExpectedJob(
-        label="autoposter-engagement (FB) — content-engagement",
-        channel="facebook",
-        job_name="content-engagement",
-        cadence_ct="Fri 10:00am CT",
-        max_age_days=9,
-    ),
-    # Vercel-side crons. Today no INSERT INTO post_log lives in this repo;
-    # if these channels never appear we surface a gap instead of a failure.
+    # Weekly Vercel-side crons. 7d nominal + 2d weekend buffer = 9d. If a
+    # channel never appears we surface a gap instead of a failure.
     ExpectedJob(
         label="vercel-cron-linkedin",
         channel="linkedin",
@@ -948,13 +938,13 @@ def _remediation_for(result: CheckResult) -> Optional[str]:
             "If `DRY RUN — no API call made.` → Variables tab, set "
             "AUTOPOSTER_DRY_RUN=0."
         )
-    if "autoposter-stats" in name or "autoposter-testimonial" in name or \
-       "autoposter-tips" in name or "autoposter-engagement" in name:
-        service = name.split("(")[0].strip()  # "autoposter-stats (FB) — content-..." -> "autoposter-stats"
+    if "monthly-market-update" in name:
         return (
-            f"Railway → {service} → Cron Runs → Run Now. Same FB_PAGE_TOKEN "
-            "issue if log shows `(#200) pages_manage_posts`. Otherwise check "
-            "the service is not paused."
+            "This month's figures are probably not in lib/market-snapshot.ts — "
+            "paste them from the Greater Nashville REALTORS report (the file "
+            "has a template at the top, ~2 min), commit, then Actions tab → "
+            "Monthly Market Update → Run workflow. A skip is deliberate, not a "
+            "bug: no numbers means no post on any channel."
         )
     if "vercel-cron-linkedin" in name:
         return (

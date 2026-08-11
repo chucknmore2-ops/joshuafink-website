@@ -19,40 +19,24 @@ export const scheduledJobs: ScheduledJob[] = [
     source: "railway",
   },
   {
-    service: "autoposter-stats",
+    // Fired by .github/workflows/monthly-market-update.yml, which hits
+    // /api/cron/facebook-post, /api/cron/linkedin-post?kind=market and
+    // /api/cron/gbp-post?kind=market together. All three read the month's
+    // figures from lib/market-snapshot.ts — the same numbers as the blog post.
+    // Facebook is the one listed here: it's the freshness canary for the whole
+    // monthly job in scripts/morning_healthcheck.py.
+    //
+    // Replaces the four Railway `autoposter-*` content services (market-stats,
+    // testimonial, tips, engagement) that were listed here for months but were
+    // never actually created in Railway — they only ever showed as permanent
+    // [GAP]s in the morning healthcheck.
+    service: "github-actions-monthly-market",
     channel: "facebook",
-    jobName: "content-market-stats",
-    cronUtc: "0 15 * * 2",
-    humanCt: "Tue 10:00am CT",
-    description: "Middle TN market stats",
-    source: "railway",
-  },
-  {
-    service: "autoposter-testimonial",
-    channel: "facebook",
-    jobName: "content-testimonial",
-    cronUtc: "0 15 * * 3",
-    humanCt: "Wed 10:00am CT",
-    description: "Client testimonial",
-    source: "railway",
-  },
-  {
-    service: "autoposter-tips",
-    channel: "facebook",
-    jobName: "content-tips",
-    cronUtc: "0 15 * * 4",
-    humanCt: "Thu 10:00am CT",
-    description: "Real estate tips",
-    source: "railway",
-  },
-  {
-    service: "autoposter-engagement",
-    channel: "facebook",
-    jobName: "content-engagement",
-    cronUtc: "0 15 * * 5",
-    humanCt: "Fri 10:00am CT",
-    description: "Engagement post",
-    source: "railway",
+    jobName: "monthly-market-update",
+    cronUtc: "0 14 5 * *",
+    humanCt: "5th of each month, 9:00am CT",
+    description: "Monthly Middle TN market update (FB + LinkedIn + GBP)",
+    source: "github-actions",
   },
   {
     service: "vercel-cron-linkedin",
@@ -95,19 +79,25 @@ const dayMap: Record<number, string> = {
 };
 
 function nextOccurrence(cronUtc: string, from: Date): Date {
-  const [m, h, _dom, _mon, dow] = cronUtc.split(" ");
+  const [m, h, dom, _mon, dow] = cronUtc.split(" ");
   const minute = Number(m);
   const hour = Number(h);
   const allowedDays = new Set(
     dow === "*" ? [0, 1, 2, 3, 4, 5, 6] : dow.split(",").map(Number)
   );
+  // Day-of-month, for monthly jobs like "0 14 5 * *". Without this a monthly
+  // cron reads as daily (dow "*") and /admin shows tomorrow as its next run.
+  const allowedDates =
+    dom === "*" ? null : new Set(dom.split(",").map(Number));
   const candidate = new Date(from);
   candidate.setUTCSeconds(0, 0);
-  for (let add = 0; add < 14; add++) {
+  // Scan far enough ahead to clear a full month for the monthly jobs.
+  for (let add = 0; add < 40; add++) {
     const d = new Date(candidate);
     d.setUTCDate(candidate.getUTCDate() + add);
     d.setUTCHours(hour, minute, 0, 0);
     if (d <= from) continue;
+    if (allowedDates && !allowedDates.has(d.getUTCDate())) continue;
     if (allowedDays.has(d.getUTCDay())) return d;
   }
   return candidate;

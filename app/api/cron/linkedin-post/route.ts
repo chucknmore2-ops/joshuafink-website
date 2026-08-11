@@ -5,6 +5,12 @@ import { soldListings } from '@/lib/sold-listings'
 import { listingSlug } from '@/lib/listing-detail'
 import { logPost } from '@/lib/admin-db'
 import { withUtm } from '@/lib/utm'
+import {
+  currentSnapshot,
+  marketUpdateSlug,
+  monthLabel,
+  snapshotSkipReason,
+} from '@/lib/market-snapshot'
 
 export const dynamic = 'force-dynamic'
 
@@ -37,9 +43,16 @@ type PostPayload = {
   description: string
   // kind + refKey populate post_log columns so the morning healthcheck can
   // see freshness per channel and /admin can dedup across reruns.
-  kind: 'blog' | 'listing' | 'sold'
+  kind: 'blog' | 'listing' | 'sold' | 'market'
   refKey: string
 }
+
+// Job name the post is logged under. The monthly market update is a separate
+// pipeline from the weekly rotation, so it logs separately — otherwise one
+// monthly post would refresh the weekly job's freshness clock and hide a dead
+// weekly cron from the morning healthcheck.
+const WEEKLY_JOB = 'linkedin-post'
+const MONTHLY_JOB = 'monthly-market-update'
 
 function isoWeekNumber(d: Date = new Date()): number {
   const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()))
@@ -165,6 +178,45 @@ function buildFromSale(addressQuery: string): PostPayload | null {
   }
 }
 
+// Monthly Middle TN market update. Fired by
+// .github/workflows/monthly-market-update.yml with ?kind=market — deliberately
+// NOT part of the weekly rotation. Reads lib/market-snapshot.ts, the same
+// numbers the blog post and the Facebook/GBP posts use, and returns null when
+// the month's figures haven't been entered yet (the caller then posts nothing).
+function buildFromMarketSnapshot(): PostPayload | null {
+  const s = currentSnapshot()
+  if (!s) return null
+  const label = monthLabel(s.month)
+  const slug = marketUpdateSlug(s.month)
+  const url = withUtm(`${SITE}/blog/${slug}`, {
+    source: 'linkedin',
+    medium: 'auto',
+    campaign: 'monthly-market-update',
+    content: s.month,
+  })
+  const n = (v: number) => v.toLocaleString('en-US')
+  // Entity + location keyword inside the first ~9 words — that opening line
+  // becomes the post's title tag. No hashtags on LinkedIn.
+  const text =
+    `Middle Tennessee real estate market update — ${label}. ` +
+    `Median sale price ${s.medianSalePrice}, ${s.medianYoyChange} year over year.\n\n` +
+    `• Average days on market: ${s.avgDaysOnMarket}\n` +
+    `• Closed sales: ${n(s.closedSales)}\n` +
+    `• Active listings: ${n(s.activeListings)}\n` +
+    `• Months of supply: ${s.monthsOfInventory}\n\n` +
+    `Source: ${s.source}, ${label} report.\n\n` +
+    `Joshua Fink Group — Compass Real Estate, serving Nashville & Middle Tennessee. ` +
+    `The full ${label} breakdown, and what it means if you're buying or selling: ${url}`
+  return {
+    text,
+    url,
+    title: `Middle Tennessee Real Estate Market Update — ${label}`,
+    description: `Median ${s.medianSalePrice} · ${s.avgDaysOnMarket} days on market · ${n(s.activeListings)} active listings`,
+    kind: 'market',
+    refKey: s.month,
+  }
+}
+
 function pickPayload(): PostPayload | null {
   // Even weeks → latest blog. Odd weeks → featured listing.
   return isoWeekNumber() % 2 === 0
@@ -188,8 +240,11 @@ export async function GET(request: Request) {
   // Opt-in overrides for one-off posts. With no params the route behaves
   // exactly as the weekly cron always has (blog / active-listing rotation).
   const params = new URL(request.url).searchParams
-  const payload =
-    params.get('kind') === 'sold'
+  const isMonthly = params.get('kind') === 'market'
+  const jobName = isMonthly ? MONTHLY_JOB : WEEKLY_JOB
+  const payload = isMonthly
+    ? buildFromMarketSnapshot()
+    : params.get('kind') === 'sold'
       ? buildFromSale(params.get('address') ?? '')
       : pickPayload()
 
@@ -199,6 +254,29 @@ export async function GET(request: Request) {
     return NextResponse.json({ posted: false, preview: true, payload })
   }
 
+  // Monthly run with no numbers entered for the month → post nothing at all
+  // rather than recycling last month's figures. 200 so the monthly workflow
+  // doesn't retry-then-fail on a deliberate skip; the post_log row is what
+  // surfaces it in /admin and the morning healthcheck.
+  if (isMonthly && !payload) {
+    const reason = snapshotSkipReason()
+    console.warn('[linkedin-post] skipping monthly market update —', reason)
+    await logPost({
+      channel: 'linkedin',
+      jobName,
+      payloadKind: 'market',
+      refKey: 'no-snapshot',
+      status: 'failed',
+      errorMessage: reason.slice(0, 500),
+    })
+    return NextResponse.json({
+      posted: false,
+      skipped: 'no_snapshot',
+      reason,
+      at: new Date().toISOString(),
+    })
+  }
+
   const accessToken = process.env.LINKEDIN_ACCESS_TOKEN
   const authorUrn = process.env.LINKEDIN_AUTHOR_URN
   if (!accessToken || !authorUrn) {
@@ -206,7 +284,7 @@ export async function GET(request: Request) {
     // LinkedIn looks identical in /admin to one that was never scheduled.
     await logPost({
       channel: 'linkedin',
-      jobName: 'linkedin-post',
+      jobName,
       payloadKind: 'none',
       refKey: 'no-payload',
       status: 'failed',
@@ -221,7 +299,7 @@ export async function GET(request: Request) {
   if (!payload) {
     await logPost({
       channel: 'linkedin',
-      jobName: 'linkedin-post',
+      jobName,
       payloadKind: 'none',
       refKey: 'no-payload',
       status: 'failed',
@@ -276,7 +354,7 @@ export async function GET(request: Request) {
       console.error('[linkedin-post] upstream error', res.status, bodySnippet)
       await logPost({
         channel: 'linkedin',
-        jobName: 'linkedin-post',
+        jobName,
         payloadKind: payload.kind,
         refKey: payload.refKey,
         messagePreview: payload.text.slice(0, 200),
@@ -300,7 +378,7 @@ export async function GET(request: Request) {
     const data = (await res.json()) as { id?: string }
     await logPost({
       channel: 'linkedin',
-      jobName: 'linkedin-post',
+      jobName,
       payloadKind: payload.kind,
       refKey: payload.refKey,
       messagePreview: payload.text.slice(0, 200),
@@ -319,7 +397,7 @@ export async function GET(request: Request) {
     console.error('[linkedin-post] network error', err)
     await logPost({
       channel: 'linkedin',
-      jobName: 'linkedin-post',
+      jobName,
       payloadKind: payload.kind,
       refKey: payload.refKey,
       messagePreview: payload.text.slice(0, 200),
