@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-08-04T10:43:24.392Z
+// AUTO-GENERATED — Last synced: 2026-08-11T18:16:30.838Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -21,21 +21,9 @@ export interface Listing {
 
 // Mirrors the header timestamp so server components can compute sync staleness
 // without parsing comments. Updated by scripts/fetch-images.mjs each sync.
-export const listingsSyncedAt = "2026-08-04T10:43:24.392Z";
+export const listingsSyncedAt = "2026-08-11T18:16:30.838Z";
 
 export const listings: Listing[] = [
-  {
-    address: "1901 New Bristol Ln",
-    city: "Brentwood, TN 37027",
-    price: 1849000,
-    beds: 5,
-    baths: 5,
-    sqft: 5855,
-    status: "Active Under Contract",
-    compassUrl: "https://www.compass.com/homedetails/1901-New-Bristol-Ln-Brentwood-TN-37027/RS25E_pid/",
-    imageUrl: "https://www.compass.com/m/5e20f6de5ae242cba0b75f7227f5a4b1f5937902cfbf792d921c2e860034cf71/2048x1536.webp",
-    lastVerified: listingsSyncedAt,
-  },
   {
     address: "159 N Berwick Ln",
     city: "Franklin, TN 37069",
@@ -105,19 +93,7 @@ export const listings: Listing[] = [
     sqft: 1134,
     status: "Active Under Contract",
     compassUrl: "https://www.compass.com/homedetails/870-Reeves-Rd-Antioch-TN-37013/SW1BU_pid/",
-    imageUrl: "https://www.compass.com/m/a7ef33f971b3f98f9c9df198198d003671a4c04ee14a9a100ddb182a937911e6/2048x1536.webp",
-    lastVerified: listingsSyncedAt,
-  },
-  {
-    address: "107 Overlook Trail",
-    city: "Goodlettsville, TN 37072 | MLS #3297936",
-    price: 339900,
-    beds: 3,
-    baths: 2,
-    sqft: 1068,
-    status: "Active",
-    compassUrl: "https://www.compass.com/homedetails/107-Overlook-Trail-Goodlettsville-TN-37072/S1YDH_pid/",
-    imageUrl: "https://www.compass.com/m/7e99b93b501a4db23703d69509d15689feafce305ecc16ae9592922c2685b41b/2048x1536.webp",
+    imageUrl: "https://www.compass.com/m/ce49d43899de5afcb9e0c75704d5e6a63a12a2c584826f54faf7ebb96ef704be/2048x1536.webp",
     lastVerified: listingsSyncedAt,
   },
   {
@@ -129,7 +105,7 @@ export const listings: Listing[] = [
     sqft: 1248,
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/4874-Sparta-Pike-Watertown-TN-37184/TMU6R_pid/",
-    imageUrl: "https://www.compass.com/m/a8e4b685ce65c4a5378c69c15f06f261bb00c6ab62c8fc4920fdaa165b4d899c/2048x1536.webp",
+    imageUrl: "https://www.compass.com/m/9271db1e1cbdb146eb498cd63a192c09a438f39c3b9627023b0cbda6f044a677/2048x1536.webp",
     lastVerified: listingsSyncedAt,
   }
 ];
