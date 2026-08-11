@@ -178,9 +178,9 @@ def test_stale_detail_unchanged_without_diagnostics():
 def test_gap_detail_explains_failed_attempts():
     """Never-posted job that nonetheless has a `failed` attempt row: the GAP
     line should explain it's failing, not silently imply 'never ran'."""
-    job = hc.EXPECTED_JOBS[1]  # content-market-stats
+    job = hc.EXPECTED_JOBS[1]  # monthly-market-update
     attempts = {
-        ("facebook", "content-market-stats"): hc.LastAttempt(
+        ("facebook", "monthly-market-update"): hc.LastAttempt(
             status="failed",
             posted_at=_fake_latest(2.0),
             error_message="(#190) Malformed access token",
@@ -752,10 +752,7 @@ def test_report_no_remediation_when_all_green():
     ("sync-listings — lib/listings.ts", "Sync Compass Listings"),
     ("github-actions — Sync Compass Listings", "Re-run"),
     ("autoposter-listing (FB) — listing-spotlight", "FB_PAGE_TOKEN"),
-    ("autoposter-stats (FB) — content-market-stats", "Cron Runs"),
-    ("autoposter-testimonial (FB) — content-testimonial", "Cron Runs"),
-    ("autoposter-tips (FB) — content-tips", "Cron Runs"),
-    ("autoposter-engagement (FB) — content-engagement", "Cron Runs"),
+    ("monthly-market-update (FB) — market snapshot", "lib/market-snapshot.ts"),
     ("vercel-cron-linkedin", "/api/linkedin/auth"),
     ("vercel-cron-gbp", "GBP"),
 ])

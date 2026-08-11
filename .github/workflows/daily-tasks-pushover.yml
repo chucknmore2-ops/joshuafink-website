@@ -87,19 +87,31 @@ jobs:
             "Create your free Nextdoor Business Page (business.nextdoor.com/local)"
           )
 
+          # Monthly market update nudge — only in the window when the Greater
+          # Nashville REALTORS report has landed and the 5th hasn't passed.
+          # This is the one piece of the automation that can't run itself: no
+          # numbers in lib/market-snapshot.ts means no blog post and no social
+          # posts on any channel. See docs/automation.md.
+          DOM=$(( 10#$(date -u +%d) ))
+          MONTHLY=""
+          if [ "$DOM" -ge 3 ] && [ "$DOM" -le 6 ]; then
+            MONTHLY=$'\n\n★ Monthly (2 min): paste this month\'s Greater Nashville REALTORS numbers into lib/market-snapshot.ts. That one file publishes the market-update blog post and pushes it to Facebook, LinkedIn + Google Business on the 5th. Nothing posts until it is filled in.'
+          fi
+
           T3="${GBP[$(( DOY % ${#GBP[@]} ))]}"
           T4="${CONTENT[$(( DOY % ${#CONTENT[@]} ))]}"
           T5="${OUTREACH[$(( DOY % ${#OUTREACH[@]} ))]}"
           T6="${CITATIONS[$(( DOY % ${#CITATIONS[@]} ))]}"
 
-          MSG=$(printf '%s\n%s\n%s\n%s\n%s\n%s\n\n%s' \
+          MSG=$(printf '%s\n%s\n%s\n%s\n%s\n%s\n\n%s%s' \
             "1) Follow up: work new CRM leads + nudge any warm ones" \
             "2) Ask 1 happy client for a Google review (your #1 lever)" \
             "3) $T3" \
             "4) $T4" \
             "5) $T5" \
             "6) Authority ladder: $T6" \
-            "Pick the ones you can knock out in 10 min. Consistency > volume.")
+            "Pick the ones you can knock out in 10 min. Consistency > volume." \
+            "$MONTHLY")
 
           curl -sS --fail -m 20 \
             --form-string "token=$PUSHOVER_TOKEN" \

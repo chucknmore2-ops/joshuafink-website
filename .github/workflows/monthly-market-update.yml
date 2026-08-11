@@ -1,0 +1,119 @@
+name: Monthly Market Update
+
+# Publishes the month's Middle Tennessee market numbers to every channel at
+# once: Facebook, LinkedIn and Google Business Profile. The matching blog post
+# is already on the site — lib/blog.ts renders one post per entry in
+# lib/market-snapshot.ts, so it goes live with the commit that adds the numbers.
+#
+# Fires on the 5th, after the Greater Nashville REALTORS® report lands in the
+# first few days of the following month.
+#
+# THE APPROVAL GATE IS THE DATA. Each month someone pastes the report's figures
+# into lib/market-snapshot.ts (about two minutes — the file has a template at
+# the top). If that month's numbers aren't in, every endpoint below returns
+# `{"posted": false, "skipped": "no_snapshot"}` and NOTHING is published —
+# deliberately, rather than recycling last month's figures under Joshua's name.
+# This job stays green on a skip; the morning healthcheck is what pages if a
+# month gets missed entirely (35-day threshold on facebook/monthly-market-update).
+#
+# If the report lands late and the 5th has already passed, add the numbers and
+# then run this workflow manually from the Actions tab.
+#
+# REQUIRED GitHub repo secret:
+#   CRON_SECRET — must match the value in the Vercel project env (same secret
+#   social-autopost.yml and indexnow-on-content-change.yml already use).
+#
+# REQUIRED Vercel env vars (see docs/automation.md):
+#   FB_PAGE_ID, FB_PAGE_TOKEN   — for /api/cron/facebook-post
+#   LINKEDIN_*                  — already set, used by the weekly LinkedIn post
+#   GBP_*                       — already set, used by the weekly GBP post
+
+on:
+  schedule:
+    - cron: '0 14 5 * *'   # 5th of each month, 14:00 UTC = 9am CT
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: monthly-market-update
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Post the month's market update to FB, LinkedIn and GBP
+        shell: bash
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$CRON_SECRET" ]; then
+            echo "::error::CRON_SECRET is not set in repo secrets. Add it at"
+            echo "github.com/chucknmore2-ops/joshuafink-website/settings/secrets/actions"
+            exit 1
+          fi
+
+          # Hit the www host directly: an apex->www 307 redirect drops the
+          # Authorization header. -L is belt-and-suspenders.
+          ENDPOINTS=(
+            "facebook-post"
+            "linkedin-post?kind=market"
+            "gbp-post?kind=market"
+          )
+
+          failed=0
+          skipped=0
+          for endpoint in "${ENDPOINTS[@]}"; do
+            URL="https://www.joshuafink.com/api/cron/$endpoint"
+            echo "──────────────────────────────────────────────"
+            echo "Posting via $URL"
+
+            posted=0
+            # Retry a few times in case a deploy is mid-flight.
+            for attempt in 1 2 3; do
+              echo "Attempt $attempt…"
+              # `|| true` so a network-level curl failure retries instead of
+              # aborting the step under `bash -e`.
+              response=$(curl -sSL -w "\n%{http_code}" \
+                -H "Authorization: Bearer $CRON_SECRET" \
+                "$URL" || true)
+              status=$(echo "$response" | tail -n1)
+              body=$(echo "$response" | sed '$d')
+              echo "HTTP $status"
+              echo "$body"
+
+              if [ "$status" = "200" ]; then
+                posted=1
+                if echo "$body" | grep -q '"skipped"'; then
+                  skipped=$((skipped + 1))
+                  echo "⏭️  $endpoint skipped (no numbers entered for this month)."
+                else
+                  echo "✅ $endpoint posted."
+                fi
+                break
+              fi
+              echo "Non-200 (attempt $attempt); retrying in $((attempt * 10))s…"
+              sleep $((attempt * 10))
+            done
+
+            if [ "$posted" != "1" ]; then
+              echo "::error::$endpoint failed after 3 attempts (last HTTP $status)."
+              failed=$((failed + 1))
+            fi
+          done
+
+          echo "──────────────────────────────────────────────"
+          if [ "$skipped" -gt 0 ]; then
+            echo "::warning::$skipped channel(s) skipped — this month's figures are"
+            echo "::warning::not in lib/market-snapshot.ts yet. Paste them from the"
+            echo "::warning::Greater Nashville REALTORS report and re-run this workflow."
+          fi
+
+          if [ "$failed" -gt 0 ]; then
+            echo "::error::$failed of ${#ENDPOINTS[@]} channels failed."
+            exit 1
+          fi
+          echo "Done — $((${#ENDPOINTS[@]} - skipped)) channel(s) published, $skipped skipped."

@@ -5,6 +5,12 @@ import { reviews } from '@/lib/reviews'
 import { logPost } from '@/lib/admin-db'
 import { withUtm } from '@/lib/utm'
 import { suburbs, marketStatsLastUpdated, marketStatsSource } from '@/lib/suburbs'
+import {
+  currentSnapshot,
+  marketUpdateSlug,
+  monthLabel,
+  snapshotSkipReason,
+} from '@/lib/market-snapshot'
 
 export const dynamic = 'force-dynamic'
 
@@ -142,6 +148,38 @@ function buildMarketUpdatePost(slug: string): PreparedPost {
     },
     kind: 'market-update',
     refKey: s.slug,
+  }
+}
+
+// Monthly Middle TN market update — fired by
+// .github/workflows/monthly-market-update.yml with ?kind=market, outside the
+// weekly rotation. Reads lib/market-snapshot.ts, the same numbers the blog post
+// and the Facebook/LinkedIn posts use. Returns null when the month's figures
+// haven't been entered, and the caller then posts nothing.
+function buildMonthlyMarketPost(): PreparedPost | null {
+  const s = currentSnapshot()
+  if (!s) return null
+  const label = monthLabel(s.month)
+  const n = (v: number) => v.toLocaleString('en-US')
+  return {
+    summary:
+      `📊 Middle Tennessee Market Update — ${label}\n\n` +
+      `• Median sale price: ${s.medianSalePrice} (${s.medianYoyChange} YoY)\n` +
+      `• Avg. days on market: ${s.avgDaysOnMarket}\n` +
+      `• Active listings: ${n(s.activeListings)}\n` +
+      `• Months of supply: ${s.monthsOfInventory}\n\n` +
+      `Source: ${s.source}, ${label} report\n\n` +
+      `Read the full ${label} breakdown — what these numbers mean if you're buying or selling.\n\n` +
+      `#NashvilleRealEstate #MiddleTennessee #JoshuaFinkGroup`,
+    cta: {
+      actionType: 'LEARN_MORE',
+      url: withUtm(`${SITE}/blog/${marketUpdateSlug(s.month)}`, {
+        ...gbpUtm('monthly-market-update'),
+        content: s.month,
+      }),
+    },
+    kind: 'market-update',
+    refKey: s.month,
   }
 }
 
@@ -327,13 +365,20 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 
+  // ?kind=market is the monthly market update (see buildMonthlyMarketPost).
+  // It logs under its own job name so one monthly post can't refresh the
+  // weekly rotator's freshness clock and hide a dead weekly cron.
+  const params = new URL(request.url).searchParams
+  const isMonthly = params.get('kind') === 'market'
+  const jobName = isMonthly ? 'monthly-market-update' : 'gbp-post'
+
   const locationId = process.env.GBP_LOCATION_ID
   if (!locationId) {
     // Log the early exit too — otherwise a channel that never even reaches
     // Google looks identical in /admin to one that was never scheduled.
     await logPost({
       channel: 'gbp',
-      jobName: 'gbp-post',
+      jobName,
       payloadKind: 'none',
       refKey: 'no-payload',
       status: 'failed',
@@ -348,18 +393,19 @@ export async function GET(request: Request) {
   // Decide what to post before spending an OAuth round-trip, so a skipped week
   // never touches Google at all.
   const week = isoWeekNumber()
-  const post = pickPost(week)
+  const post = isMonthly ? buildMonthlyMarketPost() : pickPost(week)
   if (!post) {
-    const reason =
-      `skipped: market stats stale (as of ${statsAsOf(BRENTWOOD_SLUG)}, ` +
-      `${statsAgeDays(BRENTWOOD_SLUG)}d old > ${MAX_STATS_AGE_DAYS}d) — ` +
-      `refresh lib/suburbs.ts`
+    const reason = isMonthly
+      ? `skipped: ${snapshotSkipReason()}`
+      : `skipped: market stats stale (as of ${statsAsOf(BRENTWOOD_SLUG)}, ` +
+        `${statsAgeDays(BRENTWOOD_SLUG)}d old > ${MAX_STATS_AGE_DAYS}d) — ` +
+        `refresh lib/suburbs.ts`
     console.warn('[gbp-post]', reason)
     await logPost({
       channel: 'gbp',
-      jobName: 'gbp-post',
+      jobName,
       payloadKind: 'market-update',
-      refKey: BRENTWOOD_SLUG,
+      refKey: isMonthly ? 'no-snapshot' : BRENTWOOD_SLUG,
       status: 'failed',
       errorMessage: reason.slice(0, 500),
     })
@@ -367,9 +413,9 @@ export async function GET(request: Request) {
     // skip; the post_log row is what surfaces it in /admin + the healthcheck.
     return NextResponse.json({
       posted: false,
-      skipped: 'stats_stale',
+      skipped: isMonthly ? 'no_snapshot' : 'stats_stale',
       week,
-      statsAsOf: statsAsOf(BRENTWOOD_SLUG),
+      statsAsOf: isMonthly ? undefined : statsAsOf(BRENTWOOD_SLUG),
       at: new Date().toISOString(),
     })
   }
@@ -382,7 +428,7 @@ export async function GET(request: Request) {
     console.error('[gbp-post] token refresh failed', (err as Error).message)
     await logPost({
       channel: 'gbp',
-      jobName: 'gbp-post',
+      jobName,
       payloadKind: 'none',
       refKey: 'no-payload',
       status: 'failed',
@@ -428,7 +474,7 @@ export async function GET(request: Request) {
       console.error('[gbp-post] upstream error', res.status, bodySnippet)
       await logPost({
         channel: 'gbp',
-        jobName: 'gbp-post',
+        jobName,
         payloadKind: post.kind,
         refKey: post.refKey,
         messagePreview: post.summary.slice(0, 200),
@@ -445,7 +491,7 @@ export async function GET(request: Request) {
     const data = (await res.json()) as { name?: string }
     await logPost({
       channel: 'gbp',
-      jobName: 'gbp-post',
+      jobName,
       payloadKind: post.kind,
       refKey: post.refKey,
       messagePreview: post.summary.slice(0, 200),
@@ -465,7 +511,7 @@ export async function GET(request: Request) {
     console.error('[gbp-post] network error', err)
     await logPost({
       channel: 'gbp',
-      jobName: 'gbp-post',
+      jobName,
       payloadKind: post.kind,
       refKey: post.refKey,
       messagePreview: post.summary.slice(0, 200),

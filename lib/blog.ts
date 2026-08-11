@@ -1,3 +1,10 @@
+import {
+  marketSnapshots,
+  marketUpdateSlug,
+  monthLabel,
+  type MarketSnapshot,
+} from '@/lib/market-snapshot'
+
 export interface BlogPost {
   slug: string
   title: string
@@ -20,7 +27,110 @@ export interface BlogPost {
   content: string
 }
 
+/**
+ * One month's market update, rendered from lib/market-snapshot.ts.
+ *
+ * Generated rather than hand-written so this post, the Facebook / LinkedIn /
+ * Google Business posts and the site all quote the same figures — see the
+ * header comment in lib/market-snapshot.ts. The editorial judgement lives in
+ * that month's `takeaways`; everything else here is the numbers plus framing
+ * that holds true whatever they say.
+ */
+function buildMarketUpdatePost(s: MarketSnapshot): BlogPost {
+  const label = monthLabel(s.month)
+  const n = (v: number) => v.toLocaleString('en-US')
+  // `date` is rendered verbatim on the post, so format it like the hand-written
+  // posts ("August 5, 2026") rather than leaving the ISO string from the report.
+  const published = new Date(`${s.reportDate}T00:00:00Z`).toLocaleDateString(
+    'en-US',
+    { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' },
+  )
+  // Six months of supply is the conventional line between a seller's market
+  // and a balanced one — the only interpretation applied to raw figures here.
+  const marketRead =
+    s.monthsOfInventory >= 6
+      ? 'a balanced market'
+      : s.monthsOfInventory >= 4
+        ? 'a market tilting from sellers toward balanced'
+        : "still a seller's market"
+  const sourceCitation = s.sourceUrl
+    ? `[${s.source}](${s.sourceUrl})`
+    : s.source
+
+  return {
+    slug: marketUpdateSlug(s.month),
+    title: `Middle Tennessee Real Estate Market Update — ${label}`,
+    date: published,
+    dateModified: published,
+    excerpt:
+      `The ${label} numbers for Middle Tennessee: a median sale price of ` +
+      `${s.medianSalePrice} (${s.medianYoyChange} year over year), homes averaging ` +
+      `${s.avgDaysOnMarket} days on market, and ${n(s.activeListings)} active listings. ` +
+      `Here's what that actually means if you're buying or selling right now.`,
+    category: 'Market Updates',
+    faq: [
+      {
+        q: `What is the median home price in Middle Tennessee in ${label}?`,
+        a: `${s.medianSalePrice}, ${s.medianYoyChange} compared with a year earlier, per the ${s.source} ${label} report. That's a regional median — individual counties and price points vary widely around it, so use it as a starting point rather than a valuation.`,
+      },
+      {
+        q: 'How long does it take to sell a home in Middle Tennessee right now?',
+        a: `Closed sales in ${label} averaged ${s.avgDaysOnMarket} days on market (${s.source}). Correctly priced, well-presented homes routinely beat that average; homes anchored to an out-of-date comp routinely fall well behind it.`,
+      },
+      {
+        q: `Is Middle Tennessee a buyer's or seller's market in ${label}?`,
+        a: `There were ${n(s.activeListings)} active listings and ${n(s.closedSales)} closed sales in ${label}, which works out to roughly ${s.monthsOfInventory} months of supply — ${marketRead} by the six-months-of-inventory convention economists use. Your specific neighborhood and price point can read very differently from the regional average.`,
+      },
+    ],
+    content: `
+Here are the ${label} numbers for Middle Tennessee, straight from the ${s.source} report — and an honest read on what they mean depending on which side of the transaction you're on.
+
+## ${label} at a Glance
+
+- **Median sale price:** ${s.medianSalePrice} (${s.medianYoyChange} year over year)
+- **Average days on market:** ${s.avgDaysOnMarket}
+- **Closed sales:** ${n(s.closedSales)}
+- **Active listings:** ${n(s.activeListings)}
+- **Months of supply:** ${s.monthsOfInventory}
+
+Source: ${sourceCitation}, ${label} report, published ${published}.
+
+## What the Numbers Say
+
+${s.takeaways.map((t) => `- ${t}`).join('\n')}
+
+At roughly ${s.monthsOfInventory} months of supply, the metro as a whole reads as ${marketRead} — six months is the line economists conventionally use to separate a seller's market from a balanced one. That is a **regional** average, though, and no single street trades at the regional average.
+
+## What This Means If You're Buying
+
+- **Get pre-approved before you tour.** Even in a market with more inventory, sellers won't seriously entertain an offer without one.
+- **Homes sitting past the ${s.avgDaysOnMarket}-day average are where the negotiating room lives.** A listing that's been out for months is a conversation, not a bidding war.
+- **Move decisively on the right home.** More choice metro-wide doesn't mean no competition — a well-priced home in a strong school zone can still draw multiple offers in a weekend.
+- **Look one ring out if the premium suburbs stretch your budget.** [Spring Hill](/buy/spring-hill-tn) and [Nolensville](/buy/nolensville-tn) consistently offer more value per square foot without giving up much on commute or schools.
+
+## What This Means If You're Selling
+
+- **Price to today's comps, not last year's.** Anchoring to an old number is the single most common reason a home sits.
+- **Presentation is doing more work than it used to.** Professional photography and a clean, decluttered showing are the highest-ROI steps before you list.
+- **Expect to negotiate on concessions.** Closing-cost help and rate buydowns are a normal part of getting to the closing table — build a buffer into your list price if that matters to your bottom line.
+- **A pre-listing inspection protects your timeline,** especially on older homes.
+
+## The Bottom Line
+
+Metro-wide medians are useful for direction, not for decisions. A ${s.medianSalePrice} median tells you almost nothing about what your specific home in your specific subdivision is worth this month.
+
+If you want that number — the honest one, backed by closed comps within a half-mile of your address — that's a short conversation. Call or text [615-551-2727](tel:6155512727), or email [joshua@joshuafink.com](mailto:joshua@joshuafink.com).
+
+Figures are as published by ${s.source} for ${label} and are not adjusted or estimated. See the always-current city-level numbers on our [market pages](/market/brentwood-tn).
+    `.trim(),
+  }
+}
+
+/** Auto-published market updates — one per entered month, newest first. */
+const marketUpdatePosts: BlogPost[] = marketSnapshots.map(buildMarketUpdatePost)
+
 export const blogPosts: BlogPost[] = [
+  ...marketUpdatePosts,
   {
     slug: "middle-tennessee-real-estate-market-july-2026-update",
     title: "Middle Tennessee Real Estate Market: July 2026 Update",
