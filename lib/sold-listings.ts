@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-08-04T10:44:31.911Z
+// AUTO-GENERATED — Last synced: 2026-08-11T18:17:38.144Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-sold.mjs
 
@@ -100,6 +100,18 @@ export const soldListings: Listing[] = [
     status: "Sold",
     compassUrl: "https://www.compass.com/homedetails/9208-Duncaster-Ct-Brentwood-TN-37027/1639388513135897137_lid/",
     imageUrl: "https://www.compass.com/m/ae91840e4f2493e9cb8952ba3a103f6d5e97ce82_img_0_3a670/480x320.webp",
+  },
+  {
+    address: "1901 New Bristol Ln",
+    city: "Brentwood, TN 37027",
+    price: 1800000,
+    beds: 5,
+    baths: 5,
+    sqft: 5855,
+    acres: 0.96,
+    status: "Sold",
+    compassUrl: "https://www.compass.com/homedetails/1901-New-Bristol-Ln-Brentwood-TN-37027/2131329778923073185_lid/",
+    imageUrl: "https://www.compass.com/m/5e20f6de5ae242cba0b75f7227f5a4b1f5937902cfbf792d921c2e860034cf71/480x320.webp",
   },
   {
     address: "9509 Garrett Park Pl",
@@ -208,17 +220,5 @@ export const soldListings: Listing[] = [
     status: "Sold",
     compassUrl: "https://www.compass.com/homedetails/9560-Dresden-Square-Brentwood-TN-37027/2083554790607127753_lid/",
     imageUrl: "https://www.compass.com/m/1726667bfbabb4404e04bd62941b072da078e36ffe55a775567367f26ee41f7d/480x320.webp",
-  },
-  {
-    address: "8117 Hilldale Dr",
-    city: "Brentwood, TN 37027",
-    price: 1100000,
-    beds: 4,
-    baths: 3,
-    sqft: 2730,
-    acres: 1.07,
-    status: "Sold",
-    compassUrl: "https://www.compass.com/homedetails/8117-Hilldale-Dr-Brentwood-TN-37027/1553130529249927305_lid/",
-    imageUrl: "https://www.compass.com/m/f4aa7860e55bb73a771f4ce571e36c1ea6c3c735_img_0_db9ed/480x320.webp",
   }
 ];
