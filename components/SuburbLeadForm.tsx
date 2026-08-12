@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, FormEvent, ReactNode } from 'react'
+import { useState, useEffect, useRef, FormEvent, ReactNode } from 'react'
 
 type Props = {
   children: ReactNode
@@ -12,6 +12,19 @@ type Props = {
 export default function SuburbLeadForm({ children, successTitle, successMessage, resetLabel }: Props) {
   const [state, setState] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
+  const alertRef = useRef<HTMLDivElement>(null)
+
+  // The error banner sits above the fields and the success panel replaces the
+  // whole form, so on a phone either can land off-screen from wherever the
+  // submit button was. Pull the outcome to the visitor rather than hoping they
+  // scroll back up to find it.
+  useEffect(() => {
+    if (state !== 'error' && state !== 'success') return
+    const el = alertRef.current
+    if (!el) return
+    el.focus({ preventScroll: true })
+    el.scrollIntoView({ block: 'center' })
+  }, [state])
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -53,7 +66,13 @@ export default function SuburbLeadForm({ children, successTitle, successMessage,
 
   if (state === 'success') {
     return (
-      <div className="border border-[#E8E8E8] p-10 text-center">
+      <div
+        ref={alertRef}
+        tabIndex={-1}
+        role="alert"
+        aria-live="assertive"
+        className="border border-[#E8E8E8] p-10 text-center focus:outline-none"
+      >
         <div className="text-4xl mb-4">✅</div>
         <h2 className="text-2xl font-black text-black mb-3">{successTitle}</h2>
         <div className="text-[#6B6B6B] text-base leading-relaxed mb-6">{successMessage}</div>
@@ -83,7 +102,13 @@ export default function SuburbLeadForm({ children, successTitle, successMessage,
         style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, width: 0 }}
       />
       {state === 'error' && (
-        <div className="bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+        <div
+          ref={alertRef}
+          tabIndex={-1}
+          role="alert"
+          aria-live="assertive"
+          className="bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700 focus:outline-none"
+        >
           {errorMsg}
         </div>
       )}
