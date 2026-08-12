@@ -9,7 +9,7 @@
 ## What we have today (the inventory)
 
 ### ✅ Working
-- **`scripts/sync-all.sh`** — Mon+Thu 7am syncs Compass MLS listings → website → Vercel deploys. Don't touch.
+- **`scripts/sync-all.sh`** — syncs Compass MLS listings → website → Vercel deploys. Runs daily at 08:00 UTC in GitHub Actions (`.github/workflows/sync-listings.yml`), which commits the result and opens an auto-merging PR. Not a local/Mac job. Don't touch.
 - **`lib/blog.ts`** — 29 published blog posts with full schema markup (BlogPosting / metadata / OG). The Next.js blog UI works.
 - **Railway `Joshua Fink Group` project** — Postgres provisioned, FB Page token + Anthropic API key already set on `services/autoposter` service.
 
