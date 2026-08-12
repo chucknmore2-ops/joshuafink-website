@@ -410,6 +410,87 @@ def test_git_freshness_empty_stdout():
 
 
 # ---------------------------------------------------------------------------
+# check_blog_freshness
+# ---------------------------------------------------------------------------
+
+def _human(days_ago: float) -> str:
+    """NOW-relative date in the same format lib/blog.ts uses."""
+    d = NOW - timedelta(days=days_ago)
+    return f"{d:%B} {d.day}, {d.year}"
+
+
+def _blog_source(*human_dates: str) -> str:
+    """Minimal lib/blog.ts stand-in — one `date:` line per post."""
+    return "\n".join(
+        f'  {{\n    slug: "post-{i}",\n    date: "{d}",\n'
+        f'    dateModified: "January 1, 2099",\n  }},'
+        for i, d in enumerate(human_dates)
+    )
+
+
+def _reader(source: str):
+    return lambda path: source
+
+
+def test_blog_freshness_pass():
+    src = _blog_source(_human(30), _human(3))
+    result = hc.check_blog_freshness("/repo", now=NOW, read_fn=_reader(src))
+    assert result.status == hc.STATUS_PASS
+    assert (NOW - timedelta(days=3)).date().isoformat() in result.detail
+
+
+def test_blog_freshness_stale_when_calendar_stalls():
+    src = _blog_source(_human(60), _human(21))
+    result = hc.check_blog_freshness("/repo", now=NOW, read_fn=_reader(src))
+    assert result.status == hc.STATUS_STALE
+    assert result.is_alert
+
+
+def test_blog_freshness_ignores_date_modified():
+    # dateModified is far in the future; only the real publish dates count.
+    src = _blog_source(_human(21))
+    result = hc.check_blog_freshness("/repo", now=NOW, read_fn=_reader(src))
+    assert result.status == hc.STATUS_STALE
+
+
+def test_blog_freshness_skips_unparsable_dates():
+    src = _blog_source("not a date", _human(3))
+    result = hc.check_blog_freshness("/repo", now=NOW, read_fn=_reader(src))
+    assert result.status == hc.STATUS_PASS
+
+
+def test_blog_freshness_error_when_no_dates():
+    result = hc.check_blog_freshness("/repo", now=NOW, read_fn=_reader("export const x = []"))
+    assert result.status == hc.STATUS_ERROR
+    assert "no parsable post dates" in result.detail
+
+
+def test_blog_freshness_error_when_unreadable():
+    def boom(path):
+        raise FileNotFoundError(path)
+    result = hc.check_blog_freshness("/repo", now=NOW, read_fn=boom)
+    assert result.status == hc.STATUS_ERROR
+
+
+def test_blog_freshness_reads_the_real_file():
+    """The shipped lib/blog.ts must parse — guards the regex against a
+    reformat of the source that would silently zero this check out."""
+    result = hc.check_blog_freshness(str(REPO_ROOT))
+    assert result.status in (hc.STATUS_PASS, hc.STATUS_STALE)
+    assert result.actual_age_days is not None
+
+
+def test_blog_stale_has_remediation():
+    stale = hc.CheckResult(
+        name=f"blog cadence — {hc.BLOG_FILE}",
+        status=hc.STATUS_STALE,
+        detail="newest post dated 2026-06-20",
+    )
+    tip = hc._remediation_for(stale)
+    assert tip and "content-keyword-strategy" in tip
+
+
+# ---------------------------------------------------------------------------
 # check_site_uptime
 # ---------------------------------------------------------------------------
 
@@ -549,7 +630,7 @@ def test_monitored_workflows_exist_on_disk():
 # Orchestration + exit codes
 # ---------------------------------------------------------------------------
 
-def _patch_dns_helpers(monkeypatch, *, healthcheck_status, git_status, latest_map=None, reach_status="pass", last_attempt_map=None, workflow_status="pass"):
+def _patch_dns_helpers(monkeypatch, *, healthcheck_status, git_status, latest_map=None, reach_status="pass", last_attempt_map=None, workflow_status="pass", blog_status="pass"):
     """Replace per-check functions with deterministic fakes."""
     monkeypatch.setattr(
         hc,
@@ -566,6 +647,15 @@ def _patch_dns_helpers(monkeypatch, *, healthcheck_status, git_status, latest_ma
         lambda repo_dir, now=None, run_fn=None: hc.CheckResult(
             name=f"sync-listings — {hc.LISTINGS_FILE}",
             status=git_status,
+            detail="patched",
+        ),
+    )
+    monkeypatch.setattr(
+        hc,
+        "check_blog_freshness",
+        lambda repo_dir, now=None, read_fn=None: hc.CheckResult(
+            name=f"blog cadence — {hc.BLOG_FILE}",
+            status=blog_status,
             detail="patched",
         ),
     )
@@ -606,8 +696,9 @@ def test_run_all_all_green(monkeypatch):
         dsn="dsn://", healthcheck_url="https://x/", repo_dir="/repo", now=NOW
     )
     assert hc.determine_exit_code(results) == 0
-    # site uptime + git + reach + monitored workflows + 7 pipeline checks
-    assert len(results) == 3 + len(hc.MONITORED_WORKFLOWS) + len(hc.EXPECTED_JOBS)
+    # site uptime + listings git + blog cadence + reach + monitored workflows
+    # + one check per expected pipeline
+    assert len(results) == 4 + len(hc.MONITORED_WORKFLOWS) + len(hc.EXPECTED_JOBS)
 
 
 def test_run_all_misconfig_when_no_dsn(monkeypatch):
@@ -641,6 +732,22 @@ def test_run_all_stale_pipeline_triggers_exit_1(monkeypatch):
     # Make autoposter-listing stale.
     latest[("facebook", "listing-spotlight")] = _fake_latest(99)
     _patch_dns_helpers(monkeypatch, healthcheck_status="pass", git_status="pass", latest_map=latest)
+    results = hc.run_all_checks(
+        dsn="dsn://", healthcheck_url="https://x/", repo_dir="/repo", now=NOW
+    )
+    assert hc.determine_exit_code(results) == 1
+
+
+def test_run_all_stale_blog_triggers_exit_1(monkeypatch):
+    """A stalled content calendar has to page, not sit quiet for weeks."""
+    latest = {(j.channel, j.job_name): _fake_latest(0.5) for j in hc.EXPECTED_JOBS}
+    _patch_dns_helpers(
+        monkeypatch,
+        healthcheck_status="pass",
+        git_status="pass",
+        latest_map=latest,
+        blog_status="stale",
+    )
     results = hc.run_all_checks(
         dsn="dsn://", healthcheck_url="https://x/", repo_dir="/repo", now=NOW
     )
