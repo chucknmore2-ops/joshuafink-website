@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
+import { useState, useEffect, useRef, FormEvent } from 'react'
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error'
 
@@ -14,6 +14,18 @@ type CashOfferFormProps = {
 export default function CashOfferForm({ source = 'cash-offer', cityName }: CashOfferFormProps = {}) {
   const [state, setState] = useState<FormState>('idle')
   const [errorMsg, setErrorMsg] = useState('')
+  const alertRef = useRef<HTMLDivElement>(null)
+
+  // On a phone the error banner and the success panel can both sit off-screen
+  // from wherever the submit button was. Pull the outcome to the visitor rather
+  // than hoping they scroll back to find it.
+  useEffect(() => {
+    if (state !== 'error' && state !== 'success') return
+    const el = alertRef.current
+    if (!el) return
+    el.focus({ preventScroll: true })
+    el.scrollIntoView({ block: 'center' })
+  }, [state])
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -54,7 +66,13 @@ export default function CashOfferForm({ source = 'cash-offer', cityName }: CashO
 
   if (state === 'success') {
     return (
-      <div className="bg-white text-black p-8 rounded-2xl text-center">
+      <div
+        ref={alertRef}
+        tabIndex={-1}
+        role="alert"
+        aria-live="assertive"
+        className="bg-white text-black p-8 rounded-2xl text-center focus:outline-none"
+      >
         <div className="text-4xl mb-4">✅</div>
         <h2 className="text-2xl font-black text-black mb-3">We Got It!</h2>
         <p className="text-neutral-500 text-sm leading-relaxed mb-6">
@@ -137,7 +155,13 @@ export default function CashOfferForm({ source = 'cash-offer', cityName }: CashO
         </div>
 
         {state === 'error' && (
-          <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
+          <div
+            ref={alertRef}
+            tabIndex={-1}
+            role="alert"
+            aria-live="assertive"
+            className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700 focus:outline-none"
+          >
             {errorMsg}
           </div>
         )}
