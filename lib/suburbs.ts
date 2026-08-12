@@ -148,7 +148,7 @@ export const suburbs: Record<string, Suburb> = {
     pricePerSqft: 192,
     yoyChange: '+5.1%',
     description:
-      'Spring Hill is one of the fastest-growing cities in Tennessee — and that growth is showing up in real estate values. Straddling the Williamson/Maury County line, Spring Hill offers new construction communities, highly rated Williamson County schools, and a more attainable entry point than Franklin or Brentwood without sacrificing convenience. The 2026 median home price is approximately $450,000, representing some of the strongest year-over-year appreciation in Middle Tennessee. Buyers love Spring Hill\'s mix of newer neighborhoods, growing retail and dining scene, and quick access to I-65. If you own here, you own in a market that continues to attract first-time buyers and move-up purchasers in equal measure — making your exit strategy strong.',
+      'Spring Hill is one of the fastest-growing cities in Tennessee — and that growth is showing up in real estate values. Straddling the Williamson/Maury County line, Spring Hill\'s population has climbed from 50,005 at the 2020 Census to an estimated 60,000+ in 2026 — roughly 20% growth in five years (U.S. Census Bureau) — fueled in large part by GM\'s Ultium Cells battery plant and the broader auto-manufacturing base anchored there. The city offers new construction communities, highly rated Williamson County schools, and a more attainable entry point than Franklin or Brentwood without sacrificing convenience. The 2026 median home price is approximately $450,000, representing some of the strongest year-over-year appreciation in Middle Tennessee. Buyers love Spring Hill\'s mix of newer neighborhoods, growing retail and dining scene, and quick access to I-65. If you own here, you own in a market that continues to attract first-time buyers and move-up purchasers in equal measure — making your exit strategy strong.',
     whyBullets: [
       'High-volume market expertise: Spring Hill\'s rapid growth means Joshua has navigated dozens of transactions across the newest subdivisions — from Autumn Ridge to Bridgemore Village — with intimate knowledge of which communities command the strongest resale premiums.',
       'Move-up buyer pipeline: Many Spring Hill sellers are upgrading to larger homes in Franklin or Brentwood. Joshua often represents both sides of that transaction chain, giving him insight into what motivated buyers in your price range are actively searching for.',
@@ -171,11 +171,15 @@ export const suburbs: Record<string, Suburb> = {
         q: 'What school zone am I in and does it matter?',
         a: 'Absolutely. School zone (Williamson vs. Maury County) can affect your home\'s value by $20,000–$40,000 or more. Joshua will confirm your exact school assignment and incorporate that into your pricing strategy and marketing — it\'s a major selling point for family buyers.',
       },
+      {
+        q: 'How much has Spring Hill grown in recent years?',
+        a: 'Spring Hill grew from 50,005 residents at the 2020 Census to an estimated 60,000+ in 2026 — about 20% growth in five years (U.S. Census Bureau), among the fastest rates of any city in Tennessee. GM\'s Ultium Cells battery plant and the surrounding manufacturing base have been a major driver, and that population growth is a direct tailwind for seller demand.',
+      },
     ],
     schemaCity: 'Spring Hill',
     schemaState: 'TN',
     schemaZip: '37174',
-    buyerDescription: 'Spring Hill is the smart buyer\'s play in 2026 — Williamson County schools, new construction communities, and a price point that still makes sense. With a median around $450,000, it\'s the most accessible entry into the Nashville suburban market. Buyers love the new neighborhoods, growing restaurant and retail scene, and the I-65 corridor that puts you in downtown Nashville in under 30 minutes. Competition is real here — Spring Hill attracts first-time buyers, move-up families, and out-of-state relocators in equal measure.',
+    buyerDescription: 'Spring Hill is the smart buyer\'s play in 2026 — Williamson County schools, new construction communities, and a price point that still makes sense. With a median around $450,000, it\'s the most accessible entry into the Nashville suburban market. The city\'s population has grown roughly 20% since the 2020 Census (50,005 to an estimated 60,000+ in 2026, per the U.S. Census Bureau), driven largely by GM\'s Ultium Cells plant — steady, employment-backed growth rather than pure speculation. Buyers love the new neighborhoods, growing restaurant and retail scene, and the I-65 corridor that puts you in downtown Nashville in under 30 minutes. Competition is real here — Spring Hill attracts first-time buyers, move-up families, and out-of-state relocators in equal measure.',
     buyerWhyBullets: [
       'New construction navigation: Spring Hill has dozens of active builder communities. Joshua knows which builders deliver quality, which floor plans hold resale value, and how to negotiate upgrades and lot premiums that builders rarely advertise.',
       'School zone precision: The Williamson/Maury County line runs through Spring Hill — and it matters. Joshua will confirm your exact school assignment before you make an offer, not after.',
@@ -186,10 +190,12 @@ export const suburbs: Record<string, Suburb> = {
       { q: 'Should I buy new construction or resale in Spring Hill?', a: 'Both have advantages. New construction offers warranties, modern layouts, and customization — but builder timelines can be long and lots are often small. Resale homes offer established landscaping, larger lots, and faster move-in. Joshua can walk you through both options side-by-side.' },
       { q: 'Which part of Spring Hill is in Williamson County schools?', a: 'The northern portion of Spring Hill (ZIP 37174) is generally Williamson County Schools; southern sections may fall under Maury County. This distinction can affect home values by $20K–$40K. Joshua verifies school assignment for every home before you tour.' },
       { q: 'Is Spring Hill a good investment?', a: 'Spring Hill has seen 5%+ annual appreciation in recent years and continues to attract new employers and residents. It remains one of the best value-to-appreciation opportunities in Middle Tennessee.' },
+      { q: 'Is Spring Hill still growing?', a: 'Yes — significantly. The city grew from 50,005 residents at the 2020 Census to an estimated 60,000+ in 2026, about 20% growth in five years (U.S. Census Bureau), making it one of the fastest-growing cities in the state. GM\'s Ultium Cells battery plant has been a major driver, giving buyers confidence the demand is backed by real jobs, not just relocation trends.' },
     ],
     topNeighborhoods: ['Autumn Ridge', 'Bridgemore Village', 'Kedron Village', 'Tollgate Village', 'Port Royal Place'],
     schoolDistrict: 'Williamson County Schools (north) / Maury County (south)',
     commuteNote: '30 min to downtown Nashville via I-65',
+    dataUpdatedAt: '2026-08-12',
   },
 
   'nolensville-tn': {
