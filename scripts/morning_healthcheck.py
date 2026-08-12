@@ -24,6 +24,10 @@ COVERED (per `lib/admin-schedule.ts`):
     wiring. A channel can still show as NEVER_LOGGED if the route has
     never fired since post_log existed — that's expected for a
     freshly-cut branch, not a failure.
+  Blog publishing cadence — newest post date in lib/blog.ts. The weekly
+    calendar in docs/content-keyword-strategy.md lives only on paper, so
+    nothing else notices when it stalls (weeks 6-12 went unwritten for a
+    fortnight in Aug 2026 and every other check stayed green).
   GitHub Actions sync-listings — checked via git mtime of lib/listings.ts
   GitHub Actions scheduled workflows — latest completed run of each must
     have concluded 'success' (needs GITHUB_TOKEN; otherwise a GAP). This
@@ -58,6 +62,7 @@ import dataclasses
 import json
 import logging
 import os
+import re
 import smtplib
 import socket
 import ssl
@@ -148,6 +153,19 @@ EXPECTED_JOBS: tuple[ExpectedJob, ...] = (
 # the *workflow* is healthy is answered by MONITORED_WORKFLOWS below, not here.
 LISTINGS_FILE = "lib/listings.ts"
 LISTINGS_MAX_AGE_DAYS = 17
+
+# Weekly blog cadence (docs/content-keyword-strategy.md). Measured from the
+# newest `date:` in lib/blog.ts rather than the file's git mtime — a typo fix
+# touches the file without publishing anything. 7d nominal + 7d buffer, so one
+# skipped week is tolerated and two page. The schedule is human-run: nothing
+# publishes these posts automatically, which is exactly why it needs a monitor.
+BLOG_FILE = "lib/blog.ts"
+BLOG_MAX_AGE_DAYS = 14
+# `date: "August 3, 2026"` on hand-written posts. Anchored to the line start so
+# the optional `dateModified:` field can't be mistaken for a publish date, and
+# the generated market-update post (whose date is a variable, not a literal)
+# is correctly ignored — it has its own monthly check.
+BLOG_DATE_RE = re.compile(r'^\s*date:\s*"([^"]+)"', re.MULTILINE)
 
 # Scheduled GitHub Actions workflows. Freshness thresholds are slow by design;
 # a red workflow run is the immediate signal that an automation is broken.
@@ -589,6 +607,73 @@ def check_listings_git_freshness(
     )
 
 
+def check_blog_freshness(
+    repo_dir: str,
+    *,
+    now: Optional[datetime] = None,
+    read_fn: Optional[Callable[[str], str]] = None,
+) -> CheckResult:
+    """Weekly blog calendar — is the newest post in lib/blog.ts still recent?
+
+    Reads publish dates out of the source rather than asking git, because the
+    thing being monitored is whether a *post* shipped, not whether the file
+    was touched. Unparsable date strings are skipped rather than fatal; only
+    an empty result set is an error.
+    """
+    now = now or datetime.now(timezone.utc)
+    name = f"blog cadence — {BLOG_FILE}"
+    t0 = time.monotonic()
+    path = os.path.join(repo_dir, BLOG_FILE)
+
+    def _default_read(p: str) -> str:
+        with open(p, "r", encoding="utf-8") as fh:
+            return fh.read()
+
+    try:
+        source = (read_fn or _default_read)(path)
+    except OSError as exc:
+        return CheckResult(
+            name=name,
+            status=STATUS_ERROR,
+            detail=f"could not read {BLOG_FILE}: {type(exc).__name__}: {exc}",
+            duration_ms=int((time.monotonic() - t0) * 1000),
+        )
+
+    newest: Optional[datetime] = None
+    for raw in BLOG_DATE_RE.findall(source):
+        try:
+            parsed = datetime.strptime(raw.strip(), "%B %d, %Y").replace(
+                tzinfo=timezone.utc
+            )
+        except ValueError:
+            continue  # One malformed post shouldn't blind the whole check.
+        if newest is None or parsed > newest:
+            newest = parsed
+
+    if newest is None:
+        return CheckResult(
+            name=name,
+            status=STATUS_ERROR,
+            detail=f"no parsable post dates found in {BLOG_FILE}",
+            duration_ms=int((time.monotonic() - t0) * 1000),
+        )
+
+    age_days = (now - newest).total_seconds() / 86400.0
+    detail = (
+        f"newest post dated {newest.date().isoformat()}, {age_days:.1f}d ago "
+        f"(threshold {BLOG_MAX_AGE_DAYS}d, weekly calendar in "
+        f"docs/content-keyword-strategy.md)"
+    )
+    return CheckResult(
+        name=name,
+        status=STATUS_STALE if age_days > BLOG_MAX_AGE_DAYS else STATUS_PASS,
+        detail=detail,
+        actual_age_days=age_days,
+        expected_max_age_days=BLOG_MAX_AGE_DAYS,
+        duration_ms=int((time.monotonic() - t0) * 1000),
+    )
+
+
 def check_workflow_last_run(
     workflow_file: str,
     label: str,
@@ -778,6 +863,16 @@ def run_all_checks(
             detail=f"uncaught {type(exc).__name__}: {exc}",
         ))
 
+    # 2b) Blog cadence — same repo-state family; no network, no DB.
+    try:
+        results.append(check_blog_freshness(repo_dir, now=now))
+    except Exception as exc:  # noqa: BLE001
+        results.append(CheckResult(
+            name=f"blog cadence — {BLOG_FILE}",
+            status=STATUS_ERROR,
+            detail=f"uncaught {type(exc).__name__}: {exc}",
+        ))
+
     # 3) Scheduled GitHub Actions runs — deliberately ahead of the DB block so a
     #    missing DATABASE_URL (which returns early) can't hide a red workflow.
     for workflow_file, label in MONITORED_WORKFLOWS:
@@ -929,6 +1024,14 @@ def _remediation_for(result: CheckResult) -> Optional[str]:
             "Actions tab → Sync Compass Listings → Run workflow. If repeated "
             "runs fail, the Compass scraper selectors likely drifted — "
             "see scripts/sync-all.sh."
+        )
+    if "blog cadence" in name:
+        return (
+            "The weekly blog calendar has stalled. Open "
+            "docs/content-keyword-strategy.md, take the next unshipped week "
+            "(status column), write the post into lib/blog.ts, and tick the "
+            "row. Nothing publishes these automatically — the calendar only "
+            "moves when someone writes one."
         )
     if "autoposter-listing" in name:
         return (
