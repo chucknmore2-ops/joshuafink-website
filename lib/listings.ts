@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-08-11T18:16:30.838Z
+// AUTO-GENERATED — Last synced: 2026-08-13T09:16:10.229Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -21,7 +21,7 @@ export interface Listing {
 
 // Mirrors the header timestamp so server components can compute sync staleness
 // without parsing comments. Updated by scripts/fetch-images.mjs each sync.
-export const listingsSyncedAt = "2026-08-11T18:16:30.838Z";
+export const listingsSyncedAt = "2026-08-13T09:16:10.229Z";
 
 export const listings: Listing[] = [
   {
