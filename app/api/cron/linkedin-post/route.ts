@@ -3,6 +3,7 @@ import { blogPosts } from '@/lib/blog'
 import { listings } from '@/lib/listings'
 import { soldListings } from '@/lib/sold-listings'
 import { listingSlug } from '@/lib/listing-detail'
+import { reviews, reviewStats } from '@/lib/reviews'
 import { logPost } from '@/lib/admin-db'
 import { withUtm } from '@/lib/utm'
 import {
@@ -43,7 +44,7 @@ type PostPayload = {
   description: string
   // kind + refKey populate post_log columns so the morning healthcheck can
   // see freshness per channel and /admin can dedup across reruns.
-  kind: 'blog' | 'listing' | 'sold' | 'market'
+  kind: 'blog' | 'listing' | 'sold' | 'market' | 'testimonial'
   refKey: string
 }
 
@@ -178,6 +179,46 @@ function buildFromSale(addressQuery: string): PostPayload | null {
   }
 }
 
+// Client testimonial. Like the just-sold post this is opt-in rather than part
+// of the weekly rotation — lib/reviews.ts carries no "already posted" state, so
+// a recurring slot would recycle the same handful of reviews through the feed.
+// Google Business already publishes a review every 8th week; this is the
+// LinkedIn equivalent, fired when Joshua has a specific client win to share:
+//   ?kind=testimonial                  → the week's review
+//   ?kind=testimonial&reviewer=lindsay → that client's review
+// Pairs with ?preview=1 to read the copy back without publishing.
+function buildFromTestimonial(reviewerQuery: string): PostPayload | null {
+  if (!reviews.length) return null
+  const needle = reviewerQuery.trim().toLowerCase()
+  const r = needle
+    ? reviews.find((x) => x.reviewer.toLowerCase().includes(needle))
+    : reviews[isoWeekNumber() % reviews.length]
+  if (!r) return null
+  const refKey = r.reviewer.toLowerCase().replace(/[^\w]+/g, '-')
+  const url = withUtm(`${SITE}/reviews`, {
+    source: 'linkedin',
+    medium: 'auto',
+    campaign: 'testimonial',
+    content: refKey,
+  })
+  const social = `${reviewStats.rating.toFixed(1)}-star average across ${reviewStats.total} client reviews`
+  // Entity + the transaction's location keyword land in the first ~9 words —
+  // that opening line becomes the post's title tag. No hashtags on LinkedIn.
+  const text =
+    `Joshua Fink Group client review — ${r.transaction}.\n\n` +
+    `"${r.text}"\n— ${r.reviewer}\n\n` +
+    `Joshua Fink Group helps buyers and sellers across Nashville and Middle Tennessee, ` +
+    `with a ${social}. Call or text Joshua Fink at 615-551-2727, or read more: ${url}`
+  return {
+    text,
+    url,
+    title: `Client reviews — Joshua Fink Group, Compass Real Estate`,
+    description: `${r.transaction} · ${social}`,
+    kind: 'testimonial',
+    refKey,
+  }
+}
+
 // Monthly Middle TN market update. Fired by
 // .github/workflows/monthly-market-update.yml with ?kind=market — deliberately
 // NOT part of the weekly rotation. Reads lib/market-snapshot.ts, the same
@@ -240,13 +281,16 @@ export async function GET(request: Request) {
   // Opt-in overrides for one-off posts. With no params the route behaves
   // exactly as the weekly cron always has (blog / active-listing rotation).
   const params = new URL(request.url).searchParams
-  const isMonthly = params.get('kind') === 'market'
+  const kind = params.get('kind')
+  const isMonthly = kind === 'market'
   const jobName = isMonthly ? MONTHLY_JOB : WEEKLY_JOB
   const payload = isMonthly
     ? buildFromMarketSnapshot()
-    : params.get('kind') === 'sold'
+    : kind === 'sold'
       ? buildFromSale(params.get('address') ?? '')
-      : pickPayload()
+      : kind === 'testimonial'
+        ? buildFromTestimonial(params.get('reviewer') ?? '')
+        : pickPayload()
 
   // ?preview=1 composes the copy and hands it back without touching LinkedIn,
   // so a draft can be read and approved before anything is published.

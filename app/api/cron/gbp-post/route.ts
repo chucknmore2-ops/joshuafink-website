@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { listings } from '@/lib/listings'
+import { soldListings } from '@/lib/sold-listings'
 import { blogPosts } from '@/lib/blog'
 import { reviews } from '@/lib/reviews'
 import { logPost } from '@/lib/admin-db'
@@ -64,15 +65,32 @@ const CALL_CTA: CTA = { actionType: 'CALL', url: `tel:${PHONE.replace(/-/g, '')}
 
 type CTA = { actionType: 'LEARN_MORE' | 'CALL' | 'ORDER' | 'BOOK' | 'SIGN_UP'; url: string }
 
-type GbpPayloadKind = 'listing' | 'market-update' | 'tip' | 'review' | 'blog'
+type GbpPayloadKind = 'listing' | 'sold' | 'market-update' | 'tip' | 'review' | 'blog'
 
 interface PreparedPost {
   summary: string
   cta?: CTA
+  // Publicly-fetchable JPEG for the post's single photo (see gbpPhotoUrl).
+  photoUrl?: string
   // kind + refKey populate post_log columns so the morning healthcheck can
   // see freshness per channel and /admin can dedup across reruns.
   kind: GbpPayloadKind
   refKey: string
+}
+
+// Google's local-post API takes exactly ONE photo (`media[0]`), not a gallery,
+// and it rejects WebP — which is the format of every Compass image URL in
+// lib/listings.ts / lib/sold-listings.ts. Compass's CDN serves the same asset
+// as a JPEG when the extension is swapped (…/480x320.webp → …/1200x900.jpg,
+// verified 2026-08-13 against both URL hash shapes Compass emits), so no local
+// copy is needed. Normalising to 1200x900 keeps every photo above Google's
+// 720px minimum and well inside its 10KB–5MB size window.
+function gbpPhotoUrl(imageUrl?: string): string | undefined {
+  if (!imageUrl) return undefined
+  const m = imageUrl.match(
+    /^(https:\/\/(?:www\.)?compass\.com\/m\/[^/?#]+)\/\d+x\d+\.webp$/,
+  )
+  return m ? `${m[1]}/1200x900.jpg` : undefined
 }
 
 // ── Content builders ──────────────────────────────────────────────────
@@ -94,7 +112,49 @@ function buildListingPost(): PreparedPost {
       actionType: 'LEARN_MORE',
       url: l.compassUrl || withUtm(`${SITE}/listings`, gbpUtm('listing')),
     },
+    photoUrl: gbpPhotoUrl(l.imageUrl),
     kind: 'listing',
+    refKey: l.address.toLowerCase().replace(/[^\w]+/g, '-'),
+  }
+}
+
+// "Just Sold" post. On-demand ONLY (?kind=sold&address=1901+New+Bristol), never
+// part of the weekly rotation: lib/sold-listings.ts carries no close date
+// (Compass's transactions section doesn't publish one), so nothing here can
+// tell a sale that closed last week from one that closed in 2019. Mirrors
+// buildFromSale() in app/api/cron/linkedin-post/route.ts.
+function buildSoldPost(addressQuery: string): PreparedPost | null {
+  const needle = addressQuery.trim().toLowerCase()
+  if (!needle) return null
+  const l = soldListings.find((x) => x.address.toLowerCase().includes(needle))
+  if (!l) return null
+  // Sold `city` values sometimes lead with a lot number ("Lot 54, Brentwood, TN
+  // 37027"), so take the segment before the state rather than the first one.
+  const parts = l.city.split('|')[0].split(',').map((s) => s.trim())
+  const stateIdx = parts.findIndex((p) => /^TN\b/.test(p))
+  const locality = (stateIdx > 0 ? parts[stateIdx - 1] : parts[0]) || l.city
+  const price = `$${l.price.toLocaleString()}`
+  const stats = [
+    l.beds ? `${l.beds} bed` : '',
+    l.baths ? `${l.baths} bath` : '',
+    l.sqft ? `${l.sqft.toLocaleString()} sq ft` : '',
+    l.acres ? `${l.acres} acres` : '',
+  ]
+    .filter(Boolean)
+    .join(' · ')
+  return {
+    summary:
+      `🎉 Just Sold — ${l.address}, ${locality}, TN\n\n` +
+      `${stats}${stats ? ' · ' : ''}${price}\n\n` +
+      `Another ${locality} closing for Joshua Fink at Compass. Thinking about ` +
+      `selling? Ask for a free, comp-backed valuation.\n\n` +
+      `#JustSold #${locality.replace(/\s+/g, '')}TN #JoshuaFinkGroup`,
+    cta: {
+      actionType: 'LEARN_MORE',
+      url: withUtm(`${SITE}/listings`, gbpUtm('just-sold')),
+    },
+    photoUrl: gbpPhotoUrl(l.imageUrl),
+    kind: 'sold',
     refKey: l.address.toLowerCase().replace(/[^\w]+/g, '-'),
   }
 }
@@ -368,9 +428,21 @@ export async function GET(request: Request) {
   // ?kind=market is the monthly market update (see buildMonthlyMarketPost).
   // It logs under its own job name so one monthly post can't refresh the
   // weekly rotator's freshness clock and hide a dead weekly cron.
+  //
+  // ?kind=listing and ?kind=sold&address=… are the on-demand "Just Listed" /
+  // "Just Sold" posts, fired by hand when Joshua has news rather than on a
+  // schedule. Same reasoning: they log under their own job name so a manual
+  // post can't mask a dead weekly cron. Pair either with ?preview=1 to read
+  // the copy back without publishing.
   const params = new URL(request.url).searchParams
-  const isMonthly = params.get('kind') === 'market'
-  const jobName = isMonthly ? 'monthly-market-update' : 'gbp-post'
+  const kind = params.get('kind')
+  const isMonthly = kind === 'market'
+  const isOnDemand = kind === 'listing' || kind === 'sold'
+  const jobName = isMonthly
+    ? 'monthly-market-update'
+    : isOnDemand
+      ? 'gbp-on-demand'
+      : 'gbp-post'
 
   const locationId = process.env.GBP_LOCATION_ID
   if (!locationId) {
@@ -393,19 +465,39 @@ export async function GET(request: Request) {
   // Decide what to post before spending an OAuth round-trip, so a skipped week
   // never touches Google at all.
   const week = isoWeekNumber()
-  const post = isMonthly ? buildMonthlyMarketPost() : pickPost(week)
+  const post = isMonthly
+    ? buildMonthlyMarketPost()
+    : kind === 'listing'
+      ? buildListingPost()
+      : kind === 'sold'
+        ? buildSoldPost(params.get('address') ?? '')
+        : pickPost(week)
+
+  // ?preview=1 composes the copy (and resolves the photo URL) and hands it back
+  // without touching Google, so a draft can be read and approved before
+  // anything publishes. Mirrors the same flag on /api/cron/linkedin-post.
+  if (params.get('preview') === '1') {
+    return NextResponse.json({ posted: false, preview: true, week, post })
+  }
+
   if (!post) {
     const reason = isMonthly
       ? `skipped: ${snapshotSkipReason()}`
-      : `skipped: market stats stale (as of ${statsAsOf(BRENTWOOD_SLUG)}, ` +
-        `${statsAgeDays(BRENTWOOD_SLUG)}d old > ${MAX_STATS_AGE_DAYS}d) — ` +
-        `refresh lib/suburbs.ts`
+      : isOnDemand
+        ? `skipped: no ${kind} matched address=${params.get('address') ?? ''}`
+        : `skipped: market stats stale (as of ${statsAsOf(BRENTWOOD_SLUG)}, ` +
+          `${statsAgeDays(BRENTWOOD_SLUG)}d old > ${MAX_STATS_AGE_DAYS}d) — ` +
+          `refresh lib/suburbs.ts`
     console.warn('[gbp-post]', reason)
     await logPost({
       channel: 'gbp',
       jobName,
-      payloadKind: 'market-update',
-      refKey: isMonthly ? 'no-snapshot' : BRENTWOOD_SLUG,
+      payloadKind: isOnDemand ? (kind as GbpPayloadKind) : 'market-update',
+      refKey: isOnDemand
+        ? params.get('address') || 'no-match'
+        : isMonthly
+          ? 'no-snapshot'
+          : BRENTWOOD_SLUG,
       status: 'failed',
       errorMessage: reason.slice(0, 500),
     })
@@ -413,9 +505,9 @@ export async function GET(request: Request) {
     // skip; the post_log row is what surfaces it in /admin + the healthcheck.
     return NextResponse.json({
       posted: false,
-      skipped: isMonthly ? 'no_snapshot' : 'stats_stale',
+      skipped: isOnDemand ? 'no_match' : isMonthly ? 'no_snapshot' : 'stats_stale',
       week,
-      statsAsOf: isMonthly ? undefined : statsAsOf(BRENTWOOD_SLUG),
+      statsAsOf: isMonthly || isOnDemand ? undefined : statsAsOf(BRENTWOOD_SLUG),
       at: new Date().toISOString(),
     })
   }
@@ -448,6 +540,11 @@ export async function GET(request: Request) {
     topicType: 'STANDARD',
   }
   if (post.cta) payload.callToAction = post.cta
+  // Exactly one photo: Google's localPost `media` array takes a single PHOTO on
+  // a STANDARD post — it is not a gallery, so a second entry is rejected.
+  if (post.photoUrl) {
+    payload.media = [{ mediaFormat: 'PHOTO', sourceUrl: post.photoUrl }]
+  }
 
   try {
     const res = await fetchWithBackoff(
@@ -503,6 +600,7 @@ export async function GET(request: Request) {
       posted: true,
       week,
       rotator: post.kind,
+      photo: post.photoUrl ?? null,
       summaryPreview: post.summary.slice(0, 100),
       name: data.name,
       at: new Date().toISOString(),
