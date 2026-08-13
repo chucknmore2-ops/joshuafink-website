@@ -28,7 +28,12 @@ export interface EngineOutput {
   error: string | null;
 }
 
-const TIMEOUT_MS = 45_000;
+// Claude's server-side web_search loop routinely runs past 45s, which was
+// silently aborting ~half of its calls and dropping them from the score (a
+// failed call is excluded, so "claude 0%" was measurement, not reality).
+const TIMEOUT_MS = 90_000;
+// One retry per engine — most failures are a timeout or a transient 429/5xx.
+const ATTEMPTS = 2;
 
 // Default Claude model is the flagship (what a claude.ai user actually gets);
 // override to a cheaper model (e.g. claude-haiku-4-5) for a low-cost daily run.
@@ -151,26 +156,43 @@ export function configuredEngines(): string[] {
   return ENGINES.filter((e) => process.env[e.envKey]).map((e) => e.name);
 }
 
+/** Human-readable failure reason (an aborted fetch just says "aborted"). */
+function reasonOf(err: unknown): string {
+  const e = err as Error;
+  if (e?.name === 'AbortError' || /abort/i.test(e?.message ?? '')) {
+    return `timeout after ${TIMEOUT_MS / 1000}s`;
+  }
+  return e?.message?.slice(0, 240) || 'unknown error';
+}
+
 /**
  * Ask every configured engine one query. Each engine resolves to an
  * EngineOutput — `ok:false` with an error string on failure, never a throw.
+ * Each engine gets ATTEMPTS tries before it's reported as failed.
  */
 export async function askAllEngines(query: string): Promise<EngineOutput[]> {
   const active = ENGINES.filter((e) => process.env[e.envKey]);
   return Promise.all(
     active.map(async (e): Promise<EngineOutput> => {
-      try {
-        return await e.run(query);
-      } catch (err) {
-        return {
-          engine: e.name,
-          ok: false,
-          model: null,
-          answerText: '',
-          sourceUrls: [],
-          error: (err as Error).message?.slice(0, 240) ?? 'unknown error',
-        };
+      let lastErr: unknown;
+      for (let attempt = 1; attempt <= ATTEMPTS; attempt++) {
+        try {
+          return await e.run(query);
+        } catch (err) {
+          lastErr = err;
+          if (attempt < ATTEMPTS) {
+            console.warn(`[geo] ${e.name} attempt ${attempt} failed (${reasonOf(err)}) — retrying`);
+          }
+        }
       }
+      return {
+        engine: e.name,
+        ok: false,
+        model: null,
+        answerText: '',
+        sourceUrls: [],
+        error: reasonOf(lastErr),
+      };
     }),
   );
 }

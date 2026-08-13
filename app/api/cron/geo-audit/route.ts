@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server';
 import { BRAND, GEO_QUERIES } from '@/lib/geo-queries';
 import { askAllEngines, configuredEngines } from '@/lib/geo-engines';
-import { detectBrand, computeGeoScore, type GeoResultRow } from '@/lib/geo-score';
+import {
+  detectBrand,
+  computeGeoScore,
+  topCompetingSources,
+  type GeoResultRow,
+} from '@/lib/geo-score';
 import { recordGeoRun } from '@/lib/geo-db';
 
 export const dynamic = 'force-dynamic';
@@ -77,15 +82,24 @@ export async function GET(request: Request) {
   const score = computeGeoScore(rows);
   const written = await recordGeoRun(rows);
 
-  // The to-do list: successful checks where Joshua did NOT surface, with the
-  // page to strengthen — this is what makes the score actionable.
-  const gaps = rows
-    .filter((r) => r.ok && !r.detection.cited)
-    .map((r) => ({
-      engine: r.engine,
-      query: r.query,
-      fix: GEO_QUERIES.find((q) => q.id === r.queryId)?.targetPath ?? null,
-    }));
+  // The to-do list: successful checks where Joshua did NOT surface, rolled up by
+  // page with a loss count — one row per losing check just repeated the same
+  // handful of pages. This is what makes the score actionable.
+  const lossesByPage = new Map<string, number>();
+  for (const r of rows) {
+    if (!r.ok || r.detection.cited) continue;
+    const page = GEO_QUERIES.find((q) => q.id === r.queryId)?.targetPath ?? r.query;
+    lossesByPage.set(page, (lossesByPage.get(page) ?? 0) + 1);
+  }
+  const gaps = Array.from(lossesByPage, ([page, losses]) => ({ page, losses })).sort(
+    (a, b) => b.losses - a.losses || a.page.localeCompare(b.page),
+  );
+
+  // Calls that errored are excluded from the score, so report them rather than
+  // letting an engine outage read as a low score.
+  const failures = rows
+    .filter((r) => !r.ok)
+    .map((r) => ({ engine: r.engine, queryId: r.queryId, error: r.errorMessage }));
 
   return NextResponse.json({
     ran: true,
@@ -95,8 +109,11 @@ export async function GET(request: Request) {
     byEngine: score.byEngine,
     checks: score.total,
     surfaced: score.cited,
+    notScored: failures.length,
+    failures,
     rowsWritten: written,
     gaps,
+    citedInstead: topCompetingSources(rows, BRAND),
     at: runId,
   });
 }

@@ -24,7 +24,12 @@
 import { Pool } from 'pg'
 import { BRAND, GEO_QUERIES } from '../lib/geo-queries'
 import { askAllEngines, configuredEngines } from '../lib/geo-engines'
-import { detectBrand, computeGeoScore, type GeoResultRow } from '../lib/geo-score'
+import {
+  detectBrand,
+  computeGeoScore,
+  topCompetingSources,
+  type GeoResultRow,
+} from '../lib/geo-score'
 
 const CONCURRENCY = 3 // queries in flight at once (each fans out to all engines)
 
@@ -149,24 +154,59 @@ async function main(): Promise<void> {
   const score = computeGeoScore(rows)
   const written = await persist(rows)
 
-  // The to-do list: successful checks where Joshua did NOT surface + the page to strengthen.
-  const gaps = rows
-    .filter((r) => r.ok && !r.detection.cited)
-    .map((r) => ({
-      query: r.query,
-      fix: GEO_QUERIES.find((q) => q.id === r.queryId)?.targetPath ?? null,
-    }))
+  // The to-do list: successful checks where Joshua did NOT surface, rolled up by
+  // page. Listing one bullet per losing CHECK burned all 5 slots on 2 pages and
+  // hid the other ~27 losses; one bullet per page with its loss count ranks the
+  // work instead.
+  const lossesByPage = new Map<string, number>()
+  for (const r of rows) {
+    if (!r.ok || r.detection.cited) continue
+    const page = GEO_QUERIES.find((q) => q.id === r.queryId)?.targetPath ?? r.query
+    lossesByPage.set(page, (lossesByPage.get(page) ?? 0) + 1)
+  }
+  const gaps = Array.from(lossesByPage, ([page, losses]) => ({ page, losses })).sort(
+    (a, b) => b.losses - a.losses || a.page.localeCompare(b.page),
+  )
+
+  // Failed calls are excluded from the score, so an engine that times out reads
+  // as a low score rather than as no data. Say so out loud.
+  const failures = rows.filter((r) => !r.ok)
+  const failsByEngine = new Map<string, { count: number; reason: string }>()
+  for (const f of failures) {
+    const e = failsByEngine.get(f.engine) ?? { count: 0, reason: f.errorMessage ?? 'unknown' }
+    e.count += 1
+    failsByEngine.set(f.engine, e)
+  }
+  const failLine = failures.length
+    ? `\nnot scored: ${failures.length}/${rows.length} — ` +
+      Array.from(failsByEngine, ([e, f]) => `${e} ×${f.count} (${f.reason.slice(0, 60)})`).join(', ')
+    : ''
+
+  const competitors = topCompetingSources(rows, BRAND)
+  const competitorLine = competitors.length
+    ? `\n\nCited instead of us:\n` +
+      competitors.map((c) => `• ${c.host} (${c.hits})`).join('\n')
+    : ''
 
   const byEngine = Object.entries(score.byEngine)
     .map(([e, s]) => `${e} ${s.score}%`)
     .join(' · ')
-  const topGaps = gaps.slice(0, 5).map((g) => `• ${g.fix ?? g.query}`).join('\n')
+  const shown = gaps.slice(0, 5)
+  const gapHeader =
+    gaps.length > shown.length
+      ? `Pages to strengthen (top ${shown.length} of ${gaps.length}):`
+      : 'Pages to strengthen:'
+  const topGaps = shown.map((g) => `• ${g.page} (${g.losses})`).join('\n')
   const title = `GEO ${score.overall}% — cited in ${score.cited}/${score.total} checks`
   const message =
-    `${byEngine || 'no engines ran'}\nrows saved: ${written}\n\n` +
-    `Pages to strengthen:\n${topGaps || '— none, Joshua surfaced everywhere 🎉'}`
+    `${byEngine || 'no engines ran'}\nrows saved: ${written}${failLine}\n\n` +
+    `${gapHeader}\n${topGaps || '— none, Joshua surfaced everywhere 🎉'}` +
+    competitorLine
 
   console.log(`\n${title}\n${message}\n`)
+  for (const f of failures) {
+    console.error(`[geo] FAILED ${f.engine} · ${f.queryId}: ${f.errorMessage}`)
+  }
   await pushover(title, message)
 }
 

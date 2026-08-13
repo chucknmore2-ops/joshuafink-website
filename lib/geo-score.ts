@@ -135,3 +135,39 @@ export function computeGeoScore(rows: Pick<GeoResultRow, 'engine' | 'ok' | 'dete
     byEngine,
   };
 }
+
+/** A domain the engines cited on a check where Joshua did NOT surface. */
+export interface CompetingSource {
+  host: string;
+  /** Number of lost checks whose sources included this host. */
+  hits: number;
+}
+
+/**
+ * Who the engines cite instead of us. Every run already stores these URLs but
+ * nothing read them — and they're the actionable half of the score: the
+ * third-party profiles and "best agent" listicles that off-site work targets.
+ * Counted once per losing check, so one answer citing a site ten times still
+ * scores one.
+ */
+export function topCompetingSources(
+  rows: Pick<GeoResultRow, 'ok' | 'detection' | 'sourceUrls'>[],
+  brand: BrandIdentity,
+  limit = 5,
+): CompetingSource[] {
+  const domain = brand.domain.toLowerCase().replace(/^www\./, '');
+  const counts = new Map<string, number>();
+  for (const r of rows) {
+    if (!r.ok || r.detection.cited) continue;
+    const hosts = new Set<string>();
+    for (const url of r.sourceUrls) {
+      const host = hostnameOf(url);
+      if (!host || host === domain || host.endsWith('.' + domain)) continue;
+      hosts.add(host);
+    }
+    hosts.forEach((host) => counts.set(host, (counts.get(host) ?? 0) + 1));
+  }
+  return Array.from(counts, ([host, hits]) => ({ host, hits }))
+    .sort((a, b) => b.hits - a.hits || a.host.localeCompare(b.host))
+    .slice(0, limit);
+}

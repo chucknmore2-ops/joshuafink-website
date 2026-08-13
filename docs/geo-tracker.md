@@ -40,11 +40,17 @@ Optional model overrides: `GEO_PERPLEXITY_MODEL` (default `sonar`), `GEO_OPENAI_
 ```json
 { "geoScore": 40, "byEngine": { "perplexity": { "score": 53, ... } },
   "checks": 15, "surfaced": 6,
-  "gaps": [ { "engine": "perplexity", "query": "Who is the best agent in Franklin, TN?", "fix": "/buy/franklin" } ] }
+  "notScored": 2, "failures": [ { "engine": "claude", "queryId": "agent-franklin", "error": "timeout after 90s" } ],
+  "gaps": [ { "page": "/buy/franklin-tn", "losses": 4 } ],
+  "citedInstead": [ { "host": "zillow.com", "hits": 28 } ] }
 ```
-`gaps` is the to-do list — each lost question names the page to strengthen
-(more sourced stats, FAQ schema, entity/NAP consistency). Trend the score over
-runs via `geoScoreTrend()` in `lib/geo-db.ts`.
+`gaps` is the to-do list, deduped by page — the loss count ranks which page to
+strengthen (more sourced stats, FAQ schema, entity/NAP consistency).
+`citedInstead` is the off-site half: the domains the engines cite when we don't
+surface, i.e. the profiles and "best agent" listicles worth getting onto.
+`notScored` counts engine calls that errored — those are excluded from the
+score, so a high number means the score is under-reporting, not that visibility
+dropped. Trend the score over runs via `geoScoreTrend()` in `lib/geo-db.ts`.
 
 ## Next steps (not built yet)
 - Surface the score + trend on `/admin`.
