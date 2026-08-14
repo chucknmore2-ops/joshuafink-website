@@ -26,6 +26,44 @@ export const metadata: Metadata = {
   },
 }
 
+// Direct-answer FAQs for AI answer engines (ChatGPT/Perplexity/Claude) and
+// Google's FAQ rich results. Every answer restates a fact already published
+// in the guide body above — no new numbers or claims introduced here.
+const BUYER_GUIDE_FAQS: { q: string; a: string }[] = [
+  {
+    q: 'Do I need to be pre-approved before touring homes in Middle Tennessee?',
+    a: 'Yes. Pre-approval is non-negotiable in 2026 — listing agents generally won\'t entertain offers without it. Get a real pre-approval (pay stubs, tax returns, bank statements, hard credit pull), not a soft-pull estimate, before you start touring.',
+  },
+  {
+    q: 'How much are closing costs for home buyers in Tennessee?',
+    a: 'Total buyer closing costs typically run 2-4% of the purchase price. The main line items are lender fees, title insurance, transfer/recordation tax, escrow setup for taxes and insurance, and the first-year homeowners insurance premium. Tennessee closings are conducted by attorneys or title companies, usually 30-45 days from contract.',
+  },
+  {
+    q: 'How much earnest money should I offer in a competitive Middle Tennessee market?',
+    a: 'Strong earnest money — typically $5,000 to $15,000 depending on the price tier — signals serious intent to a seller. Pairing it with a flexible closing timeline and a tight but real inspection window strengthens an offer without necessarily requiring the highest price.',
+  },
+  {
+    q: 'Should I waive the home inspection to win a bidding war?',
+    a: 'No — never waive inspection. The savings from "winning" a bid are nothing compared to the cost of an undisclosed structural issue. A tight inspection contingency (7-10 days) gives you real diligence time without slowing the offer down.',
+  },
+  {
+    q: 'What does a typical Middle Tennessee home inspection turn up?',
+    a: 'A typical inspection finds 30-80 items, which is normal. Worth negotiating: HVAC, roof, or water heater at end of life, active leaks, electrical safety issues, foundation concerns, and crawl space moisture. Reasons to walk away: extensive mold, structural foundation issues, polybutylene plumbing with active failures, or sewer line collapse.',
+  },
+  {
+    q: 'How do I find off-market homes in Franklin, Brentwood, or Nashville?',
+    a: 'A meaningful share of Middle Tennessee transactions — especially $1M+ and established luxury neighborhoods — never hit public MLS. Compass Coming Soon listings, pocket listings, and word-of-mouth deals fill that gap, so buyers searching only Zillow miss real inventory. Ask for the off-market list for your target suburb or price tier.',
+  },
+  {
+    q: 'What is the biggest mistake first-time buyers make in this market?',
+    a: 'Buying at the top of loan approval — the qualification number is usually 20-30% higher than most buyers\' actual comfort level. Other common mistakes: skipping the inspection to win a bid, letting emotion drive the offer, and not reading HOA CC&Rs before falling in love with a property.',
+  },
+  {
+    q: 'Which Middle Tennessee suburb fits my budget?',
+    a: 'Roughly: $300K-$425K reaches Murfreesboro, Smyrna, Gallatin, Lebanon, Columbia, and La Vergne. $425K-$600K opens Spring Hill, Thompson\'s Station, Hendersonville, and Mount Juliet. $600K-$900K reaches Nolensville and Franklin. $900K+ is Brentwood, core Franklin, and luxury Nolensville. See the suburb head-to-head comparisons or market report hub for specifics.',
+  },
+]
+
 export default function BuyerGuidePage() {
   const articleSchema = {
     '@context': 'https://schema.org',
@@ -59,6 +97,16 @@ export default function BuyerGuidePage() {
     ],
   }
 
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: BUYER_GUIDE_FAQS.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  }
+
   return (
     <>
       <script
@@ -68,6 +116,10 @@ export default function BuyerGuidePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       <div className="bg-white">
@@ -488,6 +540,21 @@ export default function BuyerGuidePage() {
               <span><strong>Using your out-of-state agent.</strong> Tennessee has its own contracts and customs — work with someone local.</span>
             </li>
           </ul>
+
+          <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3 mt-12">
+            FAQ
+          </p>
+          <h2 className="text-3xl font-black text-black tracking-tight mb-6">
+            Buyer&apos;s Guide — Quick Answers
+          </h2>
+          <div className="space-y-6 mb-6">
+            {BUYER_GUIDE_FAQS.map((f, i) => (
+              <div key={i} className="bg-[#F9F9F9] p-6 border-l-4" style={{ borderColor: '#0A1628' }}>
+                <h3 className="text-base font-black text-black mb-2">{f.q}</h3>
+                <p className="text-sm text-[#6B6B6B] leading-relaxed">{f.a}</p>
+              </div>
+            ))}
+          </div>
 
           <div className="mt-16 p-8 bg-[#F9F9F9] border-l-4" style={{ borderColor: '#C41E3A' }}>
             <p className="text-xs font-semibold tracking-widest text-[#C41E3A] uppercase mb-3">
