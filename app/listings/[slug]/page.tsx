@@ -3,6 +3,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
+import TrustBadges from '@/components/TrustBadges'
+import ReviewStrip from '@/components/ReviewStrip'
 import { activeListingSlugs, getListingBySlug } from '@/lib/listing-detail'
 import { buildListingSchema } from '@/lib/listing-schema'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
@@ -267,6 +269,12 @@ export default async function ListingDetailPage({ params }: Props) {
               </div>
             )}
 
+            {/* Trust signals sit beside the lead form so proof is on screen at
+                the moment the visitor decides to reach out. */}
+            <div className="mt-6">
+              <TrustBadges variant="light" />
+            </div>
+
             {listing.note && (
               <p className="mt-5 text-sm text-neutral-600 leading-relaxed">{listing.note}</p>
             )}
@@ -449,6 +457,8 @@ export default async function ListingDetailPage({ params }: Props) {
           </div>
         </div>
       </div>
+
+      <ReviewStrip variant="light" limit={3} />
     </div>
   )
 }

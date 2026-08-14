@@ -10,6 +10,8 @@ import { getSuburb, getSuburbSlugForListing } from '@/lib/suburbs'
 import { reviewStats } from '@/lib/reviews'
 import { withUtm } from '@/lib/utm'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
+import TrustBadges from '@/components/TrustBadges'
+import ReviewStrip from '@/components/ReviewStrip'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import ListingCard from '@/components/ListingCard'
 import { listings } from '@/lib/listings'
@@ -272,8 +274,13 @@ export default async function NeighborhoodPage({ params }: Props) {
               </p>
             )}
 
+            {/* Trust signals directly above the hero form — proof at the moment of decision */}
+            <div className="mt-8 max-w-3xl">
+              <TrustBadges variant="dark" />
+            </div>
+
             {/* Compact above-the-fold lead capture — mirrors /buy/[suburb] hero form */}
-            <div className="mt-10 max-w-xl bg-white p-6 sm:p-7 pb-20 md:pb-7">
+            <div className="mt-6 max-w-xl bg-white p-6 sm:p-7 pb-20 md:pb-7">
               <p className="text-xs font-semibold tracking-widest uppercase mb-1" style={{ color: '#A0A0A0' }}>
                 Quick start — text Joshua
               </p>
@@ -649,6 +656,8 @@ export default async function NeighborhoodPage({ params }: Props) {
             </div>
           </div>
         </div>
+
+        <ReviewStrip variant="light" limit={3} />
 
         {/* Mid-page lead form — surfaced after schools/HOA so engaged readers can convert without scrolling past the rest of the guide */}
         <div id="contact" className="bg-[#F9F9F9] border-y border-[#E8E8E8] py-16 px-4 sm:px-6 lg:px-8">
