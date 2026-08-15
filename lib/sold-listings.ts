@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-08-11T18:17:38.144Z
+// AUTO-GENERATED — Last synced: 2026-08-15T08:34:14.708Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-sold.mjs
 
@@ -123,7 +123,6 @@ export const soldListings: Listing[] = [
     acres: 0.51,
     status: "Sold",
     compassUrl: "https://www.compass.com/homedetails/9509-Garrett-Park-Pl-Brentwood-TN-37027/1425503425773997809_lid/",
-    imageUrl: "https://www.compass.com/m/a61ed17395ec542e90fb96c127cef088576e82dc_img_0_2e3c1/480x320.webp",
   },
   {
     address: "1858 Traditions Cir",
@@ -160,18 +159,6 @@ export const soldListings: Listing[] = [
     status: "Sold",
     compassUrl: "https://www.compass.com/homedetails/7544-Sutcliff-Dr-College-Grove-TN-37046/2012029683069063897_lid/",
     imageUrl: "https://www.compass.com/m/5dd4ae41a6755623d37b4786bd515f9c42495414_img_0_b69db/480x320.webp",
-  },
-  {
-    address: "9499 Stillbrook Trce",
-    city: "Brentwood, TN 37027",
-    price: 1340000,
-    beds: 6,
-    baths: 6,
-    sqft: 4668,
-    acres: 0.49,
-    status: "Sold",
-    compassUrl: "https://www.compass.com/homedetails/9499-Stillbrook-Trce-Brentwood-TN-37027/870249398429837049_lid/",
-    imageUrl: "https://www.compass.com/m/16d00271bed5c7732db0a280a7f518a6e11af470_img_0/480x320.webp",
   },
   {
     address: "805 S 17th St",
