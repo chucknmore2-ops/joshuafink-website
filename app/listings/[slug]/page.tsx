@@ -230,7 +230,7 @@ export default async function ListingDetailPage({ params }: Props) {
         {/* Header + two-column body */}
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-14">
           {/* Left: property info */}
-          <div className="lg:col-span-2">
+          <div className="order-2 lg:order-1 lg:col-span-2">
             <p className="text-4xl font-black text-black tracking-tight">
               {formatPrice(listing.price)}
             </p>
@@ -322,7 +322,7 @@ export default async function ListingDetailPage({ params }: Props) {
           </div>
 
           {/* Right: lead capture */}
-          <div className="lg:col-span-1">
+          <div className="order-1 lg:order-2 lg:col-span-1">
             <div id="lead" className="lg:sticky lg:top-24 border border-[#E8E8E8] rounded-2xl p-6 sm:p-8 scroll-mt-24">
               <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-2">
                 Interested in this home?
