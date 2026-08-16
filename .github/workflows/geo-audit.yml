@@ -10,9 +10,16 @@ name: GEO Audit
 # answer-engine keys (engines run only when their key is present):
 #   PERPLEXITY_API_KEY   OPENAI_API_KEY   ANTHROPIC_API_KEY
 
+# Cadence: WEEKLY, not daily. The score moves on a scale of weeks (Perplexity
+# went 20% → 38% over three weeks), so a daily sample mostly measured noise —
+# the headline % swung 9–19% day to day largely because failed engine calls drop
+# out of the denominator, not because visibility changed. Daily also cost ~$0.65
+# /day on the OpenAI line alone (~$240/yr) for a number that only moves monthly.
+# Weekly keeps the trend and the `citedInstead` competitor list — the parts that
+# are actually actionable — at roughly 1/7th the spend.
 on:
   schedule:
-    - cron: '0 13 * * *' # 13:00 UTC = 08:00 America/Chicago (CDT) daily
+    - cron: '0 13 * * 1' # 13:00 UTC Mondays = 08:00 America/Chicago (CDT)
   workflow_dispatch: {} # allow manual runs from the Actions tab
 
 concurrency:

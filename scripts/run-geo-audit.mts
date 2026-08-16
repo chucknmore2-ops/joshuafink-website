@@ -23,7 +23,7 @@
  */
 import { Pool } from 'pg'
 import { BRAND, GEO_QUERIES } from '../lib/geo-queries'
-import { askAllEngines, configuredEngines } from '../lib/geo-engines'
+import { askAllEngines, configuredEngines, classifyFailure, FIX_HINT } from '../lib/geo-engines'
 import {
   detectBrand,
   computeGeoScore,
@@ -98,7 +98,7 @@ async function persist(rows: GeoResultRow[]): Promise<number> {
   }
 }
 
-async function pushover(title: string, message: string): Promise<void> {
+async function pushover(title: string, message: string, priority = 0): Promise<void> {
   const token = process.env.PUSHOVER_TOKEN
   const user = process.env.PUSHOVER_USER
   if (!token || !user) {
@@ -108,18 +108,28 @@ async function pushover(title: string, message: string): Promise<void> {
   const res = await fetch('https://api.pushover.net/1/messages.json', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ token, user, title, message }).toString(),
+    body: new URLSearchParams({
+      token,
+      user,
+      title,
+      message,
+      priority: String(priority),
+    }).toString(),
   })
   if (!res.ok) console.error('[geo] Pushover failed:', res.status, await res.text())
 }
 
-async function main(): Promise<void> {
+/** Resolves to the process exit code: 0 = healthy run, 1 = an engine gave no data. */
+async function main(): Promise<number> {
   const engines = configuredEngines()
   if (engines.length === 0) {
-    console.log(
+    // Non-zero on purpose: in production all three keys are set, so "no engines"
+    // means the Secrets went missing. A silent no-op must not read as success —
+    // that is the same failure mode this run's engine-down check exists to catch.
+    console.error(
       '[geo] No answer-engine API keys configured (set PERPLEXITY_API_KEY, OPENAI_API_KEY, or ANTHROPIC_API_KEY). Nothing to run.',
     )
-    return
+    return 1
   }
   console.log(`[geo] ${GEO_QUERIES.length} queries × engines: ${engines.join(', ')}`)
 
@@ -182,6 +192,28 @@ async function main(): Promise<void> {
       Array.from(failsByEngine, ([e, f]) => `${e} ×${f.count} (${f.reason.slice(0, 60)})`).join(', ')
     : ''
 
+  // An engine whose every call failed contributes nothing and silently drops out
+  // of `byEngine` — the run still reports success, the score just quietly covers
+  // fewer engines, and a *smaller* denominator can even make the headline % go
+  // UP while visibility is unchanged. That is how ChatGPT sat out three runs on
+  // an empty balance while this workflow stayed green and the morning
+  // healthcheck — which only watches the workflow conclusion — never paged.
+  // Failing the run makes that existing healthcheck catch it for free.
+  const downEngines = engines.flatMap((name) => {
+    const mine = rows.filter((r) => r.engine === name)
+    if (mine.some((r) => r.ok)) return []
+    // No rows at all counts as down too — a configured engine that produced
+    // nothing is the same silent absence of data, just arriving a different way.
+    return [{ name, kind: mine.length ? classifyFailure(mine[0].errorMessage) : ('other' as const) }]
+  })
+  const downLine = downEngines.length
+    ? `\n\n🚨 NO DATA AT ALL FROM:\n` +
+      downEngines.map((d) => `• ${d.name} — ${FIX_HINT[d.kind]}`).join('\n')
+    : ''
+  // Only 'credits'/'auth' need Josh to go do something; the rest self-heal, so
+  // they fail the run (data is genuinely missing) without buzzing his phone.
+  const needsAction = downEngines.some((d) => d.kind === 'credits' || d.kind === 'auth')
+
   const competitors = topCompetingSources(rows, BRAND)
   const competitorLine = competitors.length
     ? `\n\nCited instead of us:\n` +
@@ -197,9 +229,11 @@ async function main(): Promise<void> {
       ? `Pages to strengthen (top ${shown.length} of ${gaps.length}):`
       : 'Pages to strengthen:'
   const topGaps = shown.map((g) => `• ${g.page} (${g.losses})`).join('\n')
-  const title = `GEO ${score.overall}% — cited in ${score.cited}/${score.total} checks`
+  const title = downEngines.length
+    ? `⚠️ GEO ${score.overall}% — ${downEngines.map((d) => d.name).join(' + ')} DOWN`
+    : `GEO ${score.overall}% — cited in ${score.cited}/${score.total} checks`
   const message =
-    `${byEngine || 'no engines ran'}\nrows saved: ${written}${failLine}\n\n` +
+    `${byEngine || 'no engines ran'}\nrows saved: ${written}${failLine}${downLine}\n\n` +
     `${gapHeader}\n${topGaps || '— none, Joshua surfaced everywhere 🎉'}` +
     competitorLine
 
@@ -207,11 +241,19 @@ async function main(): Promise<void> {
   for (const f of failures) {
     console.error(`[geo] FAILED ${f.engine} · ${f.queryId}: ${f.errorMessage}`)
   }
-  await pushover(title, message)
+  await pushover(title, message, needsAction ? 1 : 0)
+
+  if (downEngines.length) {
+    for (const d of downEngines) {
+      console.error(`[geo] ENGINE DOWN: ${d.name} (${d.kind}) — ${FIX_HINT[d.kind]}`)
+    }
+    return 1
+  }
+  return 0
 }
 
 main()
-  .then(() => process.exit(0))
+  .then((code) => process.exit(code))
   .catch((err) => {
     console.error('[geo] FATAL:', err)
     process.exit(1)

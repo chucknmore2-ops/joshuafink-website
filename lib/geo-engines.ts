@@ -157,6 +157,41 @@ export function configuredEngines(): string[] {
 }
 
 /** Human-readable failure reason (an aborted fetch just says "aborted"). */
+/**
+ * Why a call failed, in the only terms that change what we do about it:
+ * 'credits' and 'auth' stay dead until someone tops up or rotates a key and will
+ * never self-heal, while 'rate-limit' and 'timeout' usually clear by next run.
+ *
+ * Order matters — OpenAI reports an exhausted balance as HTTP **429** with
+ * `insufficient_quota`, the same status code as a genuine rate limit, so the
+ * credits test must run before the rate-limit test or a dead balance reads as
+ * transient. That exact collision is what let ChatGPT sit out three whole runs
+ * on an empty balance while the workflow still reported success.
+ */
+export type FailureKind = 'credits' | 'auth' | 'rate-limit' | 'timeout' | 'other';
+
+export function classifyFailure(msg: string | null | undefined): FailureKind {
+  const m = (msg ?? '').toLowerCase();
+  if (
+    /insufficient_quota|no credits remaining|credit balance|billing|payment required|http 402/.test(m)
+  )
+    return 'credits';
+  if (/http 401|http 403|invalid_api_key|invalid x-api-key|authentication_error/.test(m))
+    return 'auth';
+  if (/rate.?limit|http 429/.test(m)) return 'rate-limit';
+  if (/timeout/.test(m)) return 'timeout';
+  return 'other';
+}
+
+/** What a human has to actually go do, per failure kind. */
+export const FIX_HINT: Record<FailureKind, string> = {
+  credits: 'top up the API balance',
+  auth: 'the API key is rejected — rotate it in repo Secrets',
+  'rate-limit': 'rate-limited — usually clears by next run',
+  timeout: 'every call timed out — check the model/timeout settings',
+  other: 'see the workflow log',
+};
+
 function reasonOf(err: unknown): string {
   const e = err as Error;
   if (e?.name === 'AbortError' || /abort/i.test(e?.message ?? '')) {
