@@ -109,6 +109,7 @@ export default function ContactForm() {
             id="name"
             name="name"
             required
+            autoComplete="name"
             placeholder="Jane Smith"
             className="w-full border border-neutral-200 rounded-xl px-4 py-3 text-sm text-black placeholder-neutral-400 focus:outline-none focus:border-black transition-colors duration-150"
           />
@@ -125,6 +126,7 @@ export default function ContactForm() {
             type="tel"
             id="phone"
             name="phone"
+            autoComplete="tel"
             placeholder="615-555-0000"
             className="w-full border border-neutral-200 rounded-xl px-4 py-3 text-sm text-black placeholder-neutral-400 focus:outline-none focus:border-black transition-colors duration-150"
           />
@@ -143,6 +145,7 @@ export default function ContactForm() {
           id="email"
           name="email"
           required
+          autoComplete="email"
           placeholder="you@example.com"
           className="w-full border border-neutral-200 rounded-xl px-4 py-3 text-sm text-black placeholder-neutral-400 focus:outline-none focus:border-black transition-colors duration-150"
         />
