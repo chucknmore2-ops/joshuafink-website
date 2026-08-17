@@ -12,13 +12,18 @@ on the Postgres `post_log` table; this doc tells you what writes there.
 
 ## The five Railway services
 
-All five deploy from the **`feature/railway-autoposter-phase-1`** branch
-of this repo, **Root Directory: `services/autoposter`**. They share the
+All five deploy from the **`main`** branch of this repo,
+**Root Directory: `services/autoposter`**. They share the
 same code; the per-service `JOB_NAME` env var picks which job runs.
+
+> Naming: the live listing service is named **`services/autoposter`** in
+> Railway (it took the root-directory path as its name), not
+> `autoposter-listing`. Railway's crash emails say
+> "your deployment for services/autoposter" — that's this service.
 
 | Service name | `JOB_NAME` value | Cron Schedule (UTC) | Equivalent CT | Status as of 2026-05-15 |
 |---|---|---|---|---|
-| `autoposter-listing` | `listing-spotlight` | `0 14 * * 1,3,5` | Mon/Wed/Fri 9:00am | Created, deployed, **posting**. Last successful post 2026-06-10; went STALE after (no `posted` row for Fri 06-12 / Mon 06-15). Open Cron Runs → Run Now and read the log to see the cause (token `(#200)`/`(#190)`, `DRY RUN`, or nothing-eligible). |
+| `services/autoposter` | `listing-spotlight` | `0 14 * * 1,3,5` | Mon/Wed/Fri 9:00am | Created, deployed, **posting**. Last successful post 2026-06-10; went STALE after (no `posted` row for Fri 06-12 / Mon 06-15). Open Cron Runs → Run Now and read the log to see the cause (token `(#200)`/`(#190)`, `DRY RUN`, or nothing-eligible). |
 | `autoposter-stats` | `content-market-stats` | `0 15 * * 2` | Tue 10:00am | **Not yet created** |
 | `autoposter-testimonial` | `content-testimonial` | `0 15 * * 3` | Wed 10:00am | **Not yet created** |
 | `autoposter-tips` | `content-tips` | `0 15 * * 4` | Thu 10:00am | **Not yet created** |
@@ -121,13 +126,14 @@ failures:
 | `(#200) ...requires both pages_read_engagement and pages_manage_posts...` | Token is missing required scopes — usually you copied a Page Token derived without the right grant flow | Use the `/me/accounts` workaround in `docs/morning-healthcheck.md` triage section |
 | `(#10) ...permission denied` | The Meta App is not approved for posting on behalf of this Page | Joshua needs to grant the app admin access to the FB Page via Meta Business Suite |
 | `DRY RUN — no API call made.` | `AUTOPOSTER_DRY_RUN=1` is still set | Variables tab → set `AUTOPOSTER_DRY_RUN=0` → Save → redeploy |
+| `Failed to fetch listings (429 Too Many Requests)` | `raw.githubusercontent.com` rate-limits by egress IP, and Railway's is shared — so this fires at random, through no fault of ours. Killed the Mon 2026-08-17 9:00am post. | Nothing to configure. `loadListings()` now retries 3× (5s apart) and then falls back to the GitHub Contents API on a separate limit bucket. If it still dies, Cron Runs → **Run Now** to recover the missed post. |
 
 ## Adding the 4 missing services
 
-When the FB token issue is resolved on `autoposter-listing` and we're
+When the FB token issue is resolved on `services/autoposter` and we're
 ready to fan out to all 5 channels:
 
-1. Railway → project canvas → right-click `autoposter-listing` service → **Duplicate** (or "Clone")
+1. Railway → project canvas → right-click `services/autoposter` service → **Duplicate** (or "Clone")
 2. Name the clone (e.g. `autoposter-stats`)
 3. **Variables tab** on the clone → change `JOB_NAME` to the new job name (table above)
 4. **Settings tab** → set the new Cron Schedule (table above)
@@ -165,4 +171,4 @@ are the source of truth.
 - [Morning healthcheck](./morning-healthcheck.md) — what we monitor and how to read alerts
 - [Handoff content pipeline](./HANDOFF-content-pipeline.md) — broader pipeline strategy
 - [IG setup playbook](./IG-SETUP-PLAYBOOK.md) — the IG channel (separate from these 5 FB jobs)
-- `services/autoposter/README.md` (on `feature/railway-autoposter-phase-1` branch) — service code internals
+- `services/autoposter/README.md` — service code internals

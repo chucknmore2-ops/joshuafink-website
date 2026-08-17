@@ -55,7 +55,26 @@ function buildCaption(listing: Listing): string {
 }
 
 export async function runListingSpotlight(): Promise<void> {
-  const listings = await loadListings();
+  let listings: Listing[];
+  try {
+    listings = await loadListings();
+  } catch (err) {
+    // Without this row the fetch failure writes nothing to post_log, so the
+    // morning healthcheck sees a bare STALE with no reason — only Railway's
+    // crash email carries the cause.
+    const message = err instanceof Error ? err.message : String(err);
+    log.error(`Listings fetch failed: ${message}`);
+    await logPost({
+      channel: CHANNEL,
+      jobName: JOB_NAME,
+      payloadKind: PAYLOAD_KIND,
+      refKey: "listings-fetch",
+      status: "failed",
+      errorMessage: message,
+      dryRun: env.dryRun,
+    });
+    throw err;
+  }
   log.info(`Loaded ${listings.length} listings from disk`);
 
   const eligible: Listing[] = [];
