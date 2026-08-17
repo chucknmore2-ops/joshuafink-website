@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated, suburbs } from '@/lib/suburbs'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
+import TrackedTelLink from '@/components/TrackedTelLink'
 
 const SITE = 'https://www.joshuafink.com'
 
@@ -304,7 +305,7 @@ export default async function MarketSuburbPage({ params }: Props) {
                   successMessage={
                     <>
                       Watch for a {s.displayName}-specific reply within a few hours. Urgent? Call{' '}
-                      <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                      <TrackedTelLink href="tel:6155512727" className="text-black font-semibold underline" data-cta="market-suburb-midpage-success-call">615-551-2727</TrackedTelLink>.
                     </>
                   }
                   resetLabel="Send Another"
@@ -501,9 +502,13 @@ export default async function MarketSuburbPage({ params }: Props) {
                 <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
                   Talk to Joshua
                 </p>
-                <a href="tel:6155512727" className="block text-2xl font-black text-black hover:underline mb-1">
+                <TrackedTelLink
+                  href="tel:6155512727"
+                  className="block text-2xl font-black text-black hover:underline mb-1"
+                  data-cta="market-suburb-panel-call"
+                >
                   615-551-2727
-                </a>
+                </TrackedTelLink>
                 <a href="mailto:joshua@joshuafink.com" className="block text-sm text-[#444] hover:underline">
                   joshua@joshuafink.com
                 </a>
@@ -592,12 +597,13 @@ export default async function MarketSuburbPage({ params }: Props) {
               >
                 Free Valuation
               </Link>
-              <a
+              <TrackedTelLink
                 href="tel:6155512727"
                 className="inline-block border border-white text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-white hover:text-black transition-colors text-center"
+                data-cta="market-suburb-final-cta-call"
               >
                 Call 615-551-2727
-              </a>
+              </TrackedTelLink>
             </div>
           </div>
 
@@ -611,7 +617,7 @@ export default async function MarketSuburbPage({ params }: Props) {
               successMessage={
                 <>
                   Joshua will reach out same-day with {s.displayName} market insights tailored to your move. For anything urgent, call{' '}
-                  <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                  <TrackedTelLink href="tel:6155512727" className="text-black font-semibold underline" data-cta="market-suburb-success-call">615-551-2727</TrackedTelLink>.
                 </>
               }
               resetLabel="Submit Another"
