@@ -55,6 +55,21 @@ const nextConfig = {
   },
   async headers() {
     return [
+      // The two blog feeds are linked from every page's <head>, list every
+      // post, and — being XML/JSON, not HTML — physically cannot carry a
+      // canonical tag. Google was therefore indexing them as unlabeled
+      // duplicates of /blog ("Duplicate without user-selected canonical").
+      // X-Robots-Tag is the only way to canonicalize a non-HTML response.
+      // Feed readers and LinkedIn are unaffected; noindex only tells Google
+      // not to list the feed URL itself.
+      {
+        source: '/blog/rss.xml',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, follow' }],
+      },
+      {
+        source: '/blog/feed.json',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, follow' }],
+      },
       {
         source: '/(.*)',
         headers: [
