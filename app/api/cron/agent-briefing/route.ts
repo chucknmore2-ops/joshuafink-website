@@ -300,7 +300,11 @@ async function runAgent02Autopilot(activitySection: string): Promise<AnthropicRe
       },
       body: JSON.stringify({
         model: AUTOPILOT_MODEL,
-        max_tokens: 2048,
+        // The FORMAT section asks for four sections (scorecard table, three
+        // failure patterns with diffs, pause/retire list, new workflow to
+        // pilot). At 2048 the 2026-08-17 report was cut off mid-sentence in
+        // failure pattern 3 and the last two sections never arrived at all.
+        max_tokens: 4096,
         system: [
           {
             type: 'text',
