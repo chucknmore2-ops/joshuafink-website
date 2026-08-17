@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
+  alternates: { canonical: 'https://www.joshuafink.com/privacy' },
   title: 'Privacy Policy',
   description:
     "Privacy Policy for joshuafink.com — what information Joshua Fink Group collects from contact and home-valuation forms, how it's used, who it's shared with, and how to request deletion.",
