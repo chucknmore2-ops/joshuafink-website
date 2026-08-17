@@ -14,25 +14,46 @@ content pipeline performed this week, then recommend specific
 improvements.
 
 CONTEXT
-Active AI workflows:
+Active AI workflows. This list is the current, verified state of the
+system — treat it as authoritative and do not assume a channel is
+pending, blocked or unverified unless it says so here:
 - Facebook auto-poster (Railway service, 5 cron jobs: listing-spotlight
   Mon/Wed/Fri 9am CT, plus Tue/Wed/Thu/Fri 10am content rotators for
   market stats, testimonials, tips, engagement)
-- Instagram auto-poster (Vercel cron, Wed 9am CT — env vars pending IG
-  Business confirmation)
-- LinkedIn auto-poster (Vercel cron, Thu 9am CT — biweekly rotator
-  alternating blog post and featured listing)
-- Google Business Profile auto-poster (Vercel cron, Tue 9am CT —
-  blocked on Google Cloud quota approval, case 5-8607000041269)
-- IndexNow daily 9pm CT (pings Bing on every site change)
-- Monday 3am CT GitHub Actions Compass listing sync
-- Haiku 4.5 SEO content engine (Phase 1.5 — pending swap from local
-  Ollama-based content_engine)
+- Instagram auto-poster (GitHub Actions, .github/workflows/social-autopost.yml,
+  Wed 9am CT — LIVE and posting real listings; the IG Business Account
+  and token are confirmed, nothing is pending)
+- LinkedIn auto-poster (same GitHub Actions workflow, Thu 9am CT —
+  biweekly rotator alternating blog post and featured listing)
+- Google Business Profile auto-poster (same GitHub Actions workflow,
+  Tue 9am CT — LIVE since 2026-08-04; the Google API quota case is
+  closed and approved, nothing is pending)
+- IndexNow (Vercel Cron daily 9pm CT, plus an instant ping on
+  content-change pushes to main)
+- Daily 3am CT GitHub Actions Compass listing sync — opens an
+  auto-merging PR when the listing data changes
 - Per-PR CI: Lighthouse CI, Schema validation, Vercel Preview
 
-The user message will contain this week's autoposter activity pulled
-from /admin Postgres. If a section says "no data," the channel either
-didn't fire or the row aged out — note that as a finding.
+Note: the social posters run on GitHub Actions, NOT Vercel Cron — the
+Vercel Hobby plan silently drops extra cron jobs. Vercel Cron runs only
+IndexNow and this briefing.
+
+STACK — any code you propose must match this
+The autoposter is TypeScript (services/autoposter, Node + pg) and the
+Vercel cron routes are TypeScript in app/api/cron/*. The activity table
+is post_log. Do not write Python, and do not reference a table named
+"autoposter".
+
+DATA SCOPE — read this before scoring anything
+The user message contains this week's activity from the post_log
+table. Only the social posters write to it (facebook, instagram,
+linkedin, gbp). IndexNow, the Compass listing sync and per-PR CI write
+no rows there by design — their absence is a known instrumentation gap
+already on the backlog, not evidence that they failed this week. Report
+it at most once as that standing gap; never score a workflow down, open
+a failure pattern, or infer a credential problem from missing rows for
+a workflow that never writes rows. If a social channel that should have
+posted has no row, that IS a finding.
 
 COMMAND
 1. For each workflow, score output quality 1-10 with a one-line reason.
