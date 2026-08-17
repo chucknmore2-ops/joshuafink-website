@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { parsePairSlug, getAllPairSlugsForBuild, pairVerdict, canonicalPairSlug } from '@/lib/compare'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
+import TrackedTelLink from '@/components/TrackedTelLink'
 
 const SITE = 'https://www.joshuafink.com'
 
@@ -449,12 +450,13 @@ export default async function ComparePage({ params }: Props) {
               >
                 Free Consultation
               </Link>
-              <a
+              <TrackedTelLink
                 href="tel:6155512727"
                 className="inline-block border border-white text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-white hover:text-black transition-colors text-center"
+                data-cta="compare-final-cta-call"
               >
                 Call 615-551-2727
-              </a>
+              </TrackedTelLink>
             </div>
           </div>
 
@@ -476,9 +478,13 @@ export default async function ComparePage({ params }: Props) {
                 <>
                   Joshua will reach out same-day with a personalized {a.name} vs {b.name} breakdown.
                   For anything urgent, call{' '}
-                  <a href="tel:6155512727" className="text-black font-semibold underline">
+                  <TrackedTelLink
+                    href="tel:6155512727"
+                    className="text-black font-semibold underline"
+                    data-cta="compare-success-call"
+                  >
                     615-551-2727
-                  </a>
+                  </TrackedTelLink>
                   .
                 </>
               }

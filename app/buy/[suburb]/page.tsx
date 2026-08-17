@@ -298,7 +298,7 @@ export default async function BuySuburbPage({ params }: Props) {
                 successMessage={
                   <>
                     Joshua will text you shortly with {suburb.name} listings. Or call{' '}
-                    <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                    <TrackedTelLink href="tel:6155512727" className="text-black font-semibold underline" data-cta="buy-suburb-quickstart-success-call">615-551-2727</TrackedTelLink>.
                   </>
                 }
                 resetLabel="Send another"
@@ -347,7 +347,7 @@ export default async function BuySuburbPage({ params }: Props) {
               <div className="space-y-5">
                 <div className="border-l-2 pl-5" style={{ borderColor: '#C41E3A' }}>
                   <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mb-1">Phone</p>
-                  <a href="tel:6155512727" className="text-xl font-black text-black hover:underline">615-551-2727</a>
+                  <TrackedTelLink href="tel:6155512727" className="text-xl font-black text-black hover:underline" data-cta="buy-suburb-panel-call">615-551-2727</TrackedTelLink>
                 </div>
                 <div className="border-l-2 pl-5" style={{ borderColor: '#C41E3A' }}>
                   <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mb-1">Also Serving</p>
@@ -373,7 +373,7 @@ export default async function BuySuburbPage({ params }: Props) {
                 successMessage={
                   <>
                     Joshua will reach out same-day with {suburb.name} listings that fit. For anything urgent, call{' '}
-                    <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                    <TrackedTelLink href="tel:6155512727" className="text-black font-semibold underline" data-cta="buy-suburb-success-call">615-551-2727</TrackedTelLink>.
                   </>
                 }
                 resetLabel="Submit Another"
@@ -572,7 +572,7 @@ export default async function BuySuburbPage({ params }: Props) {
 
               <div className="border border-[#E8E8E8] p-6">
                 <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">Talk to Joshua</p>
-                <a href="tel:6155512727" className="block text-2xl font-black text-black hover:underline mb-1">615-551-2727</a>
+                <TrackedTelLink href="tel:6155512727" className="block text-2xl font-black text-black hover:underline mb-1" data-cta="buy-suburb-sidebar-call">615-551-2727</TrackedTelLink>
                 <a href="mailto:joshua@joshuafink.com" className="block text-sm text-[#444] hover:underline">joshua@joshuafink.com</a>
               </div>
             </div>
@@ -860,10 +860,11 @@ export default async function BuySuburbPage({ params }: Props) {
                 style={{ backgroundColor: '#C41E3A', color: '#FFFFFF' }}>
                 Start My Search
               </a>
-              <a href="tel:6155512727"
-                className="inline-block border border-white text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-white hover:text-black transition-colors text-center">
+              <TrackedTelLink href="tel:6155512727"
+                className="inline-block border border-white text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-white hover:text-black transition-colors text-center"
+                data-cta="buy-suburb-final-cta-call">
                 Call 615-551-2727
-              </a>
+              </TrackedTelLink>
             </div>
           </div>
         </div>
