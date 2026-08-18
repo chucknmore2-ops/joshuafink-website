@@ -59,6 +59,53 @@ export default function BuyerGuidePage() {
     ],
   }
 
+  // FAQ copy is a direct restatement of the guide sections above — no new
+  // pricing, bio, or license claims introduced here.
+  const faqs = [
+    {
+      q: 'How do I start buying a home in Middle Tennessee in 2026?',
+      a: 'Pick the right suburb for your budget and priorities first, get a real pre-approval (not a soft-pull estimate), then work with a local buyer’s agent who has off-market access — a meaningful share of Middle Tennessee inventory, especially $1M+, never hits public MLS.',
+    },
+    {
+      q: 'What Middle Tennessee suburb fits my budget?',
+      a: 'As a rough guide: $300K–$425K reaches furthest in Murfreesboro, Smyrna, Gallatin, Lebanon, Columbia, and La Vergne. $425K–$600K opens up Spring Hill, Thompson’s Station, Hendersonville, and Mount Juliet. $600K–$900K reaches Nolensville and entry-level Franklin. $900K+ is Brentwood, core Franklin, and luxury Nolensville.',
+    },
+    {
+      q: 'Do I need to be pre-approved before touring homes in Tennessee?',
+      a: 'Yes. Pre-approval is non-negotiable in the current market — listing agents generally won’t entertain offers without one. It should be a real pre-approval based on pay stubs, tax returns, bank statements, and a hard credit pull, not a soft-pull estimate.',
+    },
+    {
+      q: 'What are typical closing costs for a Tennessee home buyer?',
+      a: 'Total buyer closing costs typically run about 2–4% of the purchase price, covering lender fees, title insurance, transfer/recordation tax, escrow setup for taxes and insurance, and the first year of homeowners insurance. Closings are usually 30–45 days from contract and are handled by an attorney or title company.',
+    },
+    {
+      q: 'Should I waive the home inspection to win a bidding war?',
+      a: 'No. Never waive the inspection. The savings from "winning" a bid are nothing compared to the cost of an undisclosed structural, electrical, or moisture issue. A stronger way to compete is a tight 7–10 day inspection contingency, strong earnest money, and an escalation clause.',
+    },
+    {
+      q: 'What is an escalation clause and how does it work?',
+      a: 'An escalation clause lets you offer to beat the highest competing offer by a set amount up to a cap — for example, "$X over the highest competing offer, up to $Y." It’s a way to win multiple-offer situations in Middle Tennessee without overpaying blindly.',
+    },
+    {
+      q: 'Can I use my out-of-state real estate agent to buy in Tennessee?',
+      a: 'It’s not recommended. Tennessee has its own contracts, disclosure rules, and closing customs. Working with a licensed local agent who buys and closes deals in Middle Tennessee regularly avoids costly missteps an out-of-state agent may not catch.',
+    },
+    {
+      q: 'How do I avoid wire fraud when closing on a Tennessee home?',
+      a: 'Always verify wire instructions verbally with your title company using a phone number from a separate, trusted source — never a number or link from an email. Wire fraud has cost real Middle Tennessee buyers six-figure losses; treat every wire instruction email as unverified until confirmed by phone.',
+    },
+  ]
+
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: { '@type': 'Answer', text: faq.a },
+    })),
+  }
+
   return (
     <>
       <script
@@ -68,6 +115,10 @@ export default function BuyerGuidePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       <div className="bg-white">
@@ -94,6 +145,24 @@ export default function BuyerGuidePage() {
               17-year Compass agent closing 100+ transactions annually. No fluff, no sales pitch,
               no sign-up to read.
             </p>
+          </div>
+        </div>
+
+        {/* Direct-answer summary — the short version for readers (and AI answer engines) skimming for the gist */}
+        <div className="bg-white border-b border-[#E8E8E8] py-10 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-5xl mx-auto">
+            <div className="bg-[#F9F9F9] border-l-4 p-6 sm:p-8" style={{ borderColor: '#0A1628' }}>
+              <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
+                Quick Answer
+              </p>
+              <p className="text-base sm:text-lg text-[#222] leading-relaxed">
+                To buy a home in Middle Tennessee in 2026: pick a suburb that fits your budget and
+                school priorities, get a full (not soft-pull) mortgage pre-approval, and work with
+                a local buyer&apos;s agent who has off-market and Coming Soon access — a real share
+                of inventory, especially above $1M, never reaches public MLS. Expect 30&ndash;45 days
+                to close and total buyer closing costs of roughly 2&ndash;4% of the purchase price.
+              </p>
+            </div>
           </div>
         </div>
 
@@ -488,6 +557,21 @@ export default function BuyerGuidePage() {
               <span><strong>Using your out-of-state agent.</strong> Tennessee has its own contracts and customs — work with someone local.</span>
             </li>
           </ul>
+
+          <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3 mt-12">
+            FAQ
+          </p>
+          <h2 className="text-3xl font-black text-black tracking-tight mb-6">
+            Buying in Middle Tennessee — Common Questions
+          </h2>
+          <div className="space-y-6 mb-6">
+            {faqs.map((faq, i) => (
+              <div key={i} className="bg-[#F5F5F5] p-6 sm:p-8 border-l-4" style={{ borderColor: '#0A1628' }}>
+                <h3 className="text-base font-black text-black mb-3">{faq.q}</h3>
+                <p className="text-sm text-[#6B6B6B] leading-relaxed">{faq.a}</p>
+              </div>
+            ))}
+          </div>
 
           <div className="mt-16 p-8 bg-[#F9F9F9] border-l-4" style={{ borderColor: '#C41E3A' }}>
             <p className="text-xs font-semibold tracking-widest text-[#C41E3A] uppercase mb-3">
