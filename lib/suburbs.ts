@@ -323,7 +323,7 @@ export const suburbs: Record<string, Suburb> = {
     avgDaysOnMarket: 32,
     pricePerSqft: 245,
     yoyChange: '+3.1%',
-    description: 'Nashville is the engine that drives Middle Tennessee real estate — and the city\'s housing market reflects its status as one of the fastest-growing metros in the country. With a 2026 median home price of $425,000, Nashville offers more entry points than its suburbs, with a wildly diverse range of neighborhoods: from the luxury high-rises of Gulch and SoBro to the charming bungalows of East Nashville, Germantown, and 12 South. The market rewards sellers who know their micro-market — price per square foot and days on market vary dramatically by zip code and neighborhood. Working with a Nashville agent who understands hyperlocal dynamics isn\'t just helpful — it\'s the difference between leaving money on the table and maximizing your return.',
+    description: 'Nashville is the engine that drives Middle Tennessee real estate — and the city\'s housing market reflects its status as one of the fastest-growing metros in the country. Davidson County has grown from 715,884 residents at the 2020 Census to an estimated 745,900+ in 2025, adding roughly 30,000 residents — about 4.2% growth — in five years (U.S. Census Bureau; USAFacts). With a 2026 median home price of $425,000, Nashville offers more entry points than its suburbs, with a wildly diverse range of neighborhoods: from the luxury high-rises of Gulch and SoBro to the charming bungalows of East Nashville, Germantown, and 12 South. The market rewards sellers who know their micro-market — price per square foot and days on market vary dramatically by zip code and neighborhood. Working with a Nashville agent who understands hyperlocal dynamics isn\'t just helpful — it\'s the difference between leaving money on the table and maximizing your return.',
     whyBullets: [
       'Neighborhood-level pricing intelligence: Nashville has dozens of distinct submarkets. Joshua understands how East Nashville differs from Sylvan Park, how 12 South compares to Wedgewood-Houston, and how to price your specific home in your specific neighborhood for maximum return.',
       'Deep buyer network: Nashville attracts buyers from across the country — tech workers, healthcare professionals, entertainment industry relocators. Joshua\'s Compass network connects your listing to these motivated, pre-approved buyers.',
@@ -335,6 +335,7 @@ export const suburbs: Record<string, Suburb> = {
       { q: 'Is Nashville still a good time to sell?', a: 'Yes. Nashville\'s market has moderated from its 2021-2022 peak but remains firmly seller-favorable. Inventory is below pre-pandemic levels, corporate relocations continue, and demand from out-of-state buyers remains strong. Well-priced homes in desirable neighborhoods are still selling in 3-5 weeks.' },
       { q: 'What are closing costs for Nashville sellers?', a: 'Tennessee sellers typically pay 1-2% in closing costs plus commission. Nashville\'s transfer tax is $0.37 per $100 of value. Joshua provides a detailed net sheet before you list so you know exactly what you\'ll walk away with.' },
       { q: 'How do I sell my house fast in Nashville, TN?', a: 'Price it correctly from day one, fix visible deferred maintenance, and get professional photography before you list — those three factors drive the majority of days-on-market variance in this city. Nashville homes are averaging 32 days on market in 2026, but well-priced, well-presented listings in strong neighborhoods routinely sell faster than that average. If you need a firm timeline, a cash-offer or as-is sale is also an option; Joshua can lay out the tradeoffs between listing and a fast, certain close so you can pick the path that fits your situation.' },
+      { q: 'Is Nashville still growing?', a: 'Yes. Davidson County grew from 715,884 residents at the 2020 Census to an estimated 745,900+ in 2025 — about 4.2% growth, adding roughly 30,000 new residents in five years (U.S. Census Bureau; USAFacts). That steady population growth, driven by continued corporate relocation and in-migration, is a direct tailwind for housing demand across the city.' },
     ],
     schemaCity: 'Nashville',
     schemaState: 'TN',
@@ -354,6 +355,7 @@ export const suburbs: Record<string, Suburb> = {
     topNeighborhoods: ['East Nashville', '12 South', 'Germantown', 'Sylvan Park', 'Wedgewood-Houston', 'The Gulch'],
     schoolDistrict: 'Metro Nashville Public Schools',
     commuteNote: 'Urban core — walkable/bikeable to many areas',
+    dataUpdatedAt: '2026-08-18',
   },
 
   'murfreesboro-tn': {
