@@ -38,7 +38,7 @@ export const suburbs: Record<string, Suburb> = {
     pricePerSqft: 248,
     yoyChange: '+4.2%',
     description:
-      'Franklin, Tennessee is one of the most desirable suburbs in the entire Southeast. Anchored by a charming historic downtown, top-rated schools, and easy access to I-65, Franklin consistently ranks among the best places to live and invest in the country. The local real estate market has shown remarkable resilience — median home prices have climbed to $650,000 in 2026, driven by continued corporate relocations, limited inventory, and overwhelming buyer demand from out-of-state movers. Sellers in Franklin are well-positioned: well-maintained homes priced correctly are routinely fielding multiple offers within the first weekend.',
+      'Franklin, Tennessee is one of the most desirable suburbs in the entire Southeast. Anchored by a charming historic downtown, top-rated schools, and easy access to I-65, Franklin consistently ranks among the best places to live and invest in the country. That reputation shows up in the numbers: Franklin has grown from 84,159 residents at the 2020 Census to an estimated 91,000+ in 2026 — roughly 8-9% growth in five years (U.S. Census Bureau). The local real estate market has shown remarkable resilience — median home prices have climbed to $650,000 in 2026, driven by continued corporate relocations, limited inventory, and overwhelming buyer demand from out-of-state movers. Sellers in Franklin are well-positioned: well-maintained homes priced correctly are routinely fielding multiple offers within the first weekend.',
     whyBullets: [
       'Deep buyer network: Joshua works directly with buyers relocating from Atlanta, Dallas, and Chicago who are actively searching in Franklin — your home gets shown to qualified buyers before it ever hits Zillow.',
       'Franklin-specific pricing expertise: From Cool Springs condos to Fieldstone Farms single-family homes, Joshua knows how hyperlocal factors (school zone, HOA, subdivision prestige) affect your final sale price.',
@@ -61,6 +61,10 @@ export const suburbs: Record<string, Suburb> = {
         q: 'Should I make repairs before listing my Franklin home?',
         a: 'It depends on scope and your timeline. Minor cosmetic updates — paint, landscaping, light fixtures — almost always yield a return. Major systems (roof, HVAC) should be disclosed if known issues exist. Joshua will walk through your home and give you an honest list of what will move the needle vs. what\'s not worth the spend.',
       },
+      {
+        q: 'Is Franklin, TN still growing?',
+        a: 'Yes. Franklin has grown from 84,159 residents at the 2020 Census to an estimated 91,000+ in 2026 — roughly 8-9% growth in five years (U.S. Census Bureau). That steady influx of corporate relocations and out-of-state movers is a direct tailwind for sellers: more buyers competing for a limited supply of well-located homes keeps demand — and prices — resilient.',
+      },
     ],
     schemaCity: 'Franklin',
     schemaState: 'TN',
@@ -76,10 +80,12 @@ export const suburbs: Record<string, Suburb> = {
       { q: 'How competitive is the Franklin buyer market?', a: 'Very competitive. Well-priced homes in Franklin\'s top areas routinely receive multiple offers within days. Coming in with a clean pre-approval, flexible closing date, and strong earnest money significantly improves your position.' },
       { q: 'What are the best neighborhoods to buy in Franklin, TN?', a: 'It depends on your priorities. Westhaven offers walkability and community amenities. Fieldstone Farms balances price and location. Cool Springs is ideal for proximity to employment and retail. Joshua will match you to the right neighborhood based on budget, lifestyle, and investment goals.' },
       { q: 'How long does it take to buy a home in Franklin?', a: 'From active search to closing, most buyers are in their new home within 60–90 days. The search phase varies widely — competitive buyers who are pre-approved and decisive often find something in 2–4 weeks. Closing itself typically takes 30–45 days after contract.' },
+      { q: 'Who is a top realtor in Franklin, TN?', a: 'Look for an agent with deep Franklin-specific experience — someone who tracks subdivision-level pricing (Westhaven vs. Fieldstone Farms vs. Cool Springs), not just Williamson County averages, since Franklin has grown to an estimated 91,000+ residents in 2026 (U.S. Census Bureau) and inventory moves fast. Joshua Fink is a Compass Affiliate Broker with 17+ years of experience personally selling 100+ homes a year across Williamson County, including Franklin.' },
     ],
     topNeighborhoods: ['Westhaven', 'Fieldstone Farms', 'Cool Springs', 'Crockett Park', 'Ladd Park'],
     schoolDistrict: 'Williamson County Schools',
     commuteNote: '20 min to downtown Nashville via I-65',
+    dataUpdatedAt: '2026-08-08',
   },
 
   'brentwood-tn': {
