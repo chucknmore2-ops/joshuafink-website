@@ -531,6 +531,35 @@ export const schools: Record<string, School> = {
       },
     ],
   },
+
+  'stewarts-creek-high-school-smyrna-tn': {
+    slug: 'stewarts-creek-high-school-smyrna-tn',
+    name: 'Stewarts Creek High School',
+    level: 'High',
+    district: 'Rutherford County Schools',
+    suburbSlug: 'smyrna-tn',
+    ratingNote: 'Niche grades it a B+ and ranks it #5 among Rutherford County public high schools (4.19/5 from 230+ reviews); SchoolDigger gives it 4 stars, ranking it 70th of 389 Tennessee public high schools.',
+    blurb: 'Stewarts Creek High School opened in August 2013 to serve Smyrna’s fast-growing northwestern side — at $46.3 million, it was the second-largest school built in Middle Tennessee at the time. Home to the Red Hawks off Red Hawk Parkway, it now enrolls more than 2,300 students and consistently outrates Smyrna High School, the town’s older comprehensive high school, on independent ratings sites. For buyers targeting Smyrna specifically for schools, the Stewarts Creek zone — which includes newer communities like Preserve at Stewart Creek and the long-running, amenity-rich Woodmont — is the first zone worth asking about.',
+    neighborhoods: ['Preserve at Stewart Creek', 'Woodmont'],
+    faqs: [
+      {
+        q: 'What neighborhoods are zoned to Stewarts Creek High School?',
+        a: 'The Stewarts Creek zone covers Smyrna’s growing Almaville Road / Sam Ridley Parkway corridor, including communities like Preserve at Stewart Creek and Woodmont, among others. Rutherford County Schools sets attendance by address rather than subdivision — some Smyrna addresses fall to Smyrna High School instead — so always confirm the current zone assignment for a specific address before writing an offer.',
+      },
+      {
+        q: 'Is Stewarts Creek High School a good school?',
+        a: 'Yes. Niche grades Stewarts Creek a B+ and ranks it #5 among Rutherford County public high schools with a 4.19-out-of-5 rating from 230+ reviews, and SchoolDigger gives it 4 stars, ranking it 70th of 389 Tennessee public high schools — both ahead of Smyrna High School, the town’s older comprehensive high school.',
+      },
+      {
+        q: 'How is Stewarts Creek different from Smyrna High School?',
+        a: 'Both serve the town of Smyrna but draw from different sides. Stewarts Creek opened in 2013 and serves the newer-construction northwestern part of town off Red Hawk Parkway, while Smyrna High School serves the more established east side. Stewarts Creek currently rates somewhat higher on both Niche and SchoolDigger, and its zone overlaps more of Smyrna’s newer subdivisions.',
+      },
+      {
+        q: 'How much do homes near Stewarts Creek High School cost?',
+        a: 'Stewarts Creek-zoned homes are part of the broader Smyrna market — see the current Smyrna market report for up-to-date medians and price-per-square-foot. Joshua can pull exact, current comps for any specific street in Preserve at Stewart Creek, Woodmont, or elsewhere in the zone.',
+      },
+    ],
+  },
 }
 
 export function getSchool(slug: string): School | undefined {
