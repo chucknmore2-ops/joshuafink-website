@@ -100,7 +100,16 @@ export default async function CashOfferCityPage({ params }: Props) {
   if (!city) notFound()
 
   const url = `https://www.joshuafink.com/cash-offer/${slug}`
-  const allFaqs = [...city.faqs, ...evergreenFaqs]
+  // Lead with a literal, extractable answer to "Can I get a cash offer for my
+  // house in [city], TN?" — the exact phrasing AI answer engines get asked
+  // (see lib/geo-queries.ts) — before the city-specific and evergreen FAQs.
+  // Mirrors the agentFaq pattern on /buy/[suburb]; facts reused verbatim from
+  // elsewhere on this page, not new claims.
+  const directAnswerFaq = {
+    q: `Can I get a cash offer for my house in ${city.name}, TN?`,
+    a: `Yes. Joshua Fink, a licensed Tennessee Affiliate Broker with Compass, buys houses for cash across ${city.displayName} and all of ${city.county} — any condition, any situation. You'll get a fair, no-obligation cash offer within 24 hours and can close in as little as 7 days, with no repairs, fees, or commissions. Call or text 615-551-2727 to get started.`,
+  }
+  const allFaqs = [directAnswerFaq, ...city.faqs, ...evergreenFaqs]
   const guides = getNeighborhoodsByCitySlug(slug)
   const otherCities = getCashOfferCityLinks().filter((c) => c.slug !== slug)
 
