@@ -627,10 +627,104 @@ def test_monitored_workflows_exist_on_disk():
 
 
 # ---------------------------------------------------------------------------
+# check_stuck_sync_prs — is a sync-listings PR sitting open past auto-merge?
+# ---------------------------------------------------------------------------
+
+def _pr(branch: str, hours_ago: float, number: int = 1) -> dict:
+    created = NOW - timedelta(hours=hours_ago)
+    return {
+        "number": number,
+        "head": {"ref": branch},
+        "created_at": created.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "html_url": f"https://github.com/o/r/pull/{number}",
+    }
+
+
+def test_sync_prs_stale_when_pr_stuck_over_a_day():
+    """The regression this check exists for: the workflow run concludes green
+    while its PR never merges and listings go stale on the live site."""
+    prs = [_pr("sync-listings/2026-05-08-080000", hours_ago=7 * 24, number=301)]
+    r = hc.check_stuck_sync_prs(
+        repo="o/r", token="t", now=NOW, opener=_runs_opener(prs),
+    )
+    assert r.status == hc.STATUS_STALE
+    assert r.is_alert
+    assert "pull/301" in r.detail
+    assert "jammed" in r.detail
+
+
+def test_sync_prs_stale_reports_oldest_of_stack():
+    """Six stacked PRs (the 2026-08-18 jam): alert links the oldest one."""
+    prs = [
+        _pr(f"sync-listings/2026-05-{9 + i:02d}-080000", hours_ago=(6 - i) * 24 + 1, number=300 + i)
+        for i in range(6)
+    ]
+    r = hc.check_stuck_sync_prs(
+        repo="o/r", token="t", now=NOW, opener=_runs_opener(prs),
+    )
+    assert r.status == hc.STATUS_STALE
+    assert "6 open sync-listings/" in r.detail
+    assert "pull/300" in r.detail  # the oldest
+
+
+def test_sync_prs_pass_when_pr_fresh():
+    """Last night's PR a few hours old is the normal pre-merge window."""
+    prs = [_pr("sync-listings/2026-05-15-080000", hours_ago=4, number=310)]
+    r = hc.check_stuck_sync_prs(
+        repo="o/r", token="t", now=NOW, opener=_runs_opener(prs),
+    )
+    assert r.status == hc.STATUS_PASS
+    assert not r.is_alert
+
+
+def test_sync_prs_pass_when_no_open_prs():
+    r = hc.check_stuck_sync_prs(
+        repo="o/r", token="t", now=NOW, opener=_runs_opener([]),
+    )
+    assert r.status == hc.STATUS_PASS
+
+
+def test_sync_prs_ignores_non_sync_branches():
+    """A long-lived feature PR must not page — only sync-listings/* counts."""
+    prs = [_pr("research/some-feature", hours_ago=30 * 24, number=200)]
+    r = hc.check_stuck_sync_prs(
+        repo="o/r", token="t", now=NOW, opener=_runs_opener(prs),
+    )
+    assert r.status == hc.STATUS_PASS
+
+
+def test_sync_prs_gap_without_token():
+    """No credentials must never page — and must never hit the network."""
+    def opener(req, timeout=None):
+        raise AssertionError("should not call the API without a token")
+    r = hc.check_stuck_sync_prs(repo="o/r", token=None, now=NOW, opener=opener)
+    assert r.status == hc.STATUS_GAP
+    assert not r.is_alert
+
+
+def test_sync_prs_error_on_api_failure():
+    r = hc.check_stuck_sync_prs(
+        repo="o/r", token="t", now=NOW,
+        opener=_runs_opener({"message": "Bad creds"}, status=401),
+    )
+    assert r.status == hc.STATUS_ERROR
+    assert "HTTP 401" in r.detail
+
+
+def test_sync_prs_error_when_api_down():
+    import urllib.error
+    def opener(req, timeout=None):
+        raise urllib.error.URLError("nope")
+    r = hc.check_stuck_sync_prs(repo="o/r", token="t", now=NOW, opener=opener)
+    assert r.status == hc.STATUS_ERROR
+    assert "unreachable" in r.detail
+
+
+# ---------------------------------------------------------------------------
 # Orchestration + exit codes
 # ---------------------------------------------------------------------------
 
-def _patch_dns_helpers(monkeypatch, *, healthcheck_status, git_status, latest_map=None, reach_status="pass", last_attempt_map=None, workflow_status="pass", blog_status="pass"):
+def _patch_dns_helpers(monkeypatch, *, healthcheck_status, git_status, latest_map=None, reach_status="pass", last_attempt_map=None, workflow_status="pass", blog_status="pass", sync_prs_status="pass"):
     """Replace per-check functions with deterministic fakes."""
     monkeypatch.setattr(
         hc,
@@ -687,6 +781,15 @@ def _patch_dns_helpers(monkeypatch, *, healthcheck_status, git_status, latest_ma
             detail="patched",
         ),
     )
+    monkeypatch.setattr(
+        hc,
+        "check_stuck_sync_prs",
+        lambda repo=None, token=None, now=None, opener=None: hc.CheckResult(
+            name="sync-listings — open PRs",
+            status=sync_prs_status,
+            detail="patched",
+        ),
+    )
 
 
 def test_run_all_all_green(monkeypatch):
@@ -696,9 +799,9 @@ def test_run_all_all_green(monkeypatch):
         dsn="dsn://", healthcheck_url="https://x/", repo_dir="/repo", now=NOW
     )
     assert hc.determine_exit_code(results) == 0
-    # site uptime + listings git + blog cadence + reach + monitored workflows
-    # + one check per expected pipeline
-    assert len(results) == 4 + len(hc.MONITORED_WORKFLOWS) + len(hc.EXPECTED_JOBS)
+    # site uptime + listings git + blog cadence + open sync PRs + reach
+    # + monitored workflows + one check per expected pipeline
+    assert len(results) == 5 + len(hc.MONITORED_WORKFLOWS) + len(hc.EXPECTED_JOBS)
 
 
 def test_run_all_misconfig_when_no_dsn(monkeypatch):
@@ -762,6 +865,22 @@ def test_run_all_red_workflow_triggers_exit_1(monkeypatch):
         git_status="pass",
         latest_map=latest,
         workflow_status="error",
+    )
+    results = hc.run_all_checks(
+        dsn="dsn://", healthcheck_url="https://x/", repo_dir="/repo", now=NOW
+    )
+    assert hc.determine_exit_code(results) == 1
+
+
+def test_run_all_stuck_sync_pr_triggers_exit_1(monkeypatch):
+    """A jammed auto-merge has to page the next morning, not at 17 days."""
+    latest = {(j.channel, j.job_name): _fake_latest(0.5) for j in hc.EXPECTED_JOBS}
+    _patch_dns_helpers(
+        monkeypatch,
+        healthcheck_status="pass",
+        git_status="pass",
+        latest_map=latest,
+        sync_prs_status="stale",
     )
     results = hc.run_all_checks(
         dsn="dsn://", healthcheck_url="https://x/", repo_dir="/repo", now=NOW
@@ -857,6 +976,7 @@ def test_report_no_remediation_when_all_green():
     ("postgres reachable", "DATABASE_PUBLIC_URL"),
     ("site uptime — https://example/", "vercel.com"),
     ("sync-listings — lib/listings.ts", "Sync Compass Listings"),
+    ("sync-listings — open PRs", "merge the NEWEST"),
     ("github-actions — Sync Compass Listings", "Re-run"),
     ("autoposter-listing (FB) — listing-spotlight", "FB_PAGE_TOKEN"),
     ("monthly-market-update (FB) — market snapshot", "lib/market-snapshot.ts"),

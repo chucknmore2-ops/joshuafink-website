@@ -32,6 +32,8 @@ COVERED (per `lib/admin-schedule.ts`):
   GitHub Actions scheduled workflows — latest completed run of each must
     have concluded 'success' (needs GITHUB_TOKEN; otherwise a GAP). This
     is the fast signal: freshness thresholds only notice days later.
+  Open sync-listings PRs — a sync-listings/* PR still open after ~24h means
+    auto-merge jammed even though the workflow run itself concluded green.
   Public uptime — GET https://joshuafink.com/api/healthcheck
 
 NOT COVERED (documented gaps — listed in every alert email):
@@ -181,6 +183,14 @@ MONITORED_WORKFLOWS: tuple[tuple[str, str], ...] = (
     ("geo-audit.yml", "GEO Audit"),
     ("daily-tasks-pushover.yml", "Daily tasks Pushover"),
 )
+
+# Open PRs from the nightly listings sync (branch sync-listings/<timestamp>,
+# supposed to auto-merge within minutes). The workflow can conclude 'success'
+# while its PR never merges — rejected push, approval gate, whatever breaks
+# next — so the run check stays green and the 17d freshness threshold takes
+# weeks to notice. A sync PR still open after a day means auto-merge is jammed.
+SYNC_PR_BRANCH_PREFIX = "sync-listings/"
+SYNC_PR_MAX_AGE_HOURS = 24
 
 HEALTHCHECK_URL_DEFAULT = "https://joshuafink.com/api/healthcheck"
 HEALTHCHECK_TIMEOUT_S = 15
@@ -770,6 +780,130 @@ def check_workflow_last_run(
     )
 
 
+def check_stuck_sync_prs(
+    *,
+    repo: str,
+    token: Optional[str],
+    now: Optional[datetime] = None,
+    opener: Callable[..., "urllib.request.addinfourl"] = urllib.request.urlopen,
+) -> CheckResult:
+    """Is any sync-listings/* PR sitting open past the auto-merge window?
+
+    Companion to check_workflow_last_run: that check sees a red *run*, but
+    twice in Aug 2026 the run stayed green while the PR never merged (a
+    rejected push, then an approval gate) and listings went a week stale.
+    An open sync PR older than SYNC_PR_MAX_AGE_HOURS is the direct signal
+    for every auto-merge failure mode, current and future.
+    """
+    name = "sync-listings — open PRs"
+    now = now or datetime.now(timezone.utc)
+    t0 = time.monotonic()
+    if not token:
+        return CheckResult(
+            name=name,
+            status=STATUS_GAP,
+            detail="GITHUB_TOKEN not set — open sync PRs not checked",
+        )
+
+    url = f"{GITHUB_API_ROOT}/repos/{repo}/pulls?state=open&per_page=100"
+    try:
+        req = urllib.request.Request(
+            url,
+            headers={
+                "Accept": "application/vnd.github+json",
+                "Authorization": f"Bearer {token}",
+                "X-GitHub-Api-Version": "2022-11-28",
+                "User-Agent": "joshuafink-morning-healthcheck/1.0",
+            },
+        )
+        with opener(req, timeout=GITHUB_API_TIMEOUT_S) as resp:
+            http_status = getattr(resp, "status", None) or resp.getcode()
+            body = resp.read(500_000).decode("utf-8", errors="replace")
+    except Exception as exc:  # noqa: BLE001 — network/HTTP error is the signal
+        return CheckResult(
+            name=name,
+            status=STATUS_ERROR,
+            detail=f"Pulls API unreachable: {type(exc).__name__}: {exc}",
+            duration_ms=int((time.monotonic() - t0) * 1000),
+        )
+
+    if http_status != 200:
+        return CheckResult(
+            name=name,
+            status=STATUS_ERROR,
+            detail=f"Pulls API returned HTTP {http_status} ({body[:120]!r})",
+            duration_ms=int((time.monotonic() - t0) * 1000),
+        )
+
+    try:
+        pulls = json.loads(body)
+        sync_prs = [
+            p for p in pulls
+            if ((p.get("head") or {}).get("ref") or "").startswith(SYNC_PR_BRANCH_PREFIX)
+        ]
+    except (ValueError, AttributeError, TypeError) as exc:
+        return CheckResult(
+            name=name,
+            status=STATUS_ERROR,
+            detail=f"unparsable Pulls API response: {type(exc).__name__}: {exc}",
+            duration_ms=int((time.monotonic() - t0) * 1000),
+        )
+
+    stuck: list[tuple[dict, float]] = []
+    for pr in sync_prs:
+        try:
+            created = datetime.fromisoformat(
+                (pr.get("created_at") or "").replace("Z", "+00:00")
+            )
+        except ValueError:
+            # Unparsable timestamp — fail safe: an unknown-age open sync PR
+            # counts as stuck rather than being silently skipped.
+            stuck.append((pr, float("inf")))
+            continue
+        if created.tzinfo is None:
+            created = created.replace(tzinfo=timezone.utc)
+        age_h = (now - created).total_seconds() / 3600.0
+        if age_h > SYNC_PR_MAX_AGE_HOURS:
+            stuck.append((pr, age_h))
+
+    if not stuck:
+        detail = (
+            f"no open {SYNC_PR_BRANCH_PREFIX}* PRs — auto-merge is keeping up"
+            if not sync_prs
+            else (
+                f"{len(sync_prs)} open {SYNC_PR_BRANCH_PREFIX}* PR(s), all "
+                f"within the {SYNC_PR_MAX_AGE_HOURS}h auto-merge window"
+            )
+        )
+        return CheckResult(
+            name=name,
+            status=STATUS_PASS,
+            detail=detail,
+            duration_ms=int((time.monotonic() - t0) * 1000),
+        )
+
+    oldest_pr, oldest_age_h = max(stuck, key=lambda t: t[1])
+    age_txt = (
+        "unknown age" if oldest_age_h == float("inf")
+        else f"{oldest_age_h / 24.0:.1f}d old"
+    )
+    return CheckResult(
+        name=name,
+        status=STATUS_STALE,
+        detail=(
+            f"{len(stuck)} open {SYNC_PR_BRANCH_PREFIX}* PR(s) unmerged for "
+            f"over {SYNC_PR_MAX_AGE_HOURS}h — auto-merge is jammed and the "
+            f"live site's listings are not updating; oldest is "
+            f"{oldest_pr.get('html_url')} ({age_txt})"
+        ),
+        actual_age_days=(
+            None if oldest_age_h == float("inf") else oldest_age_h / 24.0
+        ),
+        expected_max_age_days=SYNC_PR_MAX_AGE_HOURS / 24.0,
+        duration_ms=int((time.monotonic() - t0) * 1000),
+    )
+
+
 def check_site_uptime(
     url: str,
     *,
@@ -886,6 +1020,20 @@ def run_all_checks(
                 status=STATUS_ERROR,
                 detail=f"uncaught {type(exc).__name__}: {exc}",
             ))
+
+    # 3b) Open sync-listings PRs — the workflow can conclude 'success' while
+    #     its PR never merges; an open sync PR older than a day is the jam
+    #     itself, seen the morning after instead of at the 17d threshold.
+    try:
+        results.append(check_stuck_sync_prs(
+            repo=github_repo, token=github_token, now=now
+        ))
+    except Exception as exc:  # noqa: BLE001
+        results.append(CheckResult(
+            name="sync-listings — open PRs",
+            status=STATUS_ERROR,
+            detail=f"uncaught {type(exc).__name__}: {exc}",
+        ))
 
     # 4) DB-dependent checks. If DSN missing or DB unreachable, each per-pipeline
     #    check downgrades to a single grouped error rather than 7 duplicate errors.
@@ -1018,6 +1166,17 @@ def _remediation_for(result: CheckResult) -> Optional[str]:
             "Open vercel.com → joshuafink-website → check the latest "
             "production deploy. If failed, redeploy. If the deploy is fine, "
             "/api/healthcheck route may have regressed — read its log."
+        )
+    # Must precede the generic sync-listings match — this one is about a PR
+    # that won't merge, not a scrape that won't run.
+    if "open prs" in name:
+        return (
+            "Auto-merge on the nightly listings PR is jammed even though the "
+            "workflow reads green. Open the stuck PR linked in the detail "
+            "above and read why it hasn't merged (pending approval gate, "
+            "failed required check, branch protection). Each sync PR is a "
+            "full regeneration from a fresh scrape, so merge the NEWEST open "
+            "sync-listings/* PR manually and close the older ones."
         )
     if "sync-listings" in name:
         return (
