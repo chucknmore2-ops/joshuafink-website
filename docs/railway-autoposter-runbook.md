@@ -21,9 +21,9 @@ same code; the per-service `JOB_NAME` env var picks which job runs.
 > `autoposter-listing`. Railway's crash emails say
 > "your deployment for services/autoposter" — that's this service.
 
-| Service name | `JOB_NAME` value | Cron Schedule (UTC) | Equivalent CT | Status as of 2026-05-15 |
+| Service name | `JOB_NAME` value | Cron Schedule (UTC) | Equivalent CT | Status as of 2026-08-19 |
 |---|---|---|---|---|
-| `services/autoposter` | `listing-spotlight` | `0 14 * * 1,3,5` | Mon/Wed/Fri 9:00am | Created, deployed, **posting**. Last successful post 2026-06-10; went STALE after (no `posted` row for Fri 06-12 / Mon 06-15). Open Cron Runs → Run Now and read the log to see the cause (token `(#200)`/`(#190)`, `DRY RUN`, or nothing-eligible). |
+| `services/autoposter` | `listing-spotlight` | `0 14 * * 1,3,5` | Mon/Wed/Fri 9:00am | Created, deployed, **posting**. 2026-08-19: the service's source branch was still the deleted `feature/railway-autoposter-phase-1`, so every deploy since ~06-15 failed before fetching code. Re-pointed to `main`, rebuilt, and recovered the missed Wed post via Run Now (`posted` row 2026-08-19). If it goes STALE again, open Cron Runs → Run Now and read the log for the cause (token `(#200)`/`(#190)`, `DRY RUN`, or nothing-eligible). |
 | `autoposter-stats` | `content-market-stats` | `0 15 * * 2` | Tue 10:00am | **Not yet created** |
 | `autoposter-testimonial` | `content-testimonial` | `0 15 * * 3` | Wed 10:00am | **Not yet created** |
 | `autoposter-tips` | `content-tips` | `0 15 * * 4` | Thu 10:00am | **Not yet created** |
