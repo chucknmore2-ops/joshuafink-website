@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { blogPosts } from '@/lib/blog'
-import { listings } from '@/lib/listings'
+import { pickPromotable } from '@/lib/promotable-listings'
 import { soldListings } from '@/lib/sold-listings'
 import { listingSlug } from '@/lib/listing-detail'
 import { reviews, reviewStats } from '@/lib/reviews'
@@ -92,7 +92,11 @@ function buildFromLatestBlog(): PostPayload | null {
 }
 
 function buildFromListing(): PostPayload | null {
-  const l = listings.find((x) => x.imageUrl && x.price && x.compassUrl)
+  // Rotates daily and skips anything not positively Active — the old
+  // `.find()` returned the array head every run, and the head is currently
+  // "Active Under Contract", so this caption was announcing an unavailable
+  // home. See lib/promotable-listings.ts.
+  const l = pickPromotable(0)
   if (!l) return null
   // Locality only (strip ", TN 37027 | MLS #…") so the caption reads
   // "in Brentwood, TN", not "in Brentwood, TN 37027, TN".
@@ -120,7 +124,7 @@ function buildFromListing(): PostPayload | null {
   // search). Semantic-triple phrasing (entity → predicate → object). No
   // hashtags on LinkedIn.
   const text =
-    `Joshua Fink Group just listed a home in ${locality}, TN — ${l.address}, ${price}.\n\n` +
+    `Joshua Fink Group has a home for sale in ${locality}, TN — ${l.address}, ${price}.\n\n` +
     `${description}\n\n` +
     `Joshua Fink Group helps buyers and sellers across ${locality} and Middle Tennessee. ` +
     `Call or text Joshua Fink at 615-551-2727 for a private showing, or see the full listing at joshuafink.com.`

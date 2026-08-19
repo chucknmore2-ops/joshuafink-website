@@ -68,12 +68,6 @@ export default async function SuburbPage({ params }: Props) {
       {
         '@type': 'RealEstateAgent',
         '@id': 'https://www.joshuafink.com/#agent',
-        name: 'Joshua Fink — Compass Real Estate',
-        url: 'https://www.joshuafink.com',
-        telephone: '+16155512727',
-        email: 'joshua@joshuafink.com',
-        image: 'https://www.joshuafink.com/headshot.webp',
-        description: `Joshua Fink is a top-producing Affiliate Broker at Compass Real Estate specializing in ${suburb.displayName} home sales. 17+ years of experience, 100+ homes sold annually.`,
         areaServed: {
           '@type': 'City',
           name: suburb.schemaCity,

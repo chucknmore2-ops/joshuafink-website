@@ -60,12 +60,6 @@ export default async function BuySuburbPage({ params }: Props) {
       {
         '@type': 'RealEstateAgent',
         '@id': 'https://www.joshuafink.com/#agent',
-        name: 'Joshua Fink — Compass Real Estate',
-        url: 'https://www.joshuafink.com',
-        telephone: '+16155512727',
-        email: 'joshua@joshuafink.com',
-        image: 'https://www.joshuafink.com/headshot.webp',
-        description: `Joshua Fink is a buyer's agent at Compass Real Estate specializing in ${suburb.displayName} home purchases. Local market expert, off-market access, proven negotiator.`,
         address: {
           '@type': 'PostalAddress',
           streetAddress: '8119 Isabella Lane, Suite 105',
@@ -123,7 +117,6 @@ export default async function BuySuburbPage({ params }: Props) {
           addressCountry: 'US',
         },
         priceRange: '$$$',
-        description: `Top-rated real estate agent helping home buyers in ${suburb.displayName}. Local market expertise, off-market access, proven negotiator.`,
       },
       {
         '@type': 'Place',

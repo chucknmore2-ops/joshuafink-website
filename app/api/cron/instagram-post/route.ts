@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { blogPosts } from '@/lib/blog'
-import { listings } from '@/lib/listings'
+import { pickPromotable } from '@/lib/promotable-listings'
 import { listingSlug } from '@/lib/listing-detail'
 import { logPost } from '@/lib/admin-db'
 import { withUtm } from '@/lib/utm'
@@ -73,7 +73,11 @@ function isoWeekNumber(d: Date = new Date()): number {
 }
 
 function buildFromListing(): PostPayload | null {
-  const l = listings.find((x) => x.imageUrl && x.price && x.compassUrl)
+  // Rotates daily and skips anything not positively Active — the old
+  // `.find()` returned the array head every run, and the head is currently
+  // "Active Under Contract", so this caption was announcing an unavailable
+  // home. See lib/promotable-listings.ts.
+  const l = pickPromotable(1)
   if (!l) return null
   // Locality only ("Brentwood"), not "Brentwood, TN 37027", so the caption
   // reads "in Brentwood, TN".
@@ -98,7 +102,7 @@ function buildFromListing(): PostPayload | null {
   // Entity-first + location keyword up front so the post indexes/seeds AI for
   // the right terms. Hashtags are fine on Instagram (unlike LinkedIn).
   const caption =
-    `Joshua Fink Group just listed a home in ${locality}, TN — ${l.address}.\n\n` +
+    `Joshua Fink Group has a home for sale in ${locality}, TN — ${l.address}.\n\n` +
     `${features}\n${price}\n\n` +
     `Call or text Joshua Fink at 615-551-2727 for a private showing. Full details at joshuafink.com — link in bio.\n\n` +
     `#${cityHashtag} #JustListed #JoshuaFinkGroup #Compass #NashvilleRealEstate #MiddleTennessee #TennesseeRealEstate`

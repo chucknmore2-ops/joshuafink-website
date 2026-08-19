@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { Fragment } from 'react'
-import { getPostBySlug, getAllSlugs, getRelatedPosts, type BlogPost } from '@/lib/blog'
+import { getPostBySlug, getAllSlugs, getRelatedPosts, getAuditTier, type BlogPost } from '@/lib/blog'
 import { linkifyLocations } from '@/lib/linkify-neighborhoods'
 import { neighborhoods } from '@/lib/neighborhoods'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
@@ -46,10 +46,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const canonical = `${SITE_URL}/blog/${post.slug}`
   const publishedIso = isoDate(post.date)
   const modifiedIso = post.dateModified ? isoDate(post.dateModified) : publishedIso
+  // The 2026-04-19 content audit flagged these as needing a rewrite, and a
+  // 2026-08-18 check found why it matters: all ten quote median prices that
+  // contradict this site's own /market and /buy pages for the same city — by
+  // up to 91% — while attributing them to Redfin. They stay published to keep
+  // existing backlinks alive, but they must not be indexed or fed to answer
+  // engines as fact while they disagree with our own numbers. `follow` stays
+  // on so their internal links still pass equity.
+  //
+  // `getAuditTier` already existed and was exported but consumed by nothing;
+  // this is the runtime effect it was always meant to have. Remove this block
+  // once the figures are reconciled against lib/suburbs.ts.
+  const noIndex = getAuditTier(post.slug) === 'rewrite'
   return {
     title: post.title,
     description: post.excerpt,
     alternates: { canonical },
+    ...(noIndex ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
       title: post.title,
       description: post.excerpt,
