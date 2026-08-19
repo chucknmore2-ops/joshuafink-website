@@ -184,6 +184,36 @@ export default async function SuburbPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
+      {/* WebPage Schema — freshness signal (dateModified) for GEO/AI crawlers,
+          matching the pattern already used on /market/[suburb], /cash-offer/[city],
+          and /moving-to-middle-tennessee. Previously missing on this template. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            name: `Sell My Home in ${suburb.displayName} | Free Market Valuation`,
+            url: `https://www.joshuafink.com/sell/${slug}`,
+            datePublished: '2026-01-15',
+            dateModified: suburb.dataUpdatedAt ?? marketStatsLastUpdated,
+            inLanguage: 'en-US',
+            author: {
+              '@type': 'Person',
+              name: 'Joshua Fink',
+              url: 'https://www.joshuafink.com/about',
+              jobTitle: 'Affiliate Broker',
+              worksFor: { '@type': 'Organization', name: 'Compass Real Estate' },
+            },
+            publisher: {
+              '@type': 'Organization',
+              name: 'Joshua Fink Group',
+              url: 'https://www.joshuafink.com',
+              logo: { '@type': 'ImageObject', url: 'https://www.joshuafink.com/compass-logo-black.png' },
+            },
+          }),
+        }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
