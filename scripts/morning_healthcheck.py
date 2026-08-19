@@ -818,7 +818,10 @@ def check_stuck_sync_prs(
         )
         with opener(req, timeout=GITHUB_API_TIMEOUT_S) as resp:
             http_status = getattr(resp, "status", None) or resp.getcode()
-            body = resp.read(500_000).decode("utf-8", errors="replace")
+            # No read cap: 29 open PRs pushed the payload past 500 KB on
+            # 2026-08-19 and a capped read truncated the JSON mid-string,
+            # turning the exact jam this check exists for into [ERR] noise.
+            body = resp.read().decode("utf-8", errors="replace")
     except Exception as exc:  # noqa: BLE001 — network/HTTP error is the signal
         return CheckResult(
             name=name,

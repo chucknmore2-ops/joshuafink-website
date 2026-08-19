@@ -720,6 +720,19 @@ def test_sync_prs_error_when_api_down():
     assert "unreachable" in r.detail
 
 
+def test_sync_prs_parses_response_larger_than_500kb():
+    """Regression (2026-08-19): 29 open PRs pushed the Pulls payload past a
+    500 KB read cap, truncating the JSON mid-string — the check reported
+    [ERR] unparsable instead of paging on the stuck sync PR it had found."""
+    prs = [_pr("sync-listings/2026-05-08-080000", hours_ago=7 * 24, number=301)]
+    prs[0]["body"] = "x" * 600_000
+    r = hc.check_stuck_sync_prs(
+        repo="o/r", token="t", now=NOW, opener=_runs_opener(prs),
+    )
+    assert r.status == hc.STATUS_STALE
+    assert "pull/301" in r.detail
+
+
 # ---------------------------------------------------------------------------
 # Orchestration + exit codes
 # ---------------------------------------------------------------------------
