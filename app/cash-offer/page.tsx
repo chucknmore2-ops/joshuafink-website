@@ -364,9 +364,6 @@ export default function CashOfferPage() {
             provider: {
               '@type': 'RealEstateAgent',
               '@id': 'https://www.joshuafink.com/#agent',
-              name: 'Joshua Fink Group',
-              url: 'https://www.joshuafink.com',
-              telephone: '+1-615-551-2727',
             },
             description:
               'We buy houses for cash in any condition across Middle Tennessee. Fair offer in 24 hours, close in as little as 7 days. No repairs, no commissions, no fees.',

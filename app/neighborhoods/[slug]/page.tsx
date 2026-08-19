@@ -136,12 +136,6 @@ export default async function NeighborhoodPage({ params }: Props) {
     '@context': 'https://schema.org',
     '@type': 'RealEstateAgent',
     '@id': 'https://www.joshuafink.com/#agent',
-    name: 'Joshua Fink — Compass Real Estate',
-    url: `https://www.joshuafink.com/neighborhoods/${n.slug}`,
-    telephone: '+16155512727',
-    email: 'joshua@joshuafink.com',
-    image: 'https://www.joshuafink.com/headshot.webp',
-    description: `Joshua Fink is a Compass Real Estate agent covering the ${n.name} neighborhood in ${n.city}, ${n.schemaState}.`,
     areaServed: {
       '@type': 'City',
       name: n.schemaCity,

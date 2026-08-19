@@ -169,12 +169,7 @@ export default async function CashOfferCityPage({ params }: Props) {
             '@context': 'https://schema.org',
             '@type': 'RealEstateAgent',
             '@id': 'https://www.joshuafink.com/#agent',
-            name: 'Joshua Fink — Compass Real Estate',
             url,
-            telephone: '+16155512727',
-            email: 'joshua@joshuafink.com',
-            image: 'https://www.joshuafink.com/headshot.webp',
-            description: `Joshua Fink buys houses for cash across ${city.displayName} and ${city.county}, Tennessee — fair offer in 24 hours, close in as little as 7 days.`,
             areaServed: {
               '@type': 'City',
               name: city.schemaCity,

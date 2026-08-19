@@ -87,7 +87,7 @@ function validateNode(url, node, path = '(root)') {
     const required = REQUIRED_FIELDS[t]
     if (!required) continue // unknown @type — don't fail, just skip
     for (const field of required) {
-      if (!(field in node) && !('@id' in node)) {
+      if (!(field in node)) {
         recordError(
           url,
           `${path} @type=${t} missing required field "${field}"`,
@@ -95,6 +95,65 @@ function validateNode(url, node, path = '(root)') {
       }
     }
   }
+}
+
+/**
+ * Fold every node that shares an `@id` into one object, the way a consumer
+ * does. Two things depend on this:
+ *
+ *   - Required-field checks used to be skipped entirely for any node carrying
+ *     an `@id` — which is every node that matters — so this gate was green by
+ *     construction on exactly the entities it claimed to protect. The escape
+ *     existed for a real reason (a bare `{ '@id': ... }` reference legitimately
+ *     has no other fields), but it was far too broad. Merging first solves it
+ *     properly: a reference contributes nothing and the real declaration
+ *     supplies the fields, so partial nodes are fine and genuine omissions
+ *     still fail.
+ *   - Conflicting identity is caught. On 2026-08-18 seven page templates
+ *     re-declared `#agent` with a different `name` and `url` than the canonical
+ *     definition in app/layout.tsx, so Google merged them and received two
+ *     contradictory identities for the entity the whole strategy rests on.
+ *     Scalar disagreement on a shared `@id` is now an error.
+ */
+function mergeById(url, roots, tag) {
+  const byId = new Map()
+  const anonymous = []
+  const IGNORE_CONFLICT = new Set(['@id', '@context'])
+
+  for (const node of iterateNodes(roots)) {
+    if (!node['@type']) continue // pure reference or untyped sub-node
+    const id = node['@id']
+    if (typeof id !== 'string') {
+      anonymous.push(node)
+      continue
+    }
+    const prev = byId.get(id)
+    if (!prev) {
+      byId.set(id, { ...node })
+      continue
+    }
+    for (const [k, v] of Object.entries(node)) {
+      if (IGNORE_CONFLICT.has(k)) continue
+      if (!(k in prev)) {
+        prev[k] = v
+        continue
+      }
+      // Only scalars are compared; objects/arrays legitimately accumulate.
+      const bothScalar =
+        (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') &&
+        (typeof prev[k] === 'string' ||
+          typeof prev[k] === 'number' ||
+          typeof prev[k] === 'boolean')
+      if (bothScalar && prev[k] !== v) {
+        recordError(
+          url,
+          `${tag} @id=${id} declared twice with conflicting "${k}": ` +
+            `${JSON.stringify(prev[k])} vs ${JSON.stringify(v)}`,
+        )
+      }
+    }
+  }
+  return { byId, anonymous }
 }
 
 async function validateUrl(url) {
@@ -125,6 +184,7 @@ async function validateUrl(url) {
   }
   recordInfo(`${scripts.length} JSON-LD block(s) found`)
 
+  const parsedBlocks = []
   scripts.forEach((raw, i) => {
     const tag = `block ${i + 1}`
     let parsed
@@ -140,15 +200,21 @@ async function validateUrl(url) {
     if (!parsed['@context']) {
       recordError(url, `${tag} missing @context at top level`)
     }
-
-    // Walk the tree — validate every typed node
-    let nodeCount = 0
-    for (const node of iterateNodes(parsed)) {
-      validateNode(url, node, `${tag}.node[${nodeCount}]`)
-      nodeCount++
-    }
-    recordInfo(`${tag} parsed OK, ${nodeCount} typed nodes scanned`)
+    parsedBlocks.push(parsed)
   })
+
+  // Merge across EVERY block on the page, not within each one. A consumer sees
+  // a single graph per document, and this site deliberately splits it:
+  // app/layout.tsx emits the canonical #agent in its own <script>, while a page
+  // template contributes extra properties to that same @id from a separate one.
+  // Validating block-by-block would report the page-level partial as missing
+  // the name/url that the layout block already supplies.
+  const { byId, anonymous } = mergeById(url, parsedBlocks, 'page')
+  byId.forEach((node, id) => validateNode(url, node, `@id=${id}`))
+  anonymous.forEach((node, i) => validateNode(url, node, `inline[${i}]`))
+  recordInfo(
+    `${byId.size} identified + ${anonymous.length} inline node(s) validated across ${parsedBlocks.length} block(s)`,
+  )
 }
 
 async function main() {

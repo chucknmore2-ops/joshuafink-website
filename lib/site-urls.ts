@@ -1,4 +1,4 @@
-import { blogPosts } from '@/lib/blog'
+import { blogPosts, getAuditTier } from '@/lib/blog'
 import { getAllSuburbSlugs } from '@/lib/suburbs'
 import { getAllCashOfferCitySlugs } from '@/lib/cash-offer-cities'
 import { getAllNeighborhoodSlugs } from '@/lib/neighborhoods'
@@ -67,7 +67,11 @@ export function getSiteUrlCatalog(): SiteUrlEntry[] {
   ]
 
   // ── Blog posts — parse date strings with a defensive fallback ─────
-  const blog: SiteUrlEntry[] = blogPosts.map((post) => {
+  // Rewrite-tier posts are noindexed (see app/blog/[slug]/page.tsx), so listing
+  // them here would ask Google to crawl a page we are telling it not to index.
+  const blog: SiteUrlEntry[] = blogPosts
+    .filter((post) => getAuditTier(post.slug) !== 'rewrite')
+    .map((post) => {
     const dateStr = post.dateModified || post.date
     const parsed = new Date(dateStr)
     return {

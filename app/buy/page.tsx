@@ -116,8 +116,6 @@ export default function BuyHubPage() {
     // Reference the canonical agent entity defined in app/layout.tsx (#agent)
     // so all pages consolidate signals onto one knowledge-graph node.
     provider: { '@id': 'https://www.joshuafink.com/#agent' },
-    description:
-      'Full-service buyer representation across Middle Tennessee — off-market and Compass Private Exclusive access, school-zone and commute guidance, and local negotiation. No separate cost to buyers.',
     areaServed: cities.map((c) => ({
       '@type': 'City',
       name: c.schemaCity,

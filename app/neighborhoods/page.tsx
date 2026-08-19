@@ -62,13 +62,6 @@ export default function NeighborhoodsIndexPage() {
       {
         '@type': 'RealEstateAgent',
         '@id': 'https://www.joshuafink.com/#agent',
-        name: 'Joshua Fink — Compass Real Estate',
-        url: 'https://www.joshuafink.com/neighborhoods',
-        telephone: '+16155512727',
-        email: 'joshua@joshuafink.com',
-        image: 'https://www.joshuafink.com/headshot.webp',
-        description:
-          'Joshua Fink is a Compass Real Estate agent covering Middle Tennessee neighborhoods across Franklin, Brentwood, Spring Hill, Nolensville, Nashville, and surrounding markets.',
         address: {
           '@type': 'PostalAddress',
           streetAddress: '8119 Isabella Lane, Suite 105',
@@ -126,8 +119,6 @@ export default function NeighborhoodsIndexPage() {
           addressCountry: 'US',
         },
         priceRange: '$$$',
-        description:
-          'Real estate agent serving Middle Tennessee neighborhoods — Franklin, Brentwood, Spring Hill, Nolensville, Nashville, and surrounding markets.',
       },
     ],
   }

@@ -153,13 +153,6 @@ export default function SellPage() {
     '@context': 'https://schema.org',
     '@type': 'RealEstateAgent',
     '@id': 'https://www.joshuafink.com/#agent',
-    name: 'Joshua Fink — Compass Real Estate',
-    url: 'https://www.joshuafink.com/sell',
-    telephone: '+16155512727',
-    email: 'joshua@joshuafink.com',
-    image: 'https://www.joshuafink.com/headshot.webp',
-    description:
-      'Joshua Fink is a top-producing Affiliate Broker at Compass Real Estate helping sellers across Nashville, Franklin, Brentwood, Spring Hill, Columbia, and all of Middle Tennessee list and sell for top dollar.',
     areaServed: {
       '@type': 'AdministrativeArea',
       name: 'Middle Tennessee',

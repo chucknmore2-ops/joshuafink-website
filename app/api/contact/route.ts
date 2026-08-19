@@ -119,6 +119,30 @@ async function sendSlack(lead: Record<string, string>): Promise<ChannelResult> {
 }
 
 // ---------------------------------------------------------------------------
+// HTML escaping for outbound email
+// ---------------------------------------------------------------------------
+
+/**
+ * Escape a value for interpolation into an HTML email body.
+ *
+ * Every field below is attacker-controlled: anyone on the internet can POST to
+ * this route. Without this, a visitor could put working markup into their name
+ * or message and it would render inside the lead email Joshua reads — an email
+ * he trusts precisely because it arrives from leads@joshuafink.com. A forged
+ * "verify this lead" link, a tracking pixel, or markup that hides the real
+ * phone number all become possible. Escaping the five HTML-significant
+ * characters removes the whole class.
+ */
+function escapeHtml(value: unknown): string {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+// ---------------------------------------------------------------------------
 // Email: auto-reply to lead
 // ---------------------------------------------------------------------------
 
@@ -138,7 +162,7 @@ async function sendAutoReply(lead: Record<string, string>): Promise<ChannelResul
     <p style="color: #A0A0A0; margin: 4px 0 0; font-size: 13px;">Compass Real Estate · Middle Tennessee</p>
   </div>
   <div style="padding: 40px;">
-    <p style="font-size: 18px; font-weight: bold; margin-top: 0;">Hi ${firstName},</p>
+    <p style="font-size: 18px; font-weight: bold; margin-top: 0;">Hi ${escapeHtml(firstName)},</p>
     <p style="line-height: 1.7; color: #444;">
       Thanks for reaching out — I got your message and I'll be in touch shortly with a personal response.
     </p>
@@ -152,7 +176,7 @@ async function sendAutoReply(lead: Record<string, string>): Promise<ChannelResul
     <p style="line-height: 1.7; color: #444;">
       Talk soon,<br/>
       <strong>Joshua Fink</strong><br/>
-      <span style="color: #666; font-size: 13px;">Affiliate Broker · Compass Real Estate · ${suburb}</span>
+      <span style="color: #666; font-size: 13px;">Affiliate Broker · Compass Real Estate · ${escapeHtml(suburb)}</span>
     </p>
   </div>
   <div style="background: #F5F5F5; padding: 20px 40px; font-size: 12px; color: #999; border-top: 1px solid #E8E8E8;">
@@ -195,7 +219,7 @@ async function forwardToJoshua(lead: Record<string, string>): Promise<ChannelRes
 
   const lines = Object.entries(lead)
     .filter(([k]) => !k.startsWith('_') && k !== 'website')
-    .map(([k, v]) => `<tr><td style="padding:6px 12px;color:#666;font-size:13px;width:140px;vertical-align:top;">${k}</td><td style="padding:6px 12px;font-size:13px;">${v}</td></tr>`)
+    .map(([k, v]) => `<tr><td style="padding:6px 12px;color:#666;font-size:13px;width:140px;vertical-align:top;">${escapeHtml(k)}</td><td style="padding:6px 12px;font-size:13px;">${escapeHtml(v)}</td></tr>`)
     .join('')
 
   try {
@@ -386,10 +410,66 @@ async function sendEmergencyPushover(
 // Main handler
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Flood protection
+// ---------------------------------------------------------------------------
+
+// A successful lead fires a priority-1 Pushover — the level that deliberately
+// bypasses Joshua's quiet hours. Unauthenticated and unlimited, that is a
+// loudspeaker anyone on the internet can hold down: a trivial curl loop makes
+// the phone unusable and, far worse, buries real lead alerts in the noise.
+//
+// The threshold is set where no human can reach it. A person filling in a form
+// carefully might submit two or three times in a minute after a typo; nobody
+// submits twelve. So a legitimate lead is never turned away — this only catches
+// automation, and it fails toward accepting rather than rejecting.
+//
+// Deliberately in-memory: serverless instances are per-region and recycle, so
+// this is a speed bump rather than a wall, and a distributed flood would need
+// Redis to stop properly. It costs nothing, adds no dependency, and removes the
+// single-source case that is actually easy to pull off.
+const FLOOD_MAX_PER_WINDOW = 12
+const FLOOD_WINDOW_MS = 60_000
+const submissionTimes = new Map<string, number[]>()
+
+function clientIp(req: NextRequest): string {
+  const forwarded = req.headers.get('x-forwarded-for')
+  if (forwarded) return forwarded.split(',')[0].trim()
+  return req.headers.get('x-real-ip') ?? 'unknown'
+}
+
+/** Records this hit and reports whether the caller has now exceeded the window. */
+function exceedsFloodLimit(ip: string, now: number = Date.now()): boolean {
+  // Prune every caller, not just this one, so the map cannot grow without bound
+  // across a long-lived instance. forEach rather than for-of: this tsconfig
+  // targets below ES2015, so iterating a Map directly needs downlevelIteration.
+  const stale: string[] = []
+  submissionTimes.forEach((times, key) => {
+    const live = times.filter((t: number) => now - t < FLOOD_WINDOW_MS)
+    if (live.length === 0) stale.push(key)
+    else submissionTimes.set(key, live)
+  })
+  stale.forEach((key) => submissionTimes.delete(key))
+  const hits = submissionTimes.get(ip) ?? []
+  hits.push(now)
+  submissionTimes.set(ip, hits)
+  return hits.length > FLOOD_MAX_PER_WINDOW
+}
+
 export async function POST(req: NextRequest) {
   // A lead reaches Joshua through Slack, the lead email, Pushover, or the
   // Google Sheet log. As long as at least ONE of those is configured we can
   // accept the submission; only fail closed when nothing is wired up.
+
+  const ip = clientIp(req)
+  if (exceedsFloodLimit(ip)) {
+    console.warn(`Contact API: flood limit hit by ${ip} — rejecting without notifying`)
+    return NextResponse.json(
+      { error: 'Too many submissions — please call or text 615-551-2727 directly' },
+      { status: 429 }
+    )
+  }
+
   const anyChannelConfigured =
     !!SLACK_TOKEN || !!SENDGRID_KEY || (!!PUSHOVER_TOKEN && !!PUSHOVER_USER) || !!GOOGLE_SHEET_WEBHOOK_URL
   if (!anyChannelConfigured) {

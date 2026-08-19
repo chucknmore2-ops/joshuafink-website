@@ -52,6 +52,17 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      # Runs BEFORE the build: these are the cheapest checks and the ones most
+      # likely to catch a real regression. lib/classify-lead.test.ts exists
+      # because that logic silently discarded real leads four separate times —
+      # until now nothing executed it on a pull request, so the guard was
+      # decorative. A failure here must fail the PR.
+      - name: Unit tests
+        run: npm test
+
+      - name: Lint
+        run: npm run lint
+
       - name: Build Next.js
         run: npm run build
         env:
