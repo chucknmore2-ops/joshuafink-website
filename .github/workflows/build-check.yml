@@ -57,6 +57,12 @@ jobs:
       # because that logic silently discarded real leads four separate times —
       # until now nothing executed it on a pull request, so the guard was
       # decorative. A failure here must fail the PR.
+      #
+      # The runner goes through tsx rather than bare `node --test`: this job
+      # pins Node 20, which cannot load a .ts file at all, so `npm test` failed
+      # here on every test file the first time it was wired up. tsx is already a
+      # devDependency (the GEO audit runs on it), so this needs no new install
+      # and no change to the Node version the site is built with.
       - name: Unit tests
         run: npm test
 
