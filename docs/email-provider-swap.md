@@ -1,6 +1,15 @@
 # Switching outbound email to Resend
 
-**Status as of 2026-08-20: code shipped, dormant. Waiting on one env var.**
+**Status as of 2026-08-20: LIVE.** Resend account created under chucknmore2@gmail.com,
+`send.joshuafink.com` verified via GoDaddy Domain Connect, `RESEND_API_KEY` set in Vercel
+(Preview + Production).
+
+**Why a subdomain and not the root:** joshuafink.com's single SPF record belongs to
+Microsoft 365 (`v=spf1 include:spf.protection.outlook.com -all`, MX
+`joshuafink-com.mail.protection.outlook.com`). Only one SPF record is permitted per
+domain, so verifying the root would have meant editing the record Joshua's real business
+email depends on. `send.joshuafink.com` carries its own SPF/DKIM and cannot collide.
+Verified after setup: the root SPF and MX are unchanged.
 
 ## Why
 
@@ -33,7 +42,7 @@ agent briefing. It picks whichever provider is configured, **Resend first**:
 |---|---|
 | `RESEND_API_KEY` | Preferred. Set this and mail starts flowing through Resend. |
 | `SENDGRID_API_KEY` | Legacy fallback, used only when the Resend key is absent. |
-| `EMAIL_FROM` | Sending address; defaults to `leads@joshuafink.com`. |
+| `EMAIL_FROM` | Sending address; defaults to `leads@send.joshuafink.com`. |
 
 Because Resend wins whenever its key is present, **the cutover is one env var** —
 no code change, no redeploy path to think about, and removing the key falls back.

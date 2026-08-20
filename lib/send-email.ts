@@ -41,7 +41,19 @@ export interface EmailResult {
   detail?: string
 }
 
-export const FROM_EMAIL = process.env.EMAIL_FROM || 'leads@joshuafink.com'
+// Must be an address on a domain VERIFIED with the active provider, or the
+// send is rejected outright. Resend is verified for the subdomain
+// `send.joshuafink.com`, deliberately — the root domain's single SPF record
+// belongs to Microsoft 365 (`include:spf.protection.outlook.com -all`) and
+// editing it to bolt on a second sender risks Joshua's actual business email
+// for the sake of a lead auto-reply. A subdomain gets its own SPF and DKIM and
+// cannot collide with it.
+//
+// Nothing receives at this address: both callers set an explicit `reply_to`
+// (the lead's auto-reply replies to joshua@joshuafink.com, and his new-lead
+// notification replies straight to the lead), so conversations still land in
+// the real Microsoft 365 inbox.
+export const FROM_EMAIL = process.env.EMAIL_FROM || 'leads@send.joshuafink.com'
 
 /** Which provider would handle a send right now. 'none' means email is off. */
 export function activeEmailProvider(): EmailProvider {
