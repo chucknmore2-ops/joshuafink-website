@@ -104,18 +104,13 @@ function buildProfileSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'ProfilePage',
-    mainEntity: {
-      '@type': 'Person',
-      '@id': 'https://www.joshuafink.com/#joshua-fink',
-      aggregateRating: {
-        '@type': 'AggregateRating',
-        ratingValue: reviewStats.rating.toFixed(1),
-        reviewCount: reviewStats.total,
-        bestRating: 5,
-        worstRating: 1,
-      },
-      review: reviewNodes,
-    },
+    // Reference only. app/layout.tsx already defines #joshua-fink in full and
+    // attaches the rating + reviews to #agent, on every page. Repeating the
+    // same 10 reviews and the same AggregateRating here asserted one review
+    // corpus about TWO distinct entities (a Person and a RealEstateAgent) in a
+    // single document — a documented cause of review rich-result
+    // ineligibility. One entity owns the reviews: #agent.
+    mainEntity: { '@id': 'https://www.joshuafink.com/#joshua-fink' },
   }
 }
 

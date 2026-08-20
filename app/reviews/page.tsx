@@ -27,33 +27,16 @@ function StarRating({ rating }: { rating: number }) {
 }
 
 export default function ReviewsPage() {
-  const reviewsSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'RealEstateAgent',
-    '@id': 'https://www.joshuafink.com/#agent',
-    name: 'Joshua Fink Group',
-    url: 'https://www.joshuafink.com',
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: reviewStats.rating,
-      reviewCount: reviewStats.total,
-      bestRating: 5,
-      worstRating: 1,
-    },
-    review: reviews.map((review) => ({
-      '@type': 'Review',
-      author: {
-        '@type': 'Person',
-        name: review.reviewer,
-      },
-      datePublished: reviewDateToIso(review.date),
-      reviewRating: {
-        '@type': 'Rating',
-        ratingValue: review.rating,
-      },
-      reviewBody: review.text,
-    })),
-  }
+  // The #agent entity — including aggregateRating and the full review list —
+  // is emitted once in app/layout.tsx on EVERY page, this one included. This
+  // page used to re-declare the same @id with a conflicting `name` and `url`,
+  // and to repeat the review corpus, so /reviews shipped two AggregateRating
+  // values (one string-typed, one numeric) and 20 Review nodes for 10 actual
+  // reviews. That is a documented cause of review rich-result ineligibility —
+  // and the star rating is the highest-CTR element this page could earn.
+  // The reviews are still in the markup below for readers; the structured data
+  // comes from the single canonical declaration in the layout.
+
 
   const breadcrumb = buildBreadcrumbSchema([
     { name: 'Home', href: '/' },
@@ -62,10 +45,6 @@ export default function ReviewsPage() {
 
   return (
     <div className="bg-white">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewsSchema) }}
-      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}

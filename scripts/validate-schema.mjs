@@ -16,15 +16,25 @@
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3000'
 
+// One URL per page TEMPLATE that emits structured data. The list was missing
+// /reviews, /neighborhoods, /market and /sell, which is why seven templates
+// could re-declare the #agent entity with a conflicting name, url, description
+// and telephone without CI ever noticing.
 const URLS = [
   '/',
   '/about',
+  '/reviews',
   '/cash-offer',
+  '/cash-offer/franklin-tn',
   '/blog',
   '/blog/nashville-real-estate-market-2025',
   '/blog/we-buy-houses-nashville-how-it-works',
+  '/sell',
   '/sell/franklin-tn',
+  '/buy',
   '/buy/franklin-tn',
+  '/market/franklin-tn',
+  '/neighborhoods',
 ]
 
 // Minimum required fields per @type. Keyed by @type; value is required keys.
