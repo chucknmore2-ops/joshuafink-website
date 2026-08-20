@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-08-18T08:40:47.368Z
+// AUTO-GENERATED — Last synced: 2026-08-20T08:42:26.449Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -21,7 +21,7 @@ export interface Listing {
 
 // Mirrors the header timestamp so server components can compute sync staleness
 // without parsing comments. Updated by scripts/fetch-images.mjs each sync.
-export const listingsSyncedAt = "2026-08-18T08:40:47.368Z";
+export const listingsSyncedAt = "2026-08-20T08:42:26.449Z";
 
 export const listings: Listing[] = [
   {
@@ -58,18 +58,6 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/4127-Edwards-Ave-Nashville-TN-37216/THUS9_pid/",
     imageUrl: "https://www.compass.com/m/a9acaa52f1af4a5177df8b946004d09e9a06867e02336fcf803a804d4570b560/2048x1536.webp",
-    lastVerified: listingsSyncedAt,
-  },
-  {
-    address: "511 Wanda Dr",
-    city: "Nashville, TN 37210 | MLS #3033369",
-    price: 419900,
-    beds: 4,
-    baths: 2,
-    sqft: 1400,
-    status: "Active",
-    compassUrl: "https://www.compass.com/homedetails/511-Wanda-Dr-Nashville-TN-37210/SDYP1_pid/",
-    imageUrl: "https://www.compass.com/m/4e9cb7fc9872c9dbd0b0f820634b2dfa965d3cfe_img_0_e40e3/2048x1536.webp",
     lastVerified: listingsSyncedAt,
   },
   {
