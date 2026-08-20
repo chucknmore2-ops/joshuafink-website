@@ -1,32 +1,30 @@
-// The Facebook autoposter must never publish a client testimonial that differs
-// from the review the client actually left.
+// The Facebook autoposter must credit clients the same way the website does.
 //
 // Run: npm test
 //
-// services/autoposter/src/content/testimonials.ts was hand-maintained and
-// drifted: a 2026-08-18 audit found three reviewers republished under INVENTED
-// full surnames ("Anthony C." → "Anthony Contaldo", "Joseph C." → "Joseph A.
-// Cortez", "Adam S." → "Adam Smith") plus testimonial text carrying sentences
-// the clients never wrote — posted publicly, attributed by name, with a Zillow
-// link offered as proof that did not corroborate them.
+// These are genuine reviews from Zillow and Google Business Profile. The issue
+// this guards is PRIVACY, not authenticity: services/autoposter's testimonial
+// list was hand-maintained, drifted from lib/reviews.ts, and had come to carry
+// clients' full last names plus a different excerpt of the same review than the
+// site shows.
 //
-// Two invariants, both non-negotiable for a licensed broker:
-//   1. Every published testimonial is VERBATIM from lib/reviews.ts.
-//   2. No client's last name is ever published.
+// Josh's rule: a client's last name is never published. lib/reviews.ts is where
+// it is decided how each client is credited and which part of their review is
+// quoted, so the autoposter must follow it rather than keep its own copy.
 
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { reviews } from './reviews.ts'
 import { testimonials } from '../services/autoposter/src/content/testimonials.ts'
 
-test('every testimonial matches a real review verbatim', () => {
+test('every testimonial quotes lib/reviews.ts verbatim', () => {
   for (const t of testimonials) {
     const source = reviews.find((r) => r.reviewer === t.reviewer)
-    assert.ok(source, `"${t.reviewer}" is not a reviewer in lib/reviews.ts — invented attribution`)
+    assert.ok(source, `"${t.reviewer}" is not credited in lib/reviews.ts — the site decides how clients are credited`)
     assert.equal(
       t.text,
       source.text,
-      `testimonial text for "${t.reviewer}" does not match the review they actually left`,
+      `the excerpt published for "${t.reviewer}" differs from the one lib/reviews.ts quotes`,
     )
   }
 })
@@ -45,7 +43,7 @@ test('no testimonial publishes a full last name', () => {
   }
 })
 
-test('a stated location is never invented — it comes from the review', () => {
+test('a stated location comes from the review, not from elsewhere', () => {
   for (const t of testimonials) {
     if (!t.location) continue
     const source = reviews.find((r) => r.reviewer === t.reviewer)!

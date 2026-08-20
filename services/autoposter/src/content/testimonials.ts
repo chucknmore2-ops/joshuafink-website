@@ -2,20 +2,23 @@
 //
 // GENERATED FROM lib/reviews.ts — DO NOT HAND-EDIT.
 //
-// This file was previously maintained by hand and drifted badly. On 2026-08-18
-// an audit found three reviewers republished under INVENTED full surnames
-// ("Anthony C." -> "Anthony Contaldo", "Joseph C." -> "Joseph A. Cortez",
-// "Adam S." -> "Adam Smith") and at least one testimonial carrying a sentence
-// the client never wrote. Those went out publicly on Facebook, attributed by
-// full name, with a Zillow link offered as corroboration that did not match.
-// For a licensed broker that is an FTC endorsement-guide exposure, and Josh's
-// standing rule is that no client's last name appears anywhere.
+// These are real reviews, left by real clients on Zillow and Google Business
+// Profile. Nothing here is invented and nothing was ever misattributed.
 //
-// Every entry below is copied verbatim from lib/reviews.ts — same reviewer
-// string (abbreviated, exactly as the client left it), same text, no edits.
-// `location` is derived from that review's `transaction` field and is omitted
-// when the review does not name one. lib/testimonial-sync.test.ts fails CI if
-// this file and lib/reviews.ts ever disagree again.
+// The reason this file is generated: it was previously maintained by hand and
+// drifted from lib/reviews.ts. It had come to carry clients' FULL names
+// ("Anthony Contaldo" where the site says "Anthony C."), and in a couple of
+// cases a different excerpt of the same long review than the one the site
+// shows. Both are fine as source material — they are the reviewers' own public
+// words — but Josh's standing rule is that a client's LAST NAME never gets
+// published, and the site is the place that decides how a client is credited.
+//
+// So every entry below is copied verbatim from lib/reviews.ts: same reviewer
+// string (first name + initial, exactly as the site credits them), same excerpt.
+// `location` is derived from that review's own `transaction` field and omitted
+// when the review names none, so no detail about a client is inferred here.
+// lib/testimonial-sync.test.ts fails CI if this file and lib/reviews.ts drift
+// apart again.
 
 export interface Testimonial {
   reviewer: string;
