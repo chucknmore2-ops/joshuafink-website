@@ -169,7 +169,6 @@ export default async function CashOfferCityPage({ params }: Props) {
             '@context': 'https://schema.org',
             '@type': 'RealEstateAgent',
             '@id': 'https://www.joshuafink.com/#agent',
-            url,
             areaServed: {
               '@type': 'City',
               name: city.schemaCity,
