@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { classifyLead } from '@/lib/classify-lead'
+import { sendEmail, activeEmailProvider } from '@/lib/send-email'
 
-const SENDGRID_KEY = process.env.SENDGRID_API_KEY
 const SLACK_TOKEN = process.env.SLACK_BOT_TOKEN
 const SLACK_CHANNEL = 'C0APH84LFG8' // #joshpersonal
-const FROM_EMAIL = 'leads@joshuafink.com'
 const TO_EMAIL = 'joshua@joshuafink.com'
 const N8N_BASE = process.env.N8N_WEBHOOK_BASE || 'http://localhost:5678/webhook'
 const CASH_OFFER_BASE = process.env.CASH_OFFER_WEBHOOK_BASE || 'http://localhost:5679/webhook'
@@ -147,7 +146,7 @@ function escapeHtml(value: unknown): string {
 // ---------------------------------------------------------------------------
 
 async function sendAutoReply(lead: Record<string, string>): Promise<ChannelResult> {
-  if (!SENDGRID_KEY) return skip('auto-reply')
+  if (activeEmailProvider() === 'none') return skip('auto-reply')
   if (!lead.email) return skip('auto-reply')
 
   const firstName = (lead.name || 'there').split(' ')[0]
@@ -186,28 +185,19 @@ async function sendAutoReply(lead: Record<string, string>): Promise<ChannelResul
 </body>
 </html>`
 
-  try {
-    const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${SENDGRID_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        personalizations: [{ to: [{ email: lead.email, name: lead.name }] }],
-        from: { email: FROM_EMAIL, name: 'Joshua Fink' },
-        reply_to: { email: TO_EMAIL, name: 'Joshua Fink' },
-        subject: `Got your message, ${firstName} — Joshua Fink Group`,
-        content: [{ type: 'text/html', value: html }],
-      }),
-    })
-    if (!res.ok) {
-      const detail = await res.text().catch(() => '')
-      console.error(`Auto-reply email failed: HTTP ${res.status} ${detail.slice(0, 200)}`)
-      return { channel: 'auto-reply', configured: true, ok: false, detail: `HTTP ${res.status}` }
-    }
-    return { channel: 'auto-reply', configured: true, ok: true }
-  } catch (err) {
-    console.error('Auto-reply email error:', err)
-    return { channel: 'auto-reply', configured: true, ok: false, detail: String(err) }
+  const sent = await sendEmail({
+    to: lead.email,
+    toName: lead.name,
+    fromName: 'Joshua Fink',
+    replyTo: { email: TO_EMAIL, name: 'Joshua Fink' },
+    subject: `Got your message, ${firstName} — Joshua Fink Group`,
+    html,
+  })
+  if (!sent.ok) {
+    console.error(`Auto-reply email failed via ${sent.provider}: ${sent.detail}`)
+    return { channel: 'auto-reply', configured: true, ok: false, detail: sent.detail }
   }
+  return { channel: 'auto-reply', configured: true, ok: true }
 }
 
 // ---------------------------------------------------------------------------
@@ -215,38 +205,27 @@ async function sendAutoReply(lead: Record<string, string>): Promise<ChannelResul
 // ---------------------------------------------------------------------------
 
 async function forwardToJoshua(lead: Record<string, string>): Promise<ChannelResult> {
-  if (!SENDGRID_KEY) return skip('joshua-email')
+  if (activeEmailProvider() === 'none') return skip('joshua-email')
 
   const lines = Object.entries(lead)
     .filter(([k]) => !k.startsWith('_') && k !== 'website')
     .map(([k, v]) => `<tr><td style="padding:6px 12px;color:#666;font-size:13px;width:140px;vertical-align:top;">${escapeHtml(k)}</td><td style="padding:6px 12px;font-size:13px;">${escapeHtml(v)}</td></tr>`)
     .join('')
 
-  try {
-    const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${SENDGRID_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        personalizations: [{ to: [{ email: TO_EMAIL, name: 'Joshua Fink' }] }],
-        from: { email: FROM_EMAIL, name: 'joshuafink.com Lead' },
-        ...(lead.email ? { reply_to: { email: lead.email, name: lead.name } } : {}),
-        subject: `🏡 New Lead: ${lead.name || 'Unknown'} — ${lead.suburb || lead.subject || 'joshuafink.com'}`,
-        content: [{
-          type: 'text/html',
-          value: `<table style="font-family:sans-serif;border-collapse:collapse;">${lines}</table>`,
-        }],
-      }),
-    })
-    if (!res.ok) {
-      const detail = await res.text().catch(() => '')
-      console.error(`Lead email to Joshua failed: HTTP ${res.status} ${detail.slice(0, 200)}`)
-      return { channel: 'joshua-email', configured: true, ok: false, detail: `HTTP ${res.status}` }
-    }
-    return { channel: 'joshua-email', configured: true, ok: true }
-  } catch (err) {
-    console.error('Lead email to Joshua error:', err)
-    return { channel: 'joshua-email', configured: true, ok: false, detail: String(err) }
+  const sent = await sendEmail({
+    to: TO_EMAIL,
+    toName: 'Joshua Fink',
+    fromName: 'joshuafink.com Lead',
+    ...(lead.email ? { replyTo: { email: lead.email, name: lead.name } } : {}),
+    subject: `🏡 New Lead: ${lead.name || 'Unknown'} — ${lead.suburb || lead.subject || 'joshuafink.com'}`,
+    html: `<table style="font-family:sans-serif;border-collapse:collapse;">${lines}</table>`,
+  })
+  if (!sent.ok) {
+    console.error(`Lead email to Joshua failed via ${sent.provider}: ${sent.detail}`)
+    return { channel: 'joshua-email', configured: true, ok: false, detail: sent.detail }
   }
+  return { channel: 'joshua-email', configured: true, ok: true }
+
 }
 
 // ---------------------------------------------------------------------------
@@ -471,7 +450,7 @@ export async function POST(req: NextRequest) {
   }
 
   const anyChannelConfigured =
-    !!SLACK_TOKEN || !!SENDGRID_KEY || (!!PUSHOVER_TOKEN && !!PUSHOVER_USER) || !!GOOGLE_SHEET_WEBHOOK_URL
+    !!SLACK_TOKEN || activeEmailProvider() !== 'none' || (!!PUSHOVER_TOKEN && !!PUSHOVER_USER) || !!GOOGLE_SHEET_WEBHOOK_URL
   if (!anyChannelConfigured) {
     console.error('Contact API misconfigured: no lead-delivery channel is set')
     return NextResponse.json(

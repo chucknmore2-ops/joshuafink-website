@@ -91,7 +91,7 @@ routes — but the following features require them:
 | Feature | Env vars |
 | --- | --- |
 | Google Analytics | `NEXT_PUBLIC_GA_ID` |
-| Lead capture (`/api/contact`) — Slack + email + Monday | `SENDGRID_API_KEY`, `SLACK_BOT_TOKEN`, `MONDAY_API_TOKEN`, `MONDAY_BOARD_ID`, `N8N_WEBHOOK_BASE`, `CASH_OFFER_WEBHOOK_BASE`, `BUYER_LEAD_WEBHOOK_BASE` |
+| Lead capture (`/api/contact`) — Slack + email + Monday | `RESEND_API_KEY` (preferred) or `SENDGRID_API_KEY` (legacy), `EMAIL_FROM`, `SLACK_BOT_TOKEN`, `MONDAY_API_TOKEN`, `MONDAY_BOARD_ID`, `N8N_WEBHOOK_BASE`, `CASH_OFFER_WEBHOOK_BASE`, `BUYER_LEAD_WEBHOOK_BASE` |
 | Cron routes (IndexNow, GBP, LinkedIn, Instagram) | `CRON_SECRET` |
 | Google Business Profile auto-poster | `GBP_CLIENT_ID`, `GBP_CLIENT_SECRET`, `GBP_REFRESH_TOKEN`, `GBP_ACCOUNT_ID`, `GBP_LOCATION_ID` |
 | LinkedIn auto-poster | `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET`, `LINKEDIN_REDIRECT_URI`, `LINKEDIN_ACCESS_TOKEN`, `LINKEDIN_AUTHOR_URN` |
