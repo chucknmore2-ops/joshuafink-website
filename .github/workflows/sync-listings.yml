@@ -52,7 +52,24 @@ jobs:
       - name: Open auto-merging PR with updated listing files
         env:
           TZ: America/Chicago
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Prefer a PAT, because the PR's AUTHOR decides whether its checks are
+          # gated. Opened with GITHUB_TOKEN the author is `app/github-actions`,
+          # which Settings → Actions → General → "Require approval for first-time
+          # contributors" treats as an unproven contributor: the pull_request
+          # build-check run is created in `action_required` and waits for a manual
+          # Approve-and-run click. On 2026-08-18 that held the required `build`
+          # check for 17 hours (run 32117725100, attempt 1 `action_required`,
+          # attempt 2 passed in 74s once approved) and the site served ~6-day-old
+          # listings. PRs authored by chucknmore2-ops build in ~2 minutes.
+          #
+          # Loosening that repo setting is NOT the fix: this repo is public, so it
+          # would let a stranger's first PR run workflows automatically, and
+          # build-check runs `npm ci` on their code.
+          #
+          # Falls back to GITHUB_TOKEN so the sync keeps working before SYNC_PAT
+          # exists. Needs a fine-grained PAT with contents:write + pull_requests:write.
+          GH_TOKEN: ${{ secrets.SYNC_PAT || secrets.GITHUB_TOKEN }}
+          HAS_PAT: ${{ secrets.SYNC_PAT != '' }}
         run: |
           git config user.name  'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
@@ -103,12 +120,21 @@ jobs:
           }
           trap cleanup_branch ERR
 
-          # GitHub deliberately does NOT fire push/pull_request workflows for
-          # refs pushed with GITHUB_TOKEN (recursion guard), so build-check
-          # would never report and auto-merge would hang forever. workflow_dispatch
-          # is the documented exception — dispatch it explicitly against the
-          # branch so the required "build" check lands on this SHA.
-          gh_retry gh workflow run build-check.yml --ref "$BRANCH"
+          # Fallback for when there is no SYNC_PAT and the PR is therefore opened
+          # by the bot. Dispatch build-check explicitly so a green `build` exists
+          # on this SHA — push events from GITHUB_TOKEN never fire it themselves.
+          #
+          # Be clear about what this does and does not buy you. It is NOT a fix:
+          # the bot-authored PR still gets its own gated `pull_request` build-check
+          # run, and that second check run — same name, same SHA, sitting in
+          # `action_required` — is what branch protection reads, so the PR stays
+          # BLOCKED regardless of this green one. That is exactly what happened on
+          # 2026-08-18. It is kept only so the check is already green the moment
+          # someone approves, and it is skipped under a PAT, where the normal
+          # pull_request run reports on its own and a duplicate would just race it.
+          if [ "$HAS_PAT" != "true" ]; then
+            gh_retry gh workflow run build-check.yml --ref "$BRANCH"
+          fi
 
           PR_URL=$(gh_retry gh pr create \
             --base main \
