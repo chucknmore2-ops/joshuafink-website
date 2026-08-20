@@ -14,10 +14,10 @@ export default function SuburbLeadForm({ children, successTitle, successMessage,
   const [errorMsg, setErrorMsg] = useState('')
   const alertRef = useRef<HTMLDivElement>(null)
 
-  // The error banner sits above the fields and the success panel replaces the
-  // whole form, so on a phone either can land off-screen from wherever the
-  // submit button was. Pull the outcome to the visitor rather than hoping they
-  // scroll back up to find it.
+  // The success panel replaces the whole form, collapsing document height, so
+  // on a phone the outcome can land off-screen from wherever the submit button
+  // was. Pull the outcome to the visitor rather than hoping they scroll to
+  // find it.
   useEffect(() => {
     if (state !== 'error' && state !== 'success') return
     const el = alertRef.current
@@ -101,6 +101,13 @@ export default function SuburbLeadForm({ children, successTitle, successMessage,
         aria-hidden="true"
         style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, width: 0 }}
       />
+      <fieldset disabled={state === 'submitting'} className="space-y-5 border-0 p-0 m-0 min-w-0 disabled:opacity-70">
+        {children}
+      </fieldset>
+      {/* Rendered after the fieldset, not before it: the submit button is the
+          last thing in `children`, so this puts the failure next to the button
+          the visitor just tapped instead of several fields above it. Stays
+          outside the fieldset so focus() still works while submitting. */}
       {state === 'error' && (
         <div
           ref={alertRef}
@@ -112,9 +119,6 @@ export default function SuburbLeadForm({ children, successTitle, successMessage,
           {errorMsg}
         </div>
       )}
-      <fieldset disabled={state === 'submitting'} className="space-y-5 border-0 p-0 m-0 min-w-0 disabled:opacity-70">
-        {children}
-      </fieldset>
     </form>
   )
 }
