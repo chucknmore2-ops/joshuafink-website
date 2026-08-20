@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { sendEmail as deliverEmail } from '@/lib/send-email'
 import { activityCounts, recentPosts, isDbConfigured } from '@/lib/admin-db'
 import { AGENT_02_SYSTEM_PROMPT } from '@/lib/agent-prompts'
 
@@ -25,7 +26,8 @@ export const runtime = 'nodejs'
 //
 // Required env vars (already in Vercel from the contact-form integration):
 //   CRON_SECRET            — bearer auth on /api/cron/*
-//   SENDGRID_API_KEY       — email delivery
+//   RESEND_API_KEY         — email delivery (preferred)
+//   SENDGRID_API_KEY       — email delivery (legacy fallback; out of credits)
 //   DATABASE_URL           — Postgres for autoposter activity (optional)
 //   CLICKUP_API_TOKEN      — ClickUp task creation (optional, gracefully degrades)
 //
@@ -43,7 +45,6 @@ export const runtime = 'nodejs'
 //                            done / comment / discuss.
 
 const TO_EMAIL = 'chucknmore2@gmail.com'
-const FROM_EMAIL = 'leads@joshuafink.com'
 const CLICKUP_LIST_ID = '901415978281' // JFG agent-briefing list (workspace 90141200625)
 
 const AGENTS = [
@@ -247,28 +248,22 @@ function buildBriefing(
   return { subject, markdown: md, html: wrappedHtml }
 }
 
+// Local name kept so callers are untouched; delivery now goes through
+// lib/send-email, which prefers Resend and falls back to SendGrid. This
+// briefing has been silently undelivered since the SendGrid account ran out of
+// credits — it will start arriving again the moment RESEND_API_KEY is set.
 async function sendEmail(subject: string, html: string, plain: string): Promise<boolean> {
-  const key = process.env.SENDGRID_API_KEY
-  if (!key) return false
-  try {
-    const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        personalizations: [{ to: [{ email: TO_EMAIL }] }],
-        from: { email: FROM_EMAIL, name: 'JFG Agent Briefing' },
-        subject,
-        content: [
-          { type: 'text/plain', value: plain },
-          { type: 'text/html', value: html },
-        ],
-      }),
-    })
-    return res.ok
-  } catch (err) {
-    console.error('[agent-briefing] sendgrid error', err)
-    return false
+  void plain // the HTML part is what actually gets read; Resend takes one body
+  const sent = await deliverEmail({
+    to: TO_EMAIL,
+    fromName: 'JFG Agent Briefing',
+    subject,
+    html,
+  })
+  if (!sent.ok && sent.provider !== 'none') {
+    console.error(`[agent-briefing] email failed via ${sent.provider}: ${sent.detail}`)
   }
+  return sent.ok
 }
 
 // ---------------------------------------------------------------------------

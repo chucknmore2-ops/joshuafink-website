@@ -271,7 +271,7 @@ export default function CashOfferPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-neutral-200">
             {[
               { value: '17+', label: 'Years in Middle TN' },
-              { value: '100+', label: 'Homes Bought Annually' },
+              { value: '100+', label: 'Homes Sold Annually' },
               { value: '7 Days', label: 'Fastest Close' },
               { value: '$0', label: 'Fees or Commissions' },
             ].map((s) => (
