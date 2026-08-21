@@ -477,9 +477,9 @@ export default async function NeighborhoodPage({ params }: Props) {
               <input type="hidden" name="source" value={`neighborhood-top:${n.slug}`} />
 
               <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-3">
-                <input type="text" name="name" required placeholder="Full name" aria-label="Full name"
+                <input type="text" name="name" required placeholder="Full name" aria-label="Full name" autoComplete="name"
                   className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
-                <input type="tel" name="phone" required placeholder="Phone" aria-label="Phone"
+                <input type="tel" name="phone" required placeholder="Phone" aria-label="Phone" autoComplete="tel"
                   className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
                 <button type="submit"
                   className="text-white text-sm font-bold px-6 py-3 tracking-wide transition-colors whitespace-nowrap"
