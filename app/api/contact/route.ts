@@ -241,7 +241,12 @@ async function forwardToJoshua(lead: Record<string, string>): Promise<ChannelRes
 // No-ops safely until GOOGLE_SHEET_WEBHOOK_URL is set.
 // ---------------------------------------------------------------------------
 
-async function pushToSheet(lead: Record<string, string>): Promise<ChannelResult> {
+async function pushToSheet(
+  lead: Record<string, string>,
+  // When set, the Apps Script files this row into a separate "Blocked" tab
+  // (with the reason in its own column) instead of the CRM tab.
+  blockedReason?: string,
+): Promise<ChannelResult> {
   if (!GOOGLE_SHEET_WEBHOOK_URL) {
     console.log('Google Sheet: skipping — GOOGLE_SHEET_WEBHOOK_URL not set')
     return skip('sheet')
@@ -257,6 +262,7 @@ async function pushToSheet(lead: Record<string, string>): Promise<ChannelResult>
     // Normalize the lead type across the different forms into one column.
     lead_type: lead.subject || lead.lead_type || '',
     received_at: new Date().toISOString(),
+    ...(blockedReason ? { blocked_reason: blockedReason } : {}),
     ...(SHEET_WEBHOOK_SECRET ? { secret: SHEET_WEBHOOK_SECRET } : {}),
   }
 
@@ -488,9 +494,14 @@ export async function POST(req: NextRequest) {
 
     if (verdict.kind === 'bot') {
       // Honeypot only. Log the WHOLE submission, not just the contact fields —
-      // if this ever fires on a real person, the message text is the only way
-      // to identify and recover them, and it used to be thrown away.
+      // if this ever fires on a real person (browsers can autofill the hidden
+      // field), the message text is the only way to identify and recover them.
       console.log(`BOT blocked (${verdict.reason}): ${JSON.stringify(lead)}`)
+      // Durable copy in the sheet's "Blocked" tab, which Josh can skim for
+      // humans — sheet only, so real bots never make noise on Slack/Pushover/
+      // email. Awaited: Vercel freezes the function once the response is sent,
+      // so a fire-and-forget write here could silently never happen.
+      await pushToSheet(lead, verdict.reason)
       // Return success so bots don't retry.
       return NextResponse.json({ ok: true })
     }
