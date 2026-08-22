@@ -35,6 +35,10 @@ COVERED (per `lib/admin-schedule.ts`):
   Open sync-listings PRs — a sync-listings/* PR still open after ~24h means
     auto-merge jammed even though the workflow run itself concluded green.
   Public uptime — GET https://joshuafink.com/api/healthcheck
+  Lead delivery channels — POSTs a tagged SYSTEM TEST lead to /api/contact
+    (silent Pushover, lead_type=system-test so the CRM sheet can filter it)
+    and alerts if any configured channel — slack / joshua-email / sheet /
+    pushover — fails. Needs CRON_SECRET; without it this is a GAP.
 
 NOT COVERED (documented gaps — listed in every alert email):
   /api/cron/indexnow            no DB write; signal lives in Vercel logs
@@ -195,6 +199,12 @@ SYNC_PR_MAX_AGE_HOURS = 24
 HEALTHCHECK_URL_DEFAULT = "https://joshuafink.com/api/healthcheck"
 HEALTHCHECK_TIMEOUT_S = 15
 HEALTHCHECK_RETRIES = 2
+
+# Live test lead through the real lead route (see check_lead_pipeline). The
+# generous timeout is because the route awaits Slack + email + sheet +
+# Pushover before answering.
+CONTACT_URL_DEFAULT = "https://joshuafink.com/api/contact"
+CONTACT_TIMEOUT_S = 30
 
 DB_CONNECT_TIMEOUT_S = 10
 DB_STATEMENT_TIMEOUT_MS = 5000
@@ -963,6 +973,164 @@ def check_site_uptime(
     )
 
 
+def check_lead_pipeline(
+    url: str,
+    secret: Optional[str],
+    *,
+    opener: Callable[..., "urllib.request.addinfourl"] = urllib.request.urlopen,
+) -> CheckResult:
+    """POST a tagged SYSTEM TEST lead through the real /api/contact route and
+    verify every configured delivery channel reports success.
+
+    The route's test mode (`x-healthcheck-secret: CRON_SECRET`) returns the
+    per-channel results it already computes internally and sends the Pushover
+    silently, so this costs one filterable CRM row per weekday and no phone
+    buzz. Partial channel death used to be only a console.warn in Vercel logs
+    — SendGrid sat dead from June with every other check green.
+
+    The lead payload must stay classifier-clean: name with a space (no
+    random_name), no token >= 25 chars in the body (no gibberish_body), no
+    email (skips the auto-reply).
+    """
+    name = "lead pipeline — /api/contact test lead"
+    t0 = time.monotonic()
+    if not secret:
+        return CheckResult(
+            name=name,
+            status=STATUS_GAP,
+            detail="CRON_SECRET not set — lead delivery channels not tested",
+        )
+
+    payload = json.dumps({
+        "name": "SYSTEM TEST — morning healthcheck",
+        "lead_type": "system-test",
+        "source": "morning-healthcheck",
+        "body": (
+            "Automated daily test of the lead delivery channels. "
+            "Safe to ignore — filter lead_type=system-test in the CRM sheet."
+        ),
+    }).encode("utf-8")
+
+    http_status: Optional[int] = None
+    body = ""
+    last_exc: Optional[BaseException] = None
+    for attempt in range(HEALTHCHECK_RETRIES + 1):
+        try:
+            req = urllib.request.Request(
+                url,
+                data=payload,
+                headers={
+                    "Content-Type": "application/json",
+                    "User-Agent": "joshuafink-morning-healthcheck/1.0",
+                    "x-healthcheck-secret": secret,
+                },
+                method="POST",
+            )
+            with opener(req, timeout=CONTACT_TIMEOUT_S) as resp:
+                http_status = getattr(resp, "status", None) or resp.getcode()
+                body = resp.read(65536).decode("utf-8", errors="replace")
+            break
+        except urllib.error.HTTPError as exc:
+            # The route answered (4xx/5xx) — a response, not an outage, and in
+            # test mode a total delivery failure is a 502 that still carries
+            # the per-channel results. Don't retry: the lead was processed.
+            http_status = exc.code
+            try:
+                body = exc.read(65536).decode("utf-8", errors="replace")
+            except Exception:  # noqa: BLE001
+                body = ""
+            break
+        except (urllib.error.URLError, socket.timeout, ssl.SSLError) as exc:
+            last_exc = exc
+            if attempt < HEALTHCHECK_RETRIES:
+                time.sleep(2.0 * (attempt + 1))
+        except Exception as exc:  # noqa: BLE001 — last-resort guard
+            last_exc = exc
+            break
+
+    if http_status is None:
+        return CheckResult(
+            name=name,
+            status=STATUS_ERROR,
+            detail=f"unreachable after retries: {type(last_exc).__name__}: {last_exc}",
+            duration_ms=int((time.monotonic() - t0) * 1000),
+        )
+
+    try:
+        data = json.loads(body)
+    except ValueError:
+        data = None
+    channels = data.get("channels") if isinstance(data, dict) else None
+
+    if not isinstance(channels, list) or not channels:
+        if http_status == 200:
+            # The lead was accepted but the response is the plain visitor one —
+            # the deployed route lacks the test mode, or the two CRON_SECRETs
+            # (GitHub secret vs Vercel env) have drifted apart.
+            return CheckResult(
+                name=name,
+                status=STATUS_ERROR,
+                detail=(
+                    "HTTP 200 but no per-channel results in the response — "
+                    "the /api/contact test mode is not deployed, or CRON_SECRET "
+                    "differs between the GitHub repo secret and the Vercel env"
+                ),
+                duration_ms=int((time.monotonic() - t0) * 1000),
+            )
+        return CheckResult(
+            name=name,
+            status=STATUS_ERROR,
+            detail=f"HTTP {http_status} ({body[:160]!r})",
+            duration_ms=int((time.monotonic() - t0) * 1000),
+        )
+
+    dicts = [c for c in channels if isinstance(c, dict)]
+    configured = [c for c in dicts if c.get("configured")]
+    failed = [c for c in configured if not c.get("ok")]
+    unconfigured = [str(c.get("channel")) for c in dicts if not c.get("configured")]
+
+    if failed:
+        failed_txt = ", ".join(
+            f"{c.get('channel')}({str(c.get('detail') or 'no detail')[:120]})"
+            for c in failed
+        )
+        ok_txt = ", ".join(
+            str(c.get("channel")) for c in configured if c.get("ok")
+        ) or "none"
+        return CheckResult(
+            name=name,
+            status=STATUS_ERROR,
+            detail=(
+                f"test lead FAILED on configured channel(s): {failed_txt} "
+                f"(still delivering: {ok_txt}). Real leads are silently "
+                f"missing these channels right now."
+            ),
+            duration_ms=int((time.monotonic() - t0) * 1000),
+        )
+
+    if not configured:
+        return CheckResult(
+            name=name,
+            status=STATUS_ERROR,
+            detail="route reports zero configured delivery channels",
+            duration_ms=int((time.monotonic() - t0) * 1000),
+        )
+
+    detail = (
+        f"test lead delivered on all {len(configured)} configured channel(s): "
+        + ", ".join(str(c.get("channel")) for c in configured)
+    )
+    if unconfigured:
+        # Named so a channel silently dropping out of the env is visible.
+        detail += f" (not configured: {', '.join(unconfigured)})"
+    return CheckResult(
+        name=name,
+        status=STATUS_PASS,
+        detail=detail,
+        duration_ms=int((time.monotonic() - t0) * 1000),
+    )
+
+
 # ---------------------------------------------------------------------------
 # Orchestration
 # ---------------------------------------------------------------------------
@@ -975,6 +1143,8 @@ def run_all_checks(
     now: Optional[datetime] = None,
     github_token: Optional[str] = None,
     github_repo: str = GITHUB_REPO_DEFAULT,
+    cron_secret: Optional[str] = None,
+    contact_url: str = CONTACT_URL_DEFAULT,
 ) -> list[CheckResult]:
     """Run every check; capture exceptions so one bad check doesn't abort the rest."""
     now = now or datetime.now(timezone.utc)
@@ -986,6 +1156,17 @@ def run_all_checks(
     except Exception as exc:  # noqa: BLE001
         results.append(CheckResult(
             name=f"site uptime — {healthcheck_url}",
+            status=STATUS_ERROR,
+            detail=f"uncaught {type(exc).__name__}: {exc}",
+        ))
+
+    # 1b) Lead pipeline — a live test lead through /api/contact, alerting on
+    #     any configured channel that fails. Independent of the DB block.
+    try:
+        results.append(check_lead_pipeline(contact_url, cron_secret))
+    except Exception as exc:  # noqa: BLE001
+        results.append(CheckResult(
+            name="lead pipeline — /api/contact test lead",
             status=STATUS_ERROR,
             detail=f"uncaught {type(exc).__name__}: {exc}",
         ))
@@ -1169,6 +1350,17 @@ def _remediation_for(result: CheckResult) -> Optional[str]:
             "Open vercel.com → joshuafink-website → check the latest "
             "production deploy. If failed, redeploy. If the deploy is fine, "
             "/api/healthcheck route may have regressed — read its log."
+        )
+    if "lead pipeline" in name:
+        return (
+            "A live test lead failed on the channel(s) named in the detail. "
+            "Per channel: slack → SLACK_BOT_TOKEN dead/revoked; joshua-email → "
+            "Resend (RESEND_API_KEY / send.joshuafink.com domain verification); "
+            "sheet → the Apps Script GOOGLE_SHEET_WEBHOOK_URL deployment; "
+            "pushover → PUSHOVER_TOKEN/PUSHOVER_USER. All live in Vercel → "
+            "joshuafink-website → Settings → Environment Variables; redeploy "
+            "after changing one. Real leads still deliver via the remaining "
+            "channels, but fix this before the last one dies too."
         )
     # Must precede the generic sync-listings match — this one is about a PR
     # that won't merge, not a scrape that won't run.
@@ -1401,6 +1593,9 @@ def main(argv: Optional[list[str]] = None) -> int:
         repo_dir=args.repo_dir,
         github_token=os.environ.get("GITHUB_TOKEN"),
         github_repo=os.environ.get("GITHUB_REPOSITORY") or GITHUB_REPO_DEFAULT,
+        # Same secret as the Vercel env's CRON_SECRET — unlocks the
+        # /api/contact test mode. Absent → the lead check reports a GAP.
+        cron_secret=os.environ.get("CRON_SECRET") or None,
     )
     exit_code = determine_exit_code(results)
     report = format_text_report(results)
