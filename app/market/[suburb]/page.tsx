@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated, suburbs } from '@/lib/suburbs'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
+import ReviewStrip from '@/components/ReviewStrip'
 
 const SITE = 'https://www.joshuafink.com'
 
@@ -576,6 +577,9 @@ export default async function MarketSuburbPage({ params }: Props) {
             </div>
           </div>
         )}
+
+        {/* Social proof ahead of the final ask */}
+        <ReviewStrip variant="light" limit={3} />
 
         {/* Bottom CTA */}
         <div className="text-white py-16 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#0A1628' }}>
