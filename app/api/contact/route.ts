@@ -18,6 +18,13 @@ const SHEET_WEBHOOK_SECRET = process.env.SHEET_WEBHOOK_SECRET || ''
 // Pushover — instant phone alert on each new lead. No-ops until both are set.
 const PUSHOVER_TOKEN = process.env.PUSHOVER_TOKEN || ''
 const PUSHOVER_USER = process.env.PUSHOVER_USER || ''
+// Healthcheck test mode — scripts/morning_healthcheck.py POSTs a tagged
+// SYSTEM TEST lead daily carrying this secret (the same CRON_SECRET the
+// /api/cron/* routes use) in an `x-healthcheck-secret` header. In that mode
+// the response includes the per-channel delivery results and the Pushover
+// goes out silently, so a channel dying pages the next morning instead of
+// rotting in a console.warn nobody reads (how SendGrid sat dead from June).
+const CRON_SECRET = process.env.CRON_SECRET || ''
 
 // ---------------------------------------------------------------------------
 // Delivery tracking
@@ -277,7 +284,7 @@ async function pushToSheet(lead: Record<string, string>): Promise<ChannelResult>
 // High priority (1) so it bypasses quiet hours. No-ops until creds are set.
 // ---------------------------------------------------------------------------
 
-async function sendPushover(lead: Record<string, string>): Promise<ChannelResult> {
+async function sendPushover(lead: Record<string, string>, silent = false): Promise<ChannelResult> {
   if (!PUSHOVER_TOKEN || !PUSHOVER_USER) {
     console.log('Pushover: skipping — PUSHOVER_TOKEN or PUSHOVER_USER not set')
     return skip('pushover')
@@ -299,8 +306,11 @@ async function sendPushover(lead: Record<string, string>): Promise<ChannelResult
     user: PUSHOVER_USER,
     title: `${lead.suspected_spam ? '⚠️ ' : '🏡 '}New Lead — ${lead.name || 'Unknown'} (${type})${source}`,
     message,
-    priority: '1', // high priority — bypasses quiet hours
-    sound: 'cashregister',
+    // Silent (-2, no alert at all) for healthcheck test leads — the API call
+    // still proves the channel works. High (1) for real leads — bypasses
+    // quiet hours.
+    priority: silent ? '-2' : '1',
+    sound: silent ? 'none' : 'cashregister',
   })
 
   // Tap the notification to call the lead directly.
@@ -501,6 +511,11 @@ export async function POST(req: NextRequest) {
       console.log(`Lead flagged as suspect (${verdict.reason}), delivering anyway: ${JSON.stringify(lead)}`)
     }
 
+    // Healthcheck test mode — see CRON_SECRET above. A wrong or absent header
+    // is simply a normal visitor lead; nothing leaks whether the secret matched.
+    const isHealthcheck =
+      CRON_SECRET !== '' && req.headers.get('x-healthcheck-secret') === CRON_SECRET
+
     // ---------- Fire all Joshua-facing channels in parallel ----------
     // Each of these resolves to a ChannelResult and never throws, so we can
     // inspect exactly what got through and react when nothing did.
@@ -508,7 +523,7 @@ export async function POST(req: NextRequest) {
       sendSlack(lead),
       forwardToJoshua(lead),
       pushToSheet(lead),
-      sendPushover(lead),
+      sendPushover(lead, isHealthcheck), // silent — a test lead must not buzz the phone
       sendAutoReply(lead), // no-ops when no email; courtesy to the lead, not a Joshua channel
     ])
 
@@ -574,7 +589,10 @@ export async function POST(req: NextRequest) {
         'CRITICAL: lead not delivered to any Joshua channel',
         JSON.stringify({ lead, failedChannels })
       )
-      const rescued = await sendEmergencyPushover(lead, failedChannels)
+      // A test lead must never fire the priority-2 siren — the healthcheck's
+      // alert email is the paging path for it, and the 502 below still carries
+      // the per-channel results.
+      const rescued = isHealthcheck ? false : await sendEmergencyPushover(lead, failedChannels)
 
       if (!rescued) {
         // Truly nowhere for the lead to land. Tell the visitor so they can call
@@ -583,6 +601,7 @@ export async function POST(req: NextRequest) {
           {
             error:
               'We had trouble delivering your message. Please call or text Joshua directly at 615-551-2727.',
+            ...(isHealthcheck ? { channels: joshuaChannels } : {}),
           },
           { status: 502 }
         )
@@ -599,7 +618,9 @@ export async function POST(req: NextRequest) {
       console.warn('Contact API: auto-reply to lead did not send')
     }
 
-    return NextResponse.json({ ok: true })
+    return NextResponse.json(
+      isHealthcheck ? { ok: true, channels: joshuaChannels } : { ok: true }
+    )
   } catch (err) {
     console.error('Contact API error:', err)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })

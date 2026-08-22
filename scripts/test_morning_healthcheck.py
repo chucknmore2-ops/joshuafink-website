@@ -544,6 +544,176 @@ def test_uptime_error_on_network():
 
 
 # ---------------------------------------------------------------------------
+# check_lead_pipeline — daily SYSTEM TEST lead through /api/contact
+# ---------------------------------------------------------------------------
+
+def _channel(channel, configured=True, ok=True, detail=None):
+    d = {"channel": channel, "configured": configured, "ok": ok}
+    if detail is not None:
+        d["detail"] = detail
+    return d
+
+
+def _contact_opener(payload, status=200, captured=None):
+    body = json.dumps(payload).encode()
+
+    def opener(req, timeout=None):
+        if captured is not None:
+            captured["req"] = req
+        return _FakeResponse(status, body)
+
+    return opener
+
+
+ALL_CHANNELS_OK = {"ok": True, "channels": [
+    _channel("slack"), _channel("joshua-email"), _channel("sheet"), _channel("pushover"),
+]}
+
+
+def test_lead_pipeline_pass_and_payload_shape():
+    """Green path — and pin the request contract: the secret header that
+    unlocks the route's test mode, plus the SYSTEM TEST / system-test tagging
+    that keeps the CRM sheet filterable and Josh's phone silent."""
+    captured: dict = {}
+    r = hc.check_lead_pipeline(
+        "https://x/api/contact", "s3cret",
+        opener=_contact_opener(ALL_CHANNELS_OK, captured=captured),
+    )
+    assert r.status == hc.STATUS_PASS
+    assert "all 4 configured" in r.detail
+    req = captured["req"]
+    assert req.get_header("X-healthcheck-secret") == "s3cret"
+    sent = json.loads(req.data.decode())
+    assert sent["lead_type"] == "system-test"
+    assert "SYSTEM TEST" in sent["name"]
+    # Classifier safety: a space in the name (random_name rule) and no token
+    # long enough to trip gibberish_body — a flagged test lead would arrive
+    # with a spurious ⚠️ on every channel.
+    assert " " in sent["name"]
+    assert max(len(t) for t in sent["body"].split()) < 25
+    assert "email" not in sent  # no auto-reply for a test lead
+
+
+def test_lead_pipeline_alerts_on_failed_channel():
+    """The SendGrid failure mode: a configured channel silently dead while
+    every other check stays green. Must page, naming the channel and why."""
+    payload = {"ok": True, "channels": [
+        _channel("slack", ok=False, detail="account_inactive"),
+        _channel("joshua-email"), _channel("sheet"), _channel("pushover"),
+    ]}
+    r = hc.check_lead_pipeline(
+        "https://x/api/contact", "s3cret", opener=_contact_opener(payload),
+    )
+    assert r.status == hc.STATUS_ERROR
+    assert r.is_alert
+    assert "slack(account_inactive)" in r.detail
+
+
+def test_lead_pipeline_unconfigured_channel_is_not_a_failure():
+    """configured:false is an expected no-op (creds not set), not a page —
+    but the channel is still named so silent shrinkage stays visible."""
+    payload = {"ok": True, "channels": [
+        _channel("slack", configured=False, ok=False),
+        _channel("joshua-email"), _channel("sheet"), _channel("pushover"),
+    ]}
+    r = hc.check_lead_pipeline(
+        "https://x/api/contact", "s3cret", opener=_contact_opener(payload),
+    )
+    assert r.status == hc.STATUS_PASS
+    assert "not configured: slack" in r.detail
+
+
+def test_lead_pipeline_alerts_on_502_with_channel_results():
+    """Total delivery failure: the route answers 502 in test mode but still
+    carries the per-channel results — judge by those, not just the status."""
+    payload = {"error": "delivery failed", "channels": [
+        _channel("slack", ok=False, detail="invalid_auth"),
+        _channel("joshua-email", ok=False, detail="403"),
+        _channel("sheet", ok=False, detail="HTTP 500"),
+        _channel("pushover", ok=False, detail="HTTP 400"),
+    ]}
+    r = hc.check_lead_pipeline(
+        "https://x/api/contact", "s3cret",
+        opener=_contact_opener(payload, status=502),
+    )
+    assert r.status == hc.STATUS_ERROR
+    assert "invalid_auth" in r.detail
+
+
+def test_lead_pipeline_gap_without_secret():
+    """No CRON_SECRET must never page — and must never POST a lead."""
+    def opener(req, timeout=None):
+        raise AssertionError("must not submit a lead without the secret")
+    r = hc.check_lead_pipeline("https://x/api/contact", None, opener=opener)
+    assert r.status == hc.STATUS_GAP
+    assert not r.is_alert
+
+
+def test_lead_pipeline_error_when_channels_missing_from_200():
+    """CRON_SECRET drift (GitHub secret != Vercel env) makes the route treat
+    the POST as a normal visitor lead and return a bare {ok:true}. That must
+    alert loudly — a quietly passing check that tests nothing is the exact
+    blindness this exists to remove."""
+    r = hc.check_lead_pipeline(
+        "https://x/api/contact", "s3cret", opener=_contact_opener({"ok": True}),
+    )
+    assert r.status == hc.STATUS_ERROR
+    assert "CRON_SECRET" in r.detail
+
+
+def test_lead_pipeline_error_on_http_failure():
+    r = hc.check_lead_pipeline(
+        "https://x/api/contact", "s3cret",
+        opener=_contact_opener({"error": "Server error"}, status=500),
+    )
+    assert r.status == hc.STATUS_ERROR
+    assert "HTTP 500" in r.detail
+
+
+def test_lead_pipeline_error_on_network_failure():
+    import urllib.error
+    attempts = {"n": 0}
+
+    def opener(req, timeout=None):
+        attempts["n"] += 1
+        raise urllib.error.URLError("nope")
+
+    with mock.patch.object(hc.time, "sleep", lambda s: None):
+        r = hc.check_lead_pipeline("https://x/api/contact", "s3cret", opener=opener)
+    assert r.status == hc.STATUS_ERROR
+    assert "unreachable" in r.detail
+    assert attempts["n"] == hc.HEALTHCHECK_RETRIES + 1
+
+
+def test_lead_pipeline_failure_has_remediation():
+    r = hc.CheckResult(
+        name="lead pipeline — /api/contact test lead",
+        status="error",
+        detail="test lead FAILED on configured channel(s): slack(account_inactive)",
+    )
+    tip = hc._remediation_for(r)
+    assert tip is not None
+    assert "SLACK_BOT_TOKEN" in tip
+    assert "Vercel" in tip
+
+
+def test_run_all_failed_lead_channel_triggers_exit_1(monkeypatch):
+    """A dead lead channel has to page the next morning — the whole point."""
+    latest = {(j.channel, j.job_name): _fake_latest(0.5) for j in hc.EXPECTED_JOBS}
+    _patch_dns_helpers(
+        monkeypatch,
+        healthcheck_status="pass",
+        git_status="pass",
+        latest_map=latest,
+        lead_status="error",
+    )
+    results = hc.run_all_checks(
+        dsn="dsn://", healthcheck_url="https://x/", repo_dir="/repo", now=NOW
+    )
+    assert hc.determine_exit_code(results) == 1
+
+
+# ---------------------------------------------------------------------------
 # check_workflow_last_run — did the scheduled Actions job actually succeed?
 # ---------------------------------------------------------------------------
 
@@ -737,7 +907,7 @@ def test_sync_prs_parses_response_larger_than_500kb():
 # Orchestration + exit codes
 # ---------------------------------------------------------------------------
 
-def _patch_dns_helpers(monkeypatch, *, healthcheck_status, git_status, latest_map=None, reach_status="pass", last_attempt_map=None, workflow_status="pass", blog_status="pass", sync_prs_status="pass"):
+def _patch_dns_helpers(monkeypatch, *, healthcheck_status, git_status, latest_map=None, reach_status="pass", last_attempt_map=None, workflow_status="pass", blog_status="pass", sync_prs_status="pass", lead_status="pass"):
     """Replace per-check functions with deterministic fakes."""
     monkeypatch.setattr(
         hc,
@@ -745,6 +915,15 @@ def _patch_dns_helpers(monkeypatch, *, healthcheck_status, git_status, latest_ma
         lambda url, opener=None: hc.CheckResult(
             name=f"site uptime — {url}",
             status=healthcheck_status,
+            detail="patched",
+        ),
+    )
+    monkeypatch.setattr(
+        hc,
+        "check_lead_pipeline",
+        lambda url, secret, opener=None: hc.CheckResult(
+            name="lead pipeline — /api/contact test lead",
+            status=lead_status,
             detail="patched",
         ),
     )
@@ -812,9 +991,9 @@ def test_run_all_all_green(monkeypatch):
         dsn="dsn://", healthcheck_url="https://x/", repo_dir="/repo", now=NOW
     )
     assert hc.determine_exit_code(results) == 0
-    # site uptime + listings git + blog cadence + open sync PRs + reach
-    # + monitored workflows + one check per expected pipeline
-    assert len(results) == 5 + len(hc.MONITORED_WORKFLOWS) + len(hc.EXPECTED_JOBS)
+    # site uptime + lead pipeline + listings git + blog cadence + open sync
+    # PRs + reach + monitored workflows + one check per expected pipeline
+    assert len(results) == 6 + len(hc.MONITORED_WORKFLOWS) + len(hc.EXPECTED_JOBS)
 
 
 def test_run_all_misconfig_when_no_dsn(monkeypatch):
@@ -1118,6 +1297,7 @@ def test_main_empty_healthcheck_url_env_falls_back_to_default(monkeypatch):
     monkeypatch.setenv("HEALTHCHECK_URL", "")  # the broken-empty case
     monkeypatch.delenv("DATABASE_URL", raising=False)
     monkeypatch.delenv("GITHUB_TOKEN", raising=False)  # keep the Actions API out of it
+    monkeypatch.delenv("CRON_SECRET", raising=False)  # never POST a real test lead from a unit test
 
     hc.main(["--no-email", "--repo-dir", "/repo"])
     assert captured["url"] == hc.HEALTHCHECK_URL_DEFAULT

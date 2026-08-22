@@ -17,6 +17,12 @@ name: Morning healthcheck
 #                         (NOT your real Gmail password — App Passwords
 #                         require 2FA on the Google account).
 #   ALERT_TO_EMAIL        Inbox to receive the alert (typically Chuck).
+#   CRON_SECRET           Same value as the Vercel env's CRON_SECRET (already
+#                         a repo secret — the monthly-market-update and
+#                         indexnow workflows use it). Unlocks the /api/contact
+#                         test mode so the daily SYSTEM TEST lead can verify
+#                         all four delivery channels. Without it that check
+#                         reports a GAP instead of alerting.
 #
 # Optional repository variables (Settings → Secrets and variables → Actions
 # → Variables tab):
@@ -87,6 +93,7 @@ jobs:
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           ALERT_TO_EMAIL: ${{ secrets.ALERT_TO_EMAIL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
           HEALTHCHECK_URL: ${{ vars.HEALTHCHECK_URL }}
           # Auto-provisioned — no secret to configure. Without it the workflow
           # run checks downgrade to a GAP instead of alerting.
