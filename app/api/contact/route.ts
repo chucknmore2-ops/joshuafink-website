@@ -277,6 +277,18 @@ async function pushToSheet(
       console.error('Google Sheet: non-OK response', res.status)
       return { channel: 'sheet', configured: true, ok: false, detail: `HTTP ${res.status}` }
     }
+    // Like Slack above, the Apps Script answers HTTP 200 for every outcome —
+    // its own failures arrive as {ok:false, error:...}, and a broken
+    // deployment serves a 200 "Authorization required" HTML page. Only a
+    // parseable {ok:true} body proves the row actually landed.
+    const data = await res.json().catch(() => null)
+    if (!data || data.ok !== true) {
+      const detail = data
+        ? String(data.error || 'script reported ok:false')
+        : 'non-JSON response (broken deployment?)'
+      console.error('Google Sheet: script did not confirm the row:', detail)
+      return { channel: 'sheet', configured: true, ok: false, detail }
+    }
     console.log(`Google Sheet: logged lead for ${lead.name || 'Unknown'}`)
     return { channel: 'sheet', configured: true, ok: true }
   } catch (err) {
