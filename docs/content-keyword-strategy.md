@@ -130,7 +130,7 @@ Refreshed keyword set for the next window. Same one-post-per-week cadence, same 
 
 | Wk | Target date | Working title | Primary keyword | Intent | Internal links |
 |---|---|---|---|---|---|
-| 13 | early Oct | **Buying a House in Middle Tennessee Before the End of the Year: What It Takes to Close by December 31** | close on a house before end of year | Buyer | /buy/franklin-tn, /buy/murfreesboro-tn, /buy/mount-juliet-tn |
+| 13 | ✅ (shipped Aug 24, ahead of target) | **Buying a House in Middle Tennessee Before the End of the Year: What It Takes to Close by December 31** | close on a house before end of year | Buyer | /buy/franklin-tn, /buy/murfreesboro-tn, /buy/mount-juliet-tn |
 | 14 | mid Oct | **Closing Costs for Buyers in Tennessee: What You Actually Pay at the Table** | closing costs for buyers in tennessee | Buyer/GEO | /buy/nashville-tn, /buy/smyrna-tn, blog: net sheet |
 | 15 | late Oct | **Rent vs. Buy in Nashville Going Into 2027** | rent vs buy nashville | Buyer/GEO | /buy/nashville-tn, /market/nashville-tn |
 | 16 | early Nov | **Selling a House Over the Holidays in Middle Tennessee: Fewer Lookers, Better Buyers** | selling a house during the holidays | Seller | /sell/brentwood-tn, /sell/franklin-tn, blog: fall pricing |
