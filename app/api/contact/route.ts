@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { classifyLead } from '@/lib/classify-lead'
-import { sendEmail, activeEmailProvider } from '@/lib/send-email'
+import { sendEmail, activeEmailProvider, fetchWithTimeout } from '@/lib/send-email'
 
 const SLACK_TOKEN = process.env.SLACK_BOT_TOKEN
 const SLACK_CHANNEL = 'C0APH84LFG8' // #joshpersonal
@@ -61,7 +61,7 @@ async function sendSlack(lead: Record<string, string>): Promise<ChannelResult> {
   const flag = lead.suspected_spam ? '⚠️ ' : ''
 
   try {
-    const res = await fetch('https://slack.com/api/chat.postMessage', {
+    const res = await fetchWithTimeout('https://slack.com/api/chat.postMessage', {
       method: 'POST',
       headers: { Authorization: `Bearer ${SLACK_TOKEN}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -267,7 +267,7 @@ async function pushToSheet(
   }
 
   try {
-    const res = await fetch(GOOGLE_SHEET_WEBHOOK_URL, {
+    const res = await fetchWithTimeout(GOOGLE_SHEET_WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
@@ -339,7 +339,7 @@ async function sendPushover(lead: Record<string, string>, silent = false): Promi
   }
 
   try {
-    const res = await fetch('https://api.pushover.net/1/messages.json', {
+    const res = await fetchWithTimeout('https://api.pushover.net/1/messages.json', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: params.toString(),
@@ -397,7 +397,7 @@ async function sendEmergencyPushover(
   }
 
   try {
-    const res = await fetch('https://api.pushover.net/1/messages.json', {
+    const res = await fetchWithTimeout('https://api.pushover.net/1/messages.json', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: params.toString(),
@@ -561,7 +561,7 @@ export async function POST(req: NextRequest) {
     const isSeller = ['sell', 'seller'].includes(leadType)
     const drip = isSeller ? 'seller-lead' : 'buyer-lead'
     bestEffort.push(
-      fetch(`${N8N_BASE}/${drip}`, {
+      fetchWithTimeout(`${N8N_BASE}/${drip}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(lead),
@@ -570,7 +570,7 @@ export async function POST(req: NextRequest) {
 
     if (isCashOffer) {
       bestEffort.push(
-        fetch(`${CASH_OFFER_BASE}/cash-offer`, {
+        fetchWithTimeout(`${CASH_OFFER_BASE}/cash-offer`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(lead),
@@ -580,7 +580,7 @@ export async function POST(req: NextRequest) {
 
     if (isBuyerLead) {
       bestEffort.push(
-        fetch(`${BUYER_LEAD_WEBHOOK_BASE}/buyer-lead`, {
+        fetchWithTimeout(`${BUYER_LEAD_WEBHOOK_BASE}/buyer-lead`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

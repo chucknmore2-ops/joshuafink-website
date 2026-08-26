@@ -20,6 +20,9 @@ import { NextRequest } from 'next/server'
 // whether it succeeded decides the whole response (200 vs 502).
 process.env.GOOGLE_SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/test-deployment/exec'
 process.env.CRON_SECRET = 'test-cron-secret'
+// Keep the per-channel fetch timeout short so the hung-channel test below
+// finishes in milliseconds instead of the production ~6s.
+process.env.LEAD_CHANNEL_TIMEOUT_MS = '250'
 delete process.env.SHEET_WEBHOOK_SECRET
 delete process.env.SLACK_BOT_TOKEN
 delete process.env.PUSHOVER_TOKEN
@@ -89,4 +92,23 @@ test('a 200 {ok:true} still counts as delivered', async () => {
   const { status, sheet } = await submitLead()
   assert.equal(sheet.ok, true)
   assert.equal(status, 200)
+})
+
+test('a hung sheet call is aborted and reported as a failed channel, not a hang', async () => {
+  // The sheet fetch never resolves on its own — like the real fetch, it only
+  // rejects when the route's AbortController fires. Without the timeout this
+  // submit would hang until Vercel's hard cutoff.
+  globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    if (String(input).includes('script.google.com')) {
+      return new Promise<Response>((_, reject) => {
+        init?.signal?.addEventListener('abort', () => reject(init.signal?.reason))
+      })
+    }
+    return new Response('{}', { status: 200 })
+  }) as typeof fetch
+  const { status, sheet } = await submitLead()
+  assert.equal(sheet.configured, true)
+  assert.equal(sheet.ok, false)
+  assert.match(sheet.detail, /timeout/)
+  assert.equal(status, 502)
 })
