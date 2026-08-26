@@ -141,6 +141,18 @@ function formatActivitySection(
     .slice(0, 5)
     .map((r) => `- **${r.channel}/${r.job_name}** — ${r.error_message}`)
 
+  // Captions are captured at post time (message_preview, first ~200-280
+  // chars), but this section never showed them — so Agent 02 could audit
+  // volume and errors while copy quality (TREC phrasing, brand voice) stayed
+  // invisible. Newlines flattened so each caption stays one list item.
+  const captions = inWindow
+    .filter((r) => r.status === 'posted' && r.message_preview)
+    .slice(0, 12)
+    .map(
+      (r) =>
+        `- **${r.channel}/${r.job_name}** — "${r.message_preview!.replace(/\s+/g, ' ').trim()}"`,
+    )
+
   const channelLines = Object.entries(byChannel)
     .map(
       ([ch, c]) =>
@@ -164,6 +176,10 @@ function formatActivitySection(
     '',
     errors.length > 0 ? '**Errors worth reviewing:**' : '',
     errors.join('\n'),
+    captions.length > 0
+      ? '\n**Caption previews of this week\'s posted content (first ~200 chars each):**'
+      : '',
+    captions.join('\n'),
   ]
     .filter(Boolean)
     .join('\n')

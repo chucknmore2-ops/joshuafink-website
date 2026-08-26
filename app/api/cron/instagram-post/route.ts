@@ -6,6 +6,9 @@ import { logPost } from '@/lib/admin-db'
 import { withUtm } from '@/lib/utm'
 
 export const dynamic = 'force-dynamic'
+// Room for the container-readiness poll below (up to ~30s) — the default
+// function cap is 10s on Hobby.
+export const maxDuration = 60
 
 // Instagram auto-poster for Joshua Fink Group.
 //
@@ -227,6 +230,34 @@ export async function GET(request: Request) {
       })
       return NextResponse.json(
         { error: 'instagram container returned no id' },
+        { status: 502 },
+      )
+    }
+
+    // Meta processes the image asynchronously after the container is created.
+    // Publishing before status_code=FINISHED is what threw the 400 "Media ID
+    // is not available" (OAuthException code 9007) failures, so poll the
+    // container until it's ready before calling media_publish.
+    let statusCode = 'IN_PROGRESS'
+    for (let attempt = 0; attempt < 10; attempt++) {
+      const statusRes = await fetch(
+        `${GRAPH_API}/${creationId}?fields=status_code&access_token=${accessToken}`,
+      )
+      if (statusRes.ok) {
+        const statusData = (await statusRes.json()) as { status_code?: string }
+        statusCode = statusData.status_code ?? 'IN_PROGRESS'
+      }
+      if (statusCode === 'FINISHED' || statusCode === 'ERROR' || statusCode === 'EXPIRED') {
+        break
+      }
+      await new Promise((resolve) => setTimeout(resolve, 3000))
+    }
+    if (statusCode !== 'FINISHED') {
+      await logIg('failed', payload, {
+        errorMessage: `container ${creationId} not ready (status_code ${statusCode}) — publish aborted`,
+      })
+      return NextResponse.json(
+        { error: 'instagram container not ready', creationId, statusCode },
         { status: 502 },
       )
     }

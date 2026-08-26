@@ -91,6 +91,18 @@ export async function runListingSpotlight(): Promise<void> {
 
   log.info(`${eligible.length} listings eligible (not on cooldown)`);
   if (eligible.length === 0) {
+    // Without this row a quiet run (everything on cooldown / under contract)
+    // and a cron that never fired look identical in /admin. payload_kind
+    // "none" keeps it out of the per-listing rotation view.
+    await logPost({
+      channel: CHANNEL,
+      jobName: JOB_NAME,
+      payloadKind: "none",
+      refKey: "no-eligible-listings",
+      messagePreview: "Ran — nothing to post today (no eligible listings off cooldown)",
+      status: "dry_run",
+      dryRun: env.dryRun,
+    });
     log.info("Nothing to post — exiting clean.");
     return;
   }
