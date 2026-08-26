@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-08-25T08:46:34.919Z
+// AUTO-GENERATED — Last synced: 2026-08-26T08:48:35.633Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -21,7 +21,7 @@ export interface Listing {
 
 // Mirrors the header timestamp so server components can compute sync staleness
 // without parsing comments. Updated by scripts/fetch-images.mjs each sync.
-export const listingsSyncedAt = "2026-08-25T08:46:34.919Z";
+export const listingsSyncedAt = "2026-08-26T08:48:35.633Z";
 
 export const listings: Listing[] = [
   {
@@ -51,7 +51,7 @@ export const listings: Listing[] = [
   {
     address: "4127 Edwards Ave",
     city: "Nashville, TN 37216 | MLS #3319964",
-    price: 429900,
+    price: 424500,
     beds: 3,
     baths: 1,
     sqft: 1223,
@@ -73,6 +73,18 @@ export const listings: Listing[] = [
     lastVerified: listingsSyncedAt,
   },
   {
+    address: "3814 Plantation Dr",
+    city: "Hermitage, TN 37076 | MLS #3319960",
+    price: 374900,
+    beds: 3,
+    baths: 1,
+    sqft: 1325,
+    status: "Active",
+    compassUrl: "https://www.compass.com/homedetails/3814-Plantation-Dr-Hermitage-TN-37076/TFS3S_pid/",
+    imageUrl: "https://www.compass.com/m/6639cc5243226d377992b3c778d4794a2f72457c3b18b67263cd98c6a21838fa/2048x1536.webp",
+    lastVerified: listingsSyncedAt,
+  },
+  {
     address: "870 Reeves Rd",
     city: "Antioch, TN 37013",
     price: 349900,
@@ -86,12 +98,12 @@ export const listings: Listing[] = [
   },
   {
     address: "107 Overlook Trail",
-    city: "Goodlettsville, TN 37072 | MLS #3297936",
+    city: "Goodlettsville, TN 37072",
     price: 339900,
     beds: 3,
     baths: 2,
     sqft: 1068,
-    status: "Active",
+    status: "Active Under Contract",
     compassUrl: "https://www.compass.com/homedetails/107-Overlook-Trail-Goodlettsville-TN-37072/S1YDH_pid/",
     imageUrl: "https://www.compass.com/m/8985df27c4ffe884adc4d99e9b53e58edb750887ca26b1f7b5e7df7c1f58a106/2048x1536.webp",
     lastVerified: listingsSyncedAt,
@@ -99,7 +111,7 @@ export const listings: Listing[] = [
   {
     address: "4874 Sparta Pike",
     city: "Watertown, TN 37184 | MLS #3319962",
-    price: 339900,
+    price: 324900,
     beds: 3,
     baths: 1,
     sqft: 1248,
