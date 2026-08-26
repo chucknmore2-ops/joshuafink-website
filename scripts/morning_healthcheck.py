@@ -202,8 +202,10 @@ HEALTHCHECK_RETRIES = 2
 
 # Live test lead through the real lead route (see check_lead_pipeline). The
 # generous timeout is because the route awaits Slack + email + sheet +
-# Pushover before answering.
-CONTACT_URL_DEFAULT = "https://joshuafink.com/api/contact"
+# Pushover before answering. Must be the www host: the apex 307-redirects
+# to www (Vercel domain config), and urllib refuses to follow a redirect
+# on a POST with a body — the apex URL fails with HTTP 307 'Redirecting...'.
+CONTACT_URL_DEFAULT = "https://www.joshuafink.com/api/contact"
 CONTACT_TIMEOUT_S = 30
 
 DB_CONNECT_TIMEOUT_S = 10
