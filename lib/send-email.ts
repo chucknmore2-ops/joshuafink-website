@@ -55,6 +55,27 @@ export interface EmailResult {
 // the real Microsoft 365 inbox.
 export const FROM_EMAIL = process.env.EMAIL_FROM || 'leads@send.joshuafink.com'
 
+// Abort a provider call after a few seconds so one hung service degrades into
+// a normal failed-channel result instead of stalling the whole submit until
+// Vercel's hard cutoff (which would skip the emergency fallback and hand the
+// visitor a raw failure). Modeled on probe() in cron/refresh-listings.
+// Overridable so tests don't have to wait out the real timeout.
+const FETCH_TIMEOUT_MS = Number(process.env.LEAD_CHANNEL_TIMEOUT_MS || '') || 6_000
+
+/** fetch() that aborts after a timeout; a timed-out call throws Error('timeout'). */
+export async function fetchWithTimeout(url: string, init: RequestInit): Promise<Response> {
+  const ctrl = new AbortController()
+  const t = setTimeout(() => ctrl.abort(), FETCH_TIMEOUT_MS)
+  try {
+    return await fetch(url, { ...init, signal: ctrl.signal })
+  } catch (err) {
+    if (ctrl.signal.aborted) throw new Error('timeout')
+    throw err
+  } finally {
+    clearTimeout(t)
+  }
+}
+
 /** Which provider would handle a send right now. 'none' means email is off. */
 export function activeEmailProvider(): EmailProvider {
   if (process.env.RESEND_API_KEY) return 'resend'
@@ -63,7 +84,7 @@ export function activeEmailProvider(): EmailProvider {
 }
 
 async function sendViaResend(msg: OutboundEmail): Promise<EmailResult> {
-  const res = await fetch('https://api.resend.com/emails', {
+  const res = await fetchWithTimeout('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
@@ -85,7 +106,7 @@ async function sendViaResend(msg: OutboundEmail): Promise<EmailResult> {
 }
 
 async function sendViaSendgrid(msg: OutboundEmail): Promise<EmailResult> {
-  const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
+  const res = await fetchWithTimeout('https://api.sendgrid.com/v3/mail/send', {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${process.env.SENDGRID_API_KEY}`,
