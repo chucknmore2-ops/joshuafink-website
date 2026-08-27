@@ -6,7 +6,7 @@ import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrustBadges from '@/components/TrustBadges'
 import ReviewStrip from '@/components/ReviewStrip'
 import TrackedTelLink from '@/components/TrackedTelLink'
-import { activeListingSlugs, getListingBySlug } from '@/lib/listing-detail'
+import { activeListingSlugs, getListingBySlug, getTourVideoId } from '@/lib/listing-detail'
 import { buildListingSchema } from '@/lib/listing-schema'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 import { getSuburb, getSuburbSlugForListing } from '@/lib/suburbs'
@@ -94,7 +94,8 @@ export default async function ListingDetailPage({ params }: Props) {
   const suburbSlug = getSuburbSlugForListing(listing.city)
   const suburbName = suburbSlug ? getSuburb(suburbSlug)?.name : undefined
 
-  const listingLd = buildListingSchema(listing, url)
+  const tourVideoId = getTourVideoId(slug)
+  const listingLd = buildListingSchema(listing, url, tourVideoId)
   const breadcrumb = buildBreadcrumbSchema([
     { name: 'Home', href: '/' },
     { name: 'Listings', href: '/listings' },
@@ -229,6 +230,21 @@ export default async function ListingDetailPage({ params }: Props) {
             {listing.status}
           </span>
         </div>
+
+        {/* Virtual tour — hand-mapped per listing in lib/listing-detail.ts (tourVideos) */}
+        {tourVideoId && (
+          <div className="mt-6 aspect-video overflow-hidden rounded-2xl bg-neutral-100">
+            <iframe
+              src={`https://www.youtube-nocookie.com/embed/${tourVideoId}`}
+              title={`Virtual tour of ${listing.address}, ${city}`}
+              className="w-full h-full"
+              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="strict-origin-when-cross-origin"
+            />
+          </div>
+        )}
 
         {/* Trust signals — credentials and rating in view before the lead form */}
         <div className="mt-6">

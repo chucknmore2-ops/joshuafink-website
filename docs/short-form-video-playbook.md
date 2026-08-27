@@ -6,12 +6,12 @@
 
 ---
 
-## ⚠️ STEP 0 — set up the RIGHT channel first
+## ⚠️ STEP 0 — rebrand the existing channel first
 
-**The existing `youtube.com/channel/UCc6j1NWgJeb00pT5xsenz3g` is NOT Josh's** — it belongs to a *different* Joshua Fink, a real-estate agent in **Reno/Sparks, Nevada** (every video is a NV listing: Reno, Sparks, Dayton, Carson City, Gardnerville). **Do not use, claim, or link the site to it** — that would create brand confusion between the two agents.
+**`youtube.com/channel/UCc6j1NWgJeb00pT5xsenz3g` IS Josh's channel** — it's the Joshua Fink Group page from before his move to Tennessee, which is why the back catalog is Nevada listings (Reno, Sparks, Dayton, Carson City, Gardnerville). An earlier version of this doc wrongly attributed it to a different Joshua Fink; Josh confirmed ownership 2026-08-26. **Use this channel — do not create a new one** (it keeps the existing history and subscribers, and the site's `sameAs` structured data now links to it).
 
-1. **Create a new YouTube channel:** "Joshua Fink Group | Middle Tennessee Real Estate." Grab the handle `@JoshuaFinkGroup` if free.
-2. Channel art + "About" → link to `https://www.joshuafink.com`, canonical NAP (Compass, Brentwood, 615-551-2727), service area = "Nashville & Middle Tennessee." State the market clearly so Google/AI don't merge you with the NV Joshua Fink.
+1. **Rebrand the existing channel** to "Joshua Fink Group | Middle Tennessee Real Estate." Grab the handle `@JoshuaFinkGroup` if free.
+2. Channel art + "About" → link to `https://www.joshuafink.com`, canonical NAP (Compass, Brentwood, 615-551-2727), service area = "Nashville & Middle Tennessee." State the market clearly so viewers of the older NV videos know Josh now serves Middle TN.
 3. Post every clip natively to **IG Reels, Facebook, and TikTok** too (same 9:16 file) — one film session, four platforms.
 
 ---
@@ -58,7 +58,7 @@ Once there are real videos, this repo can:
 - Add a reusable **`VideoEmbed` component + `VideoObject` JSON-LD** so each embedded Short is eligible for Google **video rich results / carousels** and gets pulled by AI answer engines. Embedding on the matching page also lifts **dwell time** (a ranking signal).
 - Optionally add a **`/videos` hub page** once there are ~5+ videos.
 
-*Not built yet on purpose — empty video scaffolding would be dead code. Send the first YouTube video IDs (and which page each maps to) and it's a quick PR to embed them with schema.*
+*Listing virtual tours are wired: add each tour's YouTube video ID to `tourVideos` in `lib/listing-detail.ts` (keyed by listing slug) and the listing page embeds the player + emits `VideoObject` schema automatically. For other pages (compare, neighborhoods, market), send the video IDs and it's a quick PR to embed them with schema.*
 
 ---
 

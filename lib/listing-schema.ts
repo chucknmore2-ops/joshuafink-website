@@ -81,7 +81,7 @@ function availabilityFor(status: string): string {
   return 'https://schema.org/InStock'
 }
 
-export function buildListingSchema(listing: Listing, url: string) {
+export function buildListingSchema(listing: Listing, url: string, tourVideoId?: string) {
   const residence: Record<string, unknown> = {
     '@type': 'SingleFamilyResidence',
     name: listing.address,
@@ -117,6 +117,21 @@ export function buildListingSchema(listing: Listing, url: string) {
     // Reference the canonical agent entity defined in app/layout.tsx (#agent)
     // so each listing feeds authority back into Joshua's knowledge graph.
     agent: { '@id': 'https://www.joshuafink.com/#agent' },
+    // Virtual-tour walkthrough (lib/listing-detail.ts → tourVideos) as a
+    // VideoObject so the tour is eligible for Google video results.
+    ...(tourVideoId
+      ? {
+          video: {
+            '@type': 'VideoObject',
+            name: `${listing.address} — virtual tour`,
+            description: `Video walkthrough of ${listing.address} with Joshua Fink, Compass Real Estate.`,
+            embedUrl: `https://www.youtube.com/embed/${tourVideoId}`,
+            contentUrl: `https://www.youtube.com/watch?v=${tourVideoId}`,
+            thumbnailUrl: `https://i.ytimg.com/vi/${tourVideoId}/hqdefault.jpg`,
+            ...(datePosted ? { uploadDate: datePosted } : {}),
+          },
+        }
+      : {}),
     about: residence,
   }
 }
