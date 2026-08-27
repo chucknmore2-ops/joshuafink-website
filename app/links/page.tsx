@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import TrackedTelLink from '@/components/TrackedTelLink'
 
 export const metadata: Metadata = {
   alternates: { canonical: 'https://www.joshuafink.com/links' },
@@ -120,9 +121,9 @@ export default function LinksPage() {
 
         {/* Contact strip */}
         <div className="mt-8 pt-6 border-t flex flex-col items-center gap-2" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
-          <a href="tel:6155512727" className="text-sm font-semibold text-white hover:underline">
+          <TrackedTelLink href="tel:6155512727" className="text-sm font-semibold text-white hover:underline" data-cta="links-call">
             📞 615-551-2727
-          </a>
+          </TrackedTelLink>
           <a href="mailto:joshua@joshuafink.com" className="text-xs hover:underline" style={{ color: '#A0A0A0' }}>
             joshua@joshuafink.com
           </a>

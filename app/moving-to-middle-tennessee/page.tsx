@@ -363,12 +363,13 @@ export default function MovingToMiddleTennesseePage() {
               >
                 Call 615-551-2727
               </TrackedTelLink>
-              <a
+              <TrackedTelLink
                 href="sms:+16155512727"
                 className="inline-block border border-white text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-white hover:text-black transition-colors text-center"
+                data-cta="moving-hero-text"
               >
                 Text 615-551-2727
-              </a>
+              </TrackedTelLink>
             </div>
           </div>
 

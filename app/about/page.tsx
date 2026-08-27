@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import TrackedTelLink from '@/components/TrackedTelLink'
 import { reviews, reviewStats, reviewDateToIso } from '@/lib/reviews'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 import GoogleReviewCTA from '@/components/GoogleReviewCTA'
@@ -170,13 +171,14 @@ export default function AboutPage() {
                 Get In Touch
               </p>
               <div className="space-y-3 text-sm">
-                <a
+                <TrackedTelLink
                   href="tel:6155512727"
                   className="flex items-center gap-3 text-black hover:underline font-medium"
+                  data-cta="about-contact-call"
                 >
                   <span className="text-[#A0A0A0]">📞</span>
                   615-551-2727
-                </a>
+                </TrackedTelLink>
                 <a
                   href="mailto:joshua@joshuafink.com"
                   className="flex items-center gap-3 text-black hover:underline font-medium"

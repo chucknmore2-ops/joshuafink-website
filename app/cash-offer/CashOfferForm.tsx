@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, FormEvent } from 'react'
+import TrackedTelLink from '@/components/TrackedTelLink'
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error'
 
@@ -77,9 +78,9 @@ export default function CashOfferForm({ source = 'cash-offer', cityName }: CashO
         <h2 className="text-2xl font-black text-black mb-3">We Got It!</h2>
         <p className="text-neutral-500 text-sm leading-relaxed mb-6">
           Joshua will call you within 24 hours with your cash offer. For faster response, call him directly at{' '}
-          <a href="tel:6155512727" className="text-black font-semibold underline">
+          <TrackedTelLink href="tel:6155512727" className="text-black font-semibold underline" data-cta="cash-offer-form-success-call">
             615-551-2727
-          </a>
+          </TrackedTelLink>
           .
         </p>
         <button

@@ -135,7 +135,7 @@ export default function BuyerGuidePage() {
                       <>
                         Joshua will email you his off-market list and a personal reply — usually
                         same-day. For anything urgent, call{' '}
-                        <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                        <TrackedTelLink href="tel:6155512727" className="text-black font-semibold underline" data-cta="buyer-guide-success-call">615-551-2727</TrackedTelLink>.
                       </>
                     }
                     resetLabel="Submit Another"

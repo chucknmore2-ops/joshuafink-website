@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import ListingCard from '@/components/ListingCard'
+import TrackedTelLink from '@/components/TrackedTelLink'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import { listings, listingsSyncedAt } from '@/lib/listings'
 import { soldListings } from '@/lib/sold-listings'
@@ -208,7 +209,7 @@ export default function ListingsPage() {
             <p className="text-sm leading-relaxed">
               <span className="font-semibold">Re-verifying availability.</span>{' '}
               Our Compass sync last refreshed {syncAgeDays} days ago, so a home below may have changed status. For the most current inventory — including off-market and Coming Soon homes — text Joshua at{' '}
-              <a href="tel:6155512727" className="font-semibold underline">615-551-2727</a>.
+              <TrackedTelLink href="tel:6155512727" className="font-semibold underline" data-cta="listings-sync-notice-call">615-551-2727</TrackedTelLink>.
             </p>
           </div>
         )}
@@ -236,7 +237,7 @@ export default function ListingsPage() {
               successMessage={
                 <>
                   Joshua will reach out same-day with matching homes. For anything urgent, call{' '}
-                  <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                  <TrackedTelLink href="tel:6155512727" className="text-black font-semibold underline" data-cta="listings-form-success-call">615-551-2727</TrackedTelLink>.
                 </>
               }
               resetLabel="Submit Another"
@@ -281,12 +282,13 @@ export default function ListingsPage() {
                   className="w-full sm:w-auto inline-flex items-center justify-center bg-black text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-[#222] transition-colors">
                   Send to Joshua →
                 </button>
-                <a
+                <TrackedTelLink
                   href="tel:6155512727"
                   className="w-full sm:w-auto inline-flex items-center justify-center border-2 border-black text-black text-sm font-bold px-8 py-4 tracking-wide hover:bg-black hover:text-white transition-colors"
+                  data-cta="listings-form-inline-call"
                 >
                   Or Call 615-551-2727
-                </a>
+                </TrackedTelLink>
               </div>
             </SuburbLeadForm>
           </div>

@@ -466,13 +466,14 @@ export default async function CashOfferCityPage({ params }: Props) {
           No pressure. No obligation. Just a fair offer and a straight answer within 24 hours.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <a
+          <TrackedTelLink
             href="tel:6155512727"
             className="inline-flex items-center justify-center bg-black text-white text-base font-black px-10 py-4 rounded-full tracking-wide transition-all duration-200 hover:bg-neutral-800 hover:shadow-lg active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
             aria-label="Call Joshua at 615-551-2727"
+            data-cta="cash-offer-city-final-cta-call"
           >
             <span aria-hidden="true">📞</span>&nbsp;Call 615-551-2727
-          </a>
+          </TrackedTelLink>
           <a
             href="#cash-offer-form"
             className="inline-flex items-center justify-center border-2 border-black text-black text-base font-black px-10 py-4 rounded-full tracking-wide transition-all duration-200 hover:bg-black hover:text-white active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"

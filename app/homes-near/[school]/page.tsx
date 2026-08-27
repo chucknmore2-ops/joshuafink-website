@@ -155,7 +155,7 @@ export default async function HomesNearSchoolPage({ params }: Props) {
                 successMessage={
                   <>
                     Joshua will text you shortly with {s.name}-zoned listings. Or call{' '}
-                    <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                    <TrackedTelLink href="tel:6155512727" className="text-black font-semibold underline" data-cta="homes-near-hero-success-call">615-551-2727</TrackedTelLink>.
                   </>
                 }
                 resetLabel="Send another"

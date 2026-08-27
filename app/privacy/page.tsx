@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import TrackedTelLink from '@/components/TrackedTelLink'
 
 export const metadata: Metadata = {
   alternates: { canonical: 'https://www.joshuafink.com/privacy' },
@@ -44,7 +45,7 @@ export default function PrivacyPage() {
           If you have questions about this privacy policy, contact us at:{' '}
           <a href="mailto:joshua@joshuafink.com" className="text-black underline">joshua@joshuafink.com</a>
           {' '}or call{' '}
-          <a href="tel:6155512727" className="text-black underline">615-551-2727</a>.
+          <TrackedTelLink href="tel:6155512727" className="text-black underline" data-cta="privacy-call">615-551-2727</TrackedTelLink>.
         </p>
 
         <h2 className="text-xl font-black text-black mt-8 mb-4">User Data Deletion</h2>

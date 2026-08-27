@@ -286,7 +286,7 @@ export default async function NeighborhoodPage({ params }: Props) {
                 successMessage={
                   <>
                     Joshua will text you shortly with {n.name} listings. Or call{' '}
-                    <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                    <TrackedTelLink href="tel:6155512727" className="text-black font-semibold underline" data-cta="neighborhood-hero-success-call">615-551-2727</TrackedTelLink>.
                   </>
                 }
                 resetLabel="Send another"
@@ -620,9 +620,9 @@ export default async function NeighborhoodPage({ params }: Props) {
                 >
                   615-551-2727
                 </TrackedTelLink>
-                <a href="sms:+16155512727" className="block text-sm font-semibold text-black hover:underline mb-1">
+                <TrackedTelLink href="sms:+16155512727" className="block text-sm font-semibold text-black hover:underline mb-1" data-cta="neighborhood-panel-text">
                   Text 615-551-2727
-                </a>
+                </TrackedTelLink>
                 <a href="mailto:joshua@joshuafink.com" className="block text-sm text-[#444] hover:underline">
                   joshua@joshuafink.com
                 </a>
@@ -842,12 +842,13 @@ export default async function NeighborhoodPage({ params }: Props) {
               >
                 Call 615-551-2727
               </TrackedTelLink>
-              <a
+              <TrackedTelLink
                 href="sms:+16155512727"
                 className="inline-block border border-white text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-white hover:text-black transition-colors text-center"
+                data-cta="neighborhood-final-cta-text"
               >
                 Text 615-551-2727
-              </a>
+              </TrackedTelLink>
             </div>
           </div>
         </div>
