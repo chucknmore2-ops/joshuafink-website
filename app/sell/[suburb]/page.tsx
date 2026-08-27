@@ -66,6 +66,17 @@ export default async function SuburbPage({ params }: Props) {
     '@context': 'https://schema.org',
     '@graph': [
       {
+        // Freshness signal for crawlers/AI answer engines — mirrors the
+        // WebPage node added to /buy/[suburb]; same verified suburb data
+        // (and its update date) backs both templates.
+        '@type': 'WebPage',
+        '@id': `https://www.joshuafink.com/sell/${slug}#webpage`,
+        url: `https://www.joshuafink.com/sell/${slug}`,
+        name: `Sell My Home in ${suburb.displayName} | Free Market Valuation`,
+        dateModified: suburb.dataUpdatedAt ?? marketStatsLastUpdated,
+        about: { '@id': `https://www.joshuafink.com/sell/${slug}#place` },
+      },
+      {
         '@type': 'RealEstateAgent',
         '@id': 'https://www.joshuafink.com/#agent',
         areaServed: {
