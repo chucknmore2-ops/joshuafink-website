@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, FormEvent } from 'react'
 import TrackedTelLink from '@/components/TrackedTelLink'
+import { captureAttribution, getAttribution } from '@/lib/attribution'
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error'
 
@@ -21,13 +22,22 @@ export default function ContactForm() {
     el.scrollIntoView({ block: 'center' })
   }, [state])
 
+  // Stash landing URL / utm params / referrer before the visitor can navigate
+  // away, so the submitted lead can say which channel brought them.
+  useEffect(() => {
+    captureAttribution()
+  }, [])
+
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setState('submitting')
     setErrorMsg('')
 
     const form = e.currentTarget
-    const data = Object.fromEntries(new FormData(form).entries())
+    const data: Record<string, FormDataEntryValue | string> = {
+      ...Object.fromEntries(new FormData(form).entries()),
+      ...getAttribution(),
+    }
 
     try {
       const res = await fetch('/api/contact', {
