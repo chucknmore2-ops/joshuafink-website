@@ -201,6 +201,7 @@ function buildJsonLd(post: BlogPost) {
         'https://www.facebook.com/profile.php?id=100064076493905',
         'https://www.instagram.com/joshuafinkgroup',
         'https://x.com/JoshuaFinkGroup',
+        'https://www.youtube.com/channel/UCc6j1NWgJeb00pT5xsenz3g',
       ],
     },
     publisher: {

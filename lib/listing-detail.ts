@@ -48,3 +48,20 @@ export function hasListingDetail(listing: Pick<Listing, 'address' | 'city'>): bo
 export function getListingBySlug(slug: string): Listing | undefined {
   return listings.find((l) => listingSlug(l) === slug)
 }
+
+/**
+ * Hand-maintained map of listing slug → YouTube video ID for virtual-tour
+ * walkthroughs on the Joshua Fink Group channel
+ * (youtube.com/channel/UCc6j1NWgJeb00pT5xsenz3g). Lives here rather than in
+ * lib/listings.ts so the Compass re-sync that regenerates that file can't
+ * wipe it. After uploading a tour, add a line like:
+ *   '1901-new-bristol-ln-brentwood': 'dQw4w9WgXcQ',
+ * and the listing page embeds the player + emits VideoObject schema.
+ * Entries for slugs no longer active are simply never rendered.
+ */
+export const tourVideos: Record<string, string> = {}
+
+/** YouTube video ID of a listing's virtual tour, if one has been uploaded. */
+export function getTourVideoId(slug: string): string | undefined {
+  return tourVideos[slug]
+}
