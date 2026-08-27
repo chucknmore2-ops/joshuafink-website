@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, FormEvent, ReactNode } from 'react'
+import { captureAttribution, getAttribution } from '@/lib/attribution'
 
 type Props = {
   children: ReactNode
@@ -26,6 +27,12 @@ export default function SuburbLeadForm({ children, successTitle, successMessage,
     el.scrollIntoView({ block: 'center' })
   }, [state])
 
+  // Stash landing URL / utm params / referrer before the visitor can navigate
+  // away, so the submitted lead can say which channel brought them.
+  useEffect(() => {
+    captureAttribution()
+  }, [])
+
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (state === 'submitting') return
@@ -33,7 +40,10 @@ export default function SuburbLeadForm({ children, successTitle, successMessage,
     setErrorMsg('')
 
     const form = e.currentTarget
-    const data = Object.fromEntries(new FormData(form).entries())
+    const data: Record<string, FormDataEntryValue | string> = {
+      ...Object.fromEntries(new FormData(form).entries()),
+      ...getAttribution(),
+    }
 
     try {
       const res = await fetch('/api/contact', {
