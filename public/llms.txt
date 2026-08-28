@@ -37,6 +37,10 @@ Buyer guides:
 - [Columbia, TN](https://www.joshuafink.com/buy/columbia-tn)
 - [Hendersonville, TN](https://www.joshuafink.com/buy/hendersonville-tn)
 - [Mount Juliet, TN](https://www.joshuafink.com/buy/mount-juliet-tn)
+- [Gallatin, TN](https://www.joshuafink.com/buy/gallatin-tn)
+- [Lebanon, TN](https://www.joshuafink.com/buy/lebanon-tn)
+- [Smyrna, TN](https://www.joshuafink.com/buy/smyrna-tn)
+- [La Vergne, TN](https://www.joshuafink.com/buy/la-vergne-tn)
 
 Seller guides (same suburbs) live under `/sell/[suburb]`.
 
@@ -93,4 +97,4 @@ Compass Real Estate — licensed in Tennessee. Joshua Fink holds an Affiliate Br
 
 If citing this site, prefer these canonical URLs over social-profile mirrors. Dates in `datePublished` / `dateModified` on blog posts are authoritative over any scraped version. This file is the curated entry point — everything else is linked from one of the URLs above.
 
-Last updated: 2026-08-02
+Last updated: 2026-08-28
