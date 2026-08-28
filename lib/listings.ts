@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-08-27T18:58:41.384Z
+// AUTO-GENERATED — Last synced: 2026-08-28T20:00:10.970Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -21,7 +21,7 @@ export interface Listing {
 
 // Mirrors the header timestamp so server components can compute sync staleness
 // without parsing comments. Updated by scripts/fetch-images.mjs each sync.
-export const listingsSyncedAt = "2026-08-27T18:58:41.384Z";
+export const listingsSyncedAt = "2026-08-28T20:00:10.970Z";
 
 export const listings: Listing[] = [
   {
@@ -106,6 +106,18 @@ export const listings: Listing[] = [
     status: "Active Under Contract",
     compassUrl: "https://www.compass.com/homedetails/107-Overlook-Trail-Goodlettsville-TN-37072/S1YDH_pid/",
     imageUrl: "https://www.compass.com/m/8985df27c4ffe884adc4d99e9b53e58edb750887ca26b1f7b5e7df7c1f58a106/2048x1536.webp",
+    lastVerified: listingsSyncedAt,
+  },
+  {
+    address: "316 7th Ave",
+    city: "Columbia, TN 38401 | MLS #3527081",
+    price: 329900,
+    beds: 2,
+    baths: 2,
+    sqft: 1053,
+    status: "Active",
+    compassUrl: "https://www.compass.com/homedetails/316-7th-Ave-Columbia-TN-38401/SQ46B_pid/",
+    imageUrl: "https://www.compass.com/m/0a998abaf8f79a2963e243e3e6a95f98a671e75f5a412c8ce50e8e191fbbf27b/2048x1536.webp",
     lastVerified: listingsSyncedAt,
   },
   {
