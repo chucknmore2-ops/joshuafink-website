@@ -24,7 +24,7 @@ process.env.CRON_SECRET = 'test-cron-secret'
 // finishes in milliseconds instead of the production ~6s.
 process.env.LEAD_CHANNEL_TIMEOUT_MS = '250'
 delete process.env.SHEET_WEBHOOK_SECRET
-delete process.env.SLACK_BOT_TOKEN
+delete process.env.CLICKUP_API_TOKEN
 delete process.env.PUSHOVER_TOKEN
 delete process.env.PUSHOVER_USER
 delete process.env.RESEND_API_KEY

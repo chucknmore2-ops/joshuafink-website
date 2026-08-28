@@ -2,8 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { classifyLead } from '@/lib/classify-lead'
 import { sendEmail, activeEmailProvider, fetchWithTimeout } from '@/lib/send-email'
 
-const SLACK_TOKEN = process.env.SLACK_BOT_TOKEN
-const SLACK_CHANNEL = 'C0APH84LFG8' // #joshpersonal
+// ClickUp — one task per lead (replaced Slack after its account went
+// inactive). Same pk_... personal token the weekly agent-briefing cron uses.
+const CLICKUP_TOKEN = process.env.CLICKUP_API_TOKEN
+// Defaults to the JFG agent-briefing list (workspace 90141200625); set
+// CLICKUP_LEADS_LIST_ID in Vercel to route leads to a dedicated Leads list.
+const CLICKUP_LIST_ID = process.env.CLICKUP_LEADS_LIST_ID || '901415978281'
 const TO_EMAIL = 'joshua@joshuafink.com'
 const N8N_BASE = process.env.N8N_WEBHOOK_BASE || 'http://localhost:5678/webhook'
 const CASH_OFFER_BASE = process.env.CASH_OFFER_WEBHOOK_BASE || 'http://localhost:5679/webhook'
@@ -44,83 +48,76 @@ type ChannelResult = {
 const skip = (channel: string): ChannelResult => ({ channel, configured: false, ok: false })
 
 // ---------------------------------------------------------------------------
-// Slack notification
+// ClickUp notification — one task per lead
 // ---------------------------------------------------------------------------
 
-async function sendSlack(lead: Record<string, string>): Promise<ChannelResult> {
-  if (!SLACK_TOKEN) return skip('slack')
+async function sendClickUp(lead: Record<string, string>, testMode = false): Promise<ChannelResult> {
+  if (!CLICKUP_TOKEN) return skip('clickup')
 
   const typeEmoji: Record<string, string> = {
     buy: '🏠', sell: '💰', both: '🔄', invest: '📈', rent: '🏢', other: '💬',
     seller: '💰', buyer: '🏠', 'cash-offer': '💵',
   }
-  const emoji = typeEmoji[lead.subject || lead.lead_type || ''] || '📬'
+  const type = lead.subject || lead.lead_type || ''
+  const emoji = typeEmoji[type] || '📬'
   const suburb = lead.suburb ? ` · ${lead.suburb}` : ''
   // Flagged leads are delivered like any other, just labelled. Treat the label
   // as "worth a second look", not "ignore this".
   const flag = lead.suspected_spam ? '⚠️ ' : ''
 
+  const description = [
+    lead.suspected_spam
+      ? `⚠️ **Flagged \`${lead.suspected_spam}\`** — delivered anyway because this check has false-positived on real people before. Worth a look.`
+      : null,
+    `**Name:** ${lead.name || '—'}`,
+    `**Phone:** ${lead.phone || '—'}`,
+    `**Email:** ${lead.email || '—'}`,
+    `**Type:** ${type || '—'}`,
+    lead.property_address ? `**Property:** ${lead.property_address}` : null,
+    lead.situation ? `**Situation:** ${lead.situation}` : null,
+    lead.timeline ? `**Timeline:** ${lead.timeline}` : null,
+    lead.body ? `**Message:**\n${lead.body}` : null,
+  ].filter(Boolean).join('\n')
+
   try {
-    const res = await fetchWithTimeout('https://slack.com/api/chat.postMessage', {
+    // Like the agent-briefing route: markdown_content renders in the ClickUp
+    // UI, plain description is the API-side fallback.
+    const res = await fetchWithTimeout(`https://api.clickup.com/api/v2/list/${CLICKUP_LIST_ID}/task`, {
       method: 'POST',
-      headers: { Authorization: `Bearer ${SLACK_TOKEN}`, 'Content-Type': 'application/json' },
+      headers: { Authorization: CLICKUP_TOKEN, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        channel: SLACK_CHANNEL,
-        text: `${flag}${emoji} New lead from joshuafink.com`,
-        blocks: [
-          {
-            type: 'header',
-            text: { type: 'plain_text', text: `${flag}${emoji} New Lead — joshuafink.com${suburb}` },
-          },
-          ...(lead.suspected_spam ? [{
-            type: 'section',
-            text: {
-              type: 'mrkdwn',
-              text: `⚠️ *Flagged \`${lead.suspected_spam}\`* — delivered anyway because this check has false-positived on real people before. Worth a look.`,
-            },
-          }] : []),
-          {
-            type: 'section',
-            fields: [
-              { type: 'mrkdwn', text: `*Name:*\n${lead.name || '—'}` },
-              { type: 'mrkdwn', text: `*Phone:*\n${lead.phone ? `<tel:${lead.phone.replace(/\D/g, '')}|${lead.phone}>` : '—'}` },
-              { type: 'mrkdwn', text: `*Email:*\n${lead.email || '—'}` },
-              { type: 'mrkdwn', text: `*Type:*\n${lead.subject || lead.lead_type || '—'}` },
-              ...(lead.property_address ? [{ type: 'mrkdwn', text: `*Property:*\n${lead.property_address}` }] : []),
-              ...(lead.situation ? [{ type: 'mrkdwn', text: `*Situation:*\n${lead.situation}` }] : []),
-              ...(lead.timeline ? [{ type: 'mrkdwn', text: `*Timeline:*\n${lead.timeline}` }] : []),
-            ],
-          },
-          ...(lead.body ? [{
-            type: 'section',
-            text: { type: 'mrkdwn', text: `*Message:*\n${lead.body}` },
-          }] : []),
-          {
-            type: 'actions',
-            elements: [
-              { type: 'button', text: { type: 'plain_text', text: '📞 Call' }, url: `tel:${(lead.phone || '').replace(/\D/g, '')}`, style: 'primary' },
-              ...(lead.email ? [{ type: 'button', text: { type: 'plain_text', text: '✉️ Email' }, url: `mailto:${lead.email}` }] : []),
-            ],
-          },
-        ],
+        name: `${flag}${emoji} New Lead — ${lead.name || 'Unknown'}${suburb}`,
+        markdown_content: description,
+        description,
+        tags: ['website-lead'],
+        notify_all: false,
       }),
     })
 
-    // Slack returns HTTP 200 even for logical failures — the real status is
-    // in the JSON body's `ok` field (e.g. invalid_auth, channel_not_found).
     if (!res.ok) {
-      console.error(`Slack notify failed: HTTP ${res.status}`)
-      return { channel: 'slack', configured: true, ok: false, detail: `HTTP ${res.status}` }
+      const snippet = await res.text().then((t) => t.slice(0, 200)).catch(() => '')
+      console.error(`ClickUp notify failed: HTTP ${res.status} ${snippet}`)
+      return { channel: 'clickup', configured: true, ok: false, detail: `HTTP ${res.status}` }
     }
+    // Only a task id in the body proves the task actually landed.
     const data = await res.json().catch(() => null)
-    if (data && data.ok === false) {
-      console.error(`Slack notify failed: ${data.error}`)
-      return { channel: 'slack', configured: true, ok: false, detail: data.error }
+    if (!data || !data.id) {
+      console.error('ClickUp notify failed: no task id in response')
+      return { channel: 'clickup', configured: true, ok: false, detail: 'no task id in response' }
     }
-    return { channel: 'slack', configured: true, ok: true }
+    // The daily healthcheck test lead has proven the token + list are live by
+    // this point — delete its task again (best-effort) so SYSTEM TEST tasks
+    // don't pile up in the list the way a silent Pushover doesn't buzz.
+    if (testMode) {
+      await fetchWithTimeout(`https://api.clickup.com/api/v2/task/${data.id}`, {
+        method: 'DELETE',
+        headers: { Authorization: CLICKUP_TOKEN },
+      }).catch(() => undefined)
+    }
+    return { channel: 'clickup', configured: true, ok: true }
   } catch (err) {
-    console.error('Slack notify error:', err)
-    return { channel: 'slack', configured: true, ok: false, detail: String(err) }
+    console.error('ClickUp notify error:', err)
+    return { channel: 'clickup', configured: true, ok: false, detail: String(err) }
   }
 }
 
@@ -277,7 +274,7 @@ async function pushToSheet(
       console.error('Google Sheet: non-OK response', res.status)
       return { channel: 'sheet', configured: true, ok: false, detail: `HTTP ${res.status}` }
     }
-    // Like Slack above, the Apps Script answers HTTP 200 for every outcome —
+    // The Apps Script answers HTTP 200 for every outcome —
     // its own failures arrive as {ok:false, error:...}, and a broken
     // deployment serves a 200 "Authorization required" HTML page. Only a
     // parseable {ok:true} body proves the row actually landed.
@@ -360,7 +357,7 @@ async function sendPushover(lead: Record<string, string>, silent = false): Promi
 // Joshua-facing channel failed. Emergency priority (2) so it keeps re-alerting
 // until Joshua acknowledges it on his phone. Carries the full lead contact info
 // so the lead is recoverable straight from the notification, even if it never
-// reached Slack, email, or the sheet.
+// reached ClickUp, email, or the sheet.
 // ---------------------------------------------------------------------------
 
 async function sendEmergencyPushover(
@@ -464,7 +461,7 @@ function exceedsFloodLimit(ip: string, now: number = Date.now()): boolean {
 }
 
 export async function POST(req: NextRequest) {
-  // A lead reaches Joshua through Slack, the lead email, Pushover, or the
+  // A lead reaches Joshua through ClickUp, the lead email, Pushover, or the
   // Google Sheet log. As long as at least ONE of those is configured we can
   // accept the submission; only fail closed when nothing is wired up.
 
@@ -478,7 +475,7 @@ export async function POST(req: NextRequest) {
   }
 
   const anyChannelConfigured =
-    !!SLACK_TOKEN || activeEmailProvider() !== 'none' || (!!PUSHOVER_TOKEN && !!PUSHOVER_USER) || !!GOOGLE_SHEET_WEBHOOK_URL
+    !!CLICKUP_TOKEN || activeEmailProvider() !== 'none' || (!!PUSHOVER_TOKEN && !!PUSHOVER_USER) || !!GOOGLE_SHEET_WEBHOOK_URL
   if (!anyChannelConfigured) {
     console.error('Contact API misconfigured: no lead-delivery channel is set')
     return NextResponse.json(
@@ -510,7 +507,7 @@ export async function POST(req: NextRequest) {
       // field), the message text is the only way to identify and recover them.
       console.log(`BOT blocked (${verdict.reason}): ${JSON.stringify(lead)}`)
       // Durable copy in the sheet's "Blocked" tab, which Josh can skim for
-      // humans — sheet only, so real bots never make noise on Slack/Pushover/
+      // humans — sheet only, so real bots never make noise on ClickUp/Pushover/
       // email. Awaited: Vercel freezes the function once the response is sent,
       // so a fire-and-forget write here could silently never happen.
       await pushToSheet(lead, verdict.reason)
@@ -528,7 +525,7 @@ export async function POST(req: NextRequest) {
     if (verdict.kind === 'suspect') {
       // Deliver it anyway, tagged. This field flows automatically into the lead
       // email and the Google Sheet (both enumerate lead fields), and is called
-      // out explicitly in Slack and Pushover below. It is deliberately NOT
+      // out explicitly in ClickUp and Pushover below. It is deliberately NOT
       // shown to the visitor, and the auto-reply never enumerates fields.
       lead.suspected_spam = verdict.reason
       console.log(`Lead flagged as suspect (${verdict.reason}), delivering anyway: ${JSON.stringify(lead)}`)
@@ -542,8 +539,8 @@ export async function POST(req: NextRequest) {
     // ---------- Fire all Joshua-facing channels in parallel ----------
     // Each of these resolves to a ChannelResult and never throws, so we can
     // inspect exactly what got through and react when nothing did.
-    const [slackRes, joshuaEmailRes, sheetRes, pushoverRes, autoReplyRes] = await Promise.all([
-      sendSlack(lead),
+    const [clickupRes, joshuaEmailRes, sheetRes, pushoverRes, autoReplyRes] = await Promise.all([
+      sendClickUp(lead, isHealthcheck), // test-lead task is deleted after it proves delivery
       forwardToJoshua(lead),
       pushToSheet(lead),
       sendPushover(lead, isHealthcheck), // silent — a test lead must not buzz the phone
@@ -599,7 +596,7 @@ export async function POST(req: NextRequest) {
 
     // ---------- Delivery detection ----------
     // A lead "reached Joshua" if any Joshua-facing channel succeeded.
-    const joshuaChannels = [slackRes, joshuaEmailRes, sheetRes, pushoverRes]
+    const joshuaChannels = [clickupRes, joshuaEmailRes, sheetRes, pushoverRes]
     const delivered = joshuaChannels.some((r) => r.configured && r.ok)
     const failedChannels = joshuaChannels
       .filter((r) => r.configured && !r.ok)

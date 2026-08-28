@@ -37,7 +37,7 @@ COVERED (per `lib/admin-schedule.ts`):
   Public uptime — GET https://joshuafink.com/api/healthcheck
   Lead delivery channels — POSTs a tagged SYSTEM TEST lead to /api/contact
     (silent Pushover, lead_type=system-test so the CRM sheet can filter it)
-    and alerts if any configured channel — slack / joshua-email / sheet /
+    and alerts if any configured channel — clickup / joshua-email / sheet /
     pushover — fails. Needs CRON_SECRET; without it this is a GAP.
 
 NOT COVERED (documented gaps — listed in every alert email):
@@ -201,7 +201,7 @@ HEALTHCHECK_TIMEOUT_S = 15
 HEALTHCHECK_RETRIES = 2
 
 # Live test lead through the real lead route (see check_lead_pipeline). The
-# generous timeout is because the route awaits Slack + email + sheet +
+# generous timeout is because the route awaits ClickUp + email + sheet +
 # Pushover before answering. Must be the www host: the apex 307-redirects
 # to www (Vercel domain config), and urllib refuses to follow a redirect
 # on a POST with a body — the apex URL fails with HTTP 307 'Redirecting...'.
@@ -1356,7 +1356,8 @@ def _remediation_for(result: CheckResult) -> Optional[str]:
     if "lead pipeline" in name:
         return (
             "A live test lead failed on the channel(s) named in the detail. "
-            "Per channel: slack → SLACK_BOT_TOKEN dead/revoked; joshua-email → "
+            "Per channel: clickup → CLICKUP_API_TOKEN dead/revoked or the "
+            "leads list gone (CLICKUP_LEADS_LIST_ID); joshua-email → "
             "Resend (RESEND_API_KEY / send.joshuafink.com domain verification); "
             "sheet → the Apps Script GOOGLE_SHEET_WEBHOOK_URL deployment; "
             "pushover → PUSHOVER_TOKEN/PUSHOVER_USER. All live in Vercel → "

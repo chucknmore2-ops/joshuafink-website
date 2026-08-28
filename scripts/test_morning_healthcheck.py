@@ -566,7 +566,7 @@ def _contact_opener(payload, status=200, captured=None):
 
 
 ALL_CHANNELS_OK = {"ok": True, "channels": [
-    _channel("slack"), _channel("joshua-email"), _channel("sheet"), _channel("pushover"),
+    _channel("clickup"), _channel("joshua-email"), _channel("sheet"), _channel("pushover"),
 ]}
 
 
@@ -598,7 +598,7 @@ def test_lead_pipeline_alerts_on_failed_channel():
     """The SendGrid failure mode: a configured channel silently dead while
     every other check stays green. Must page, naming the channel and why."""
     payload = {"ok": True, "channels": [
-        _channel("slack", ok=False, detail="account_inactive"),
+        _channel("clickup", ok=False, detail="HTTP 401"),
         _channel("joshua-email"), _channel("sheet"), _channel("pushover"),
     ]}
     r = hc.check_lead_pipeline(
@@ -606,28 +606,28 @@ def test_lead_pipeline_alerts_on_failed_channel():
     )
     assert r.status == hc.STATUS_ERROR
     assert r.is_alert
-    assert "slack(account_inactive)" in r.detail
+    assert "clickup(HTTP 401)" in r.detail
 
 
 def test_lead_pipeline_unconfigured_channel_is_not_a_failure():
     """configured:false is an expected no-op (creds not set), not a page —
     but the channel is still named so silent shrinkage stays visible."""
     payload = {"ok": True, "channels": [
-        _channel("slack", configured=False, ok=False),
+        _channel("clickup", configured=False, ok=False),
         _channel("joshua-email"), _channel("sheet"), _channel("pushover"),
     ]}
     r = hc.check_lead_pipeline(
         "https://x/api/contact", "s3cret", opener=_contact_opener(payload),
     )
     assert r.status == hc.STATUS_PASS
-    assert "not configured: slack" in r.detail
+    assert "not configured: clickup" in r.detail
 
 
 def test_lead_pipeline_alerts_on_502_with_channel_results():
     """Total delivery failure: the route answers 502 in test mode but still
     carries the per-channel results — judge by those, not just the status."""
     payload = {"error": "delivery failed", "channels": [
-        _channel("slack", ok=False, detail="invalid_auth"),
+        _channel("clickup", ok=False, detail="HTTP 401"),
         _channel("joshua-email", ok=False, detail="403"),
         _channel("sheet", ok=False, detail="HTTP 500"),
         _channel("pushover", ok=False, detail="HTTP 400"),
@@ -637,7 +637,7 @@ def test_lead_pipeline_alerts_on_502_with_channel_results():
         opener=_contact_opener(payload, status=502),
     )
     assert r.status == hc.STATUS_ERROR
-    assert "invalid_auth" in r.detail
+    assert "HTTP 401" in r.detail
 
 
 def test_lead_pipeline_gap_without_secret():
@@ -689,11 +689,11 @@ def test_lead_pipeline_failure_has_remediation():
     r = hc.CheckResult(
         name="lead pipeline — /api/contact test lead",
         status="error",
-        detail="test lead FAILED on configured channel(s): slack(account_inactive)",
+        detail="test lead FAILED on configured channel(s): clickup(HTTP 401)",
     )
     tip = hc._remediation_for(r)
     assert tip is not None
-    assert "SLACK_BOT_TOKEN" in tip
+    assert "CLICKUP_API_TOKEN" in tip
     assert "Vercel" in tip
 
 
