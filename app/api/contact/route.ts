@@ -208,7 +208,7 @@ async function sendAutoReply(lead: Record<string, string>): Promise<ChannelResul
 // Email: forward lead details to Joshua
 // ---------------------------------------------------------------------------
 
-async function forwardToJoshua(lead: Record<string, string>): Promise<ChannelResult> {
+async function forwardToJoshua(lead: Record<string, string>, testMode = false): Promise<ChannelResult> {
   if (activeEmailProvider() === 'none') return skip('joshua-email')
 
   const lines = Object.entries(lead)
@@ -221,7 +221,12 @@ async function forwardToJoshua(lead: Record<string, string>): Promise<ChannelRes
     toName: 'Joshua Fink',
     fromName: 'joshuafink.com Lead',
     ...(lead.email ? { replyTo: { email: lead.email, name: lead.name } } : {}),
-    subject: `🏡 New Lead: ${lead.name || 'Unknown'} — ${lead.suburb || lead.subject || 'joshuafink.com'}`,
+    // The daily test email still sends — the provider's 200 is the delivery
+    // proof — but it must never share a subject with real leads, or Joshua
+    // (or an inbox rule) learns to skim past "New Lead".
+    subject: testMode
+      ? '🩺 Daily lead-channel test — ignore'
+      : `🏡 New Lead: ${lead.name || 'Unknown'} — ${lead.suburb || lead.subject || 'joshuafink.com'}`,
     html: `<table style="font-family:sans-serif;border-collapse:collapse;">${lines}</table>`,
   })
   if (!sent.ok) {
@@ -243,6 +248,9 @@ async function pushToSheet(
   // When set, the Apps Script files this row into a separate "Blocked" tab
   // (with the reason in its own column) instead of the CRM tab.
   blockedReason?: string,
+  // Daily healthcheck lead — tagged so the Apps Script files it into a
+  // "System" tab (same mechanism as Blocked) instead of the real CRM tab.
+  testMode = false,
 ): Promise<ChannelResult> {
   if (!GOOGLE_SHEET_WEBHOOK_URL) {
     console.log('Google Sheet: skipping — GOOGLE_SHEET_WEBHOOK_URL not set')
@@ -260,6 +268,7 @@ async function pushToSheet(
     lead_type: lead.subject || lead.lead_type || '',
     received_at: new Date().toISOString(),
     ...(blockedReason ? { blocked_reason: blockedReason } : {}),
+    ...(testMode ? { system_test: 'true' } : {}),
     ...(SHEET_WEBHOOK_SECRET ? { secret: SHEET_WEBHOOK_SECRET } : {}),
   }
 
@@ -541,8 +550,8 @@ export async function POST(req: NextRequest) {
     // inspect exactly what got through and react when nothing did.
     const [clickupRes, joshuaEmailRes, sheetRes, pushoverRes, autoReplyRes] = await Promise.all([
       sendClickUp(lead, isHealthcheck), // test-lead task is deleted after it proves delivery
-      forwardToJoshua(lead),
-      pushToSheet(lead),
+      forwardToJoshua(lead, isHealthcheck), // still sends, but with an "ignore" subject, never "New Lead"
+      pushToSheet(lead, undefined, isHealthcheck), // tagged → sheet's "System" tab, not the CRM tab
       sendPushover(lead, isHealthcheck), // silent — a test lead must not buzz the phone
       sendAutoReply(lead), // no-ops when no email; courtesy to the lead, not a Joshua channel
     ])

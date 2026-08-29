@@ -985,9 +985,11 @@ def check_lead_pipeline(
     verify every configured delivery channel reports success.
 
     The route's test mode (`x-healthcheck-secret: CRON_SECRET`) returns the
-    per-channel results it already computes internally and sends the Pushover
-    silently, so this costs one filterable CRM row per weekday and no phone
-    buzz. Partial channel death used to be only a console.warn in Vercel logs
+    per-channel results it already computes internally, sends the Pushover
+    silently, subjects the email "🩺 Daily lead-channel test — ignore" instead
+    of "🏡 New Lead", and tags the sheet row so it files under a "System" tab —
+    so this costs no phone buzz, no fake lead in the inbox, and no fake CRM
+    row. Partial channel death used to be only a console.warn in Vercel logs
     — SendGrid sat dead from June with every other check green.
 
     The lead payload must stay classifier-clean: name with a space (no
@@ -1009,7 +1011,7 @@ def check_lead_pipeline(
         "source": "morning-healthcheck",
         "body": (
             "Automated daily test of the lead delivery channels. "
-            "Safe to ignore — filter lead_type=system-test in the CRM sheet."
+            "Safe to ignore — this row files under the sheet's System tab."
         ),
     }).encode("utf-8")
 
