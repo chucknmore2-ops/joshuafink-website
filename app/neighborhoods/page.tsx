@@ -20,6 +20,10 @@ const faqs = [
     a: 'Family-first searches usually start with Brentwood, Franklin, and Nolensville — all anchored by top-rated Williamson County Schools, low crime, and strong long-term appreciation. Spring Hill and Thompson’s Station offer similar schools at a lower price band. Open any neighborhood guide for the specific school zones, HOA, and price range.',
   },
   {
+    q: 'What are the best neighborhoods in Franklin, TN for families?',
+    a: 'The Franklin neighborhoods families ask Joshua about most are Westhaven (a walkable master-planned community with a private golf course, resort-style pools, and a real town center), McKay’s Mill and Fieldstone Farms (large, established subdivisions with mature trees, pools, and clubhouses — the kind of place families put down roots for a decade or more), Berry Farms (a newer, walkable mixed-use community in south Franklin with its own town center), and The Highlands at Ladd Park (a newer upscale option on larger-than-builder lots). All five are zoned to Williamson County Schools. See the full guide for each above, or call or text 615-551-2727 and Joshua will match your must-haves — school zone, budget, HOA tolerance — to the right one.',
+  },
+  {
     q: 'Which Middle Tennessee neighborhoods have the best schools?',
     a: 'Williamson County Schools (Franklin, Brentwood, Nolensville, Thompson’s Station) consistently rank in the top tier of Tennessee public districts. Within that, neighborhoods zoned for Ravenwood High, Page High, and Independence High pull a meaningful school-zone premium — usually 5–15% over comparable homes in adjacent zones.',
   },
