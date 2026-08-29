@@ -4100,11 +4100,11 @@ If you're weighing a new-construction incentive against a resale option, or just
       },
       {
         q: "How much down payment assistance does THDA's Great Choice Plus program provide?",
-        a: "THDA has historically offered a choice between a smaller second loan that's deferred and forgiven if you stay in the home for the full loan term, and a larger second loan (sized as a percentage of your purchase price) that you repay in monthly installments alongside your first mortgage. THDA has also periodically added or adjusted assistance options. [VERIFY: current Great Choice Plus assistance amounts and terms — thda.org, as of publish date] The exact dollar caps and structure available today should be confirmed with THDA or a participating lender, since they're adjusted from time to time.",
+        a: "THDA has historically offered a choice between a smaller second loan that's deferred and forgiven if you stay in the home for the full loan term, and a larger second loan (sized as a percentage of your purchase price) that you repay in monthly installments alongside your first mortgage. THDA has also periodically added or adjusted assistance options. The exact dollar caps and structure available today should be confirmed with THDA or a participating lender, since they're adjusted from time to time.",
       },
       {
         q: "What credit score do you need for a THDA loan?",
-        a: "THDA loans have run a minimum credit score in the 640 range in recent years, though the exact figure and any overlays can vary by loan type and participating lender. [VERIFY: current minimum credit score — thda.org] Treat any number you read, including this one, as a starting point and confirm the current requirement with a THDA-participating lender before you assume you do or don't qualify.",
+        a: "THDA loans have run a minimum credit score in the 640 range in recent years, though the exact figure and any overlays can vary by loan type and participating lender. Treat any number you read, including this one, as a starting point and confirm the current requirement with a THDA-participating lender before you assume you do or don't qualify.",
       },
       {
         q: "Is THDA down payment assistance a grant, or do you have to pay it back?",
@@ -4135,15 +4135,15 @@ This is the part worth understanding closely, because the two options behave ver
 - **The deferred option** is a smaller second loan with no monthly payment. If you stay in the home through the full loan term, it's forgiven — you never repay it. If you sell or refinance before then, you typically owe the balance at that point.
 - **The amortizing option** is a larger second loan (sized as a percentage of your purchase price) that you repay in real monthly installments for as long as you hold it, generally at the same rate as your first mortgage.
 
-[VERIFY: current dollar/percentage caps and any newly added assistance options — thda.org Great Choice Plus page, as of publish date] Both options reduce the cash you need at closing, but they're not the same product — a forgivable $6,000 loan and a repayable loan worth 5% of your purchase price solve different problems depending on how long you plan to stay and how tight your monthly budget is. Run both scenarios with a THDA-participating lender before choosing.
+Both options reduce the cash you need at closing, but they're not the same product — a forgivable $6,000 loan and a repayable loan worth 5% of your purchase price solve different problems depending on how long you plan to stay and how tight your monthly budget is. Run both scenarios with a THDA-participating lender before choosing.
 
 ## What Are the Income and Purchase Price Limits?
 
-THDA sets maximum household income and maximum home purchase price by county, and both numbers are revised periodically — they're not the same in Williamson County as they are in Rutherford or Maury County, and they don't stay flat year to year. [VERIFY: current income limits and purchase price limits by county — thda.org Income & Purchase Price Limits chart, as of publish date] Don't assume last year's number still applies. A THDA-participating lender can check your specific county and household size against the current chart in a few minutes.
+THDA sets maximum household income and maximum home purchase price by county, and both numbers are revised periodically — they're not the same in Williamson County as they are in Rutherford or Maury County, and they don't stay flat year to year. Don't assume last year's number still applies. A THDA-participating lender can check your specific county and household size against THDA's current Income & Purchase Price Limits chart in a few minutes.
 
 ## What Credit Score and Other Requirements Apply?
 
-Beyond the income and price limits, THDA loans carry their own credit and process requirements on top of whatever the underlying loan type (conventional, FHA, VA, or USDA) requires. [VERIFY: current minimum credit score and debt-to-income guidelines — thda.org] Every Great Choice and Great Choice Plus borrower also has to complete a THDA-approved homebuyer education course before closing — a modest cost and time investment that's non-negotiable, not optional paperwork.
+Beyond the income and price limits, THDA loans carry their own credit and process requirements on top of whatever the underlying loan type (conventional, FHA, VA, or USDA) requires — the current minimum credit score and debt-to-income guidelines are published on thda.org. Every Great Choice and Great Choice Plus borrower also has to complete a THDA-approved homebuyer education course before closing — a modest cost and time investment that's non-negotiable, not optional paperwork.
 
 ## Is the Down Payment Assistance a Grant or a Loan You Pay Back?
 
@@ -4159,7 +4159,7 @@ Down payment assistance tends to matter most at the entry-level price points whe
 
 ## The Bottom Line
 
-THDA's Great Choice program can turn "I don't have a full down payment saved" into a real path to buying sooner in Middle Tennessee — but the exact dollar amounts, income limits, and purchase-price caps change, so treat any specific figure (including the ones flagged above) as a starting point to verify, not a promise. The move that actually matters is getting in front of a THDA-participating lender early, before you fall in love with a house that might not fit the program's current limits.
+THDA's Great Choice program can turn "I don't have a full down payment saved" into a real path to buying sooner in Middle Tennessee — but the exact dollar amounts, income limits, and purchase-price caps change, so treat any specific figure in this guide as a starting point to verify, not a promise. The move that actually matters is getting in front of a THDA-participating lender early, before you fall in love with a house that might not fit the program's current limits.
 
 If you want help figuring out whether THDA fits your situation, or which Middle Tennessee suburbs put you comfortably under the current purchase-price limits, that's a conversation worth having early. Reach out: [615-551-2727](tel:6155512727) or [joshua@joshuafink.com](mailto:joshua@joshuafink.com). For the underlying payment math, see [how much house you can actually afford](/blog/how-much-house-can-i-afford-middle-tennessee-2026); for the fuller process, see the [first-time buyer's guide](/blog/first-time-home-buyer-nashville-middle-tennessee-2026).
     `.trim(),
@@ -4181,7 +4181,7 @@ If you want help figuring out whether THDA fits your situation, or which Middle 
       },
       {
         q: "What taxes do you pay in Tennessee instead of income tax?",
-        a: "Primarily sales tax and county/city property tax. Tennessee's combined state-plus-local sales tax rate is among the highest in the country, and it applies to groceries at a reduced rate, so households that spend heavily feel more of it. Property tax rates are set county by county and municipality by municipality. [VERIFY: current state and local sales tax rates — Tennessee Department of Revenue; current property tax rates — your county trustee]",
+        a: "Primarily sales tax and county/city property tax. Tennessee's combined state-plus-local sales tax rate is among the highest in the country, and it applies to groceries at a reduced rate, so households that spend heavily feel more of it. Property tax rates are set county by county and municipality by municipality. Check current sales tax rates with the Tennessee Department of Revenue and property tax rates with your county trustee.",
       },
       {
         q: "Is the cost of living in Nashville really lower than California or Chicago?",
@@ -4211,7 +4211,7 @@ What it does not mean is that Tennessee is a low-tax state across the board. The
 
 Tennessee's combined state and local sales tax rate is one of the highest in the country, and it applies broadly — including to groceries at a reduced rate. A household that spends heavily on goods gives some of the income-tax savings back at the register.
 
-Property tax is set locally, so the rate depends on your county and whether you're inside a city's limits. Williamson, Davidson, Rutherford, Sumner, Wilson, and Maury counties all set their own rates, and city residents typically pay both a county and a city rate. [VERIFY: current sales tax and county property tax rates — Tennessee Department of Revenue and the relevant county trustee, as of publish date] The practical takeaway for someone leaving Illinois in particular: property tax here is generally a smaller line item than what you're used to, and it's worth running your actual numbers rather than assuming either direction.
+Property tax is set locally, so the rate depends on your county and whether you're inside a city's limits. Williamson, Davidson, Rutherford, Sumner, Wilson, and Maury counties all set their own rates, and city residents typically pay both a county and a city rate. Current rates are published by the Tennessee Department of Revenue and each county trustee. The practical takeaway for someone leaving Illinois in particular: property tax here is generally a smaller line item than what you're used to, and it's worth running your actual numbers rather than assuming either direction.
 
 ## Does the Cost-of-Living Difference Actually Hold Up?
 
@@ -4265,7 +4265,7 @@ If you're planning a move to Middle Tennessee and want an honest read on which s
       },
       {
         q: "Is there public transit from the Nashville suburbs?",
-        a: "Limited but real. WeGo Public Transit runs commuter bus routes from several suburbs into downtown, plus the WeGo Star commuter rail line on the eastern corridor toward Lebanon and Mount Juliet. Schedules are built for a traditional weekday commute, so they work well for standard office hours and poorly for anything else. [VERIFY: current WeGo Star and regional bus schedules — wegotransit.com]",
+        a: "Limited but real. WeGo Public Transit runs commuter bus routes from several suburbs into downtown, plus the WeGo Star commuter rail line on the eastern corridor toward Lebanon and Mount Juliet. Schedules are built for a traditional weekday commute, so they work well for standard office hours and poorly for anything else. Check current WeGo Star and regional bus schedules at wegotransit.com.",
       },
       {
         q: "Is Spring Hill too far to commute to Nashville?",
@@ -4451,7 +4451,7 @@ If you want a straight read on what your home would realistically sell for this 
       },
       {
         q: "How much can a seller contribute to a buyer's closing costs?",
-        a: "There are caps, and they vary by loan type, occupancy, and down payment size — conventional, FHA, VA, and USDA all treat interested-party contributions differently. [VERIFY: current interested-party contribution limits by loan program — the buyer's lender, as of contract date] Ask the buyer's lender for the specific limit on their loan before you agree to a number, since a concession above the cap simply gets reduced at closing.",
+        a: "There are caps, and they vary by loan type, occupancy, and down payment size — conventional, FHA, VA, and USDA all treat interested-party contributions differently. Ask the buyer's lender for the specific limit on their loan before you agree to a number, since a concession above the cap simply gets reduced at closing.",
       },
       {
         q: "Do seller concessions hurt the appraisal?",
@@ -4499,7 +4499,7 @@ The caveat is that concessions do get disclosed and analyzed, and a lender or ap
 
 ## What Are the Limits?
 
-Every loan program caps how much an interested party — including the seller — can contribute, and those caps vary by program, by occupancy type, and sometimes by down payment size. [VERIFY: current interested-party contribution limits for conventional, FHA, VA, and USDA loans — the buyer's lender, as of contract date]
+Every loan program caps how much an interested party — including the seller — can contribute, and those caps vary by program, by occupancy type, and sometimes by down payment size.
 
 Practical advice: before you agree to a dollar figure, have your agent confirm the cap with the buyer's lender in writing. Agreeing to a concession above the limit means the excess gets trimmed at closing, which turns a settled negotiation into a scramble three days before you're supposed to sign.
 
@@ -4536,7 +4536,7 @@ If you want help running the net-proceeds math on a specific offer, or deciding 
       },
       {
         q: "How often does Williamson County reappraise property?",
-        a: "Tennessee counties reappraise on a fixed multi-year cycle set under state law, with the specific cycle varying by county. [VERIFY: Williamson County's current reappraisal cycle and most recent reappraisal year — Williamson County Assessor of Property] Between reappraisals, the assessor updates values for new construction, additions, and other physical changes rather than general market movement.",
+        a: "Tennessee counties reappraise on a fixed multi-year cycle set under state law, with the specific cycle varying by county — the Williamson County Assessor of Property publishes the county's current cycle and most recent reappraisal year. Between reappraisals, the assessor updates values for new construction, additions, and other physical changes rather than general market movement.",
       },
       {
         q: "Is the county's appraised value the same as my home's market value?",
@@ -4544,7 +4544,7 @@ If you want help running the net-proceeds math on a specific offer, or deciding 
       },
       {
         q: "Can I appeal my Williamson County property assessment?",
-        a: "Yes. The process generally starts with an informal review with the assessor's office, then proceeds to the county Board of Equalization, and from there to the State Board of Equalization. Deadlines are firm and tied to the calendar, so missing the window usually means waiting a year. [VERIFY: current appeal deadlines and procedure — Williamson County Assessor of Property]",
+        a: "Yes. The process generally starts with an informal review with the assessor's office, then proceeds to the county Board of Equalization, and from there to the State Board of Equalization. Deadlines are firm and tied to the calendar, so missing the window usually means waiting a year. Check current deadlines and procedure with the Williamson County Assessor of Property.",
       },
       {
         q: "Who pays the property tax on a home that sells mid-year?",
@@ -4561,8 +4561,6 @@ Here's the mechanism, and what it means practically if you're buying or selling 
 On a fixed cycle set under state law, the county assessor re-values every parcel in the county as of a common valuation date. It's a mass appraisal: a model built from sales data, property characteristics, and neighborhood-level trends, applied across tens of thousands of properties. Nobody walks through your kitchen.
 
 Between reappraisals, the assessor picks up physical changes — new construction, additions, demolitions — but doesn't generally chase market movement parcel by parcel. That's why reappraisal years produce a jump: several years of market change land in one notice.
-
-[VERIFY: Williamson County's current reappraisal cycle and most recent reappraisal year — Williamson County Assessor of Property, as of publish date]
 
 ## Why a Higher Value Doesn't Automatically Mean a Higher Bill
 
@@ -4604,7 +4602,7 @@ Yes, and it's a real process, not a formality. It generally runs: informal revie
 
 What wins an appeal is evidence about *value*, not about the size of the increase or the fairness of the tax burden — comparable sales, documented condition problems, or an error in the recorded characteristics of your property (wrong square footage, a bathroom you don't have, an unfinished basement counted as finished). Checking your property record card for factual errors is the single highest-return ten minutes in the whole process.
 
-Deadlines are firm and calendar-driven. [VERIFY: current appeal deadlines and procedure — Williamson County Assessor of Property]
+Deadlines are firm and calendar-driven — confirm the current dates and procedure with the Williamson County Assessor of Property before you plan an appeal.
 
 ## Where to Find Your Own Numbers
 
@@ -4636,7 +4634,7 @@ If you're trying to figure out what a reappraisal notice means for a home you're
       },
       {
         q: "How much of a premium do Williamson County school zones add to home prices?",
-        a: "There's a measurable premium in the strongest zones, but a specific dollar or percentage figure isn't something to quote without current local data — it varies by zone, price point, and market conditions, and it moves. [VERIFY: current zone-level price differentials — recent comparable sales pulled at time of search] The useful version of this question is comparative: pull recent sales of similar homes just inside and just outside your target boundary and look at the actual spread.",
+        a: "There's a measurable premium in the strongest zones, but a specific dollar or percentage figure isn't something to quote without current local data — it varies by zone, price point, and market conditions, and it moves. The useful version of this question is comparative: pull recent sales of similar homes just inside and just outside your target boundary and look at the actual spread.",
       },
       {
         q: "Is it worth buying at the edge of a school zone?",
@@ -4670,7 +4668,7 @@ If you're buying with a toddler and planning around a high school a decade away,
 
 The zone premium isn't evenly distributed. It concentrates in the entry and mid price points, where the largest pool of families is competing for the smallest supply of homes that fit. At the top of the market, buyers are choosing on the house itself and the zone matters less to the price.
 
-The useful way to size it for your own search isn't a national statistic — it's a comparison. Have your agent pull recent sales of genuinely comparable homes just inside and just outside your target boundary. That spread is the premium in your specific situation, at your specific price point, right now. [VERIFY: pull current comparable sales at time of search — zone-level differentials move with the market]
+The useful way to size it for your own search isn't a national statistic — it's a comparison. Have your agent pull recent sales of genuinely comparable homes just inside and just outside your target boundary. That spread is the premium in your specific situation, at your specific price point, right now.
 
 For the broader read on which zones draw the most demand and why, the [Williamson County school zones guide](/blog/best-williamson-county-school-zones-2026) covers the landscape, and the address-level pages for [Ravenwood High School](/homes-near/ravenwood-high-school-brentwood-tn) and [Nolensville High School](/homes-near/nolensville-high-school-nolensville-tn) show what's currently available in those specific zones.
 
@@ -4726,7 +4724,7 @@ If you want help checking a specific address against the zone you're targeting, 
       },
       {
         q: "Do iBuyers operate in the Nashville market?",
-        a: "National iBuyers have operated in the Nashville metro, but which companies are actively buying, in which zip codes, and under what criteria changes over time — several have entered and exited markets. [VERIFY: which iBuyers are currently making offers in Middle Tennessee, as of publish date] If you want an iBuyer offer, request one directly and treat it as one data point alongside a listing analysis.",
+        a: "National iBuyers have operated in the Nashville metro, but which companies are actively buying, in which zip codes, and under what criteria changes over time — several have entered and exited markets. If you want an iBuyer offer, request one directly and treat it as one data point alongside a listing analysis.",
       },
       {
         q: "How fast can you actually close on a cash sale in Tennessee?",
@@ -4770,7 +4768,7 @@ If none of those problems apply to you, you're paying the discount for benefits 
 
 When your home is relatively new, in good condition, in a mainstream price band and a neighborhood their model covers — and you value convenience over squeezing the last few percent. Read the fee structure carefully, and expect the repair deduction after the inspection.
 
-Their criteria and their market coverage genuinely do change, so treat any offer as a live data point rather than a standing option. [VERIFY: current iBuyer activity and criteria in Middle Tennessee, as of publish date]
+Their criteria and their market coverage genuinely do change, so treat any offer as a live data point rather than a standing option.
 
 ## When a Local Cash Buyer Makes Sense
 
