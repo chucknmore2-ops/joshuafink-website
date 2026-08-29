@@ -94,6 +94,58 @@ test('a 200 {ok:true} still counts as delivered', async () => {
   assert.equal(status, 200)
 })
 
+test('the healthcheck lead emails an "ignore" subject and tags the sheet row', async () => {
+  // The daily test must not pose as a real lead: the email to Joshua still
+  // sends (delivery proof) but under a test-only subject, and the sheet row
+  // carries the system_test tag that files it into the "System" tab.
+  const captured: { url: string; body: string }[] = []
+  globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input)
+    captured.push({ url, body: String(init?.body ?? '') })
+    if (url.includes('script.google.com')) {
+      return new Response('{"ok":true}', { status: 200, headers: { 'Content-Type': 'application/json' } })
+    }
+    return new Response('{}', { status: 200 })
+  }) as typeof fetch
+
+  // activeEmailProvider() reads env per call, so the key can be set here
+  // despite route.ts already being imported.
+  process.env.RESEND_API_KEY = 're_test_key'
+  try {
+    const { POST } = await import('./route.ts')
+    const res = await POST(
+      new NextRequest('http://localhost/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-healthcheck-secret': 'test-cron-secret',
+        },
+        // Mirrors scripts/morning_healthcheck.py: no email, so no auto-reply —
+        // the one Resend call below is the lead email to Joshua.
+        body: JSON.stringify({
+          name: 'SYSTEM TEST — morning healthcheck',
+          lead_type: 'system-test',
+          source: 'morning-healthcheck',
+          body: 'Automated daily test of the lead delivery channels.',
+        }),
+      })
+    )
+    assert.equal(res.status, 200)
+
+    const emails = captured.filter((c) => c.url.includes('api.resend.com'))
+    assert.equal(emails.length, 1)
+    const subject = JSON.parse(emails[0].body).subject
+    assert.equal(subject, '🩺 Daily lead-channel test — ignore')
+    assert.doesNotMatch(subject, /New Lead/)
+
+    const sheetCall = captured.find((c) => c.url.includes('script.google.com'))
+    assert.ok(sheetCall)
+    assert.equal(JSON.parse(sheetCall.body).system_test, 'true')
+  } finally {
+    delete process.env.RESEND_API_KEY
+  }
+})
+
 test('a hung sheet call is aborted and reported as a failed channel, not a hang', async () => {
   // The sheet fetch never resolves on its own — like the real fetch, it only
   // rejects when the route's AbortController fires. Without the timeout this
