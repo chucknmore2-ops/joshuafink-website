@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated, suburbs } from '@/lib/suburbs'
+import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated, marketStatsSource, suburbs } from '@/lib/suburbs'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import ReviewStrip from '@/components/ReviewStrip'
@@ -72,15 +72,16 @@ export default async function MarketSuburbPage({ params }: Props) {
 
   const lean = marketLean(s)
   const neighbors = neighborSuburbs(slug)
+  const statsAsOf = s.dataUpdatedAt ?? marketStatsLastUpdated
 
   const reportSchema = {
     '@context': 'https://schema.org',
     '@type': 'Report',
     name: `${s.displayName} Real Estate Market Report — 2026`,
     headline: `${s.displayName} housing market in 2026: median ${s.medianPrice}, ${s.yoyChange} YoY`,
-    description: `2026 housing market report for ${s.displayName}: median sale price ${s.medianPrice}, ${s.avgDaysOnMarket} avg days on market, ${s.yoyChange} year-over-year appreciation. Market lean: ${lean.lean}.`,
+    description: `2026 housing market report for ${s.displayName}: median sale price ${s.medianPrice}, ${s.avgDaysOnMarket} avg days on market, ${s.yoyChange} year-over-year appreciation. Market lean: ${lean.lean}. Source: ${marketStatsSource}, as of ${statsAsOf}.`,
     datePublished: '2026-01-15',
-    dateModified: s.dataUpdatedAt ?? marketStatsLastUpdated,
+    dateModified: statsAsOf,
     inLanguage: 'en-US',
     url: `${SITE}/market/${slug}`,
     about: {
@@ -115,7 +116,7 @@ export default async function MarketSuburbPage({ params }: Props) {
     },
     {
       q: `What is the median home price in ${s.displayName} right now?`,
-      a: `The current median sale price in ${s.displayName} is ${s.medianPrice}, with average price per square foot at $${s.pricePerSqft}. Your actual value depends on neighborhood, condition, lot size, and school zone — these averages set a baseline, not a final number.`,
+      a: `According to ${marketStatsSource} city-level data as of ${statsAsOf}, the median sale price in ${s.displayName} is ${s.medianPrice}, with average price per square foot at $${s.pricePerSqft}. Your actual value depends on neighborhood, condition, lot size, and school zone — these averages set a baseline, not a final number.`,
     },
     {
       q: `Is ${s.name} appreciating in 2026?`,
@@ -279,6 +280,12 @@ export default async function MarketSuburbPage({ params }: Props) {
                 <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">YoY Appreciation</p>
               </div>
             </div>
+            <p className="text-xs text-[#A0A0A0] mt-4">
+              Source: {marketStatsSource} city-level medians, as of {statsAsOf}. Your specific home&apos;s value depends on its neighborhood, condition, and lot &mdash;{' '}
+              <Link href={`/sell/${s.slug}`} className="underline hover:no-underline">
+                get a comp-backed valuation
+              </Link>.
+            </p>
           </div>
         </div>
 
