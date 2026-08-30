@@ -177,6 +177,15 @@ export default async function NeighborhoodPage({ params }: Props) {
       postalCode: '37027',
       addressCountry: 'US',
     },
+    // Coordinates of the Brentwood office above — NOT the neighborhood's (those
+    // belong on the Place node). A business node whose geo disagrees with its
+    // own postal address reads as a NAP inconsistency. Same point /buy/[suburb]
+    // publishes on its RealEstateAgent node.
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: 36.0234,
+      longitude: -86.7838,
+    },
     areaServed: {
       '@type': 'City',
       name: n.schemaCity,
