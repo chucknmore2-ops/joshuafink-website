@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-08-29T13:43:08.906Z
+// AUTO-GENERATED — Last synced: 2026-08-30T13:41:07.644Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -21,7 +21,7 @@ export interface Listing {
 
 // Mirrors the header timestamp so server components can compute sync staleness
 // without parsing comments. Updated by scripts/fetch-images.mjs each sync.
-export const listingsSyncedAt = "2026-08-29T13:43:08.906Z";
+export const listingsSyncedAt = "2026-08-30T13:41:07.644Z";
 
 export const listings: Listing[] = [
   {
@@ -130,6 +130,18 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/4874-Sparta-Pike-Watertown-TN-37184/TMU6R_pid/",
     imageUrl: "https://www.compass.com/m/9271db1e1cbdb146eb498cd63a192c09a438f39c3b9627023b0cbda6f044a677/2048x1536.webp",
+    lastVerified: listingsSyncedAt,
+  },
+  {
+    address: "2037 Walnut Ln",
+    city: "Gallatin, TN 37066 | MLS #3527618",
+    price: 319900,
+    beds: 3,
+    baths: 3,
+    sqft: 1544,
+    status: "Active",
+    compassUrl: "https://www.compass.com/homedetails/2037-Walnut-Ln-Gallatin-TN-37066/SFFDI_pid/",
+    imageUrl: "https://www.compass.com/m/cfb0b5c09b81c0659c2b0baa6b3bc9332777f4a2bd4d6d647b185638b946738f/2048x1536.webp",
     lastVerified: listingsSyncedAt,
   }
 ];
