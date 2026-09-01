@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
+import TrackedTelLink from '@/components/TrackedTelLink'
 import TrustBadges from '@/components/TrustBadges'
 import ReviewStrip from '@/components/ReviewStrip'
 import { activeListingSlugs, getListingBySlug } from '@/lib/listing-detail'
@@ -348,9 +349,13 @@ export default async function ListingDetailPage({ params }: Props) {
                   <>
                     Joshua will reach out same-day about {listing.address}. For anything urgent,
                     call{' '}
-                    <a href="tel:6155512727" className="text-black font-semibold underline">
+                    <TrackedTelLink
+                      href="tel:6155512727"
+                      className="text-black font-semibold underline"
+                      data-cta="listing-detail-success-call"
+                    >
                       615-551-2727
-                    </a>
+                    </TrackedTelLink>
                     .
                   </>
                 }
@@ -437,7 +442,7 @@ export default async function ListingDetailPage({ params }: Props) {
                   Send to Joshua →
                 </button>
 
-                <a
+                <TrackedTelLink
                   href={`sms:+16155512727?&body=${encodeURIComponent(
                     `Hi Joshua, I'm interested in ${listing.address}, ${city}`,
                   )}`}
@@ -446,7 +451,7 @@ export default async function ListingDetailPage({ params }: Props) {
                   aria-label={`Text Joshua about ${listing.address}`}
                 >
                   Or text Joshua
-                </a>
+                </TrackedTelLink>
 
                 <p className="text-xs text-[#A0A0A0]">
                   * Joshua responds same-day. No spam, no pressure.
