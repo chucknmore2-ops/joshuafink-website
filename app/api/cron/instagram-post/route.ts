@@ -6,7 +6,7 @@ import { logPost } from '@/lib/admin-db'
 import { withUtm } from '@/lib/utm'
 
 export const dynamic = 'force-dynamic'
-// Room for the container-readiness poll below (up to ~30s) — the default
+// Room for the container-readiness poll below (up to ~40s) — the default
 // function cap is 10s on Hobby.
 export const maxDuration = 60
 
@@ -237,9 +237,14 @@ export async function GET(request: Request) {
     // Meta processes the image asynchronously after the container is created.
     // Publishing before status_code=FINISHED is what threw the 400 "Media ID
     // is not available" (OAuthException code 9007) failures, so poll the
-    // container until it's ready before calling media_publish.
+    // container until it's ready before calling media_publish. The 2026-08-26
+    // run was still IN_PROGRESS after the old 30s window (10 × 3s), so poll
+    // against a deadline instead — 40s is as long as the 60s maxDuration
+    // allows once container creation, media_publish, and the post_log writes
+    // get their share.
     let statusCode = 'IN_PROGRESS'
-    for (let attempt = 0; attempt < 10; attempt++) {
+    const pollDeadline = Date.now() + 40_000
+    while (Date.now() < pollDeadline) {
       const statusRes = await fetch(
         `${GRAPH_API}/${creationId}?fields=status_code&access_token=${accessToken}`,
       )
@@ -250,7 +255,7 @@ export async function GET(request: Request) {
       if (statusCode === 'FINISHED' || statusCode === 'ERROR' || statusCode === 'EXPIRED') {
         break
       }
-      await new Promise((resolve) => setTimeout(resolve, 3000))
+      await new Promise((resolve) => setTimeout(resolve, 4000))
     }
     if (statusCode !== 'FINISHED') {
       await logIg('failed', payload, {

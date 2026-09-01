@@ -26,6 +26,12 @@ export const dynamic = 'force-dynamic'
 //   LINKEDIN_ACCESS_TOKEN   — from the one-time /api/linkedin/auth + /callback flow
 //   LINKEDIN_AUTHOR_URN     — e.g. urn:li:person:XXXXX (returned by /callback)
 //
+// Optional:
+//   LINKEDIN_TOKEN_EXPIRES_AT_MS — Unix ms timestamp of the token's expiry
+//   (issue time + expires_in from the /callback response). When set, runs
+//   within 7 days of expiry abort with an actionable post_log row instead of
+//   posting until the channel silently goes dark on a 401.
+//
 // NOTE: LinkedIn access tokens expire ~60 days after issue. When a run returns
 // 401 Unauthorized from LinkedIn, re-run the OAuth flow:
 //   1. Visit https://www.joshuafink.com/api/linkedin/auth
@@ -341,6 +347,35 @@ export async function GET(request: Request) {
     return NextResponse.json(
       { error: 'LINKEDIN_ACCESS_TOKEN or LINKEDIN_AUTHOR_URN not set' },
       { status: 500 },
+    )
+  }
+
+  // Expiry guardrail: LinkedIn tokens live ~60 days and the only built-in
+  // signal is a 401 at post time — by which point the channel is already dark
+  // (three straight EXPIRED_ACCESS_TOKEN failures the week of 2026-08-24).
+  // When the expiry timestamp is in the env, fail loudly a week early so the
+  // post_log row / healthcheck prompt a re-auth while posts are still going out.
+  const tokenExpiresAtMs = Number(process.env.LINKEDIN_TOKEN_EXPIRES_AT_MS ?? 0)
+  const sevenDaysMs = 7 * 24 * 60 * 60 * 1000
+  if (tokenExpiresAtMs && Date.now() > tokenExpiresAtMs - sevenDaysMs) {
+    const expired = Date.now() > tokenExpiresAtMs
+    const errorMessage =
+      `LINKEDIN_ACCESS_TOKEN ${expired ? 'has expired' : 'expires within 7 days'} ` +
+      `(LINKEDIN_TOKEN_EXPIRES_AT_MS=${tokenExpiresAtMs}) — posting aborted. ` +
+      `Re-run https://www.joshuafink.com/api/linkedin/auth, then update ` +
+      `LINKEDIN_ACCESS_TOKEN and LINKEDIN_TOKEN_EXPIRES_AT_MS in Vercel env and redeploy.`
+    console.error('[linkedin-post]', errorMessage)
+    await logPost({
+      channel: 'linkedin',
+      jobName,
+      payloadKind: payload?.kind ?? 'none',
+      refKey: 'token-expiry',
+      status: 'failed',
+      errorMessage: errorMessage.slice(0, 500),
+    })
+    return NextResponse.json(
+      { error: 'linkedin token expired or expiring', expiresAtMs: tokenExpiresAtMs },
+      { status: 503 },
     )
   }
 
