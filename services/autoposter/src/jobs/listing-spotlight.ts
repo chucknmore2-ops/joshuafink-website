@@ -32,6 +32,20 @@ function buildCaption(listing: Listing): string {
   ].filter(Boolean);
   const details = parts.join(" | ");
   const cityTag = listing.city.split(",")[0].replace(/\s+/g, "");
+  // Dedupe: Nashville listings derive "#NashvilleRealEstate" as their city tag,
+  // which collides with the hardcoded one and doubled it in every caption.
+  const hashtags = Array.from(
+    new Set([
+      `#${cityTag}RealEstate`,
+      "#NashvilleRealEstate",
+      "#MiddleTennessee",
+      "#CompassRealEstate",
+      "#JoshuaFinkGroup",
+      "#HomesForSale",
+      "#TennesseeRealEstate",
+      "#JustListed",
+    ]),
+  ).join(" ");
 
   return [
     statusTag(listing.status),
@@ -47,7 +61,7 @@ function buildCaption(listing: Listing): string {
     "🌐 joshuafink.com",
     "✉️ joshua@joshuafink.com",
     "",
-    `#${cityTag}RealEstate #NashvilleRealEstate #MiddleTennessee #CompassRealEstate #JoshuaFinkGroup #HomesForSale #TennesseeRealEstate #JustListed`,
+    hashtags,
   ]
     .filter((line) => line !== "")
     .join("\n")
