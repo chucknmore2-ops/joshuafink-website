@@ -491,6 +491,89 @@ def test_blog_stale_has_remediation():
 
 
 # ---------------------------------------------------------------------------
+# check_market_stats_freshness
+# ---------------------------------------------------------------------------
+
+def _iso(days_ago: float) -> str:
+    return (NOW - timedelta(days=days_ago)).date().isoformat()
+
+
+def _suburbs_source(main_date: str, *data_updated: str) -> str:
+    """Minimal lib/suburbs.ts stand-in."""
+    lines = [f"    dataUpdatedAt: '{d}'," for d in data_updated]
+    lines.append(f"export const marketStatsLastUpdated = '{main_date}'")
+    return "\n".join(lines)
+
+
+def _cash_source(date: str) -> str:
+    return f"export const cashOfferContentLastUpdated = '{date}'"
+
+
+def _stats_reader(suburbs_src: str, cash_src: str):
+    """Dispatch on filename — the check reads both TS sources."""
+    def read(path):
+        return suburbs_src if path.endswith("suburbs.ts") else cash_src
+    return read
+
+
+def test_market_stats_pass_when_fresh():
+    read = _stats_reader(_suburbs_source(_iso(80), _iso(10)), _cash_source(_iso(90)))
+    result = hc.check_market_stats_freshness("/repo", now=NOW, read_fn=read)
+    # Newest date across both files wins — one recent dataUpdatedAt is enough.
+    assert result.status == hc.STATUS_PASS
+    assert _iso(10) in result.detail
+
+
+def test_market_stats_stale_when_all_dates_old():
+    read = _stats_reader(_suburbs_source(_iso(80), _iso(76)), _cash_source(_iso(90)))
+    result = hc.check_market_stats_freshness("/repo", now=NOW, read_fn=read)
+    assert result.status == hc.STATUS_STALE
+    assert result.is_alert
+    assert "re-run the Redfin sync" in result.detail
+
+
+def test_market_stats_error_when_suburbs_has_no_dates():
+    read = _stats_reader("export const x = []", _cash_source(_iso(1)))
+    result = hc.check_market_stats_freshness("/repo", now=NOW, read_fn=read)
+    assert result.status == hc.STATUS_ERROR
+    assert hc.SUBURBS_FILE in result.detail
+
+
+def test_market_stats_error_when_cash_offer_has_no_dates():
+    # Guards the mirrored regex — a reformat of cash-offer-cities.ts must
+    # surface as ERROR, not silently drop the file from the check.
+    read = _stats_reader(_suburbs_source(_iso(1)), "export const x = []")
+    result = hc.check_market_stats_freshness("/repo", now=NOW, read_fn=read)
+    assert result.status == hc.STATUS_ERROR
+    assert hc.CASH_OFFER_FILE in result.detail
+
+
+def test_market_stats_error_when_unreadable():
+    def boom(path):
+        raise FileNotFoundError(path)
+    result = hc.check_market_stats_freshness("/repo", now=NOW, read_fn=boom)
+    assert result.status == hc.STATUS_ERROR
+
+
+def test_market_stats_reads_the_real_files():
+    """The shipped TS sources must parse — guards the regexes against a
+    reformat that would silently zero this check out."""
+    result = hc.check_market_stats_freshness(str(REPO_ROOT))
+    assert result.status in (hc.STATUS_PASS, hc.STATUS_STALE)
+    assert result.actual_age_days is not None
+
+
+def test_market_stats_stale_has_remediation():
+    stale = hc.CheckResult(
+        name=f"market stats — {hc.SUBURBS_FILE}",
+        status=hc.STATUS_STALE,
+        detail="newest stats refresh 2026-08-20",
+    )
+    tip = hc._remediation_for(stale)
+    assert tip and "Redfin" in tip and "lib/suburbs.ts" in tip
+
+
+# ---------------------------------------------------------------------------
 # check_site_uptime
 # ---------------------------------------------------------------------------
 
@@ -907,7 +990,7 @@ def test_sync_prs_parses_response_larger_than_500kb():
 # Orchestration + exit codes
 # ---------------------------------------------------------------------------
 
-def _patch_dns_helpers(monkeypatch, *, healthcheck_status, git_status, latest_map=None, reach_status="pass", last_attempt_map=None, workflow_status="pass", blog_status="pass", sync_prs_status="pass", lead_status="pass"):
+def _patch_dns_helpers(monkeypatch, *, healthcheck_status, git_status, latest_map=None, reach_status="pass", last_attempt_map=None, workflow_status="pass", blog_status="pass", market_stats_status="pass", sync_prs_status="pass", lead_status="pass"):
     """Replace per-check functions with deterministic fakes."""
     monkeypatch.setattr(
         hc,
@@ -942,6 +1025,15 @@ def _patch_dns_helpers(monkeypatch, *, healthcheck_status, git_status, latest_ma
         lambda repo_dir, now=None, read_fn=None: hc.CheckResult(
             name=f"blog cadence — {hc.BLOG_FILE}",
             status=blog_status,
+            detail="patched",
+        ),
+    )
+    monkeypatch.setattr(
+        hc,
+        "check_market_stats_freshness",
+        lambda repo_dir, now=None, read_fn=None: hc.CheckResult(
+            name=f"market stats — {hc.SUBURBS_FILE}",
+            status=market_stats_status,
             detail="patched",
         ),
     )
@@ -991,9 +1083,9 @@ def test_run_all_all_green(monkeypatch):
         dsn="dsn://", healthcheck_url="https://x/", repo_dir="/repo", now=NOW
     )
     assert hc.determine_exit_code(results) == 0
-    # site uptime + lead pipeline + listings git + blog cadence + open sync
-    # PRs + reach + monitored workflows + one check per expected pipeline
-    assert len(results) == 6 + len(hc.MONITORED_WORKFLOWS) + len(hc.EXPECTED_JOBS)
+    # site uptime + lead pipeline + listings git + blog cadence + market stats
+    # + open sync PRs + reach + monitored workflows + one per expected pipeline
+    assert len(results) == 7 + len(hc.MONITORED_WORKFLOWS) + len(hc.EXPECTED_JOBS)
 
 
 def test_run_all_misconfig_when_no_dsn(monkeypatch):
@@ -1042,6 +1134,23 @@ def test_run_all_stale_blog_triggers_exit_1(monkeypatch):
         git_status="pass",
         latest_map=latest,
         blog_status="stale",
+    )
+    results = hc.run_all_checks(
+        dsn="dsn://", healthcheck_url="https://x/", repo_dir="/repo", now=NOW
+    )
+    assert hc.determine_exit_code(results) == 1
+
+
+def test_run_all_stale_market_stats_triggers_exit_1(monkeypatch):
+    """Rotted Redfin figures on the money pages have to page, not sit quiet
+    until guide prices visibly disagree with market pages again."""
+    latest = {(j.channel, j.job_name): _fake_latest(0.5) for j in hc.EXPECTED_JOBS}
+    _patch_dns_helpers(
+        monkeypatch,
+        healthcheck_status="pass",
+        git_status="pass",
+        latest_map=latest,
+        market_stats_status="stale",
     )
     results = hc.run_all_checks(
         dsn="dsn://", healthcheck_url="https://x/", repo_dir="/repo", now=NOW
@@ -1168,6 +1277,7 @@ def test_report_no_remediation_when_all_green():
     ("postgres reachable", "DATABASE_PUBLIC_URL"),
     ("site uptime — https://example/", "vercel.com"),
     ("sync-listings — lib/listings.ts", "Sync Compass Listings"),
+    ("market stats — lib/suburbs.ts", "Redfin Data Center"),
     ("sync-listings — open PRs", "merge the NEWEST"),
     ("github-actions — Sync Compass Listings", "Re-run"),
     ("autoposter-listing (FB) — listing-spotlight", "FB_PAGE_TOKEN"),

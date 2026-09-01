@@ -28,6 +28,10 @@ COVERED (per `lib/admin-schedule.ts`):
     calendar in docs/content-keyword-strategy.md lives only on paper, so
     nothing else notices when it stalls (weeks 6-12 went unwritten for a
     fortnight in Aug 2026 and every other check stayed green).
+  Market stats freshness — newest hand-refresh date in lib/suburbs.ts +
+    lib/cash-offer-cities.ts. The Redfin figures quoted on 40+ money pages
+    are a rolling 3-month window; when they last rotted (Aug 2026) guide
+    prices drifted up to 91% and 10 pages were hidden from Google.
   GitHub Actions sync-listings — checked via git mtime of lib/listings.ts
   GitHub Actions scheduled workflows — latest completed run of each must
     have concluded 'success' (needs GITHUB_TOKEN; otherwise a GAP). This
@@ -172,6 +176,35 @@ BLOG_MAX_AGE_DAYS = 14
 # the generated market-update post (whose date is a variable, not a literal)
 # is correctly ignored — it has its own monthly check.
 BLOG_DATE_RE = re.compile(r'^\s*date:\s*"([^"]+)"', re.MULTILINE)
+
+# Hand-refreshed Redfin market stats quoted on 40+ sell/buy/market/cash-offer
+# money pages. Redfin's figures are a rolling 3-month window, so they rot
+# silently — in Aug 2026 nobody noticed until guide prices disagreed with
+# market pages by up to 91% and 10 pages had to be hidden from Google.
+# Measured from the newest of `marketStatsLastUpdated` + per-suburb
+# `dataUpdatedAt` in lib/suburbs.ts plus the mirrored review date in
+# lib/cash-offer-cities.ts. 75d keeps the quoted window mostly inside
+# Redfin's rolling one, with slack for a slow month.
+SUBURBS_FILE = "lib/suburbs.ts"
+CASH_OFFER_FILE = "lib/cash-offer-cities.ts"
+MARKET_STATS_MAX_AGE_DAYS = 75
+# Each source file must match its regex at least once or the check errors —
+# a reformat of the TS source must not silently zero the check out.
+MARKET_STATS_DATE_SOURCES: tuple[tuple[str, re.Pattern], ...] = (
+    # `export const marketStatsLastUpdated = '2026-08-20'` plus the optional
+    # per-suburb `dataUpdatedAt: '2026-08-20'` overrides.
+    (
+        SUBURBS_FILE,
+        re.compile(
+            r"(?:marketStatsLastUpdated\s*=|dataUpdatedAt:)\s*'(\d{4}-\d{2}-\d{2})'"
+        ),
+    ),
+    # `export const cashOfferContentLastUpdated = '2026-07-31'`
+    (
+        CASH_OFFER_FILE,
+        re.compile(r"cashOfferContentLastUpdated\s*=\s*'(\d{4}-\d{2}-\d{2})'"),
+    ),
+)
 
 # Scheduled GitHub Actions workflows. Freshness thresholds are slow by design;
 # a red workflow run is the immediate signal that an automation is broken.
@@ -696,6 +729,76 @@ def check_blog_freshness(
     )
 
 
+def check_market_stats_freshness(
+    repo_dir: str,
+    *,
+    now: Optional[datetime] = None,
+    read_fn: Optional[Callable[[str], str]] = None,
+) -> CheckResult:
+    """Hand-refreshed market stats — are the quoted Redfin figures still fresh?
+
+    Parses the ISO date literals out of the TS sources rather than asking git,
+    because a prose tweak touches the file without refreshing a single number.
+    Stale means the NEWEST date across both files is past threshold — nothing
+    on the site has been refreshed, so the fix is one Redfin sync, not a hunt.
+    """
+    now = now or datetime.now(timezone.utc)
+    name = f"market stats — {SUBURBS_FILE}"
+    t0 = time.monotonic()
+
+    def _default_read(p: str) -> str:
+        with open(p, "r", encoding="utf-8") as fh:
+            return fh.read()
+
+    newest: Optional[datetime] = None
+    for rel_path, date_re in MARKET_STATS_DATE_SOURCES:
+        try:
+            source = (read_fn or _default_read)(os.path.join(repo_dir, rel_path))
+        except OSError as exc:
+            return CheckResult(
+                name=name,
+                status=STATUS_ERROR,
+                detail=f"could not read {rel_path}: {type(exc).__name__}: {exc}",
+                duration_ms=int((time.monotonic() - t0) * 1000),
+            )
+        found = False
+        for raw in date_re.findall(source):
+            try:
+                parsed = datetime.strptime(raw, "%Y-%m-%d").replace(
+                    tzinfo=timezone.utc
+                )
+            except ValueError:
+                continue  # One malformed date shouldn't blind the whole check.
+            found = True
+            if newest is None or parsed > newest:
+                newest = parsed
+        if not found:
+            return CheckResult(
+                name=name,
+                status=STATUS_ERROR,
+                detail=f"no parsable stats dates found in {rel_path}",
+                duration_ms=int((time.monotonic() - t0) * 1000),
+            )
+
+    assert newest is not None
+    age_days = (now - newest).total_seconds() / 86400.0
+    detail = (
+        f"newest stats refresh {newest.date().isoformat()}, {age_days:.1f}d ago "
+        f"(threshold {MARKET_STATS_MAX_AGE_DAYS}d — Redfin figures are a "
+        f"rolling 3-month window)"
+    )
+    if age_days > MARKET_STATS_MAX_AGE_DAYS:
+        detail += " — re-run the Redfin sync"
+    return CheckResult(
+        name=name,
+        status=STATUS_STALE if age_days > MARKET_STATS_MAX_AGE_DAYS else STATUS_PASS,
+        detail=detail,
+        actual_age_days=age_days,
+        expected_max_age_days=MARKET_STATS_MAX_AGE_DAYS,
+        duration_ms=int((time.monotonic() - t0) * 1000),
+    )
+
+
 def check_workflow_last_run(
     workflow_file: str,
     label: str,
@@ -1195,6 +1298,17 @@ def run_all_checks(
             detail=f"uncaught {type(exc).__name__}: {exc}",
         ))
 
+    # 2c) Market stats freshness — the hand-refreshed Redfin figures quoted
+    #     on 40+ sell/buy/market/cash-offer pages. Same repo-state family.
+    try:
+        results.append(check_market_stats_freshness(repo_dir, now=now))
+    except Exception as exc:  # noqa: BLE001
+        results.append(CheckResult(
+            name=f"market stats — {SUBURBS_FILE}",
+            status=STATUS_ERROR,
+            detail=f"uncaught {type(exc).__name__}: {exc}",
+        ))
+
     # 3) Scheduled GitHub Actions runs — deliberately ahead of the DB block so a
     #    missing DATABASE_URL (which returns early) can't hide a red workflow.
     for workflow_file, label in MONITORED_WORKFLOWS:
@@ -1391,6 +1505,17 @@ def _remediation_for(result: CheckResult) -> Optional[str]:
             "(status column), write the post into lib/blog.ts, and tick the "
             "row. Nothing publishes these automatically — the calendar only "
             "moves when someone writes one."
+        )
+    if "market stats" in name:
+        return (
+            "The hand-refreshed Redfin figures on the sell/buy/market/"
+            "cash-offer pages have aged out. Re-run the Redfin sync: pull "
+            "current city stats from the Redfin Data Center, paste them into "
+            "lib/suburbs.ts (bump each suburb's dataUpdatedAt / "
+            "marketStatsLastUpdated per the refresh notes in that file) and "
+            "refresh the mirrored cashOfferContentLastUpdated in "
+            "lib/cash-offer-cities.ts. Last time this drifted, pages "
+            "disagreed by up to 91% and 10 had to be hidden from Google."
         )
     if "autoposter-listing" in name:
         return (
