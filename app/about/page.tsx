@@ -12,6 +12,7 @@ export const metadata: Metadata = {
   title: { absolute: 'About Joshua Fink | Compass Real Estate Agent, Middle Tennessee' },
   description:
     'Learn about Joshua Fink — Affiliate Broker at Compass Real Estate with 17+ years of experience, 100+ homes sold annually, and multiple top-producer awards in Middle Tennessee.',
+  openGraph: { url: 'https://www.joshuafink.com/about' },
 }
 
 const specialties = [

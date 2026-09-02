@@ -18,6 +18,7 @@ export const metadata: Metadata = {
   title: { absolute: 'Joshua Fink | Top Realtor in Middle Tennessee | Compass Real Estate' },
   description:
     'Top-rated Compass agent serving Franklin, Brentwood, Spring Hill, Nashville, and all of Middle Tennessee. 17+ years, 100+ homes sold annually, 5★ rating from 218+ clients. Free valuation and off-market listing access.',
+  openGraph: { url: 'https://www.joshuafink.com' },
 }
 
 const stats = [
