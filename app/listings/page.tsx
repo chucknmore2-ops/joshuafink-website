@@ -33,6 +33,7 @@ export const metadata: Metadata = {
   title: 'Listings — Active & Recently Sold',
   description:
     "Active listings and recently sold homes from Joshua Fink at Compass Real Estate — Nashville, Brentwood, Franklin, Spring Hill, Columbia, and across Middle Tennessee. See what's on the market and what's actually closing.",
+  openGraph: { url: 'https://www.joshuafink.com/listings' },
 }
 
 // Statuses that mean the home is genuinely available to a new buyer.
