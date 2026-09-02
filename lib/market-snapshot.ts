@@ -79,7 +79,28 @@ export interface MarketSnapshot {
  * Deliberately empty until a real report is entered — publishing invented
  * numbers under Joshua's name is worse than publishing nothing.
  */
-export const marketSnapshots: MarketSnapshot[] = []
+export const marketSnapshots: MarketSnapshot[] = [
+  {
+    month: '2026-07',
+    medianSalePrice: '$520,000',
+    medianSalePriceNum: 520000,
+    medianYoyChange: '-0.9%', // from GNAR's stated July 2026 residential median $520,000 vs July 2025 $524,700 in the same release
+    avgDaysOnMarket: 54,
+    closedSales: 3269, // total closings
+    activeListings: 15636, // total inventory
+    monthsOfInventory: 6, // stated by GNAR: "Currently, there are 6 months of available inventory"
+    source: 'Greater Nashville REALTORS®',
+    sourceUrl:
+      'https://www.greaternashvillerealtors.org/news/market-conditions-diverge-across-price-points-in-july-housing-report',
+    reportDate: '2026-08-07',
+    takeaways: [
+      "Inventory sits at six months of supply — a balanced market, not the frantic seller's market of a few years ago.",
+      'The regional median eased to $520,000 from $524,700 a year earlier, while homes priced above $800,000 still saw closings up 8% year over year.',
+      'Average days on market for a single-family home was 54. Correctly priced homes still move; overpriced ones sit.',
+      'First-time buyers remain under pressure — condo closings fell 17% year over year as affordability stays tight at the entry level.',
+    ],
+  },
+]
 
 /** "2026-07" → "July 2026". UTC-anchored so the label can't drift a month. */
 export function monthLabel(month: string): string {
