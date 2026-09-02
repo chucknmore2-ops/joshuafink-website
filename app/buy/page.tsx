@@ -19,11 +19,13 @@ export const metadata: Metadata = {
     canonical: 'https://www.joshuafink.com/buy',
   },
   openGraph: {
-    title: "Homes for Sale in Middle Tennessee — Buyer's Agent Joshua Fink",
+    // Title omits the brand so og:site_name from the root layout
+    // ("Joshua Fink | Compass Real Estate") does not render as
+    // "…Joshua Fink | Joshua Fink | Compass Real Estate" on unfurl.
+    title: "Homes for Sale in Middle Tennessee — Buyer's Agent",
     description:
       "Insider access to every Middle Tennessee market — including off-market and Compass Coming Soon homes. Free buyer consultation with Joshua Fink at Compass.",
     url: 'https://www.joshuafink.com/buy',
-    siteName: 'Joshua Fink Group',
     type: 'website',
   },
 }
