@@ -207,23 +207,24 @@ export default function ListingCard({ listing, featured }: Props) {
             </a>
           )}
 
-          <a
-            href={withUtm(listing.compassUrl, {
-              source: 'joshuafink',
-              medium: 'referral',
-              campaign: 'listing-card',
-              content: listing.address.toLowerCase().replace(/[^\w]+/g, '-'),
-            })}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={
-              detailHref
-                ? 'text-center text-xs font-semibold text-neutral-500 py-1 underline-offset-4 hover:text-black hover:underline'
-                : 'text-center text-sm font-semibold border border-black text-black py-2.5 rounded-full tracking-wide transition-all duration-200 hover:bg-black hover:text-white'
-            }
-          >
-            View on Compass ↗
-          </a>
+          {/* Sold / no on-site page: Compass is the only listing destination.
+              Active cards already have View Details + SMS — don't leak buyers
+              off-site from the card footer. */}
+          {!detailHref && (
+            <a
+              href={withUtm(listing.compassUrl, {
+                source: 'joshuafink',
+                medium: 'referral',
+                campaign: 'listing-card',
+                content: listing.address.toLowerCase().replace(/[^\w]+/g, '-'),
+              })}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-center text-sm font-semibold border border-black text-black py-2.5 rounded-full tracking-wide transition-all duration-200 hover:bg-black hover:text-white"
+            >
+              View on Compass ↗
+            </a>
+          )}
         </div>
       </div>
     </article>
