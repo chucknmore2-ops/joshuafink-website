@@ -5,9 +5,9 @@
  * every Compass sync, so the derived slug logic lives here (a hand-maintained
  * sibling) to survive regeneration. This module is the SINGLE source of truth
  * for a listing's on-site URL slug — app/listings/[slug]/page.tsx
- * (generateStaticParams + lookup) and components/ListingCard.tsx both call
- * listingSlug(), so the generated routes and the links pointing at them can
- * never drift apart.
+ * (generateStaticParams + lookup), components/ListingCard.tsx, and
+ * lib/hero-slides.ts (homepage hero CTAs) all call listingSlug(), so the
+ * generated routes and the links pointing at them can never drift apart.
  */
 import { listings, type Listing } from './listings'
 
