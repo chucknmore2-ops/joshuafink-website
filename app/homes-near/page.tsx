@@ -108,7 +108,7 @@ export default function HomesNearHubPage() {
                   <p className="text-sm text-[#6B6B6B] leading-relaxed mb-3">{s.ratingNote}</p>
                   {suburb && (
                     <p className="text-xs font-semibold text-black">
-                      Suburb: {suburb.displayName} · Median {suburb.medianPrice}
+                      {suburb.displayName} · citywide median {suburb.medianPrice}
                     </p>
                   )}
                 </Link>
