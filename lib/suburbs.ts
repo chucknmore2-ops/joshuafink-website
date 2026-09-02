@@ -740,6 +740,30 @@ export const suburbCityGeo: Record<string, { latitude: number; longitude: number
   'la-vergne-tn': { latitude: 36.0156, longitude: -86.5819 },
 }
 
+export function suburbStatsAsOf(s: Suburb): string {
+  return s.dataUpdatedAt ?? marketStatsLastUpdated
+}
+
+// Display form for the ISO as-of date already stored on each suburb (or the
+// global fallback). Kept UTC so "2026-08-20" always renders as August 20.
+export function formatStatsDate(iso: string): string {
+  const [year, month, day] = iso.split('-').map(Number)
+  if (!year || !month || !day) return iso
+  return new Date(Date.UTC(year, month - 1, day)).toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: 'UTC',
+  })
+}
+
+// Honest attribution for citywide Redfin (etc.) medians. School-zone pages
+// must cite this rather than implying the figure is an attendance-zone median.
+export function citywideStatsCitation(s: Suburb): string {
+  const asOf = formatStatsDate(suburbStatsAsOf(s))
+  return marketStatsSource ? `Source: ${marketStatsSource}, as of ${asOf}` : `As of ${asOf}`
+}
+
 export function getSuburb(slug: string): Suburb | undefined {
   return suburbs[slug]
 }

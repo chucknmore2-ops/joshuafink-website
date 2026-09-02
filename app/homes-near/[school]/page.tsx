@@ -1,7 +1,17 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getSchool, getAllSchoolSlugs, getSchoolSuburb } from '@/lib/schools'
+import {
+  getSchool,
+  getAllSchoolSlugs,
+  getSchoolSuburb,
+  getRelatedSchools,
+  schoolPageTitle,
+  schoolPageDescription,
+  schoolHeroLine,
+  schoolHeroKicker,
+} from '@/lib/schools'
+import { citywideStatsCitation } from '@/lib/suburbs'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
 
@@ -22,8 +32,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const suburb = getSchoolSuburb(s)
 
   return {
-    title: `Homes for Sale Near ${s.name} — ${s.district}`,
-    description: `Looking for a home in the ${s.name} zone? Browse pricing, top feeder neighborhoods${suburb ? `, and current ${suburb.displayName} market data (median ${suburb.medianPrice})` : ''}. School-zone-first home search from Joshua Fink at Compass.`,
+    title: schoolPageTitle(s, suburb),
+    description: schoolPageDescription(s, suburb),
     alternates: { canonical: `${SITE}/homes-near/${slug}` },
     keywords: [
       `homes near ${s.name}`,
@@ -34,8 +44,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       suburb ? `${suburb.name} ${s.level.toLowerCase()} school zone` : '',
     ].filter(Boolean) as string[],
     openGraph: {
-      title: `Homes Near ${s.name}`,
-      description: `Homes for sale in the ${s.name} zone. ${s.ratingNote}`,
+      title: schoolPageTitle(s, suburb),
+      description: schoolPageDescription(s, suburb),
       url: `${SITE}/homes-near/${slug}`,
       type: 'article',
     },
@@ -48,6 +58,7 @@ export default async function HomesNearSchoolPage({ params }: Props) {
   if (!s) notFound()
 
   const suburb = getSchoolSuburb(s)
+  const related = getRelatedSchools(s)
 
   const schoolSchema = {
     '@context': 'https://schema.org',
@@ -112,16 +123,19 @@ export default async function HomesNearSchoolPage({ params }: Props) {
               </ol>
             </nav>
             <p className="text-xs font-semibold tracking-widest uppercase mb-3" style={{ color: '#A0A0A0' }}>
-              {s.district} · {s.level} School Zone
+              {schoolHeroKicker(s, suburb)}
             </p>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.05] max-w-5xl">
-              Homes for Sale Near{' '}
+              Homes Near{' '}
               <span style={{ color: '#C41E3A' }}>{s.name}</span>
+              {suburb ? (
+                <>
+                  {' '}in {suburb.name}
+                </>
+              ) : null}
             </h1>
             <p className="text-lg mt-5 max-w-3xl leading-relaxed" style={{ color: '#A0A0A0' }}>
-              {s.ratingNote} Browse feeder subdivisions, current pricing
-              {suburb ? `, and live ${suburb.displayName} market data` : ''} — all the home-shopping
-              context you need with school zone as your starting filter, not an afterthought.
+              {schoolHeroLine(s, suburb)}
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-4">
               {suburb && (
@@ -192,25 +206,31 @@ export default async function HomesNearSchoolPage({ params }: Props) {
         {suburb && (
           <div className="border-b border-[#E8E8E8] bg-[#F9F9F9]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-              <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-6">
-                {suburb.displayName} Market Snapshot · 2026
+              <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 mb-2">
+                <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase">
+                  {suburb.displayName} Citywide Market Snapshot
+                </p>
+                <p className="text-xs text-[#A0A0A0]">{citywideStatsCitation(suburb)}</p>
+              </div>
+              <p className="text-sm text-[#6B6B6B] mb-6">
+                Citywide {suburb.name} figures — not a {s.name} attendance-zone median.
               </p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div className="bg-white p-6 border border-[#E8E8E8]">
                   <p className="text-3xl font-black text-black">{suburb.medianPrice}</p>
-                  <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">Median Sale Price</p>
+                  <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">Citywide Median Sale Price</p>
                 </div>
                 <div className="bg-white p-6 border border-[#E8E8E8]">
                   <p className="text-3xl font-black text-black">{suburb.avgDaysOnMarket}</p>
-                  <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">Avg. Days on Market</p>
+                  <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">Citywide Avg. Days on Market</p>
                 </div>
                 <div className="bg-white p-6 border border-[#E8E8E8]">
                   <p className="text-3xl font-black text-black">${suburb.pricePerSqft}</p>
-                  <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">Price Per Sq Ft</p>
+                  <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">Citywide Price Per Sq Ft</p>
                 </div>
                 <div className="bg-white p-6 border border-[#E8E8E8]">
                   <p className="text-3xl font-black" style={{ color: '#16a34a' }}>{suburb.yoyChange}</p>
-                  <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">YoY Appreciation</p>
+                  <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">Citywide YoY Appreciation</p>
                 </div>
               </div>
             </div>
@@ -244,6 +264,32 @@ export default async function HomesNearSchoolPage({ params }: Props) {
                 ))}
               </ul>
 
+              {related.length > 0 && (
+                <>
+                  <h3 className="text-xl font-black text-black mt-8 mb-4">Related Feeder Pages</h3>
+                  <p className="text-[#444] text-base leading-relaxed mb-4">
+                    These school-zone pages already mention {s.name} or share a named
+                    feeder neighborhood:
+                  </p>
+                  <ul className="space-y-2 mb-8">
+                    {related.map((r) => (
+                      <li key={r.slug} className="text-sm text-[#444] flex items-start gap-2">
+                        <span style={{ color: '#C41E3A' }} className="mt-1">→</span>
+                        <span>
+                          <Link href={`/homes-near/${r.slug}`} className="font-semibold text-black hover:underline">
+                            Homes Near {r.name}
+                          </Link>
+                          {' '}
+                          <span className="text-[#6B6B6B]">
+                            ({r.level} · {r.district})
+                          </span>
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+
               <div className="bg-[#F9F9F9] border-l-4 p-6 mb-8" style={{ borderColor: '#0A1628' }}>
                 <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-2">
                   Important: Always Verify Zoning
@@ -262,9 +308,10 @@ export default async function HomesNearSchoolPage({ params }: Props) {
                     Search Homes in {suburb.displayName}
                   </h3>
                   <p className="text-[#444] text-base leading-relaxed mb-4">
-                    {s.name}-zoned homes are part of the broader {suburb.displayName} market —
-                    median {suburb.medianPrice}, {suburb.avgDaysOnMarket} days on market, and{' '}
-                    {suburb.yoyChange} year-over-year appreciation. Browse the full local market
+                    {s.name}-zoned homes sit inside the broader {suburb.displayName} market.
+                    The snapshot above is the citywide {suburb.name} median ({suburb.medianPrice}),
+                    not an attendance-zone median — {suburb.avgDaysOnMarket} days on market and{' '}
+                    {suburb.yoyChange} year-over-year citywide. Browse the full local market
                     or filter by school zone with Joshua&apos;s help.
                   </p>
                   <div className="flex flex-wrap gap-3">
@@ -308,7 +355,7 @@ export default async function HomesNearSchoolPage({ params }: Props) {
                         <dd className="text-sm font-semibold text-white">{suburb.displayName}</dd>
                       </div>
                       <div className="flex justify-between items-center">
-                        <dt className="text-sm" style={{ color: '#A0A0A0' }}>Median Home</dt>
+                        <dt className="text-sm" style={{ color: '#A0A0A0' }}>Citywide Median</dt>
                         <dd className="text-sm font-semibold text-white">{suburb.medianPrice}</dd>
                       </div>
                     </>

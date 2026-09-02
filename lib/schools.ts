@@ -544,3 +544,97 @@ export function getAllSchoolSlugs(): string[] {
 export function getSchoolSuburb(s: School): Suburb | undefined {
   return getSuburb(s.suburbSlug)
 }
+
+function stripNeighborhoodQualifier(name: string): string {
+  return name.replace(/\s*\([^)]*\)/g, '').trim()
+}
+
+function neighborhoodMatchKeys(s: School): string[] {
+  return s.neighborhoods
+    .map(stripNeighborhoodQualifier)
+    .filter((n) => n.length >= 4 && !/subdivisions|corridor|\barea\b|adjacent/i.test(n))
+}
+
+// Distinctive names used to detect "this page already mentions that school"
+// in existing blurbs / FAQs. City-name-only tokens (e.g. "Brentwood") are
+// skipped so we don't false-match every Brentwood page to Brentwood High.
+function mentionTokens(s: School): string[] {
+  const tokens = new Set<string>([s.name])
+  const stripped = s.name
+    .replace(/\s+(Senior High|Elementary|Middle|High) School$/i, '')
+    .replace(/\s+(Elementary|Middle|High)$/i, '')
+    .trim()
+  const cityName = getSchoolSuburb(s)?.name
+  const isCityName = !!cityName && stripped.toLowerCase() === cityName.toLowerCase()
+  if (stripped.length >= 5 && !isCityName) tokens.add(stripped)
+  if (s.level === 'High') tokens.add(`${stripped} High`)
+  if (s.level === 'Middle') tokens.add(`${stripped} Middle`)
+  if (s.level === 'Elementary') tokens.add(`${stripped} Elementary`)
+  return Array.from(tokens)
+}
+
+function schoolHaystack(s: School): string {
+  return [s.blurb, s.ratingNote, ...s.faqs.map((f) => `${f.q} ${f.a}`)].join('\n')
+}
+
+function haystackMentions(haystack: string, token: string): boolean {
+  const escaped = token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  return new RegExp(`\\b${escaped}\\b`, 'i').test(haystack)
+}
+
+const LEVEL_ORDER: Record<School['level'], number> = {
+  Elementary: 0,
+  Middle: 1,
+  High: 2,
+}
+
+// Other /homes-near pages that already mention this school (or vice versa)
+// in editorial copy, or that share a named feeder neighborhood. No new
+// relationships are invented — only fields already on School are read.
+export function getRelatedSchools(s: School): School[] {
+  const selfTokens = mentionTokens(s)
+  const selfHaystack = schoolHaystack(s)
+  const selfHoods = new Set(neighborhoodMatchKeys(s).map((n) => n.toLowerCase()))
+
+  return Object.values(schools)
+    .filter((other) => {
+      if (other.slug === s.slug) return false
+      const otherHaystack = schoolHaystack(other)
+      const mentioned =
+        selfTokens.some((t) => haystackMentions(otherHaystack, t)) ||
+        mentionTokens(other).some((t) => haystackMentions(selfHaystack, t))
+      const sharedHood = neighborhoodMatchKeys(other).some((n) => selfHoods.has(n.toLowerCase()))
+      return mentioned || sharedHood
+    })
+    .sort((a, b) => LEVEL_ORDER[a.level] - LEVEL_ORDER[b.level] || a.name.localeCompare(b.name))
+}
+
+export function schoolPageTitle(s: School, suburb?: Suburb): string {
+  const city = suburb?.name ?? s.district
+  const a = s.neighborhoods[0] ? stripNeighborhoodQualifier(s.neighborhoods[0]) : ''
+  const b = s.neighborhoods[1] ? stripNeighborhoodQualifier(s.neighborhoods[1]) : ''
+  const hoods = a && b ? `${a} & ${b}` : a
+  return hoods ? `Homes Near ${s.name} in ${city} — ${hoods}` : `Homes Near ${s.name} in ${city}`
+}
+
+export function schoolPageDescription(s: School, suburb?: Suburb): string {
+  const lead = s.ratingNote.replace(/\.$/, '')
+  const hoods = s.neighborhoods.slice(0, 3).join(', ')
+  const citywide = suburb
+    ? ` Citywide ${suburb.name} median (${suburb.medianPrice}) is shown for context, not a ${s.name} attendance-zone median.`
+    : ''
+  return `${lead}. Feeder neighborhoods include ${hoods}.${citywide}`
+}
+
+export function schoolHeroLine(s: School, suburb?: Suburb): string {
+  const hoods = s.neighborhoods.slice(0, 3).join(', ')
+  const extra = s.neighborhoods.length > 3 ? ` and other ${s.level.toLowerCase()} feeders` : ''
+  const where = suburb ? ` in ${suburb.displayName}` : ''
+  return `${s.ratingNote} Typical search areas include ${hoods}${extra}${where}.`
+}
+
+export function schoolHeroKicker(s: School, suburb?: Suburb): string {
+  const hoods = s.neighborhoods.slice(0, 2).map(stripNeighborhoodQualifier).join(' · ')
+  const city = suburb?.name ?? s.district
+  return hoods ? `${s.district} · ${s.level} · ${city} · ${hoods}` : `${s.district} · ${s.level} School Zone`
+}
