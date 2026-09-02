@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation'
 import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated, suburbs } from '@/lib/suburbs'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
+import TrustBadges from '@/components/TrustBadges'
+import ReviewStrip from '@/components/ReviewStrip'
 
 const SITE = 'https://www.joshuafink.com'
 
@@ -284,6 +286,10 @@ export default async function MarketSuburbPage({ params }: Props) {
         {/* Mid-page inline lead capture — catches high-intent visitors who scroll
             past the headline stats but won't reach the bottom CTA form. */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
+          {/* Trust signals — credentials and rating in view before the lead form */}
+          <div className="mb-6">
+            <TrustBadges variant="light" />
+          </div>
           <div className="bg-white border border-[#E8E8E8] p-6 sm:p-8">
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
               <div className="lg:col-span-2">
@@ -576,6 +582,9 @@ export default async function MarketSuburbPage({ params }: Props) {
             </div>
           </div>
         )}
+
+        {/* Social proof — same strip used on /buy, /sell and /cash-offer */}
+        <ReviewStrip variant="light" limit={3} />
 
         {/* Bottom CTA */}
         <div className="text-white py-16 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#0A1628' }}>
