@@ -177,7 +177,8 @@ export default function CinematicHero({ slides }: { slides: HeroSlide[] }) {
               aria-atomic="true"
             >
               <p className="text-[10px] sm:text-xs font-semibold tracking-[0.3em] text-white/60 uppercase mb-2">
-                {paused ? 'Paused · Featured Property' : 'Featured Property'}
+                {paused ? 'Paused · ' : ''}
+                {active.status === 'Recently Sold' ? 'Recently Sold' : 'Featured Property'}
               </p>
               <Link
                 href={active.href}
@@ -190,7 +191,8 @@ export default function CinematicHero({ slides }: { slides: HeroSlide[] }) {
                 </span>
                 <span className="text-white/75 text-sm sm:text-base">{active.cityShort}</span>
                 <span className="text-white/85 text-sm sm:text-base font-medium">
-                  · View details <span aria-hidden="true">→</span>
+                  · {active.href.startsWith('/listings/') ? 'View details' : 'View listings'}{' '}
+                  <span aria-hidden="true">→</span>
                 </span>
               </Link>
             </div>

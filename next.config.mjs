@@ -42,12 +42,38 @@ const nextConfig = {
   },
   async redirects() {
     return [
-      // 1901 New Bristol Ln closed 2026-08 and dropped out of lib/listings.ts,
-      // so its statically-generated detail page stopped existing. The URL was
-      // live and linked from social posts, so send it to the listings hub
-      // (where it now appears under Recently Sold) instead of a 404.
+      // Sold hero / showcase addresses that dropped out of lib/listings.ts.
+      // Their /listings/{slug} pages were never regenerated (or were removed
+      // after close). Send leftover and guessed URLs to the listings hub
+      // (where they appear under Recently Sold) instead of a 404. Do not
+      // invent detail pages with stale data.
       {
         source: '/listings/1901-new-bristol-ln-brentwood',
+        destination: '/listings',
+        permanent: true,
+      },
+      {
+        source: '/listings/9209-duncaster-ct-brentwood',
+        destination: '/listings',
+        permanent: true,
+      },
+      {
+        source: '/listings/9560-dresden-square-brentwood',
+        destination: '/listings',
+        permanent: true,
+      },
+      {
+        source: '/listings/1523-tellcroft-dr-brentwood',
+        destination: '/listings',
+        permanent: true,
+      },
+      {
+        source: '/listings/9242-lehigh-dr-brentwood',
+        destination: '/listings',
+        permanent: true,
+      },
+      {
+        source: '/listings/9451-appleton-ct-brentwood',
         destination: '/listings',
         permanent: true,
       },

@@ -5,22 +5,69 @@
 //
 // Photos are enhanced versions stored locally in public/hero/. Update this
 // list manually when a featured property closes or a new one comes online.
+//
+// CTAs are resolved against lib/listings.ts via listingSlug / hasListingDetail:
+// an on-site /listings/{slug} page wins; otherwise the slide stays first-party
+// (/listings) instead of leaking to compass.com. Sold addresses are never
+// labelled Featured.
+
+import { hasListingDetail, listingSlug } from './listing-detail'
+import { soldListings } from './sold-listings'
+
+export type HeroSlideStatus = 'Featured' | 'Coming Soon' | 'Just Listed' | 'Recently Sold'
 
 export type HeroSlide = {
   imageUrl: string
   alt: string
-  status: 'Featured' | 'Coming Soon' | 'Just Listed' | 'Recently Sold'
+  status: HeroSlideStatus
   cityShort: string
   href: string
+  address: string
+  city: string
 }
 
-export const heroSlides: HeroSlide[] = [
+type HeroSlideSource = Omit<HeroSlide, 'href' | 'status'> & {
+  status: HeroSlideStatus
+}
+
+const soldListingSlugs: ReadonlySet<string> = new Set(
+  soldListings.map((l) => listingSlug(l)),
+)
+
+/** First-party CTA: on-site detail page when it exists, else the listings hub. */
+export function resolveHeroHref(slide: Pick<HeroSlideSource, 'address' | 'city'>): string {
+  if (hasListingDetail(slide)) {
+    return `/listings/${listingSlug(slide)}`
+  }
+  return '/listings'
+}
+
+/** Sold homes (present in sold-listings) are never labelled Featured. */
+export function resolveHeroStatus(
+  slide: Pick<HeroSlideSource, 'address' | 'city' | 'status'>,
+): HeroSlideStatus {
+  if (soldListingSlugs.has(listingSlug(slide))) {
+    return 'Recently Sold'
+  }
+  return slide.status
+}
+
+export function resolveHeroSlide(source: HeroSlideSource): HeroSlide {
+  return {
+    ...source,
+    status: resolveHeroStatus(source),
+    href: resolveHeroHref(source),
+  }
+}
+
+const heroSlideSources: HeroSlideSource[] = [
   {
     imageUrl: '/hero/9209-duncaster.webp',
-    alt: 'Featured Compass listing — 9209 Duncaster Court, Brentwood TN',
-    status: 'Featured',
+    alt: 'Recently sold by Joshua Fink Group — 9209 Duncaster Court, Brentwood TN',
+    status: 'Recently Sold',
     cityShort: 'Brentwood, TN',
-    href: 'https://www.compass.com/homedetails/9209-Duncaster-Ct-Brentwood-TN-37027/TLPVE_pid/',
+    address: '9209 Duncaster Ct',
+    city: 'Brentwood, TN 37027',
   },
   {
     // Sold 2026-08 at $1.8M. Kept in rotation at Joshua's request — the photo
@@ -30,14 +77,16 @@ export const heroSlides: HeroSlide[] = [
     alt: 'Recently sold by Joshua Fink Group — 1901 New Bristol Lane, Brentwood TN',
     status: 'Recently Sold',
     cityShort: 'Brentwood, TN',
-    href: 'https://www.compass.com/homedetails/1901-New-Bristol-Ln-Brentwood-TN-37027/2131329778923073185_lid/',
+    address: '1901 New Bristol Ln',
+    city: 'Brentwood, TN 37027',
   },
   {
     imageUrl: '/hero/9560-dresden.webp',
-    alt: 'Featured Compass listing — 9560 Dresden Square, Brentwood TN',
-    status: 'Featured',
+    alt: 'Recently sold by Joshua Fink Group — 9560 Dresden Square, Brentwood TN',
+    status: 'Recently Sold',
     cityShort: 'Brentwood, TN',
-    href: 'https://www.compass.com/homedetails/9560-Dresden-Square-Brentwood-TN-37027/T863Z_pid/',
+    address: '9560 Dresden Square',
+    city: 'Brentwood, TN 37027',
   },
   // Luxury tier — Joshua's largest sales, so the wheel stays entirely $1M-plus.
   // (9293 Fordham Dr, $5.65M, is the biggest of all but Compass only ever
@@ -46,22 +95,27 @@ export const heroSlides: HeroSlide[] = [
   {
     imageUrl: '/hero/1523-tellcroft.webp',
     alt: 'Sold by Joshua Fink Group — 1523 TellCroft Drive, Brentwood TN',
-    status: 'Featured',
+    status: 'Recently Sold',
     cityShort: 'Brentwood, TN',
-    href: 'https://www.compass.com/homedetails/1523-TellCroft-Dr-Brentwood-TN-37027/1866928982066828025_lid/',
+    address: '1523 TellCroft Dr',
+    city: 'Brentwood, TN 37027',
   },
   {
     imageUrl: '/hero/9242-lehigh.webp',
     alt: 'Sold by Joshua Fink Group — 9242 Lehigh Drive, Brentwood TN',
-    status: 'Featured',
+    status: 'Recently Sold',
     cityShort: 'Brentwood, TN',
-    href: 'https://www.compass.com/homedetails/9242-Lehigh-Dr-Brentwood-TN-37027/1271758271710874905_lid/',
+    address: '9242 Lehigh Dr',
+    city: 'Brentwood, TN 37027',
   },
   {
     imageUrl: '/hero/9451-appleton.webp',
     alt: 'Sold by Joshua Fink Group — 9451 Appleton Court, Brentwood TN',
-    status: 'Featured',
+    status: 'Recently Sold',
     cityShort: 'Brentwood, TN',
-    href: 'https://www.compass.com/homedetails/9451-Appleton-Ct-Brentwood-TN-37027/1586230701225457937_lid/',
+    address: '9451 Appleton Ct',
+    city: 'Brentwood, TN 37027',
   },
 ]
+
+export const heroSlides: HeroSlide[] = heroSlideSources.map(resolveHeroSlide)
