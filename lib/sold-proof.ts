@@ -33,5 +33,5 @@ export function soldListingLocationNames(items: readonly Listing[]): string[] {
     const city = locality.split(',')[0]?.trim()
     if (city) names.add(city)
   }
-  return [...names].sort((a, b) => a.localeCompare(b))
+  return Array.from(names).sort((a, b) => a.localeCompare(b))
 }

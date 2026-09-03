@@ -119,7 +119,7 @@ export function assignListingDetailSlugs(
 
 function buildIdentityIndex(slugToListing: Map<string, Listing>): Map<string, string> {
   const identityToSlug = new Map<string, string>()
-  for (const [slug, listing] of slugToListing) {
+  for (const [slug, listing] of Array.from(slugToListing.entries())) {
     identityToSlug.set(listingIdentity(listing), slug)
   }
   return identityToSlug
@@ -157,7 +157,9 @@ export function resolveListingDetailSlug(listing: ListingRef): string | undefine
   }
 
   const base = listingSlug(listing)
-  const candidates = [...detailBySlug.entries()].filter(([, l]) => listingSlug(l) === base)
+  const candidates = Array.from(detailBySlug.entries()).filter(
+    ([, l]) => listingSlug(l) === base,
+  )
   if (candidates.length === 0) return undefined
 
   if (listing.status && isSoldStatus(listing.status)) {

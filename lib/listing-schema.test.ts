@@ -21,7 +21,9 @@ test('sold detail schema uses SoldOut and the on-site canonical URL', () => {
   assert.equal(schema.availability, 'https://schema.org/SoldOut')
   assert.equal('datePosted' in schema, false)
   assert.equal('validThrough' in schema, false)
-  assert.equal((schema.about as { address: { addressLocality: string } }).address.addressCountry, 'US')
+  const about = schema.about as { address: Record<string, string> }
+  assert.equal(about.address.addressCountry, 'US')
+  assert.equal(about.address.addressLocality, 'Brentwood')
 })
 
 test('active detail schema stays InStock (or PreOrder) and is not SoldOut', () => {

@@ -35,7 +35,7 @@ const soldListingSlugs: ReadonlySet<string> = new Set(
 
 /** First-party CTA: on-site detail page when it exists, else the listings hub. */
 export function resolveHeroHref(
-  slide: Pick<HeroSlideSource, 'address' | 'city'> & Partial<Pick<HeroSlideSource, 'status'>>,
+  slide: Pick<HeroSlideSource, 'address' | 'city'> & { status?: string },
 ): string {
   const slug = resolveListingDetailSlug(slide)
   return slug ? `/listings/${slug}` : '/listings'

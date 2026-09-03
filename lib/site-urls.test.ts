@@ -16,7 +16,7 @@ test('every listing detail slug is in the sitemap catalog exactly once', () => {
   assert.equal(unique.size, listingPaths.length, 'duplicate listing URLs in sitemap')
   assert.equal(listingPaths.length, listingDetailSlugs.size)
 
-  for (const slug of listingDetailSlugs) {
+  for (const slug of Array.from(listingDetailSlugs)) {
     assert.ok(
       unique.has(`/listings/${slug}`),
       `missing /listings/${slug} from sitemap catalog`,
