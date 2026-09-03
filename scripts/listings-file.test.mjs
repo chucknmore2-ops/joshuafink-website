@@ -125,6 +125,42 @@ test('loadExistingListingsMap parses the live lib/listings.ts fixture', () => {
   }
 });
 
+test('loadExistingListingsMap parses the live lib/sold-listings.ts fixture', () => {
+  const live = path.join(__dirname, '..', 'lib', 'sold-listings.ts');
+  const map = loadExistingListingsMap(live, 'soldListings');
+  assert.ok(map.size > 0, 'expected at least one live sold listing');
+  for (const listing of map.values()) {
+    assert.ok(listing.address, 'live sold listing missing address');
+    assert.ok(listing.price > 0, 'live sold listing missing price');
+    assert.ok(listing.compassUrl, 'live sold listing missing compassUrl');
+  }
+});
+
+test('salvage keeps a known live listing when the detail scrape is unusable', () => {
+  const live = path.join(__dirname, '..', 'lib', 'listings.ts');
+  const map = loadExistingListingsMap(live, 'listings');
+  const [url, known] = map.entries().next().value;
+  const scraped = { address: '', city: '', price: 0, compassUrl: url };
+  assert.equal(isUnusableScrapedListing(scraped), true);
+  const salvaged = salvagePriorListing(map, known.compassUrl + '/?utm=fail');
+  assert.equal(salvaged.address, known.address);
+  assert.equal(salvaged.price, known.price);
+  const decision = decideFetchImagesWrite({ resolvedCount: 1, unresolvedCount: 0 });
+  assert.equal(decision.write, true);
+});
+
+test('unknown Compass URL cannot be salvaged and fails the write', () => {
+  const live = path.join(__dirname, '..', 'lib', 'listings.ts');
+  const map = loadExistingListingsMap(live, 'listings');
+  assert.equal(
+    salvagePriorListing(map, 'https://www.compass.com/homedetails/not-a-known-home/'),
+    null,
+  );
+  const decision = decideFetchImagesWrite({ resolvedCount: map.size, unresolvedCount: 1 });
+  assert.equal(decision.write, false);
+  assert.equal(decision.exitCode, 1);
+});
+
 test('decideFetchImagesWrite fails loudly when any card is unresolved', () => {
   assert.deepEqual(
     decideFetchImagesWrite({ resolvedCount: 9, unresolvedCount: 1 }),

@@ -33,7 +33,7 @@ export function loadExistingListingsMap(filePath, exportName = 'listings') {
   if (!filePath || !fs.existsSync(filePath)) return map;
   const src = fs.readFileSync(filePath, 'utf8');
   const re = new RegExp(
-    `export const ${exportName}(?:: [^=]+)? = (\\[[\\s\\S]*?\\n\\];)`,
+    `export const ${exportName}(?:: [^=]+)? = (\\[[\\s\\S]*?\\n\\]);`,
   );
   const match = src.match(re);
   if (!match) return map;
