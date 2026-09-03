@@ -24,7 +24,7 @@ const faqs = [
   },
   {
     q: 'What does “Recently Sold” show?',
-    a: 'These are homes Joshua has closed across Middle Tennessee. They’re a snapshot of the price points, neighborhoods, and home styles he works in every day — useful comps if you’re trying to understand what your own home might be worth.',
+    a: 'These are sold-property records currently shown on this site, synced from Joshua’s Compass profile. Each card opens an on-site page with the address, recorded sold price, and property details we have — not a complete sales history, and not a claim about which side of the transaction Joshua represented. Useful as first-party comps if you’re trying to understand what your own home might be worth.',
   },
 ]
 

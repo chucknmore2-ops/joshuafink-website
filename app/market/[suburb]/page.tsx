@@ -5,6 +5,8 @@ import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated, suburbs } from '@
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import ReviewStrip from '@/components/ReviewStrip'
+import SoldPropertyExperience from '@/components/SoldPropertyExperience'
+import { soldListingsForSuburb } from '@/lib/sold-proof'
 
 const SITE = 'https://www.joshuafink.com'
 
@@ -72,6 +74,7 @@ export default async function MarketSuburbPage({ params }: Props) {
 
   const lean = marketLean(s)
   const neighbors = neighborSuburbs(slug)
+  const soldInSuburb = soldListingsForSuburb(slug)
 
   const reportSchema = {
     '@context': 'https://schema.org',
@@ -517,6 +520,14 @@ export default async function MarketSuburbPage({ params }: Props) {
             </div>
           </div>
         </div>
+
+        {soldInSuburb.length > 0 && (
+          <div className="bg-white border-t border-[#E8E8E8] py-16 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+              <SoldPropertyExperience listings={soldInSuburb} placeName={s.displayName} />
+            </div>
+          </div>
+        )}
 
         {/* FAQ */}
         <div className="bg-[#F5F5F5] py-16 px-4 sm:px-6 lg:px-8">

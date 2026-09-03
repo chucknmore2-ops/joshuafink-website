@@ -3,11 +3,10 @@
 // Run: npm test
 //
 // The cinematic hero used to hard-code compass.com "View details" links, and
-// several sold Brentwood addresses stayed labelled Featured after they closed
-// (and 404'd at /listings/{slug} because sold homes have no detail page).
+// several sold Brentwood addresses stayed labelled Featured after they closed.
 // These tests pin three invariants:
 //
-//   1. When an on-site /listings/{slug} page exists, the CTA uses listingSlug().
+//   1. When an on-site /listings/{slug} page exists, the CTA uses that slug.
 //   2. When it does not, the CTA stays first-party (/listings) — never Compass.
 //   3. Sold homes (lib/sold-listings.ts) are never labelled Featured.
 
@@ -15,7 +14,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { listings } from './listings.ts'
 import { soldListings } from './sold-listings.ts'
-import { hasListingDetail, listingSlug } from './listing-detail.ts'
+import { hasListingDetail, listingSlug, resolveListingDetailSlug } from './listing-detail.ts'
 import {
   heroSlides,
   resolveHeroHref,
@@ -28,10 +27,20 @@ test('an active listing resolves to its on-site /listings/{slug} page', () => {
   assert.equal(resolveHeroHref(listing), `/listings/${listingSlug(listing)}`)
 })
 
-test('a sold / unknown address falls back to /listings, not compass.com', () => {
-  const sold = { address: '9209 Duncaster Ct', city: 'Brentwood, TN 37027' }
-  assert.equal(hasListingDetail(sold), false)
-  assert.equal(resolveHeroHref(sold), '/listings')
+test('a sold address with an on-site page resolves to /listings/{slug}', () => {
+  const sold = soldListings.find((l) => l.address === '9209 Duncaster Ct')
+  assert.ok(sold, '9209 Duncaster Ct should be in sold inventory')
+  assert.equal(hasListingDetail(sold), true)
+  const slug = resolveListingDetailSlug(sold)
+  assert.ok(slug)
+  assert.equal(resolveHeroHref(sold), `/listings/${slug}`)
+})
+
+test('an unknown address falls back to /listings, not compass.com', () => {
+  assert.equal(
+    hasListingDetail({ address: '1 Does-Not-Exist Way', city: 'Franklin, TN 37064' }),
+    false,
+  )
   assert.equal(
     resolveHeroHref({ address: '1 Does-Not-Exist Way', city: 'Franklin, TN 37064' }),
     '/listings',
@@ -77,7 +86,7 @@ test('published hero slides stay first-party and never leak to Compass', () => {
     assert.ok(slide.href.startsWith('/'), `${slide.address} href must be first-party`)
     assert.doesNotMatch(slide.href, /compass\.com/i)
     if (hasListingDetail(slide)) {
-      assert.equal(slide.href, `/listings/${listingSlug(slide)}`)
+      assert.equal(slide.href, `/listings/${resolveListingDetailSlug(slide)}`)
     } else {
       assert.equal(slide.href, '/listings')
     }

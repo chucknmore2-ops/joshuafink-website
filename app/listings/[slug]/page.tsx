@@ -6,7 +6,12 @@ import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrustBadges from '@/components/TrustBadges'
 import ReviewStrip from '@/components/ReviewStrip'
 import TrackedTelLink from '@/components/TrackedTelLink'
-import { activeListingSlugs, getListingBySlug, getTourVideoId } from '@/lib/listing-detail'
+import {
+  getListingBySlug,
+  getTourVideoId,
+  isSoldStatus,
+  listingDetailSlugs,
+} from '@/lib/listing-detail'
 import { buildListingSchema } from '@/lib/listing-schema'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 import { getSuburb, getSuburbSlugForListing } from '@/lib/suburbs'
@@ -47,8 +52,9 @@ function specString(listing: {
 }
 
 export async function generateStaticParams() {
-  // Set already de-dupes, so every generated route is unique.
-  return Array.from(activeListingSlugs).map((slug) => ({ slug }))
+  // Set already de-dupes, so every generated route is unique. Includes
+  // indexable sold homes; colliding slugs are resolved in listing-detail.ts.
+  return Array.from(listingDetailSlugs).map((slug) => ({ slug }))
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -59,20 +65,31 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const city = cityDisplay(listing.city)
   const specs = specString(listing)
   const url = `${SITE}/listings/${slug}`
+  const sold = isSoldStatus(listing.status)
 
-  const title = `${listing.address}, ${city} — ${formatPrice(listing.price)}${
-    specs ? ` · ${specs}` : ''
-  }`
-  const description = `${listing.address} in ${city} — ${formatPrice(listing.price)}${
-    specs ? `, ${specs}` : ''
-  }. ${listing.status} listing represented by Joshua Fink at Compass Real Estate. Request full details or a private showing.`
+  const title = sold
+    ? `${listing.address}, ${city} — Sold ${formatPrice(listing.price)}${
+        specs ? ` · ${specs}` : ''
+      }`
+    : `${listing.address}, ${city} — ${formatPrice(listing.price)}${
+        specs ? ` · ${specs}` : ''
+      }`
+  const description = sold
+    ? `Sold-property record from Joshua Fink Group's Compass inventory: ${listing.address} in ${city} — ${formatPrice(listing.price)}${
+        specs ? `, ${specs}` : ''
+      }. Closing date, days on market, and representation side are not published on this page. Ask Joshua about similar homes or a valuation.`
+    : `${listing.address} in ${city} — ${formatPrice(listing.price)}${
+        specs ? `, ${specs}` : ''
+      }. ${listing.status} listing represented by Joshua Fink at Compass Real Estate. Request full details or a private showing.`
 
   return {
     title,
     description,
     alternates: { canonical: url },
     openGraph: {
-      title: `${listing.address}, ${city} — Joshua Fink · Compass`,
+      title: sold
+        ? `${listing.address}, ${city} — Sold · Joshua Fink`
+        : `${listing.address}, ${city} — Joshua Fink · Compass`,
       description,
       url,
       siteName: 'Joshua Fink Group',
@@ -90,6 +107,7 @@ export default async function ListingDetailPage({ params }: Props) {
   const city = cityDisplay(listing.city)
   const url = `${SITE}/listings/${slug}`
   const specs = specString(listing)
+  const sold = isSoldStatus(listing.status)
 
   const suburbSlug = getSuburbSlugForListing(listing.city)
   const suburbName = suburbSlug ? getSuburb(suburbSlug)?.name : undefined
@@ -100,7 +118,11 @@ export default async function ListingDetailPage({ params }: Props) {
     { name: 'Home', href: '/' },
     { name: 'Listings', href: '/listings' },
     ...(suburbSlug && suburbName
-      ? [{ name: `${suburbName} homes for sale`, href: `/buy/${suburbSlug}` }]
+      ? [
+          sold
+            ? { name: `${suburbName} market`, href: `/market/${suburbSlug}` }
+            : { name: `${suburbName} homes for sale`, href: `/buy/${suburbSlug}` },
+        ]
       : []),
     { name: `${listing.address}, ${city}`, href: `/listings/${slug}` },
   ])
@@ -115,11 +137,13 @@ export default async function ListingDetailPage({ params }: Props) {
   })
 
   // Seed the lead form's message with the property so Joshua sees intent
-  // immediately and the buyer can edit before sending.
-  const prefilledMessage = `I'm interested in ${listing.address}, ${city}. Please send me more details and let me know about a showing.`
+  // immediately and the visitor can edit before sending.
+  const prefilledMessage = sold
+    ? `I'm looking for a home like ${listing.address}, ${city} (sold record). Please send similar homes or a valuation.`
+    : `I'm interested in ${listing.address}, ${city}. Please send me more details and let me know about a showing.`
 
   const detailRows: { label: string; value: string }[] = [
-    { label: 'Price', value: formatPrice(listing.price) },
+    { label: sold ? 'Sold price' : 'Price', value: formatPrice(listing.price) },
     ...(listing.beds !== undefined
       ? [{ label: 'Bedrooms', value: String(listing.beds) }]
       : []),
@@ -170,10 +194,10 @@ export default async function ListingDetailPage({ params }: Props) {
               <>
                 <li>
                   <Link
-                    href={`/buy/${suburbSlug}`}
+                    href={sold ? `/market/${suburbSlug}` : `/buy/${suburbSlug}`}
                     className="hover:text-black underline-offset-4 hover:underline"
                   >
-                    {suburbName} homes for sale
+                    {sold ? `${suburbName} market` : `${suburbName} homes for sale`}
                   </Link>
                 </li>
                 <li aria-hidden className="text-neutral-300">/</li>
@@ -215,16 +239,20 @@ export default async function ListingDetailPage({ params }: Props) {
                   d="M9 21V12h6v9"
                 />
               </svg>
-              <span className="text-xs tracking-wide">Photo available on Compass</span>
+              <span className="text-xs tracking-wide">
+                {sold ? 'Photo on request' : 'Photo available on Compass'}
+              </span>
             </div>
           )}
           <span
             className={`absolute top-4 left-4 text-xs font-semibold px-3 py-1 rounded-full tracking-wide ${
-              listing.status === 'Active'
-                ? 'bg-black text-white'
-                : listing.status.startsWith('Open')
-                  ? 'bg-neutral-900 text-white'
-                  : 'bg-neutral-100 text-neutral-600'
+              sold
+                ? 'bg-red-600 text-white'
+                : listing.status === 'Active'
+                  ? 'bg-black text-white'
+                  : listing.status.startsWith('Open')
+                    ? 'bg-neutral-900 text-white'
+                    : 'bg-neutral-100 text-neutral-600'
             }`}
           >
             {listing.status}
@@ -295,6 +323,16 @@ export default async function ListingDetailPage({ params }: Props) {
               <p className="mt-5 text-sm text-neutral-600 leading-relaxed">{listing.note}</p>
             )}
 
+            {sold && (
+              <p className="mt-5 text-sm text-neutral-600 leading-relaxed">
+                This page republishes a sold-property record from Joshua Fink Group&apos;s
+                Compass inventory. The price and property details below are the fields stored
+                on this site. Closing date, days on market, and which side of the transaction
+                Joshua represented are not in the site data, so they are omitted. If you want
+                a similar home or a valuation, use the form — Joshua answers at 615-551-2727.
+              </p>
+            )}
+
             {/* Details table */}
             <div className="mt-8">
               <h2 className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
@@ -322,48 +360,72 @@ export default async function ListingDetailPage({ params }: Props) {
                 View on Compass ↗
               </a>
               <p className="mt-3 text-xs text-neutral-400">
-                Full photo gallery and MLS documents are hosted on Compass with Joshua as your
-                attributed agent.
+                {sold
+                  ? 'Compass is the source listing for this sold record. Closing date, days on market, and representation side are not in the site data and are not shown here.'
+                  : 'Full photo gallery and MLS documents are hosted on Compass with Joshua as your attributed agent.'}
               </p>
             </div>
 
-            {suburbSlug && suburbName && (
-              <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm">
-                <Link
-                  href={`/buy/${suburbSlug}`}
-                  className="text-black font-semibold underline-offset-4 hover:underline"
-                >
-                  Browse more {suburbName} homes →
-                </Link>
-                <Link
-                  href={`/cash-offer/${suburbSlug}`}
-                  className="text-neutral-500 underline-offset-4 hover:underline hover:text-black"
-                >
-                  Selling first? Get a cash offer →
-                </Link>
-              </div>
-            )}
+            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+              {suburbSlug && suburbName && (
+                <>
+                  <Link
+                    href={`/buy/${suburbSlug}`}
+                    className="text-black font-semibold underline-offset-4 hover:underline"
+                  >
+                    Browse {suburbName} homes for sale →
+                  </Link>
+                  <Link
+                    href={`/market/${suburbSlug}`}
+                    className="text-black font-semibold underline-offset-4 hover:underline"
+                  >
+                    {suburbName} market report →
+                  </Link>
+                  <Link
+                    href={`/cash-offer/${suburbSlug}`}
+                    className="text-neutral-500 underline-offset-4 hover:underline hover:text-black"
+                  >
+                    Selling first? Get a cash offer →
+                  </Link>
+                </>
+              )}
+              <Link
+                href="/neighborhoods"
+                className="text-neutral-500 underline-offset-4 hover:underline hover:text-black"
+              >
+                Neighborhood guides →
+              </Link>
+              <Link
+                href="/listings"
+                className="text-neutral-500 underline-offset-4 hover:underline hover:text-black"
+              >
+                All listings →
+              </Link>
+            </div>
           </div>
 
           {/* Right: lead capture — first in the mobile stack so the form is reachable without scrolling the whole page */}
           <div className="lg:col-span-1 order-first lg:order-last">
             <div id="lead" className="lg:sticky lg:top-24 border border-[#E8E8E8] rounded-2xl p-6 sm:p-8 scroll-mt-24">
               <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-2">
-                Interested in this home?
+                {sold ? 'This home has sold' : 'Interested in this home?'}
               </p>
               <h2 className="text-2xl font-black text-black tracking-tight mb-2">
-                Ask Joshua for details
+                {sold ? 'Ask about similar homes' : 'Ask Joshua for details'}
               </h2>
               <p className="text-sm text-[#6B6B6B] leading-relaxed mb-6">
-                Get pricing history, disclosures, and a private showing for {listing.address}.
-                Joshua responds same-day.
+                {sold
+                  ? `Looking for something like ${listing.address}, or want a valuation on your address? Joshua responds same-day.`
+                  : `Get pricing history, disclosures, and a private showing for ${listing.address}. Joshua responds same-day.`}
               </p>
 
               <SuburbLeadForm
                 successTitle="Request Sent!"
                 successMessage={
                   <>
-                    Joshua will reach out same-day about {listing.address}. For anything urgent,
+                    Joshua will reach out same-day
+                    {sold ? ` about homes like ${listing.address}` : ` about ${listing.address}`}. For
+                    anything urgent,
                     call{' '}
                     <TrackedTelLink
                       href="tel:6155512727"
@@ -378,7 +440,7 @@ export default async function ListingDetailPage({ params }: Props) {
                 resetLabel="Send Another"
               >
                 <input type="hidden" name="lead_type" value="buyer" />
-                <input type="hidden" name="source" value="listing-detail" />
+                <input type="hidden" name="source" value={sold ? 'listing-detail-sold' : 'listing-detail'} />
                 {/* property_address is the field the contact webhook already
                     surfaces (Slack "Property" field + Monday item name). */}
                 <input type="hidden" name="property_address" value={`${listing.address}, ${city}`} />

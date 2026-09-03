@@ -4,6 +4,8 @@ import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import { neighborhoods } from '@/lib/neighborhoods'
 import { reviewStats } from '@/lib/reviews'
+import SoldPropertyExperience from '@/components/SoldPropertyExperience'
+import { publishedSoldListings } from '@/lib/sold-proof'
 
 export const metadata: Metadata = {
   title: 'Middle Tennessee Neighborhood Guides',
@@ -39,6 +41,7 @@ const faqs = [
 
 export default function NeighborhoodsIndexPage() {
   const all = Object.values(neighborhoods)
+  const soldRecords = publishedSoldListings()
 
   const byCity = all.reduce<Record<string, typeof all>>((acc, n) => {
     const key = `${n.city}, ${n.schemaState}`
@@ -289,6 +292,12 @@ export default function NeighborhoodsIndexPage() {
               </div>
             </div>
           ))}
+
+          {soldRecords.length > 0 && (
+            <div className="mt-16 mb-16 border border-[#E8E8E8] p-8 sm:p-10">
+              <SoldPropertyExperience listings={soldRecords} />
+            </div>
+          )}
 
           <div className="mt-16 bg-[#F5F5F5] p-10 text-center">
             <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
