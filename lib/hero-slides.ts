@@ -6,12 +6,11 @@
 // Photos are enhanced versions stored locally in public/hero/. Update this
 // list manually when a featured property closes or a new one comes online.
 //
-// CTAs are resolved against lib/listings.ts via listingSlug / hasListingDetail:
-// an on-site /listings/{slug} page wins; otherwise the slide stays first-party
-// (/listings) instead of leaking to compass.com. Sold addresses are never
-// labelled Featured.
+// CTAs are resolved via resolveListingDetailSlug: an on-site /listings/{slug}
+// page (active or sold) wins; otherwise the slide stays first-party (/listings)
+// instead of leaking to compass.com. Sold addresses are never labelled Featured.
 
-import { hasListingDetail, listingSlug } from './listing-detail'
+import { listingSlug, resolveListingDetailSlug } from './listing-detail'
 import { soldListings } from './sold-listings'
 
 export type HeroSlideStatus = 'Featured' | 'Coming Soon' | 'Just Listed' | 'Recently Sold'
@@ -35,11 +34,11 @@ const soldListingSlugs: ReadonlySet<string> = new Set(
 )
 
 /** First-party CTA: on-site detail page when it exists, else the listings hub. */
-export function resolveHeroHref(slide: Pick<HeroSlideSource, 'address' | 'city'>): string {
-  if (hasListingDetail(slide)) {
-    return `/listings/${listingSlug(slide)}`
-  }
-  return '/listings'
+export function resolveHeroHref(
+  slide: Pick<HeroSlideSource, 'address' | 'city'> & Partial<Pick<HeroSlideSource, 'status'>>,
+): string {
+  const slug = resolveListingDetailSlug(slide)
+  return slug ? `/listings/${slug}` : '/listings'
 }
 
 /** Sold homes (present in sold-listings) are never labelled Featured. */

@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { Listing } from '@/lib/listings'
 import { getSuburb, getSuburbSlugForListing } from '@/lib/suburbs'
-import { hasListingDetail, listingSlug } from '@/lib/listing-detail'
+import { listingDetailPath } from '@/lib/listing-detail'
 import { withUtm } from '@/lib/utm'
 
 function formatPrice(price: number): string {
@@ -43,9 +43,10 @@ interface Props {
 export default function ListingCard({ listing, featured }: Props) {
   const suburbSlug = getSuburbSlugForListing(listing.city)
   const suburbName = suburbSlug ? getSuburb(suburbSlug)?.name : undefined
-  // Active listings have an on-site detail page; sold homes don't, so their card
-  // keeps handing straight off to Compass.
-  const detailHref = hasListingDetail(listing) ? `/listings/${listingSlug(listing)}` : null
+  // Active and indexable sold homes share /listings/[slug]. resolveListingDetailSlug
+  // (via listingDetailPath) handles active-vs-sold collisions so a live listing
+  // never silently shares a sold home's URL.
+  const detailHref = listingDetailPath(listing)
   const cityDisplay = listing.city.replace(/\s*\|\s*MLS\s*#\S+$/i, '')
   const addressDisplay =
     listing.address === 'Undisclosed Address' ? 'Address on request' : listing.address
@@ -85,7 +86,7 @@ export default function ListingCard({ listing, featured }: Props) {
         )}
 
         {/* Primary click target — cover the image with a link to the on-site
-            detail page (active listings only). */}
+            detail page (active + indexable sold). */}
         {detailHref && (
           <Link
             href={detailHref}
@@ -171,8 +172,8 @@ export default function ListingCard({ listing, featured }: Props) {
         )}
 
         <div className={`${suburbSlug ? '' : 'mt-auto '}flex flex-col gap-2`}>
-          {/* Active listings: keep the buyer on-site first. Sold homes have no
-              detail page, so their primary CTA stays the tap-to-text. */}
+          {/* On-site detail page when one exists. Otherwise SMS is the primary
+              CTA so we do not leak the visitor off-site. */}
           {detailHref ? (
             <Link
               href={detailHref}
@@ -207,9 +208,9 @@ export default function ListingCard({ listing, featured }: Props) {
             </a>
           )}
 
-          {/* Sold / no on-site page: Compass is the only listing destination.
-              Active cards already have View Details + SMS — don't leak buyers
-              off-site from the card footer. */}
+          {/* No on-site page (thin / undisclosed sold records): Compass is the
+              remaining destination. Cards with a detail page already have
+              View Details + SMS — don't leak visitors off-site from the footer. */}
           {!detailHref && (
             <a
               href={withUtm(listing.compassUrl, {

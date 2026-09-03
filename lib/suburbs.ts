@@ -773,9 +773,15 @@ export function getAllSuburbSlugs(): string[] {
 }
 
 // Maps a free-form listing `city` string (e.g. "Brentwood, TN 37027 | MLS #...")
-// to a suburb slug if we have a matching landing page.
+// to a suburb slug if we have a matching landing page. Sold Compass cards
+// sometimes prefix a lot/unit token ("Lot 54, Brentwood, TN 37027") — use the
+// locality immediately before ", ST ZIP" so those still resolve to Brentwood.
 export function getSuburbSlugForListing(city: string): string | undefined {
-  const cityName = city.split(',')[0]?.trim()
+  const cityClean = city.split('|')[0]?.trim() ?? ''
+  const localityMatch = cityClean.match(
+    /([A-Za-z][A-Za-z .']+),\s*[A-Z]{2}\s+\d{5}/,
+  )
+  const cityName = localityMatch?.[1]?.trim() || cityClean.split(',')[0]?.trim()
   if (!cityName) return undefined
   const slug =
     cityName
