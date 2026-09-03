@@ -12,6 +12,7 @@ import {
   monthLabel,
   snapshotSkipReason,
 } from '@/lib/market-snapshot'
+import { CALL_CTA, ctaLink, gbpCreatePayload, type CTA } from './cta'
 
 export const dynamic = 'force-dynamic'
 
@@ -49,7 +50,6 @@ const GBP_POSTS_API = (location: string) =>
   `https://mybusiness.googleapis.com/v4/${location}/localPosts`
 
 const SITE = 'https://www.joshuafink.com'
-const PHONE = '615-551-2727'
 
 // IMPORTANT — never put PHONE (or the street address) in a post `summary`.
 // Google auto-rejects local posts whose body text contains the business phone
@@ -61,9 +61,8 @@ const PHONE = '615-551-2727'
 //
 // Surface the number through the structured CALL call-to-action below instead —
 // that renders as a tap-to-call button and is the supported channel for it.
-const CALL_CTA: CTA = { actionType: 'CALL', url: `tel:${PHONE.replace(/-/g, '')}` }
-
-type CTA = { actionType: 'LEARN_MORE' | 'CALL' | 'ORDER' | 'BOOK' | 'SIGN_UP'; url: string }
+// Google's CallToAction.url "should be left unset for Call CTA"; a tel: URL
+// is INVALID_ARGUMENT (review-week failure 2026-09-01).
 
 type GbpPayloadKind = 'listing' | 'sold' | 'market-update' | 'tip' | 'review' | 'blog'
 
@@ -534,17 +533,9 @@ export async function GET(request: Request) {
     )
   }
 
-  const payload: Record<string, unknown> = {
-    languageCode: 'en-US',
-    summary: post.summary,
-    topicType: 'STANDARD',
-  }
-  if (post.cta) payload.callToAction = post.cta
   // Exactly one photo: Google's localPost `media` array takes a single PHOTO on
   // a STANDARD post — it is not a gallery, so a second entry is rejected.
-  if (post.photoUrl) {
-    payload.media = [{ mediaFormat: 'PHOTO', sourceUrl: post.photoUrl }]
-  }
+  const payload = gbpCreatePayload(post)
 
   try {
     const res = await fetchWithBackoff(
@@ -575,7 +566,7 @@ export async function GET(request: Request) {
         payloadKind: post.kind,
         refKey: post.refKey,
         messagePreview: post.summary.slice(0, 200),
-        link: post.cta?.url ?? null,
+        link: ctaLink(post.cta),
         externalPostId: null,
         status: 'failed',
         errorMessage: `upstream ${res.status} ${bodySnippet}`.slice(0, 500),
@@ -592,7 +583,7 @@ export async function GET(request: Request) {
       payloadKind: post.kind,
       refKey: post.refKey,
       messagePreview: post.summary.slice(0, 200),
-      link: post.cta?.url ?? null,
+      link: ctaLink(post.cta),
       externalPostId: data.name ?? null,
       status: 'posted',
     })
@@ -613,7 +604,7 @@ export async function GET(request: Request) {
       payloadKind: post.kind,
       refKey: post.refKey,
       messagePreview: post.summary.slice(0, 200),
-      link: post.cta?.url ?? null,
+      link: ctaLink(post.cta),
       externalPostId: null,
       status: 'failed',
       errorMessage: `network: ${(err as Error).message}`.slice(0, 500),

@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test": "node --import tsx --test lib/*.test.ts app/api/contact/*.test.ts scripts/*.test.mjs",
+    "test": "node --import tsx --test lib/*.test.ts app/api/contact/*.test.ts app/api/cron/gbp-post/*.test.ts scripts/*.test.mjs",
     "healthcheck": "python3 scripts/morning_healthcheck.py",
     "setup": "bash scripts/setup-machine.sh"
   },
