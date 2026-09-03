@@ -81,7 +81,9 @@ export default function ListingCard({ listing, featured }: Props) {
               />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 21V12h6v9" />
             </svg>
-            <span className="text-xs tracking-wide">View on Compass</span>
+            <span className="text-xs tracking-wide">
+              {detailHref ? 'Photo on request' : 'View on Compass'}
+            </span>
           </div>
         )}
 

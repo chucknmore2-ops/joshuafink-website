@@ -239,7 +239,9 @@ export default async function ListingDetailPage({ params }: Props) {
                   d="M9 21V12h6v9"
                 />
               </svg>
-              <span className="text-xs tracking-wide">Photo available on Compass</span>
+              <span className="text-xs tracking-wide">
+                {sold ? 'Photo on request' : 'Photo available on Compass'}
+              </span>
             </div>
           )}
           <span

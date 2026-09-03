@@ -11,6 +11,9 @@
 
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
+import { dirname, join } from 'node:path'
 import type { Listing } from './listings.ts'
 import { listings } from './listings.ts'
 import { soldListings } from './sold-listings.ts'
@@ -192,4 +195,17 @@ test('listingDetailSlugs includes every active listing plus every indexable sold
   }
   const soldCount = soldListings.filter(isIndexableSoldListing).length
   assert.equal(listingDetailSlugs.size, listings.length + soldCount)
+})
+
+test('next.config does not permanently redirect any listing detail slug to /listings', () => {
+  const configPath = join(dirname(fileURLToPath(import.meta.url)), '..', 'next.config.mjs')
+  const src = readFileSync(configPath, 'utf8')
+  for (const slug of Array.from(listingDetailSlugs)) {
+    const escaped = slug.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    assert.doesNotMatch(
+      src,
+      new RegExp(`source:\\s*['\`]/listings/${escaped}['\`]`),
+      `/listings/${slug} must not be redirected away now that a detail page exists`,
+    )
+  }
 })
