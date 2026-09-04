@@ -531,6 +531,35 @@ export const schools: Record<string, School> = {
       },
     ],
   },
+  'stewarts-creek-high-school-smyrna-tn': {
+    slug: 'stewarts-creek-high-school-smyrna-tn',
+    name: 'Stewarts Creek High School',
+    level: 'High',
+    district: 'Rutherford County Schools',
+    suburbSlug: 'smyrna-tn',
+    ratingNote: 'Niche-graded a B+ and ranked #5 among Best Public High Schools in Rutherford County (63rd of 376 statewide).',
+    blurb:
+      'Stewarts Creek High School serves the Sam Ridley Parkway / Stewarts Creek corridor of southern and eastern Smyrna — the newer-construction side of town that has driven much of Smyrna\'s growth alongside the nearby Nissan plant. Niche grades the school a B+ and ranks it #5 among Rutherford County\'s public high schools (63rd of 376 statewide), with roughly 2,474 students and a 17:1 student-teacher ratio. For buyers comparing Smyrna to pricier Williamson County zones, Stewarts Creek pairs a solidly rated public school with Smyrna\'s lower entry price point.',
+    neighborhoods: ['Woodmont', 'Preserve at Stewart Creek'],
+    faqs: [
+      {
+        q: 'What neighborhoods are zoned to Stewarts Creek High School?',
+        a: 'The Stewarts Creek cluster covers much of the Sam Ridley Parkway corridor in Smyrna, including Woodmont and the Preserve at Stewart Creek — though some Woodmont sections feed to Rock Springs schools instead. Rutherford County zoning can change and can split within a single subdivision, so always confirm the current attendance assignment for a specific address before writing an offer.',
+      },
+      {
+        q: 'Is Stewarts Creek High School a good school?',
+        a: 'Yes — Niche grades it a B+ overall and ranks it #5 among Best Public High Schools in Rutherford County, 63rd of 376 public high schools statewide. State testing shows 41% of students at least proficient in math and 59% in reading, both above the district baseline.',
+      },
+      {
+        q: 'How much do homes near Stewarts Creek High School cost?',
+        a: 'Stewarts Creek-zoned homes are part of the broader Smyrna market — see the current Smyrna market report for up-to-date medians and price-per-square-foot. Recent activity in Woodmont and the Preserve at Stewart Creek has ranged roughly from the low $300,000s to the low $600,000s depending on section, age, and size. Joshua can pull exact, current comps for any specific street.',
+      },
+      {
+        q: 'Why do buyers choose Smyrna over other Rutherford County or Williamson County zones?',
+        a: 'Smyrna\'s Stewarts Creek zone delivers a B+-graded public high school at a meaningfully lower price point than Franklin, Brentwood, or Murfreesboro\'s premium zones — backed by steady, employment-driven demand from the Nissan Smyrna plant, one of the region\'s largest single-site employers. For buyers prioritizing value alongside a solidly rated school, it\'s one of the more frequently shortlisted zones in Rutherford County.',
+      },
+    ],
+  },
 }
 
 export function getSchool(slug: string): School | undefined {
