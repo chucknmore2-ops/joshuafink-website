@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-09-03T12:42:33.308Z
+// AUTO-GENERATED — Last synced: 2026-09-04T12:36:16.319Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -21,21 +21,9 @@ export interface Listing {
 
 // Mirrors the header timestamp so server components can compute sync staleness
 // without parsing comments. Updated by scripts/fetch-images.mjs each sync.
-export const listingsSyncedAt = "2026-09-03T12:42:33.308Z";
+export const listingsSyncedAt = "2026-09-04T12:36:16.319Z";
 
 export const listings: Listing[] = [
-  {
-    address: "159 N Berwick Ln",
-    city: "Franklin, TN 37069",
-    price: 1224900,
-    beds: 5,
-    baths: 5,
-    sqft: 4948,
-    status: "Active Under Contract",
-    compassUrl: "https://www.compass.com/homedetails/159-N-Berwick-Ln-Franklin-TN-37069/SXI63_pid/",
-    imageUrl: "https://www.compass.com/m/df12aeb09644a8bbdce04893e44f3c939f35787c3b949436910c3b3d24cd926d/2048x1536.webp",
-    lastVerified: listingsSyncedAt,
-  },
   {
     address: "1113 Linn Cv Ct",
     city: "Gallatin, TN 37066",
@@ -63,7 +51,7 @@ export const listings: Listing[] = [
   {
     address: "511 Wanda Dr",
     city: "Nashville, TN 37210 | MLS #3524691",
-    price: 419900,
+    price: 414500,
     beds: 4,
     baths: 2,
     sqft: 1400,
