@@ -120,7 +120,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Thompson's Station mixes new subdivisions with rural acreage. Whether your home needs work, sits on land that's become hard to maintain, or you're settling an estate, a cash offer lets you sell as-is and close on your schedule.",
     localAngle:
-      "With a ~$420,000 median and a lot of land in the mix, Thompson's Station sellers often value speed and simplicity — especially on acreage or older homes that don't fit the new-build demand. Joshua buys as-is and prices off real Williamson County comps.",
+      "With a ~$842,000 median and a lot of land in the mix, Thompson's Station sellers often value speed and simplicity — especially on acreage or older homes that don't fit the new-build demand. Joshua buys as-is and prices off real Williamson County comps.",
     faqs: [
       {
         q: 'Do you buy homes on acreage in Thompson’s Station?',
@@ -132,7 +132,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
       },
       {
         q: 'Is a cash offer worth it in a growing market like Thompson’s Station?',
-        a: "It depends on your situation. If the home is turnkey and you can wait, listing traditionally in a ~$420K-and-rising market may net more. If it's dated, inherited, or you need to move now, the cash route often nets more after repairs, carrying costs, and time — and Joshua will walk you through both honestly.",
+        a: "It depends on your situation. If the home is turnkey and you can wait, listing traditionally in a ~$842K market may net more. If it's dated, inherited, or you need to move now, the cash route often nets more after repairs, carrying costs, and time — and Joshua will walk you through both honestly.",
       },
     ],
   },
