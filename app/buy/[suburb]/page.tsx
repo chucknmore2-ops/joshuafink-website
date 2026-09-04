@@ -58,6 +58,18 @@ export default async function BuySuburbPage({ params }: Props) {
     '@context': 'https://schema.org',
     '@graph': [
       {
+        // Freshness signal for crawlers/AI answer engines — no page-level
+        // dateModified existed here before, unlike /market/[suburb], even
+        // though the same verified suburb data (and its update date) backs
+        // both templates.
+        '@type': 'WebPage',
+        '@id': `https://www.joshuafink.com/buy/${slug}#webpage`,
+        url: `https://www.joshuafink.com/buy/${slug}`,
+        name: `Homes for Sale in ${suburb.displayName} | Buyer's Agent`,
+        dateModified: suburb.dataUpdatedAt ?? marketStatsLastUpdated,
+        about: { '@id': `https://www.joshuafink.com/buy/${slug}#place` },
+      },
+      {
         '@type': 'RealEstateAgent',
         '@id': 'https://www.joshuafink.com/#agent',
         address: {
