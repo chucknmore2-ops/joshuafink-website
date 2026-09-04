@@ -4885,6 +4885,101 @@ It's a real tradeoff. There are fewer homes on the market than in spring, so the
 Closing by December 31 in Middle Tennessee is entirely doable — it just rewards starting early and punishes starting late. Under contract by mid-November with a real pre-approval behind you, and a December closing is routine. If you'd rather have a second set of eyes on your specific timeline — or an honest opinion on whether the year-end deadline should matter to you at all — reach out: [615-551-2727](tel:6155512727) or [joshua@joshuafink.com](mailto:joshua@joshuafink.com).
     `.trim(),
   },
+  {
+    slug: "closing-costs-for-buyers-in-tennessee",
+    title: "Closing Costs for Buyers in Tennessee: What You Actually Pay at the Table",
+    date: "August 31, 2026",
+    dateModified: "August 31, 2026",
+    excerpt:
+      "Buyer closing costs in Tennessee run roughly 2-4% of the purchase price on top of your down payment — here's the actual line-item breakdown, the one state tax that surprises financed buyers, and how to ask a seller to help cover it.",
+    category: "For Buyers",
+    faq: [
+      {
+        q: "How much are closing costs for buyers in Tennessee?",
+        a: "Budget roughly 2-4% of the purchase price, separate from your down payment. Rocket Mortgage's 2026 Tennessee closing-cost data puts the average buyer bill at about 3.63% of the sale price, which on a median-priced home works out to somewhere in the low five figures — the exact number depends on your loan program, lender fees, and purchase price.",
+      },
+      {
+        q: "What is the Tennessee mortgage tax, and who pays it?",
+        a: "It's a state recordation tax on the loan itself — $0.115 per $100 of the amount financed, with the first $2,000 of the loan exempt — collected when your mortgage is recorded at the county register of deeds (Tennessee Department of Revenue, Recordation Taxes). It's paid by the buyer at closing and shows up as a line item on your closing disclosure. Cash purchases skip it entirely, since there's no mortgage to record.",
+      },
+      {
+        q: "Can I ask the seller to pay my closing costs?",
+        a: "Yes — seller-paid closing-cost credits are a normal, negotiable part of Middle Tennessee offers in 2026, particularly on homes that have sat on the market a while. There's no fixed amount; it's negotiated as part of the offer and capped by your loan program's rules on seller contributions. Ask your lender what your specific program allows before you write the number into an offer.",
+      },
+      {
+        q: "Are closing costs the same as my down payment?",
+        a: "No — they're two separate checks. Your down payment buys equity in the home; closing costs are fees for originating the loan and completing the transaction (lender fees, appraisal, title work, taxes, prepaid escrow items) and are typically due in addition to your down payment at the closing table.",
+      },
+      {
+        q: "Do closing costs differ between a conventional loan and an FHA or VA loan?",
+        a: "The categories are largely the same, but the amounts and rules differ by program — VA loans cap certain fees and allow no down payment, FHA loans add an upfront mortgage insurance premium, and conventional loans vary by lender. Your Loan Estimate, which lenders are required to provide within three business days of application, is the only document that gives you your program's actual numbers.",
+      },
+    ],
+    content: `
+**Quick answer:** Plan on roughly 2-4% of the purchase price in closing costs on top of your down payment — Rocket Mortgage's 2026 Tennessee data puts the buyer average closer to 3.63%. That covers your lender's fees, the appraisal and inspection, title work, prepaid escrow items, and — if you're financing — a Tennessee-specific mortgage recordation tax most out-of-state buyers have never heard of. Below is the real line-item breakdown, not a vague percentage.
+
+Every buyer I work with asks a version of the same question once they're actually under contract: "Wait, what else am I paying besides the down payment?" Here's the honest answer.
+
+## What Are Closing Costs, Exactly?
+
+Closing costs are the fees and prepaid items you pay at the closing table to actually get the loan and the title into your name — separate from your down payment, which builds your equity. They fall into a few buckets: fees your lender charges to originate the loan, third-party services (appraisal, inspection, title), government taxes and recording fees, and prepaid items like homeowners insurance and property tax escrow that your lender collects up front.
+
+Every lender is required to send you a **Loan Estimate** within three business days of your application, and it breaks these out line by line for your actual loan. Treat the ranges below as a planning tool before that document exists — not a substitute for it.
+
+## The Line-Item Breakdown
+
+| Category | Typical Range | Notes |
+| --- | --- | --- |
+| Loan origination / lender fees | 0.5-1% of loan amount | Varies significantly by lender — worth comparing across at least two or three. |
+| Appraisal | $500-$700 | Required by most lenders; higher for larger or rural properties. |
+| Home inspection | $400-$700 | Optional but strongly recommended; not always bundled into "closing costs" but budget for it the same week. |
+| Title insurance (buyer's lender policy) | Varies by loan amount | Protects the lender; most Tennessee buyers also purchase an optional owner's policy protecting themselves. |
+| Tennessee mortgage recordation tax | $0.115 per $100 financed (first $2,000 exempt) | State tax on the loan amount, paid only if you're financing — see below. |
+| Recording fees | $50-$150 | Paid to the county register of deeds. |
+| Prepaid interest, insurance & tax escrow | Varies | Your first year of homeowners insurance plus 2-6 months of property tax and insurance reserves, collected up front. |
+| Credit report, flood cert, misc. underwriting fees | $50-$150 combined | Small individually; add up on the Loan Estimate. |
+
+Add it up and Rocket Mortgage's 2026 Tennessee figures land the average buyer around 3.63% of the purchase price ([Rocket Mortgage, Tennessee closing costs](https://www.rocketmortgage.com/learn/closing-costs-tennessee)) — a useful planning number, but your actual total depends on your loan program, lender, purchase price, and how much prepaid escrow your specific closing date requires.
+
+## The Tennessee-Specific Tax Financed Buyers Forget
+
+If you're financing your purchase, Tennessee charges a state recordation tax on the **mortgage itself** — separate from the deed transfer tax sellers typically pay. The rate is $0.115 per $100 of the amount you're borrowing, with the first $2,000 of the loan exempt (Tennessee Department of Revenue, [Recordation Taxes](https://www.tn.gov/revenue/taxes/local-taxes/recordation-taxes.html)). On a $350,000 loan, that's roughly $400.
+
+This is one of the more common surprises for buyers relocating from states that don't have a comparable tax. It shows up automatically on your closing disclosure — it isn't something you can negotiate away, but it's worth knowing about before you see it rather than in the closing room. Cash buyers never see this line at all, since there's no mortgage to record.
+
+## Can You Get the Seller to Cover Some of This?
+
+Often, yes. Seller-paid closing-cost credits are a normal negotiating point in Middle Tennessee's 2026 market, especially on homes that have been sitting for a few weeks. There's no standard number — it's part of the offer, and it's capped by rules specific to your loan program (VA, FHA, and conventional loans each set different limits on how much a seller can contribute). Ask your lender what your program allows before you decide how to structure the ask.
+
+If you're weaving this into your purchase strategy, it pairs naturally with knowing [how much house you can actually afford](/blog/how-much-house-can-i-afford-middle-tennessee-2026) and, for first-time buyers, whether [THDA down payment assistance](/blog/thda-great-choice-down-payment-assistance-tennessee-2026) applies to your situation — a program that can help with both the down payment and closing costs.
+
+## Budgeting It Out Across Middle Tennessee
+
+Because closing costs scale with purchase price, the dollar amount looks different by market. Using the 2-4% planning range against this site's own current suburb medians:
+
+- **[Murfreesboro](/buy/murfreesboro-tn)** — a lower entry price point means a proportionally smaller closing-cost check.
+- **[Smyrna](/buy/smyrna-tn)** — similar story; more of your cash goes toward the down payment than the closing table.
+- **[Nashville](/buy/nashville-tn)** — a higher median price means a meaningfully larger closing-cost number in dollar terms, even at the same percentage.
+- **[Franklin](/buy/franklin-tn)** — Williamson County's premium prices make closing-cost budgeting especially worth doing early, before you fall for a house at the top of your range.
+
+None of these are promises — they're a reason to run your own numbers on a specific price point with your lender before you start touring.
+
+## What to Do Before You Write an Offer
+
+- **Get pre-approved and ask for closing-cost estimates upfront**, not just a rate quote — some lenders' fees vary more than their rates do.
+- **Compare Loan Estimates from at least two lenders.** The origination and title fees are where lenders differ most; the government fees and taxes don't change no matter who you finance with.
+- **Decide your ask on seller concessions before you're mid-negotiation.** Know your program's cap so you don't leave money on the table or ask for more than you're allowed.
+- **Keep 2-4% of your target price liquid, separate from your down payment**, so a strong offer isn't derailed by cash you didn't set aside.
+
+## The Bottom Line
+
+Closing costs are real money on top of your down payment, but they're not mysterious once you see the actual line items — and Tennessee's specific mortgage recordation tax is the one surprise worth knowing about ahead of time, not at the closing table. Your Loan Estimate is the only document with your real number; everything above is the planning map that gets you ready to read it.
+
+Want a second set of eyes on your specific numbers before you make an offer? Reach out: [615-551-2727](tel:6155512727) or [joshua@joshuafink.com](mailto:joshua@joshuafink.com). For the fuller process, see the [cost breakdown sellers work through on the other side of the table](/blog/cost-to-sell-home-tennessee-2026-net-sheet), or start narrowing your search with the [Nashville](/buy/nashville-tn), [Smyrna](/buy/smyrna-tn), [Murfreesboro](/buy/murfreesboro-tn), or [Franklin](/buy/franklin-tn) buyer's guides.
+    `.trim(),
+    disclosure:
+      "Figures above are general 2026 planning ranges from published industry sources and Tennessee Department of Revenue tax rates, not a quote for your transaction. Actual closing costs vary by lender, loan program, purchase price, and closing date. This is general information, not tax, legal, or financial advice — your Loan Estimate and your lender are the only source for your real numbers.",
+  },
 ]
 
 export function getPostBySlug(slug: string): BlogPost | undefined {
