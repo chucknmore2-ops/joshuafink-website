@@ -6,6 +6,7 @@ import { getPostBySlug, getAllSlugs, getRelatedPosts, getAuditTier, type BlogPos
 import { linkifyLocations } from '@/lib/linkify-neighborhoods'
 import { neighborhoods } from '@/lib/neighborhoods'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
+import TrackedTelLink from '@/components/TrackedTelLink'
 
 interface Props {
   params: { slug: string }
@@ -108,9 +109,9 @@ function parseInlineMarkdown(text: string) {
 
     if (/^\d{3}-\d{3}-\d{4}$/.test(token)) {
       return (
-        <a key={idx} href={`tel:${token.replace(/-/g, '')}`} className="text-black underline hover:no-underline">
+        <TrackedTelLink key={idx} href={`tel:${token.replace(/-/g, '')}`} className="text-black underline hover:no-underline" data-cta="blog-body-call">
           {token}
-        </a>
+        </TrackedTelLink>
       )
     }
 
@@ -386,13 +387,14 @@ export default function BlogPostPage({ params }: Props) {
               >
                 Contact Joshua
               </Link>
-              <a
+              <TrackedTelLink
                 href="tel:6155512727"
                 className="inline-flex items-center justify-center border border-black text-black text-sm font-bold px-6 py-3 rounded-full tracking-wide hover:bg-black hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
                 aria-label="Call Joshua at 615-551-2727"
+                data-cta="blog-author-bio-call"
               >
                 615-551-2727
-              </a>
+              </TrackedTelLink>
             </div>
           </div>
         </div>
@@ -416,7 +418,7 @@ export default function BlogPostPage({ params }: Props) {
               successMessage={
                 <>
                   Joshua will reach out same-day. For anything urgent, call{' '}
-                  <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                  <TrackedTelLink href="tel:6155512727" className="text-black font-semibold underline" data-cta="blog-form-success-call">615-551-2727</TrackedTelLink>.
                 </>
               }
               resetLabel="Send Another"
