@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-09-04T12:36:16.319Z
+// AUTO-GENERATED — Last synced: 2026-09-05T11:44:40.814Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -21,7 +21,7 @@ export interface Listing {
 
 // Mirrors the header timestamp so server components can compute sync staleness
 // without parsing comments. Updated by scripts/fetch-images.mjs each sync.
-export const listingsSyncedAt = "2026-09-04T12:36:16.319Z";
+export const listingsSyncedAt = "2026-09-05T11:44:40.814Z";
 
 export const listings: Listing[] = [
   {
@@ -58,6 +58,18 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/511-Wanda-Dr-Nashville-TN-37210/SDYP1_pid/",
     imageUrl: "https://www.compass.com/m/f0024ff837d3adc039ba8c6d1dc635742a6efeecc314e741179475524cec3185/2048x1536.webp",
+    lastVerified: listingsSyncedAt,
+  },
+  {
+    address: "1100 Gibson Dr",
+    city: "Madison, TN 37115 | MLS #3531755",
+    price: 389900,
+    beds: 3,
+    baths: 2,
+    sqft: 1378,
+    status: "Active",
+    compassUrl: "https://www.compass.com/homedetails/1100-Gibson-Dr-Madison-TN-37115/SJV0E_pid/",
+    imageUrl: "https://www.compass.com/m/11e587962d972824bcfa83986a2a18c8b7991d767be1f8ec6b0cb060ef148290/2048x1536.webp",
     lastVerified: listingsSyncedAt,
   },
   {
