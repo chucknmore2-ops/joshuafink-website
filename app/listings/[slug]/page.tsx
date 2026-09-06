@@ -229,6 +229,17 @@ export default async function ListingDetailPage({ params }: Props) {
           </span>
         </div>
 
+        {/* Mobile-only summary — the lead column is order-first below lg, so without
+            this the price and address would sit under the form, off the first screen */}
+        <div className="mt-5 lg:hidden">
+          <p className="text-3xl font-black text-black tracking-tight">
+            {formatPrice(listing.price)}
+          </p>
+          <p className="text-base font-bold text-black tracking-tight mt-1">{listing.address}</p>
+          <p className="text-sm text-neutral-500">{city}</p>
+          {specs && <p className="mt-2 text-sm text-neutral-600">{specs}</p>}
+        </div>
+
         {/* Trust signals — credentials and rating in view before the lead form */}
         <div className="mt-6">
           <TrustBadges variant="light" />
