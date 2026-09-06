@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getSuburb, getAllSuburbSlugs, getSuburbSlugForListing, marketStatsLastUpdated, suburbCityGeo, type Suburb } from '@/lib/suburbs'
+import { getSuburb, getAllSuburbSlugs, getSuburbSlugForListing, citywideStatsCitation, suburbCityGeo, type Suburb } from '@/lib/suburbs'
 import { listings } from '@/lib/listings'
 import { schools } from '@/lib/schools'
 import ListingCard from '@/components/ListingCard'
@@ -468,9 +468,7 @@ export default async function BuySuburbPage({ params }: Props) {
               <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase">
                 {suburb.displayName} Market Snapshot · 2026
               </p>
-              <p className="text-xs text-[#A0A0A0]">
-                Last verified: {marketStatsLastUpdated}
-              </p>
+              <p className="text-xs text-[#A0A0A0]">{citywideStatsCitation(suburb)}</p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div className="bg-white p-6 border border-[#E8E8E8]">

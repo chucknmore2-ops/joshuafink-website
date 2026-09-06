@@ -47,5 +47,6 @@ test('core GEO pages stay in the catalog', () => {
   const paths = new Set(getSiteUrlCatalog().map((e) => e.path))
   assert.ok(paths.has('/market/brentwood-tn'))
   assert.ok(paths.has('/neighborhoods'))
+  assert.ok(paths.has('/neighborhoods/cool-springs-franklin-tn'))
   assert.ok(paths.has('/listings'))
 })
