@@ -92,6 +92,73 @@ export const neighborhoods: Record<string, Neighborhood> = {
     longitude: -86.9557,
   },
 
+  'cool-springs-franklin-tn': {
+    slug: 'cool-springs-franklin-tn',
+    name: 'Cool Springs',
+    city: 'Franklin',
+    citySlug: 'franklin-tn',
+    county: 'Williamson County',
+    metaTitle: 'Cool Springs Neighborhood Guide — Franklin, TN',
+    metaDescription:
+      'Cool Springs in Franklin, TN explained: condos, townhomes, and single-family near I-65, offices, and the Galleria. Schools, HOA, and honest price context from Compass agent Joshua Fink.',
+    intro:
+      'Cool Springs is not a single HOA subdivision — it is Franklin’s mixed residential, employment, and retail corridor along I-65, Cool Springs Boulevard, and the Mack Hatcher / Carothers Parkway loop. Buyers searching “Cool Springs” are usually looking at condos and townhomes near the Galleria and office campuses, plus single-family streets in the surrounding Centennial High corridor — not one gated community with a shared amenity package.',
+    about:
+      'Cool Springs grew up around the interstate interchange, Cool Springs Galleria, and the corporate office parks that make north-central Franklin a daily commute destination as much as a place to live. Housing is mixed on purpose: stacked condos and attached townhomes sit closest to the mall, hotels, and office buildings; traditional single-family subdivisions fan out from there toward Fieldstone Farms, Sullivan Farms, and other established Williamson County streets. Architecture and finish levels vary by pocket — 1980s–1990s attached product, 1990s–2000s brick-front family homes, and newer infill — so two “Cool Springs” listings a mile apart can feel like different neighborhoods. Daily life is car-oriented but convenient: shopping, restaurants, healthcare, and I-65 toward Nashville or Spring Hill are minutes away. Treat Cool Springs as a corridor you shop by address, school zone, and housing type, not as one master-planned community like Westhaven.',
+    vibe: 'Mixed residential, office, and retail corridor — not a single HOA subdivision.',
+    priceBand: '$400K – $1.2M+',
+    buildYears: '1980s–present (condos and townhomes near the commercial core; 1990s–2000s single-family and newer infill)',
+    hoa: 'No single Cool Springs HOA. Condo and townhome buildings typically have monthly associations; many nearby single-family streets have their own HOA or none at all. Confirm dues, reserves, and rental rules for the specific address.',
+    schoolNotes:
+      'Most Cool Springs addresses sit in Williamson County Schools and are commonly discussed as part of the Centennial High School corridor. Elementary and middle assignments change by street — and some nearby Franklin pockets feed other high schools — so always confirm the current Williamson County Schools zoning map for the exact address before you write an offer.',
+    amenities: [
+      'Cool Springs Galleria and surrounding retail',
+      'Corporate office campuses and daily employment base',
+      'Restaurants and services along Cool Springs Blvd, Mallory Lane, and Carothers Pkwy',
+      'Direct I-65 access toward Nashville, Brentwood, and Spring Hill',
+      'Healthcare and professional services clustered on the corridor',
+      'Mix of attached and single-family housing within a short drive',
+    ],
+    homeStyles: [
+      'Condos near the Galleria and office parks',
+      'Townhomes and attached products',
+      'Traditional brick-front single-family in nearby subdivisions',
+      '1990s–2000s family two-stories',
+      'Selected newer infill and rebuilt homes',
+    ],
+    whyBullets: [
+      'Commute and convenience are the product: Cool Springs buyers are usually optimizing for I-65, a Cool Springs job, and daily retail — not a walkable town-center HOA. Joshua helps you decide whether that tradeoff is worth it versus Westhaven or Fieldstone Farms.',
+      'Housing type changes the number: A Galleria-area condo, a townhome, and a nearby single-family home are not one market. Joshua prices the specific product and street against recent closed comps, not a citywide Franklin median.',
+      'School and HOA homework is address-level: The corridor spans multiple associations and feeder patterns. Confirming Centennial (or another) zoning and the right dues structure before you tour saves wasted offers.',
+    ],
+    faqs: [
+      {
+        q: 'Is Cool Springs a neighborhood or a corridor?',
+        a: 'A corridor. Unlike Westhaven or Fieldstone Farms, Cool Springs is not one master-planned HOA community. It is the mixed residential, office, and retail area around I-65, Cool Springs Boulevard, and the Galleria — condos, townhomes, and single-family in several adjacent subdivisions. Shop by address, not by the Cool Springs label alone.',
+      },
+      {
+        q: 'How much do homes in Cool Springs cost in 2026?',
+        a: 'There is no single Cool Springs median — the corridor mixes product types. Condos and townhomes typically enter below Franklin’s citywide median and below typical Westhaven or Fieldstone Farms single-family pricing. Nearby single-family often overlaps the published Fieldstone Farms ($650K–$1.1M) and McKay’s Mill ($650K–$1.2M) bands, with some homes above that. Joshua pulls closed comps for the specific building or street rather than quoting a corridor-wide average.',
+      },
+      {
+        q: 'What schools are zoned to Cool Springs?',
+        a: 'Most of the Cool Springs residential pockets sit in Williamson County Schools and are commonly part of the Centennial High School corridor. Elementary and middle schools vary by street, and a few nearby Franklin addresses feed other high schools. Always verify the current WCS zoning map for the exact property before you write.',
+      },
+      {
+        q: 'Does Cool Springs have an HOA?',
+        a: 'Not one shared HOA. Condos and many townhomes have monthly associations that cover buildings, exteriors, or amenities. Single-family streets may have a neighborhood HOA, a lighter covenant, or none. Joshua confirms dues, what they cover, and any rental or pet rules for the specific address.',
+      },
+      {
+        q: 'How does Cool Springs compare to Westhaven or Fieldstone Farms?',
+        a: 'Westhaven is a walkable master-planned community with a town center, golf, and a single amenity HOA. Fieldstone Farms is an established family subdivision with larger lots, mature trees, and a traditional pool/clubhouse HOA — close to Cool Springs employment but not the commercial core itself. Cool Springs is the employment and retail corridor: shorter office and I-65 commutes, more condos and townhomes, and more variation street to street. Joshua matches the tradeoff to your commute, school zone, and housing type.',
+      },
+    ],
+    schemaCity: 'Franklin',
+    schemaState: 'TN',
+    latitude: 35.9565,
+    longitude: -86.8180,
+  },
+
   'east-nashville-tn': {
     slug: 'east-nashville-tn',
     name: 'East Nashville',
