@@ -4885,6 +4885,96 @@ It's a real tradeoff. There are fewer homes on the market than in spring, so the
 Closing by December 31 in Middle Tennessee is entirely doable — it just rewards starting early and punishes starting late. Under contract by mid-November with a real pre-approval behind you, and a December closing is routine. If you'd rather have a second set of eyes on your specific timeline — or an honest opinion on whether the year-end deadline should matter to you at all — reach out: [615-551-2727](tel:6155512727) or [joshua@joshuafink.com](mailto:joshua@joshuafink.com).
     `.trim(),
   },
+  {
+    slug: "closing-costs-for-buyers-tennessee-2026",
+    title: "Closing Costs for Buyers in Tennessee: What You Actually Pay at the Table",
+    date: "September 7, 2026",
+    dateModified: "September 7, 2026",
+    excerpt:
+      "Your down payment isn't the only check you write at closing. Here's what buyer closing costs actually cover in Tennessee — the state's mortgage and transfer taxes, lender fees, title insurance, and prepaid escrow — with real ranges and honest ways to bring the number down.",
+    category: "For Buyers",
+    disclosure:
+      "This article is for general educational purposes only and is not tax, legal, or lending advice. Tax rates cited are set by Tennessee law and are current as of publication but can change; specific lender fees, title premiums, and prepaid amounts vary by transaction. Confirm your actual costs against your Loan Estimate and Closing Disclosure with your lender and closing attorney. Joshua Fink is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate and does not originate mortgages or provide legal or tax advice.",
+    faq: [
+      {
+        q: "How much are closing costs for buyers in Tennessee?",
+        a: "Most lender guides put total buyer closing costs in Tennessee at roughly 2% to 5% of the purchase price, on top of the down payment — covering lender fees, title insurance, Tennessee's mortgage and transfer taxes, recording fees, and prepaid escrow items. On a $450,000 home, that's a working range of roughly $9,000 to $22,500. Your Loan Estimate, issued within three days of applying, will give you the real number for your specific loan.",
+      },
+      {
+        q: "What is the Tennessee mortgage tax, and who pays it?",
+        a: "Tennessee charges a recording tax on mortgages — often called the indebtedness tax — of $0.115 per $100 of the loan amount, with the first $2,000 of debt exempt (Tenn. Code Ann. § 67-4-409). It only applies to financed purchases, not cash deals, and it's customarily a buyer closing cost since it's tied to recording your loan, not the deed.",
+      },
+      {
+        q: "Who pays the Tennessee real estate transfer tax, buyer or seller?",
+        a: "Tennessee's realty transfer tax is $0.37 per $100 of the sale price, charged on recording the deed. Unlike the mortgage tax, custom on who pays it varies by market and even source — some Middle Tennessee contracts show the seller paying it, others the buyer, and it's sometimes split. It's not set by state law, so don't assume either way: check the specific line on your purchase agreement.",
+      },
+      {
+        q: "Can a seller pay some of a buyer's closing costs in Tennessee?",
+        a: "Yes — these are called seller concessions, and they're a normal, negotiated part of a Tennessee purchase contract, not a special favor. A seller agreeing to credit a few thousand dollars toward your closing costs is common, especially on homes that have sat on the market a while. Your lender will cap how much of a concession they'll allow relative to your loan type and down payment, so ask early rather than assuming an unlimited number.",
+      },
+      {
+        q: "What's the difference between closing costs and a down payment?",
+        a: "They're separate checks for separate things. Your down payment is equity you're putting into the home itself and reduces what you finance. Closing costs are the fees and prepaid items required to originate the loan and transfer the property — lender fees, title insurance, taxes, recording fees, and the first chunk of escrowed property tax and insurance. Both are typically due at the closing table, which is why buyers budget for both, not just the down payment.",
+      },
+    ],
+    content: `
+**Quick answer:** Buyer closing costs in Tennessee typically run about 2% to 5% of the purchase price, separate from your down payment. That covers lender fees, Tennessee's mortgage and transfer taxes, title insurance, recording fees, and prepaid property tax and insurance. Your lender's Loan Estimate — provided within three days of applying — is the real number for your loan; the ranges below are for planning ahead of that.
+
+Most first-time buyers budget carefully for the down payment and then get surprised by a second, smaller check due the same day. Here's what's actually in it.
+
+## What Counts as Closing Costs, Exactly?
+
+Closing costs are everything you pay to originate the loan and transfer the property into your name, beyond the price of the home itself. Broadly, that's four buckets:
+
+1. **Lender fees** — origination, underwriting, appraisal, and credit report charges.
+2. **Title and settlement fees** — the title search, lender's title insurance policy, and the closing attorney's or title company's fee. Tennessee closings run through a closing attorney or title company, not escrow companies the way some states do it.
+3. **Government taxes and recording fees** — Tennessee's mortgage tax and transfer tax, plus a per-page fee the county charges to record your deed and mortgage.
+4. **Prepaid escrow items** — a few months of property tax and homeowners insurance, collected upfront to seed your escrow account, plus per-diem interest for the days between closing and your first mortgage payment.
+
+Only that fourth bucket varies with your closing date. The first three are largely fixed once your loan amount and purchase price are set.
+
+## How Much Should You Budget For Closing Costs in Tennessee?
+
+Several lender closing-cost guides put total buyer closing costs in Tennessee at roughly **2% to 5% of the purchase price** ([Rocket Mortgage](https://www.rocketmortgage.com/learn/closing-costs-tennessee)). On a $450,000 home — a reasonable Middle Tennessee price point — that's a working range of about **$9,000 to $22,500**, before any seller concession reduces it. Where you land in that range depends mostly on your loan type, whether you're financing or paying cash, and how much of your property tax and insurance gets prepaid at your specific closing date.
+
+Treat this as a planning range, not a quote. The one number that matters is the Loan Estimate your lender sends within three days of your application — that's the document to actually budget against.
+
+## Line by Line: What Buyers Actually Pay
+
+**Lender fees.** Origination, underwriting, and processing fees vary by lender and loan type — shop more than one lender, because these are the fees with the most room to negotiate or shop away.
+
+**Appraisal and credit report.** Smaller, largely fixed fees your lender passes through to the appraiser and credit bureau.
+
+**Tennessee mortgage tax (indebtedness tax).** $0.115 per $100 of your loan amount, with the first $2,000 exempt (Tenn. Code Ann. § 67-4-409; see the [Tennessee Department of Revenue's recordation tax page](https://www.tn.gov/revenue/taxes/local-taxes/recordation-taxes.html)). It's charged on recording the mortgage itself, so it only applies if you're financing — a cash purchase skips it entirely.
+
+**Tennessee realty transfer tax.** $0.37 per $100 of the sale price, charged on recording the deed ([TN Dept. of Revenue](https://www.tn.gov/revenue/taxes/local-taxes/recordation-taxes.html)). Who pays it — buyer, seller, or split — is negotiated on your specific contract, not set by state law. Don't assume either way; check the line item.
+
+**Title search and lender's title insurance.** Your lender requires a title search and a lender's title insurance policy protecting their interest in the property; you'll separately want to discuss an owner's policy protecting yours. Premiums vary by loan amount and title company — get a quote from your closing attorney rather than estimating a percentage.
+
+**Recording fees.** A modest per-page fee the county charges to record your deed and mortgage — a small, largely fixed line item.
+
+**Prepaid property tax and homeowners insurance.** Your lender collects a cushion of property tax and insurance upfront to start your escrow account, plus a full year's insurance premium paid at closing. This is the most variable piece, since it depends on your closing date relative to the local property tax cycle.
+
+**Per-diem mortgage interest.** Interest for the days between closing and the first day of the following month, prorated based on your closing date.
+
+**HOA transfer or estoppel fees**, if the home is in an HOA — a smaller, community-specific fee to transfer membership and confirm dues are current.
+
+## Can You Reduce Your Closing Costs?
+
+A few real levers, none of them tricks:
+
+- **Ask for a seller concession.** Especially on a home that's sat a while, sellers will often credit a few thousand dollars toward your closing costs as part of negotiating the price. Your lender caps how large a concession they'll allow relative to your loan type and down payment, so confirm the ceiling with your loan officer before you build a number into your offer.
+- **Shop your lender.** Origination and processing fees genuinely differ between lenders for an otherwise identical loan. Comparing Loan Estimates from two or three lenders is the single highest-leverage step here.
+- **Compare title and closing attorney fees.** You're not required to use whoever your agent or lender defaults to — Tennessee buyers can shop the closing attorney and title company, and fees do vary.
+- **Weigh a lender credit against a slightly higher rate.** Some lenders will cover part of your closing costs in exchange for a modestly higher interest rate. Whether that trade is worth it depends on how long you plan to keep the loan — ask your lender to show you both scenarios side by side.
+
+## The Bottom Line
+
+Plan for roughly 2% to 5% of the purchase price in closing costs on top of your down payment, and treat every specific dollar figure as an estimate until your Loan Estimate and Closing Disclosure confirm it. If you're still working out what you can comfortably afford before you get that far, [start with the payment math](/blog/how-much-house-can-i-afford-middle-tennessee-2026), and if a full down payment is the harder part, [see how THDA's down payment assistance program works](/blog/thda-great-choice-down-payment-assistance-tennessee-2026).
+
+If you want an honest walk-through of what your specific closing costs would look like in [Nashville](/buy/nashville-tn), [Murfreesboro](/buy/murfreesboro-tn), [Smyrna](/buy/smyrna-tn), or anywhere else in Middle Tennessee — including where a seller concession could realistically apply — reach out: [615-551-2727](tel:6155512727) or [joshua@joshuafink.com](mailto:joshua@joshuafink.com).
+    `.trim(),
+  },
 ]
 
 export function getPostBySlug(slug: string): BlogPost | undefined {
