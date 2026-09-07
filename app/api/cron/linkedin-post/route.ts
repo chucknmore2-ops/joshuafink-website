@@ -4,7 +4,8 @@ import { pickPromotable } from '@/lib/promotable-listings'
 import { soldListings } from '@/lib/sold-listings'
 import { listingSlug } from '@/lib/listing-detail'
 import { reviews, reviewStats } from '@/lib/reviews'
-import { logPost } from '@/lib/admin-db'
+import { lastSuccessfulPost, logPost } from '@/lib/admin-db'
+import { pickWeeklyLinkedIn } from './rotate'
 import { withUtm } from '@/lib/utm'
 import {
   currentSnapshot,
@@ -19,7 +20,10 @@ export const dynamic = 'force-dynamic'
 //
 // Runs on Vercel Cron; posts to the authenticated LinkedIn member URN using a
 // long-lived access token. Rotates weekly between (a) latest blog post and
-// (b) featured listing so LinkedIn feed stays varied.
+// (b) featured listing. The next slot is the opposite of the last *successful*
+// weekly post_log row (see rotate.ts) — ISO-week parity used to re-fire the
+// same latest blog twice in one week when a retry or manual dispatch landed
+// in the same even week.
 //
 // Required env vars:
 //   CRON_SECRET             — shared across /api/cron/* routes
@@ -68,12 +72,13 @@ function isoWeekNumber(d: Date = new Date()): number {
   return Math.ceil(((+date - +yearStart) / 86400000 + 1) / 7)
 }
 
-function buildFromLatestBlog(): PostPayload | null {
+function buildFromLatestBlog(excludeSlug?: string): PostPayload | null {
   if (!blogPosts.length) return null
   const sorted = [...blogPosts].sort(
     (a, b) => +new Date(b.date) - +new Date(a.date),
   )
-  const p = sorted[0]
+  const p = sorted.find((x) => x.slug !== excludeSlug)
+  if (!p) return null
   const url = withUtm(`${SITE}/blog/${p.slug}`, {
     source: 'linkedin',
     medium: 'auto',
@@ -268,11 +273,18 @@ function buildFromMarketSnapshot(): PostPayload | null {
   }
 }
 
-function pickPayload(): PostPayload | null {
-  // Even weeks → latest blog. Odd weeks → featured listing.
-  return isoWeekNumber() % 2 === 0
-    ? buildFromLatestBlog() || buildFromListing()
-    : buildFromListing() || buildFromLatestBlog()
+async function pickPayload(): Promise<PostPayload | null> {
+  const last = await lastSuccessfulPost({
+    channel: 'linkedin',
+    jobName: WEEKLY_JOB,
+    payloadKinds: ['blog', 'listing'],
+  })
+  return pickWeeklyLinkedIn({
+    last: last ? { kind: last.payload_kind, refKey: last.ref_key } : null,
+    weekNumber: isoWeekNumber(),
+    buildBlog: buildFromLatestBlog,
+    buildListing: buildFromListing,
+  })
 }
 
 export async function GET(request: Request) {
@@ -300,7 +312,7 @@ export async function GET(request: Request) {
       ? buildFromSale(params.get('address') ?? '')
       : kind === 'testimonial'
         ? buildFromTestimonial(params.get('reviewer') ?? '')
-        : pickPayload()
+        : await pickPayload()
 
   // ?preview=1 composes the copy and hands it back without touching LinkedIn,
   // so a draft can be read and approved before anything is published.

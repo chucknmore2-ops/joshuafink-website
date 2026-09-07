@@ -8,7 +8,9 @@ import assert from 'node:assert/strict'
 import {
   CALL_CTA,
   gbpCreatePayload,
+  safeGbpPayloadSummary,
   serializeCallToAction,
+  validateGbpLocalPost,
 } from './cta.ts'
 
 test('ISO week 36 is the even-week review slot (the 2026-09-01 failure)', () => {
@@ -62,4 +64,114 @@ test('create-payload skips an empty cta.url so CALL cannot regress', () => {
   })
   assert.deepEqual(leaked, { actionType: 'LEARN_MORE' })
   assert.equal('url' in leaked, false)
+})
+
+test('preflight rejects an empty summary', () => {
+  const result = validateGbpLocalPost({ summary: '   ', cta: CALL_CTA })
+  assert.equal(result.ok, false)
+  if (!result.ok) assert.match(result.reason, /summary empty/)
+})
+
+test('preflight rejects a summary over 1500 characters', () => {
+  const result = validateGbpLocalPost({
+    summary: 'x'.repeat(1501),
+    cta: CALL_CTA,
+  })
+  assert.equal(result.ok, false)
+  if (!result.ok) assert.match(result.reason, /summary too long/)
+})
+
+test('preflight rejects CALL with a url (the 2026-09-01 INVALID_ARGUMENT)', () => {
+  const result = validateGbpLocalPost({
+    summary: '⭐ What clients say about Joshua Fink Group',
+    cta: { actionType: 'CALL', url: 'tel:6155512727' },
+  })
+  assert.equal(result.ok, false)
+  if (!result.ok) assert.match(result.reason, /CALL CTA must not include a url/)
+})
+
+test('preflight requires http(s) on LEARN_MORE / BOOK / ORDER / SIGN_UP', () => {
+  for (const actionType of ['LEARN_MORE', 'BOOK', 'ORDER', 'SIGN_UP'] as const) {
+    const missing = validateGbpLocalPost({
+      summary: 'Ready to buy or sell in Middle Tennessee?',
+      cta: { actionType },
+    })
+    assert.equal(missing.ok, false, `${actionType} without url must fail`)
+
+    const tel = validateGbpLocalPost({
+      summary: 'Ready to buy or sell in Middle Tennessee?',
+      cta: { actionType, url: 'tel:6155512727' },
+    })
+    assert.equal(tel.ok, false, `${actionType} tel: must fail`)
+    if (!tel.ok) assert.match(tel.reason, /http\(s\)/)
+
+    const https = validateGbpLocalPost({
+      summary: 'Ready to buy or sell in Middle Tennessee?',
+      cta: { actionType, url: 'https://www.joshuafink.com/sell' },
+    })
+    assert.equal(https.ok, true, `${actionType} https must pass`)
+  }
+})
+
+test('preflight rejects a bad actionType', () => {
+  const result = validateGbpLocalPost({
+    summary: 'Market update',
+    cta: { actionType: 'GET_OFFER', url: 'https://www.joshuafink.com' },
+  })
+  assert.equal(result.ok, false)
+  if (!result.ok) assert.match(result.reason, /bad actionType/)
+})
+
+test('preflight rejects a raw http(s) URL in summary', () => {
+  const result = validateGbpLocalPost({
+    summary: 'Read: https://www.joshuafink.com/blog/year-end',
+    cta: {
+      actionType: 'LEARN_MORE',
+      url: 'https://www.joshuafink.com/blog/year-end',
+    },
+  })
+  assert.equal(result.ok, false)
+  if (!result.ok) assert.match(result.reason, /raw http\(s\) URL/)
+})
+
+test('preflight rejects the business phone in summary', () => {
+  const result = validateGbpLocalPost({
+    summary: 'Call Joshua at 615-551-2727 for a showing.',
+    cta: CALL_CTA,
+  })
+  assert.equal(result.ok, false)
+  if (!result.ok) assert.match(result.reason, /business phone/)
+})
+
+test('review-week CALL payload still passes preflight', () => {
+  const result = validateGbpLocalPost({
+    summary: '⭐ What clients say about Joshua Fink Group',
+    cta: CALL_CTA,
+  })
+  assert.deepEqual(result, { ok: true })
+})
+
+test('400 log summary is host+scheme only — no tel number, no secrets', () => {
+  const safe = safeGbpPayloadSummary({
+    kind: 'review',
+    summary: '⭐ What clients say',
+    cta: { actionType: 'CALL', url: 'tel:6155512727' },
+  })
+  assert.equal(safe.actionType, 'CALL')
+  assert.equal(safe.ctaUrl, 'tel:')
+  assert.equal(JSON.stringify(safe).includes('6155512727'), false)
+
+  const learn = safeGbpPayloadSummary({
+    kind: 'blog',
+    summary: 'Latest from the blog',
+    cta: {
+      actionType: 'LEARN_MORE',
+      url: 'https://www.joshuafink.com/blog/secret-slug?token=abc',
+    },
+    photoUrl: 'https://www.compass.com/m/x/1200x900.jpg',
+  })
+  assert.equal(learn.ctaUrl, 'https://www.joshuafink.com')
+  assert.equal(learn.hasPhoto, true)
+  assert.equal(JSON.stringify(learn).includes('token=abc'), false)
+  assert.equal(JSON.stringify(learn).includes('secret-slug'), false)
 })
