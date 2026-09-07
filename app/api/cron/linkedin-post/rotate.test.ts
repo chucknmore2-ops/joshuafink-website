@@ -11,12 +11,16 @@ import {
   pickWeeklyLinkedIn,
 } from './rotate.ts'
 
-const blog = (slug = 'buying-a-house-before-the-end-of-the-year-middle-tennessee') => ({
-  kind: 'blog' as const,
+const blog = (
+  slug = 'buying-a-house-before-the-end-of-the-year-middle-tennessee',
+): { kind: string; refKey: string } => ({
+  kind: 'blog',
   refKey: slug,
 })
-const listing = (slug = '1113-linn-cv-ct-gallatin') => ({
-  kind: 'listing' as const,
+const listing = (
+  slug = '1113-linn-cv-ct-gallatin',
+): { kind: string; refKey: string } => ({
+  kind: 'listing',
   refKey: slug,
 })
 

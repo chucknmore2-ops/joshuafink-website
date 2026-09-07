@@ -20,7 +20,7 @@ export const GBP_SUMMARY_MAX = 1500
 
 const CTA_WITH_URL = new Set(['LEARN_MORE', 'ORDER', 'BOOK', 'SIGN_UP', 'SHOP'])
 const CTA_NO_URL = new Set(['CALL'])
-const CTA_ALLOWED = new Set([...CTA_WITH_URL, ...CTA_NO_URL])
+const CTA_ALLOWED = new Set(['LEARN_MORE', 'ORDER', 'BOOK', 'SIGN_UP', 'SHOP', 'CALL'])
 
 export function serializeCallToAction(
   cta: CTA,
@@ -91,33 +91,33 @@ export function validateGbpLocalPost(post: {
   }
 
   const cta = post.cta
-  if (!cta) return { ok: true }
-
-  if (!CTA_ALLOWED.has(cta.actionType)) {
-    return { ok: false, reason: `bad actionType: ${cta.actionType}` }
-  }
-
-  const url = typeof cta.url === 'string' ? cta.url.trim() : ''
-
-  if (CTA_NO_URL.has(cta.actionType) && url) {
-    return {
-      ok: false,
-      reason: 'CALL CTA must not include a url (Google rejects tel: as INVALID_ARGUMENT)',
+  if (cta) {
+    if (!CTA_ALLOWED.has(cta.actionType)) {
+      return { ok: false, reason: `bad actionType: ${cta.actionType}` }
     }
-  }
 
-  if (CTA_WITH_URL.has(cta.actionType)) {
-    if (!url) {
+    const url = typeof cta.url === 'string' ? cta.url.trim() : ''
+
+    if (CTA_NO_URL.has(cta.actionType) && url) {
       return {
         ok: false,
-        reason: `${cta.actionType} CTA requires an http(s) url`,
+        reason: 'CALL CTA must not include a url (Google rejects tel: as INVALID_ARGUMENT)',
       }
     }
-    const scheme = ctaUrlScheme(url)
-    if (scheme !== 'http:' && scheme !== 'https:') {
-      return {
-        ok: false,
-        reason: `CTA url must be http(s) if present (got ${scheme ?? 'unparseable'})`,
+
+    if (CTA_WITH_URL.has(cta.actionType)) {
+      if (!url) {
+        return {
+          ok: false,
+          reason: `${cta.actionType} CTA requires an http(s) url`,
+        }
+      }
+      const scheme = ctaUrlScheme(url)
+      if (scheme !== 'http:' && scheme !== 'https:') {
+        return {
+          ok: false,
+          reason: `CTA url must be http(s) if present (got ${scheme ?? 'unparseable'})`,
+        }
       }
     }
   }
@@ -140,7 +140,13 @@ export function describeCtaUrl(url?: string | null): string | null {
   if (!url) return null
   try {
     const u = new URL(url)
-    return `${u.protocol}//${u.hostname}`
+    // WHATWG parses `tel:615…` as a valid URL with an empty host, which
+    // would stringify as `tel://` and still isn't a number — but we never
+    // want the path/number in logs. Non-http schemes: protocol only.
+    if (u.protocol === 'http:' || u.protocol === 'https:') {
+      return `${u.protocol}//${u.hostname}`
+    }
+    return u.protocol
   } catch {
     if (/^tel:/i.test(url)) return 'tel:'
     if (/^mailto:/i.test(url)) return 'mailto:'
