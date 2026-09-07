@@ -13,7 +13,14 @@ import {
   snapshotSkipReason,
   snapshotStatLines,
 } from '@/lib/market-snapshot'
-import { CALL_CTA, ctaLink, gbpCreatePayload, type CTA } from './cta'
+import {
+  CALL_CTA,
+  ctaLink,
+  gbpCreatePayload,
+  safeGbpPayloadSummary,
+  validateGbpLocalPost,
+  type CTA,
+} from './cta'
 
 export const dynamic = 'force-dynamic'
 
@@ -297,11 +304,12 @@ function buildLatestBlogPost(): PreparedPost {
     (a, b) => +new Date(b.date) - +new Date(a.date),
   )
   const p = sorted[0]
+  // Do not put the article URL in summary — Google 400s a local post
+  // whose body contains a raw http(s) link. The LEARN_MORE CTA carries it.
   const summary =
     `📝 Latest from the Joshua Fink Group blog:\n\n` +
     `${p.title}\n\n` +
-    `${p.excerpt.slice(0, 240)}${p.excerpt.length > 240 ? '…' : ''}\n\n` +
-    `Read: ${SITE}/blog/${p.slug}`
+    `${p.excerpt.slice(0, 240)}${p.excerpt.length > 240 ? '…' : ''}`
   return {
     summary,
     cta: {
@@ -469,11 +477,19 @@ export async function GET(request: Request) {
         ? buildSoldPost(params.get('address') ?? '')
         : pickPost(week)
 
+  const validation = post ? validateGbpLocalPost(post) : { ok: true as const }
+
   // ?preview=1 composes the copy (and resolves the photo URL) and hands it back
   // without touching Google, so a draft can be read and approved before
   // anything publishes. Mirrors the same flag on /api/cron/linkedin-post.
   if (params.get('preview') === '1') {
-    return NextResponse.json({ posted: false, preview: true, week, post })
+    return NextResponse.json({
+      posted: false,
+      preview: true,
+      week,
+      post,
+      validation,
+    })
   }
 
   if (!post) {
@@ -506,6 +522,24 @@ export async function GET(request: Request) {
       statsAsOf: isMonthly || isOnDemand ? undefined : statsAsOf(BRENTWOOD_SLUG),
       at: new Date().toISOString(),
     })
+  }
+
+  if (!validation.ok) {
+    console.error('[gbp-post] preflight failed', validation.reason, safeGbpPayloadSummary(post))
+    await logPost({
+      channel: 'gbp',
+      jobName,
+      payloadKind: post.kind,
+      refKey: post.refKey,
+      messagePreview: post.summary.slice(0, 200),
+      link: ctaLink(post.cta),
+      status: 'failed',
+      errorMessage: `preflight: ${validation.reason}`.slice(0, 500),
+    })
+    return NextResponse.json(
+      { error: 'gbp payload failed preflight', reason: validation.reason },
+      { status: 422 },
+    )
   }
 
   let accessToken: string
@@ -556,7 +590,8 @@ export async function GET(request: Request) {
         .text()
         .then((t) => t.slice(0, 100).replace(/[^\w\s.:,\-]/g, ''))
         .catch(() => '')
-      console.error('[gbp-post] upstream error', res.status, bodySnippet)
+      const safePayload = safeGbpPayloadSummary(post)
+      console.error('[gbp-post] upstream error', res.status, bodySnippet, safePayload)
       await logPost({
         channel: 'gbp',
         jobName,
@@ -566,7 +601,7 @@ export async function GET(request: Request) {
         link: ctaLink(post.cta),
         externalPostId: null,
         status: 'failed',
-        errorMessage: `upstream ${res.status} ${bodySnippet}`.slice(0, 500),
+        errorMessage: `upstream ${res.status} ${bodySnippet} payload=${JSON.stringify(safePayload)}`.slice(0, 500),
       })
       return NextResponse.json(
         { error: 'gbp upstream returned non-2xx', upstreamStatus: res.status },

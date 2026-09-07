@@ -103,6 +103,54 @@ export function isDbConfigured(): boolean {
   return Boolean(process.env.DATABASE_URL);
 }
 
+export interface LastSuccessfulPost {
+  payload_kind: string;
+  ref_key: string;
+  posted_at: string;
+}
+
+// Most recent *successful* row for a channel/job. Used by the LinkedIn
+// weekly rotator so the next slot is "the other type" rather than
+// `isoWeekNumber() % 2` (which re-fired the same blog twice in one week).
+// Failures, dry_runs, and other jobs (monthly-market-update) are ignored.
+export async function lastSuccessfulPost(opts: {
+  channel: string;
+  jobName: string;
+  payloadKinds?: readonly string[];
+}): Promise<LastSuccessfulPost | null> {
+  const pool = getPool();
+  if (!pool) return null;
+  try {
+    const kinds = opts.payloadKinds;
+    const r =
+      kinds && kinds.length
+        ? await pool.query<LastSuccessfulPost>(
+            `SELECT payload_kind, ref_key, posted_at::text AS posted_at
+               FROM post_log
+              WHERE channel = $1
+                AND job_name = $2
+                AND status = 'posted'
+                AND payload_kind = ANY($3::text[])
+              ORDER BY posted_at DESC
+              LIMIT 1`,
+            [opts.channel, opts.jobName, kinds]
+          )
+        : await pool.query<LastSuccessfulPost>(
+            `SELECT payload_kind, ref_key, posted_at::text AS posted_at
+               FROM post_log
+              WHERE channel = $1
+                AND job_name = $2
+                AND status = 'posted'
+              ORDER BY posted_at DESC
+              LIMIT 1`,
+            [opts.channel, opts.jobName]
+          );
+    return r.rows[0] ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export interface LogPostRow {
   channel: string;
   jobName: string;
