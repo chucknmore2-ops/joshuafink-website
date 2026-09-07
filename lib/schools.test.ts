@@ -24,7 +24,7 @@ import {
   schoolHeroLine,
   schoolHeroKicker,
 } from './schools.ts'
-import { citywideStatsCitation, marketStatsSource, marketStatsLastUpdated } from './suburbs.ts'
+import { citywideStatsCitation, marketStatsSource, marketStatsLastUpdated, getSuburb } from './suburbs.ts'
 
 const RAVENWOOD = 'ravenwood-high-school-brentwood-tn'
 const BRENTWOOD_HIGH = 'brentwood-high-school-brentwood-tn'
@@ -141,4 +141,11 @@ test('citywide citation uses suburbs.ts source and as-of date', () => {
   assert.match(citation, /as of/i)
   assert.match(citation, /August 20, 2026/)
   assert.equal(marketStatsLastUpdated, '2026-08-20')
+})
+
+test('Nolensville citywide citation matches the same Redfin helper as school pages', () => {
+  const suburb = getSuburb('nolensville-tn')
+  assert.ok(suburb)
+  const citation = citywideStatsCitation(suburb)
+  assert.match(citation, /Source: Redfin, as of August 20, 2026/)
 })

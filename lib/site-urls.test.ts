@@ -48,5 +48,7 @@ test('core GEO pages stay in the catalog', () => {
   assert.ok(paths.has('/market/brentwood-tn'))
   assert.ok(paths.has('/neighborhoods'))
   assert.ok(paths.has('/neighborhoods/cool-springs-franklin-tn'))
+  assert.ok(paths.has('/neighborhoods/scales-farmstead-nolensville-tn'))
+  assert.ok(paths.has('/neighborhoods/benington-nolensville-tn'))
   assert.ok(paths.has('/listings'))
 })
