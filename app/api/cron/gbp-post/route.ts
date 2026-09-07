@@ -11,6 +11,7 @@ import {
   marketUpdateSlug,
   monthLabel,
   snapshotSkipReason,
+  snapshotStatLines,
 } from '@/lib/market-snapshot'
 import { CALL_CTA, ctaLink, gbpCreatePayload, type CTA } from './cta'
 
@@ -219,15 +220,11 @@ function buildMonthlyMarketPost(): PreparedPost | null {
   const s = currentSnapshot()
   if (!s) return null
   const label = monthLabel(s.month)
-  const n = (v: number) => v.toLocaleString('en-US')
   return {
     summary:
       `📊 Middle Tennessee Market Update — ${label}\n\n` +
-      `• Median sale price: ${s.medianSalePrice} (${s.medianYoyChange} YoY)\n` +
-      `• Avg. days on market: ${s.avgDaysOnMarket}\n` +
-      `• Active listings: ${n(s.activeListings)}\n` +
-      `• Months of supply: ${s.monthsOfInventory}\n\n` +
-      `Source: ${s.source}, ${label} report\n\n` +
+      snapshotStatLines(s).map((line) => `• ${line}`).join('\n') +
+      `\n\nSource: ${s.source}, ${label} nine-county report\n\n` +
       `Read the full ${label} breakdown — what these numbers mean if you're buying or selling.\n\n` +
       `#NashvilleRealEstate #MiddleTennessee #JoshuaFinkGroup`,
     cta: {
