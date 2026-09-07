@@ -32,16 +32,22 @@ export interface MarketSnapshot {
   medianSalePrice: string
   /** The same figure as a number, for schema + math. */
   medianSalePriceNum: number
-  /** Year-over-year change in the median, signed ("+2.1%" / "-1.4%"). */
-  medianYoyChange: string
+  /** Year-over-year change in the median, signed ("+2.1%" / "-1.4%").
+   *  Omit when GNAR does not publish YoY in that month's chart or release. */
+  medianYoyChange?: string
   /** Average days on market for closed sales. */
   avgDaysOnMarket: number
   /** Closed sales during the month. */
   closedSales: number
   /** Active listings at month end. */
   activeListings: number
-  /** Months of supply (inventory ÷ monthly sales pace). */
-  monthsOfInventory: number
+  /** Months of supply. Omit when GNAR does not publish the figure. */
+  monthsOfInventory?: number
+  /** Condo median sale price, when GNAR publishes one on the monthly chart. */
+  condoMedianPrice?: string
+  condoMedianPriceNum?: number
+  /** Pending sales at month end, when GNAR publishes the figure. */
+  pendingSales?: number
   /** Report the figures came from — cited verbatim on every channel. */
   source: string
   /** Stable URL for the report, when it has one. */
@@ -80,6 +86,30 @@ export interface MarketSnapshot {
  * numbers under Joshua's name is worse than publishing nothing.
  */
 export const marketSnapshots: MarketSnapshot[] = [
+  {
+    month: '2026-08',
+    medianSalePrice: '$515,725',
+    medianSalePriceNum: 515725,
+    // GNAR's August 2026 monthly chart does not publish YoY or months of
+    // supply. Do not invent either — July's figures came from a named news
+    // release that stated those comparisons. No August release was live as
+    // of the 2026-09-07 audit.
+    avgDaysOnMarket: 55,
+    closedSales: 2928, // total closings
+    activeListings: 15637, // total inventory
+    condoMedianPrice: '$339,995',
+    condoMedianPriceNum: 339995,
+    pendingSales: 2409,
+    source: 'Greater Nashville REALTORS®',
+    sourceUrl: 'https://www.greaternashvillerealtors.org/monthly-home-sales-report',
+    reportDate: '2026-09-07',
+    takeaways: [
+      'August closed 2,928 nine-county sales, down from July\'s 3,269 — a typical fade after the school-year rush, not a Franklin-only read.',
+      'The residential median was $515,725. Condos closed at a $339,995 median. Both figures are Greater Nashville nine-county totals.',
+      'Inventory held at 15,637 active listings with 2,409 pendings. Average days on market was 55.',
+      'Correctly priced homes still move. A listing sitting past that 55-day average is where the conversation starts.',
+    ],
+  },
   {
     month: '2026-07',
     medianSalePrice: '$520,000',
@@ -157,4 +187,42 @@ export function snapshotSkipReason(now: Date = new Date()): string {
     `latest market snapshot is ${s.month} (${monthsBehind(s.month, now)} months ` +
     `behind, max ${MAX_MONTHS_BEHIND}) — add this month to lib/market-snapshot.ts`
   )
+}
+
+const n = (v: number) => v.toLocaleString('en-US')
+
+/** Display line for the residential median — YoY only when GNAR published it. */
+export function snapshotMedianLine(s: MarketSnapshot): string {
+  return s.medianYoyChange
+    ? `${s.medianSalePrice} (${s.medianYoyChange} year over year)`
+    : s.medianSalePrice
+}
+
+/**
+ * Sourced stat lines for social copy and glance lists. Skips YoY and months
+ * of supply unless they were typed in from a named GNAR figure.
+ */
+export function snapshotStatLines(s: MarketSnapshot): string[] {
+  const lines = [
+    `Median sale price: ${snapshotMedianLine(s)}`,
+    `Average days on market: ${s.avgDaysOnMarket}`,
+    `Closed sales: ${n(s.closedSales)}`,
+    `Active listings: ${n(s.activeListings)}`,
+  ]
+  if (s.pendingSales != null) lines.push(`Pending sales: ${n(s.pendingSales)}`)
+  if (s.condoMedianPrice) lines.push(`Condo median: ${s.condoMedianPrice}`)
+  if (s.monthsOfInventory != null) {
+    lines.push(`Months of supply: ${s.monthsOfInventory}`)
+  }
+  return lines
+}
+
+/** Six-month convention — only when GNAR published months of supply. */
+export function marketReadFromSupply(
+  months: number | undefined,
+): string | null {
+  if (months == null) return null
+  if (months >= 6) return 'a balanced market'
+  if (months >= 4) return 'a market tilting from sellers toward balanced'
+  return "still a seller's market"
 }

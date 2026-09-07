@@ -6,6 +6,7 @@ import {
   marketUpdateSlug,
   monthLabel,
   snapshotSkipReason,
+  snapshotStatLines,
 } from '@/lib/market-snapshot'
 
 export const dynamic = 'force-dynamic'
@@ -43,7 +44,6 @@ function buildMonthlyMarketPost(): PreparedPost | null {
   const s = currentSnapshot()
   if (!s) return null
   const label = monthLabel(s.month)
-  const n = (v: number) => v.toLocaleString('en-US')
   const link = withUtm(`${SITE}/blog/${marketUpdateSlug(s.month)}`, {
     source: 'facebook',
     medium: 'auto',
@@ -52,12 +52,8 @@ function buildMonthlyMarketPost(): PreparedPost | null {
   })
   const message =
     `📊 Middle Tennessee real estate market update — ${label}\n\n` +
-    `• Median sale price: ${s.medianSalePrice} (${s.medianYoyChange} year over year)\n` +
-    `• Average days on market: ${s.avgDaysOnMarket}\n` +
-    `• Closed sales: ${n(s.closedSales)}\n` +
-    `• Active listings: ${n(s.activeListings)}\n` +
-    `• Months of supply: ${s.monthsOfInventory}\n\n` +
-    `Source: ${s.source}, ${label} report.\n\n` +
+    snapshotStatLines(s).map((line) => `• ${line}`).join('\n') +
+    `\n\nSource: ${s.source}, ${label} nine-county report.\n\n` +
     `${s.takeaways[0] ?? ''}\n\n`.trimStart() +
     `Metro-wide medians are useful for direction, not for decisions — your street ` +
     `is what matters. Call or text Joshua Fink at 615-551-2727 for an honest read ` +

@@ -11,6 +11,7 @@ import {
   marketUpdateSlug,
   monthLabel,
   snapshotSkipReason,
+  snapshotStatLines,
 } from '@/lib/market-snapshot'
 
 export const dynamic = 'force-dynamic'
@@ -250,12 +251,9 @@ function buildFromMarketSnapshot(): PostPayload | null {
   // becomes the post's title tag. No hashtags on LinkedIn.
   const text =
     `Middle Tennessee real estate market update — ${label}. ` +
-    `Median sale price ${s.medianSalePrice}, ${s.medianYoyChange} year over year.\n\n` +
-    `• Average days on market: ${s.avgDaysOnMarket}\n` +
-    `• Closed sales: ${n(s.closedSales)}\n` +
-    `• Active listings: ${n(s.activeListings)}\n` +
-    `• Months of supply: ${s.monthsOfInventory}\n\n` +
-    `Source: ${s.source}, ${label} report.\n\n` +
+    `Median sale price ${s.medianSalePrice}.\n\n` +
+    snapshotStatLines(s).map((line) => `• ${line}`).join('\n') +
+    `\n\nSource: ${s.source}, ${label} nine-county report.\n\n` +
     `Joshua Fink Group — Compass Real Estate, serving Nashville & Middle Tennessee. ` +
     `The full ${label} breakdown, and what it means if you're buying or selling: ${url}`
   return {

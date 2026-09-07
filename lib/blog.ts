@@ -1,7 +1,9 @@
 import {
+  marketReadFromSupply,
   marketSnapshots,
   marketUpdateSlug,
   monthLabel,
+  snapshotMedianLine,
   type MarketSnapshot,
 } from '@/lib/market-snapshot'
 
@@ -46,16 +48,35 @@ function buildMarketUpdatePost(s: MarketSnapshot): BlogPost {
     { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' },
   )
   // Six months of supply is the conventional line between a seller's market
-  // and a balanced one — the only interpretation applied to raw figures here.
-  const marketRead =
-    s.monthsOfInventory >= 6
-      ? 'a balanced market'
-      : s.monthsOfInventory >= 4
-        ? 'a market tilting from sellers toward balanced'
-        : "still a seller's market"
+  // and a balanced one — applied only when GNAR published months of supply.
+  const marketRead = marketReadFromSupply(s.monthsOfInventory)
   const sourceCitation = s.sourceUrl
     ? `[${s.source}](${s.sourceUrl})`
     : s.source
+  const glanceLines = [
+    `- **Median sale price:** ${snapshotMedianLine(s)}`,
+    ...(s.condoMedianPrice
+      ? [`- **Condo median:** ${s.condoMedianPrice}`]
+      : []),
+    `- **Average days on market:** ${s.avgDaysOnMarket}`,
+    `- **Closed sales:** ${n(s.closedSales)}`,
+    `- **Active listings:** ${n(s.activeListings)}`,
+    ...(s.pendingSales != null
+      ? [`- **Pending sales:** ${n(s.pendingSales)}`]
+      : []),
+    ...(s.monthsOfInventory != null
+      ? [`- **Months of supply:** ${s.monthsOfInventory}`]
+      : []),
+  ]
+  const yoyFaqClause = s.medianYoyChange
+    ? `, ${s.medianYoyChange} compared with a year earlier`
+    : ''
+  const supplyFaq = marketRead
+    ? `There were ${n(s.activeListings)} active listings and ${n(s.closedSales)} closed sales in ${label}, which works out to roughly ${s.monthsOfInventory} months of supply — ${marketRead} by the six-months-of-inventory convention economists use. Your specific neighborhood and price point can read very differently from the regional average.`
+    : `There were ${n(s.activeListings)} active listings and ${n(s.closedSales)} closed sales in ${label}${s.pendingSales != null ? `, with ${n(s.pendingSales)} pendings` : ''} (${s.source}, nine-county). ${s.source} did not publish a months-of-supply figure for ${label}. Your specific neighborhood and price point can read very differently from those regional totals.`
+  const supplyParagraph = marketRead
+    ? `At roughly ${s.monthsOfInventory} months of supply, the metro as a whole reads as ${marketRead} — six months is the line economists conventionally use to separate a seller's market from a balanced one. That is a **regional** average, though, and no single street trades at the regional average.`
+    : `These are **nine-county** Greater Nashville totals (Davidson, Cheatham, Dickson, Maury, Robertson, Rutherford, Sumner, Williamson, and Wilson) — not a city-only or street-level read. ${s.source} did not publish year-over-year or months-of-supply figures for ${label} on the monthly chart, so those are omitted rather than estimated.`
 
   return {
     slug: marketUpdateSlug(s.month),
@@ -64,14 +85,14 @@ function buildMarketUpdatePost(s: MarketSnapshot): BlogPost {
     dateModified: published,
     excerpt:
       `The ${label} numbers for Middle Tennessee: a median sale price of ` +
-      `${s.medianSalePrice} (${s.medianYoyChange} year over year), homes averaging ` +
+      `${snapshotMedianLine(s)}, homes averaging ` +
       `${s.avgDaysOnMarket} days on market, and ${n(s.activeListings)} active listings. ` +
       `Here's what that actually means if you're buying or selling right now.`,
     category: 'Market Updates',
     faq: [
       {
         q: `What is the median home price in Middle Tennessee in ${label}?`,
-        a: `${s.medianSalePrice}, ${s.medianYoyChange} compared with a year earlier, per the ${s.source} ${label} report. That's a regional median — individual counties and price points vary widely around it, so use it as a starting point rather than a valuation.`,
+        a: `${s.medianSalePrice}${yoyFaqClause}, per the ${s.source} ${label} report. That's a regional residential median — individual counties and price points vary widely around it, so use it as a starting point rather than a valuation.`,
       },
       {
         q: 'How long does it take to sell a home in Middle Tennessee right now?',
@@ -79,7 +100,7 @@ function buildMarketUpdatePost(s: MarketSnapshot): BlogPost {
       },
       {
         q: `Is Middle Tennessee a buyer's or seller's market in ${label}?`,
-        a: `There were ${n(s.activeListings)} active listings and ${n(s.closedSales)} closed sales in ${label}, which works out to roughly ${s.monthsOfInventory} months of supply — ${marketRead} by the six-months-of-inventory convention economists use. Your specific neighborhood and price point can read very differently from the regional average.`,
+        a: supplyFaq,
       },
     ],
     content: `
@@ -87,19 +108,15 @@ Here are the ${label} numbers for Middle Tennessee, straight from the ${s.source
 
 ## ${label} at a Glance
 
-- **Median sale price:** ${s.medianSalePrice} (${s.medianYoyChange} year over year)
-- **Average days on market:** ${s.avgDaysOnMarket}
-- **Closed sales:** ${n(s.closedSales)}
-- **Active listings:** ${n(s.activeListings)}
-- **Months of supply:** ${s.monthsOfInventory}
+${glanceLines.join('\n')}
 
-Source: ${sourceCitation}, ${label} report, published ${published}.
+Source: ${sourceCitation}, ${label} nine-county report, published ${published}.
 
 ## What the Numbers Say
 
 ${s.takeaways.map((t) => `- ${t}`).join('\n')}
 
-At roughly ${s.monthsOfInventory} months of supply, the metro as a whole reads as ${marketRead} — six months is the line economists conventionally use to separate a seller's market from a balanced one. That is a **regional** average, though, and no single street trades at the regional average.
+${supplyParagraph}
 
 ## What This Means If You're Buying
 
