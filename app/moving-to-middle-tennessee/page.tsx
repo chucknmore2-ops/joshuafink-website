@@ -1,10 +1,31 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { suburbs, marketStatsLastUpdated } from '@/lib/suburbs'
+import { suburbs } from '@/lib/suburbs'
+import { gnarMarketUpdatePath, homesCostFaqAnswer } from '@/lib/moving-faqs'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
 
 const SITE = 'https://www.joshuafink.com'
+
+// Content-review stamp for this pillar page (America/Chicago). Distinct from
+// `marketStatsLastUpdated`, which is when the Redfin city medians were refreshed.
+const PAGE_LAST_VERIFIED = '2026-09-08'
+
+function FaqAnswer({ text }: { text: string }) {
+  const path = gnarMarketUpdatePath()
+  const url = `${SITE}${path}`
+  const idx = text.indexOf(url)
+  if (idx === -1) return <>{text}</>
+  return (
+    <>
+      {text.slice(0, idx)}
+      <Link href={path} className="font-semibold text-black hover:underline">
+        {path}
+      </Link>
+      {text.slice(idx + url.length)}
+    </>
+  )
+}
 
 // Relocation pillar page. Targets the high-intent "moving to Middle Tennessee /
 // moving to [city] TN" cluster that had zero on-site coverage, and acts as a
@@ -32,7 +53,7 @@ const RELO_FAQS: { q: string; a: string }[] = [
   },
   {
     q: 'How much do homes cost across Middle Tennessee in 2026?',
-    a: 'It varies widely by city, and Joshua can always pull the latest closed comps for exact numbers. As of the most recent market data, the most accessible medians run roughly $370K–$440K (La Vergne, Columbia, Smyrna, Lebanon, Murfreesboro, Gallatin). Nashville, Spring Hill, Hendersonville, and Mount Juliet sit in the high-$400Ks to mid-$500Ks. The Williamson County core carries a real premium: Thompson’s Station and Franklin median in the mid-to-high $800Ks, Nolensville has climbed past $900K, and Brentwood leads the region at roughly $1.4M.',
+    a: homesCostFaqAnswer(),
   },
   {
     q: 'Which Middle TN city is right for me?',
@@ -125,7 +146,7 @@ export default function MovingToMiddleTennesseePage() {
     name: 'Moving to Middle Tennessee — Relocation Guide (2026)',
     url: `${SITE}/moving-to-middle-tennessee`,
     datePublished: '2026-01-15',
-    dateModified: '2026-09-08',
+    dateModified: PAGE_LAST_VERIFIED,
     inLanguage: 'en-US',
     author: {
       '@type': 'Person',
@@ -236,7 +257,7 @@ export default function MovingToMiddleTennesseePage() {
                 Choose Your City
               </p>
               <p className="text-xs text-[#A0A0A0]">
-                Page last verified: {marketStatsLastUpdated}
+                Page last verified: {PAGE_LAST_VERIFIED}
               </p>
             </div>
             <h2 className="text-3xl font-black text-black tracking-tight mb-3">
@@ -338,7 +359,9 @@ export default function MovingToMiddleTennesseePage() {
               {RELO_FAQS.map((f, i) => (
                 <div key={i} className="bg-white p-8 border-l-4" style={{ borderColor: '#0A1628' }}>
                   <h3 className="text-base font-black text-black mb-3">{f.q}</h3>
-                  <p className="text-sm text-[#6B6B6B] leading-relaxed">{f.a}</p>
+                  <p className="text-sm text-[#6B6B6B] leading-relaxed">
+                    <FaqAnswer text={f.a} />
+                  </p>
                 </div>
               ))}
             </div>
