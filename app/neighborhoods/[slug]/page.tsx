@@ -6,7 +6,7 @@ import {
   getAllNeighborhoodSlugs,
   getRelatedNeighborhoods,
 } from '@/lib/neighborhoods'
-import { getSuburb, getSuburbSlugForListing } from '@/lib/suburbs'
+import { getSuburb, getSuburbSlugForListing, citywideStatsCitation } from '@/lib/suburbs'
 import { reviewStats } from '@/lib/reviews'
 import { withUtm } from '@/lib/utm'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
@@ -358,12 +358,18 @@ export default async function NeighborhoodPage({ params }: Props) {
 
             {parentSuburb && (
               <>
-                <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mt-10 mb-6">
-                  {parentSuburb.name} Market — 2026
+                <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 mt-10 mb-2">
+                  <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase">
+                    {parentSuburb.displayName} Citywide Market — 2026
+                  </p>
+                  <p className="text-xs text-[#A0A0A0]">{citywideStatsCitation(parentSuburb)}</p>
+                </div>
+                <p className="text-sm text-[#6B6B6B] mb-6">
+                  Citywide {parentSuburb.name} figures — not a {n.name} subdivision median. {n.name} sits within this market.
                 </p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                   <div className="bg-white p-6 border border-[#E8E8E8]">
-                    <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mb-2">Median Price</p>
+                    <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mb-2">Citywide Median Price</p>
                     <p className="text-xl font-black text-black">{parentSuburb.medianPrice}</p>
                   </div>
                   <div className="bg-white p-6 border border-[#E8E8E8]">
@@ -379,9 +385,6 @@ export default async function NeighborhoodPage({ params }: Props) {
                     <p className="text-xl font-black text-black">{parentSuburb.yoyChange}</p>
                   </div>
                 </div>
-                <p className="text-xs text-[#7B7B7B] mt-3">
-                  Source: Joshua Fink / Compass market data for {parentSuburb.displayName}. {n.name} sits within this market.
-                </p>
               </>
             )}
           </div>
