@@ -32,7 +32,7 @@ const RELO_FAQS: { q: string; a: string }[] = [
   },
   {
     q: 'How much do homes cost across Middle Tennessee in 2026?',
-    a: 'It varies widely by city. On the more accessible end, median prices run in the low-to-mid $300Ks (La Vergne, Columbia, Gallatin) and mid-$300Ks to $400Ks (Murfreesboro, Smyrna, Hendersonville, Lebanon). The Williamson County core is higher — Spring Hill around the $450Ks, Nolensville near $580K, Franklin around $650K, and Brentwood around $900K. Joshua can pull exact, current comps for any specific area.',
+    a: 'It varies widely by city, and Joshua can always pull the latest closed comps for exact numbers. As of the most recent market data, the most accessible medians run roughly $370K–$440K (La Vergne, Columbia, Smyrna, Lebanon, Murfreesboro, Gallatin). Nashville, Spring Hill, Hendersonville, and Mount Juliet sit in the high-$400Ks to mid-$500Ks. The Williamson County core carries a real premium: Thompson’s Station and Franklin median in the mid-to-high $800Ks, Nolensville has climbed past $900K, and Brentwood leads the region at roughly $1.4M.',
   },
   {
     q: 'Which Middle TN city is right for me?',
@@ -125,7 +125,7 @@ export default function MovingToMiddleTennesseePage() {
     name: 'Moving to Middle Tennessee — Relocation Guide (2026)',
     url: `${SITE}/moving-to-middle-tennessee`,
     datePublished: '2026-01-15',
-    dateModified: '2026-07-17',
+    dateModified: '2026-09-08',
     inLanguage: 'en-US',
     author: {
       '@type': 'Person',
