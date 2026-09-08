@@ -20,18 +20,23 @@
  *        run only when their key is present, so this degrades gracefully)
  *   DATABASE_URL     optional — persistence is skipped if absent
  *   PUSHOVER_TOKEN + PUSHOVER_USER  optional — the alert is skipped if absent
+ *   GEO_CONCURRENCY  optional — queries in flight (default 1; was 3, which 429'd Perplexity)
  */
 import { Pool } from 'pg'
 import { BRAND, GEO_QUERIES } from '../lib/geo-queries'
-import { askAllEngines, configuredEngines, classifyFailure, FIX_HINT } from '../lib/geo-engines'
+import {
+  askAllEngines,
+  configuredEngines,
+  classifyFailure,
+  FIX_HINT,
+  GEO_QUERY_CONCURRENCY,
+} from '../lib/geo-engines'
 import {
   detectBrand,
   computeGeoScore,
   topCompetingSources,
   type GeoResultRow,
 } from '../lib/geo-score'
-
-const CONCURRENCY = 3 // queries in flight at once (each fans out to all engines)
 
 // Mirrors lib/geo-db.ts recordGeoRun, minus the `server-only` import.
 async function persist(rows: GeoResultRow[]): Promise<number> {
@@ -131,7 +136,9 @@ async function main(): Promise<number> {
     )
     return 1
   }
-  console.log(`[geo] ${GEO_QUERIES.length} queries × engines: ${engines.join(', ')}`)
+  console.log(
+    `[geo] ${GEO_QUERIES.length} queries × engines: ${engines.join(', ')} (concurrency ${GEO_QUERY_CONCURRENCY})`,
+  )
 
   const runId = new Date().toISOString()
   const rows: GeoResultRow[] = []
@@ -159,7 +166,9 @@ async function main(): Promise<number> {
       }
     }
   }
-  await Promise.all(Array.from({ length: Math.min(CONCURRENCY, GEO_QUERIES.length) }, worker))
+  await Promise.all(
+    Array.from({ length: Math.min(GEO_QUERY_CONCURRENCY, GEO_QUERIES.length) }, worker),
+  )
 
   const score = computeGeoScore(rows)
   const written = await persist(rows)
