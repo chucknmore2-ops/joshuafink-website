@@ -29,8 +29,9 @@ concurrency:
 jobs:
   audit:
     runs-on: ubuntu-latest
-    # Room for the raised per-call timeout (90s) plus one retry per engine.
-    timeout-minutes: 25
+    # Room for the 90s per-call timeout, serial query walk (concurrency 1),
+    # and up to three rate-limit backoffs per engine (capped at 20s each).
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

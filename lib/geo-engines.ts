@@ -32,8 +32,20 @@ export interface EngineOutput {
 // silently aborting ~half of its calls and dropping them from the score (a
 // failed call is excluded, so "claude 0%" was measurement, not reality).
 const TIMEOUT_MS = 90_000;
-// One retry per engine — most failures are a timeout or a transient 429/5xx.
+// Timeout / 5xx: one immediate retry. Rate limits get more attempts below.
 const ATTEMPTS = 2;
+// Perplexity (and others) return request_rate_limit_exceeded as HTTP 429.
+// Immediate retries just re-hit the same window; back off instead.
+const RATE_LIMIT_ATTEMPTS = 4;
+const RATE_LIMIT_BASE_MS = 2_000;
+const RATE_LIMIT_CAP_MS = 20_000;
+
+// Queries in flight at once (each fans out to all configured engines). 3 made
+// Perplexity 429 on the weekly run; 1 keeps one Sonar call at a time.
+export const GEO_QUERY_CONCURRENCY = Math.max(
+  1,
+  Number.parseInt(process.env.GEO_CONCURRENCY ?? '1', 10) || 1,
+);
 
 // Default Claude model is the flagship (what a claude.ai user actually gets);
 // override to a cheaper model (e.g. claude-haiku-4-5) for a low-cost daily run.
@@ -63,7 +75,9 @@ async function postJson(
       /* non-JSON error body */
     }
     if (!res.ok) {
-      throw new Error(`HTTP ${res.status}: ${text.slice(0, 200)}`);
+      const retryAfter = res.headers.get('retry-after');
+      const hint = retryAfter ? ` retry-after=${retryAfter}` : '';
+      throw new Error(`HTTP ${res.status}: ${text.slice(0, 200)}${hint}`);
     }
     return json;
   } finally {
@@ -187,7 +201,7 @@ export function classifyFailure(msg: string | null | undefined): FailureKind {
 export const FIX_HINT: Record<FailureKind, string> = {
   credits: 'top up the API balance',
   auth: 'the API key is rejected — rotate it in repo Secrets',
-  'rate-limit': 'rate-limited — usually clears by next run',
+  'rate-limit': 'rate-limited after retries — usually clears by next run',
   timeout: 'every call timed out — check the model/timeout settings',
   other: 'see the workflow log',
 };
@@ -200,24 +214,74 @@ function reasonOf(err: unknown): string {
   return e?.message?.slice(0, 240) || 'unknown error';
 }
 
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/** Numeric `Retry-After` seconds from the suffix appended to the HTTP error. */
+export function parseRetryAfterMs(msg: string): number | null {
+  const m = /retry-after[=:\s]+(\d+(?:\.\d+)?)/i.exec(msg);
+  if (!m) return null;
+  const seconds = Number(m[1]);
+  if (!Number.isFinite(seconds) || seconds < 0) return null;
+  return Math.round(seconds * 1000);
+}
+
+/** Exponential backoff with up to 50% additive jitter. `failedAttempt` is 1-based. */
+export function rateLimitDelayMs(failedAttempt: number, random: () => number = Math.random): number {
+  const exp = Math.min(RATE_LIMIT_CAP_MS, RATE_LIMIT_BASE_MS * 2 ** Math.max(0, failedAttempt - 1));
+  const jitter = Math.floor(Math.max(0, Math.min(1, random())) * exp * 0.5);
+  return exp + jitter;
+}
+
+export type RetryDelayOpts = {
+  random?: () => number;
+  retryAfterMs?: number | null;
+};
+
+/**
+ * Ms to wait before the next try, or null to stop.
+ * Credits/auth never self-heal. Rate limits back off; timeout/other retry once immediately.
+ */
+export function nextRetryDelayMs(
+  kind: FailureKind,
+  failedAttempt: number,
+  opts: RetryDelayOpts = {},
+): number | null {
+  if (kind === 'credits' || kind === 'auth') return null;
+  const maxAttempts = kind === 'rate-limit' ? RATE_LIMIT_ATTEMPTS : ATTEMPTS;
+  if (failedAttempt >= maxAttempts) return null;
+  if (kind !== 'rate-limit') return 0;
+  const computed = rateLimitDelayMs(failedAttempt, opts.random);
+  const hinted = opts.retryAfterMs;
+  if (hinted != null && hinted > 0) {
+    return Math.min(RATE_LIMIT_CAP_MS, Math.max(computed, hinted));
+  }
+  return computed;
+}
+
 /**
  * Ask every configured engine one query. Each engine resolves to an
  * EngineOutput — `ok:false` with an error string on failure, never a throw.
- * Each engine gets ATTEMPTS tries before it's reported as failed.
+ * Transient failures retry; 429s wait with exponential backoff + jitter.
  */
 export async function askAllEngines(query: string): Promise<EngineOutput[]> {
   const active = ENGINES.filter((e) => process.env[e.envKey]);
   return Promise.all(
     active.map(async (e): Promise<EngineOutput> => {
       let lastErr: unknown;
-      for (let attempt = 1; attempt <= ATTEMPTS; attempt++) {
+      for (let attempt = 1; ; attempt++) {
         try {
           return await e.run(query);
         } catch (err) {
           lastErr = err;
-          if (attempt < ATTEMPTS) {
-            console.warn(`[geo] ${e.name} attempt ${attempt} failed (${reasonOf(err)}) — retrying`);
-          }
+          const reason = reasonOf(err);
+          const kind = classifyFailure(reason);
+          const delay = nextRetryDelayMs(kind, attempt, { retryAfterMs: parseRetryAfterMs(reason) });
+          if (delay == null) break;
+          const wait = delay > 0 ? ` in ${delay}ms` : '';
+          console.warn(`[geo] ${e.name} attempt ${attempt} failed (${reason}) — retrying${wait}`);
+          if (delay > 0) await sleep(delay);
         }
       }
       return {
