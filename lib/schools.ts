@@ -531,6 +531,36 @@ export const schools: Record<string, School> = {
       },
     ],
   },
+
+  'stewarts-creek-high-school-smyrna-tn': {
+    slug: 'stewarts-creek-high-school-smyrna-tn',
+    name: 'Stewarts Creek High School',
+    level: 'High',
+    district: 'Rutherford County Schools',
+    suburbSlug: 'smyrna-tn',
+    ratingNote: 'An 8/10 GreatSchools-rated Rutherford County high school with a 98% graduation rate — one of the newer, top-performing options in Smyrna.',
+    blurb:
+      'Stewarts Creek High School opened in 2013 on Red Hawk Boulevard on the east side of Smyrna and has quickly become one of Rutherford County\'s stronger public high schools — an 8/10 GreatSchools rating, a 98% graduation rate, and average SAT/ACT scores (1180 / 24) that run well ahead of the district norm. It serves the newer subdivisions built along the Stewarts Creek corridor east of downtown Smyrna, including Bankside and Preserve at Stewart Creek, and feeds from Stewarts Creek Elementary and Stewarts Creek Middle. For buyers comparing Smyrna to pricier Williamson County suburbs, the Stewarts Creek zone is a frequent shortlist pick — newer construction paired with a top-performing Rutherford County public school.',
+    neighborhoods: ['Bankside', 'Preserve at Stewart Creek', 'Stewarts Creek area'],
+    faqs: [
+      {
+        q: 'What neighborhoods are zoned to Stewarts Creek High School?',
+        a: 'Stewarts Creek draws primarily from the newer subdivisions built along the Stewarts Creek corridor on the east side of Smyrna, including Bankside and Preserve at Stewart Creek. Rutherford County attendance zones can shift as new sections are built out, so always confirm the current assignment with Rutherford County Schools for the specific address before writing an offer.',
+      },
+      {
+        q: 'Is Stewarts Creek High School a good school?',
+        a: 'Yes. Stewarts Creek carries an 8/10 GreatSchools rating, a 98% graduation rate, and average SAT/ACT scores (1180 / 24) — all ahead of the district average at nearby Smyrna High School. It opened in 2013 as one of Rutherford County\'s newer high schools and has built a strong academic track record since.',
+      },
+      {
+        q: 'How much do homes near Stewarts Creek High School cost?',
+        a: 'Stewarts Creek-zoned homes are part of the broader Smyrna market — see the current Smyrna market report for up-to-date medians and price-per-square-foot. Newer construction in Bankside and Preserve at Stewart Creek tends to sit at or above the citywide Smyrna median given the school zone and build age. Joshua can pull exact, current comps for any specific street.',
+      },
+      {
+        q: 'How does Stewarts Creek compare to Smyrna High School?',
+        a: 'Both are Rutherford County Schools, but Stewarts Creek is the newer of the two (opened 2013) and currently carries a higher GreatSchools rating and graduation rate. Smyrna High serves the older, more established core of town; Stewarts Creek serves the newer subdivisions on the east side. Which zone fits depends on whether a buyer prioritizes newer construction or an established, closer-in address — Joshua can walk through the tradeoffs for a specific budget.',
+      },
+    ],
+  },
 }
 
 export function getSchool(slug: string): School | undefined {
