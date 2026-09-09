@@ -11,6 +11,8 @@ import { linkifyNeighborhoods } from '@/lib/linkify-neighborhoods'
 import { reviewStats } from '@/lib/reviews'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
+import TrustBadges from '@/components/TrustBadges'
+import ReviewStrip from '@/components/ReviewStrip'
 
 type Props = {
   params: Promise<{ suburb: string }>
@@ -276,6 +278,11 @@ export default async function BuySuburbPage({ params }: Props) {
               >
                 Call 615-551-2727
               </TrackedTelLink>
+            </div>
+
+            {/* Trust signals — credentials and rating in view before the hero form */}
+            <div className="mt-8">
+              <TrustBadges variant="dark" />
             </div>
 
             {/* Compact above-the-fold lead capture */}
@@ -837,6 +844,9 @@ export default async function BuySuburbPage({ params }: Props) {
             </div>
           </div>
         )}
+
+        {/* Social proof — same strip used on /buy, /sell and /cash-offer */}
+        <ReviewStrip variant="light" limit={3} />
 
         {/* Bottom CTA */}
         <div className="text-white py-16 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#0A1628' }}>
