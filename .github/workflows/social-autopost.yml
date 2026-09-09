@@ -77,12 +77,21 @@ jobs:
           URL="https://www.joshuafink.com/api/cron/$ENDPOINT"
           echo "Posting via $URL"
 
-          # Retry a few times in case a deploy is mid-flight.
+          # Retry a few times in case a deploy is mid-flight — or, for
+          # Instagram, to resume the same Meta container that was still
+          # IN_PROGRESS (2026-08-26 and 2026-09-09: same creationId, three
+          # 502s). Passing ?creationId= avoids creating a second container.
+          CREATION_ID=""
           for attempt in 1 2 3; do
             echo "Attempt $attempt…"
+            FIRE_URL="$URL"
+            if [ "$ENDPOINT" = "instagram-post" ] && [ -n "$CREATION_ID" ]; then
+              FIRE_URL="${URL}?creationId=${CREATION_ID}"
+              echo "Resuming Instagram container $CREATION_ID"
+            fi
             response=$(curl -sSL -w "\n%{http_code}" \
               -H "Authorization: Bearer $CRON_SECRET" \
-              "$URL")
+              "$FIRE_URL")
             status=$(echo "$response" | tail -n1)
             body=$(echo "$response" | sed '$d')
             echo "HTTP $status"
@@ -92,8 +101,33 @@ jobs:
               echo "✅ $ENDPOINT posted."
               exit 0
             fi
-            echo "Non-200 (attempt $attempt); retrying in $((attempt * 10))s…"
-            sleep $((attempt * 10))
+
+            parsed=$(printf '%s' "$body" | python3 -c '
+import json, sys
+try:
+    d = json.load(sys.stdin)
+except Exception:
+    d = {}
+print(d.get("creationId") or "")
+print(d.get("statusCode") or "")
+')
+            new_id=$(printf '%s\n' "$parsed" | sed -n '1p')
+            new_sc=$(printf '%s\n' "$parsed" | sed -n '2p')
+            if [ "$new_sc" = "IN_PROGRESS" ] && [ -n "$new_id" ]; then
+              CREATION_ID="$new_id"
+            else
+              CREATION_ID=""
+            fi
+
+            if [ "$attempt" -eq 3 ]; then
+              break
+            fi
+            wait_s=$((attempt * 10))
+            if [ "$ENDPOINT" = "instagram-post" ]; then
+              wait_s=$((attempt * 20))
+            fi
+            echo "Non-200 (attempt $attempt); retrying in ${wait_s}s…"
+            sleep "$wait_s"
           done
 
           echo "::error::$ENDPOINT failed after 3 attempts (last HTTP $status)."

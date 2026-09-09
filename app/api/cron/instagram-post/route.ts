@@ -3,12 +3,12 @@ import { blogPosts } from '@/lib/blog'
 import { pickPromotable } from '@/lib/promotable-listings'
 import { listingSlug } from '@/lib/listing-detail'
 import { logPost } from '@/lib/admin-db'
+import { instagramImageUrl } from '@/lib/compass-photo'
 import { withUtm } from '@/lib/utm'
 
 export const dynamic = 'force-dynamic'
-// Room for the container-readiness poll below (up to ~40s) — the default
-// function cap is 10s on Hobby.
-export const maxDuration = 60
+// Room for the container-readiness poll below (up to ~80s) plus create/publish.
+export const maxDuration = 120
 
 // Instagram auto-poster for Joshua Fink Group.
 //
@@ -111,7 +111,9 @@ function buildFromListing(): PostPayload | null {
     `#${cityHashtag} #JustListed #JoshuaFinkGroup #Compass #NashvilleRealEstate #MiddleTennessee #TennesseeRealEstate`
   return {
     caption: caption.slice(0, MAX_CAPTION),
-    imageUrl: l.imageUrl!,
+    // Raw Compass WebP (2048x1536.webp) left the 2026-09-09 container
+    // IN_PROGRESS across three GHA retries. Send the JPEG variant.
+    imageUrl: instagramImageUrl(l.imageUrl!),
     url,
     kind: 'listing',
     refKey: slug,
@@ -141,7 +143,7 @@ function buildFromBlog(): PostPayload | null {
     `#NashvilleRealEstate #MiddleTennessee #JoshuaFinkGroup #Compass`
   return {
     caption: caption.slice(0, MAX_CAPTION),
-    imageUrl: cover,
+    imageUrl: instagramImageUrl(cover),
     url,
     kind: 'blog',
     refKey: p.slug,
@@ -193,57 +195,63 @@ export async function GET(request: Request) {
   }
 
   const sanitize = (t: string) => t.slice(0, 100).replace(/[^\w\s.:,\-]/g, '')
+  // ?creationId= lets Social Autopost resume the same Meta container on
+  // retry instead of creating a second one that stays IN_PROGRESS too.
+  const resumeRaw = new URL(request.url).searchParams.get('creationId')?.trim() ?? ''
+  const resumeId = /^\d+$/.test(resumeRaw) ? resumeRaw : ''
 
   try {
-    const containerParams = new URLSearchParams({
-      image_url: payload.imageUrl,
-      caption: payload.caption,
-      access_token: accessToken,
-    })
-    const containerRes = await fetch(
-      `${GRAPH_API}/${igUserId}/media?${containerParams.toString()}`,
-      { method: 'POST' },
-    )
-    if (!containerRes.ok) {
-      const snippet = await containerRes.text().then(sanitize).catch(() => '')
-      console.error('[instagram-post] container error', containerRes.status, snippet)
-      await logIg('failed', payload, {
-        errorMessage: `container ${containerRes.status} ${snippet}`,
-      })
-      return NextResponse.json(
-        {
-          error: 'instagram container creation failed',
-          upstreamStatus: containerRes.status,
-          hint:
-            containerRes.status === 401 || containerRes.status === 400
-              ? 'IG_ACCESS_TOKEN may have expired or lacks instagram_content_publish scope.'
-              : undefined,
-        },
-        { status: 502 },
-      )
-    }
-    const containerData = (await containerRes.json()) as { id?: string }
-    const creationId = containerData.id
+    let creationId = resumeId
     if (!creationId) {
-      await logIg('failed', payload, {
-        errorMessage: 'instagram container returned no id',
+      const containerParams = new URLSearchParams({
+        image_url: payload.imageUrl,
+        caption: payload.caption,
+        access_token: accessToken,
       })
-      return NextResponse.json(
-        { error: 'instagram container returned no id' },
-        { status: 502 },
+      const containerRes = await fetch(
+        `${GRAPH_API}/${igUserId}/media?${containerParams.toString()}`,
+        { method: 'POST' },
       )
+      if (!containerRes.ok) {
+        const snippet = await containerRes.text().then(sanitize).catch(() => '')
+        console.error('[instagram-post] container error', containerRes.status, snippet)
+        await logIg('failed', payload, {
+          errorMessage: `container ${containerRes.status} ${snippet}`,
+        })
+        return NextResponse.json(
+          {
+            error: 'instagram container creation failed',
+            upstreamStatus: containerRes.status,
+            hint:
+              containerRes.status === 401 || containerRes.status === 400
+                ? 'IG_ACCESS_TOKEN may have expired or lacks instagram_content_publish scope.'
+                : undefined,
+          },
+          { status: 502 },
+        )
+      }
+      const containerData = (await containerRes.json()) as { id?: string }
+      creationId = containerData.id ?? ''
+      if (!creationId) {
+        await logIg('failed', payload, {
+          errorMessage: 'instagram container returned no id',
+        })
+        return NextResponse.json(
+          { error: 'instagram container returned no id' },
+          { status: 502 },
+        )
+      }
     }
 
     // Meta processes the image asynchronously after the container is created.
     // Publishing before status_code=FINISHED is what threw the 400 "Media ID
     // is not available" (OAuthException code 9007) failures, so poll the
     // container until it's ready before calling media_publish. The 2026-08-26
-    // run was still IN_PROGRESS after the old 30s window (10 × 3s), so poll
-    // against a deadline instead — 40s is as long as the 60s maxDuration
-    // allows once container creation, media_publish, and the post_log writes
-    // get their share.
+    // and 2026-09-09 runs were still IN_PROGRESS after a 40s window on the
+    // raw 2048px WebP; JPEG + an 80s deadline (maxDuration 120) is the
+    // remaining budget after create/publish/log.
     let statusCode = 'IN_PROGRESS'
-    const pollDeadline = Date.now() + 40_000
+    const pollDeadline = Date.now() + 80_000
     while (Date.now() < pollDeadline) {
       const statusRes = await fetch(
         `${GRAPH_API}/${creationId}?fields=status_code&access_token=${accessToken}`,
