@@ -52,13 +52,13 @@ const cityContent: Record<string, CashOfferCityContent> = {
     slug: 'brentwood-tn',
     areas: 'Governors Club, Annandale, Otter Creek, Brentwood Hills, and the Murray Lane corridor',
     intro:
-      "Brentwood's luxury buyers expect flawless presentation. If your home is dated, tenant-occupied, caught in an estate, or you just need to move without staging a $900K listing, a cash sale removes the prep, the showings, and the months of carrying costs.",
+      "Brentwood's luxury buyers expect flawless presentation. If your home is dated, tenant-occupied, caught in an estate, or you just need to move without staging a $1.40M listing, a cash sale removes the prep, the showings, and the months of carrying costs.",
     localAngle:
-      "At a ~$900,000 median, Brentwood homes carry significant equity even in as-is condition — but selling traditionally at this tier means staging, professional photography, and buyers who walk over deferred maintenance. A cash offer lets you convert that equity now, on your timeline, without spending into a high-expectation market.",
+      "At a ~$1,400,000 median (Redfin, as of August 20, 2026), Brentwood homes carry significant equity even in as-is condition — but selling traditionally at this tier means staging, professional photography, and buyers who walk over deferred maintenance. A cash offer lets you convert that equity now, on your timeline, without spending into a high-expectation market.",
     faqs: [
       {
         q: 'Do you buy higher-value Brentwood homes for cash?',
-        a: "Yes. Brentwood's price point ($900K median, with Governors Club and Murray Lane estates well above) is squarely in range. Whether it's a luxury home that needs updating, an inherited estate, or a property you need to move quickly without a months-long luxury listing campaign, Joshua makes fair, no-obligation cash offers priced off real Brentwood comps.",
+        a: "Yes. Brentwood's price point ($1.40M median, with Governors Club and Murray Lane estates well above) is squarely in range (Redfin, as of August 20, 2026). Whether it's a luxury home that needs updating, an inherited estate, or a property you need to move quickly without a months-long luxury listing campaign, Joshua makes fair, no-obligation cash offers priced off real Brentwood comps.",
       },
       {
         q: 'I inherited a Brentwood home in probate — can I still sell it for cash?',
@@ -76,7 +76,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Spring Hill straddles Williamson and Maury counties and moves fast — but if your home needs work, you're relocating for a GM or plant job, or you're behind on payments, a cash sale lets you skip the repairs and showings and close on your schedule.",
     localAngle:
-      "With a ~$450,000 median, Spring Hill is a value market where many sellers are relocating for work or upsizing quickly. A cash offer is ideal when timing matters more than squeezing the last dollar — Joshua buys as-is across both the Williamson and Maury sides and prices off true local comps.",
+      "With a ~$532,000 median (Redfin, as of August 20, 2026), Spring Hill is a value market where many sellers are relocating for work or upsizing quickly. A cash offer is ideal when timing matters more than squeezing the last dollar — Joshua buys as-is across both the Williamson and Maury sides and prices off true local comps.",
     faqs: [
       {
         q: 'I got relocated for work — can you close fast on my Spring Hill home?',
@@ -98,7 +98,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Nolensville's newer subdivisions set a high bar for condition. If your home is older, on acreage that needs clearing, or tied to an estate or divorce, a cash offer lets you sell as-is without competing against the move-in-ready inventory in Bent Creek and Scales Farmstead.",
     localAngle:
-      "At a ~$580,000 median in fast-growing Williamson County, Nolensville homes hold strong equity — but much of the market is new construction, so an older or distressed property can struggle traditionally. A cash sale converts your equity now, with no prep and no showings.",
+      "At a ~$935,000 median (Redfin, as of August 20, 2026) in fast-growing Williamson County, Nolensville homes hold strong equity — but much of the market is new construction, so an older or distressed property can struggle traditionally. A cash sale converts your equity now, with no prep and no showings.",
     faqs: [
       {
         q: 'Can I sell an older Nolensville home for cash against all the new construction?',
@@ -120,7 +120,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Thompson's Station mixes new subdivisions with rural acreage. Whether your home needs work, sits on land that's become hard to maintain, or you're settling an estate, a cash offer lets you sell as-is and close on your schedule.",
     localAngle:
-      "With a ~$420,000 median and a lot of land in the mix, Thompson's Station sellers often value speed and simplicity — especially on acreage or older homes that don't fit the new-build demand. Joshua buys as-is and prices off real Williamson County comps.",
+      "With a ~$842,000 median (Redfin, as of August 20, 2026) and a lot of land in the mix, Thompson's Station sellers often value speed and simplicity — especially on acreage or older homes that don't fit the new-build demand. Joshua buys as-is and prices off real Williamson County comps.",
     faqs: [
       {
         q: 'Do you buy homes on acreage in Thompson’s Station?',
@@ -132,7 +132,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
       },
       {
         q: 'Is a cash offer worth it in a growing market like Thompson’s Station?',
-        a: "It depends on your situation. If the home is turnkey and you can wait, listing traditionally in a ~$420K-and-rising market may net more. If it's dated, inherited, or you need to move now, the cash route often nets more after repairs, carrying costs, and time — and Joshua will walk you through both honestly.",
+        a: "It depends on your situation. If the home is turnkey and you can wait, listing traditionally in a ~$842K-and-rising market may net more (Redfin, as of August 20, 2026). If it's dated, inherited, or you need to move now, the cash route often nets more after repairs, carrying costs, and time — and Joshua will walk you through both honestly.",
       },
     ],
   },
@@ -142,7 +142,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Nashville is the most varied market in Middle TN — and the most common place for cash situations: inherited homes, tired rentals, pre-foreclosure, and properties that need more work than a retail buyer will take on. A cash offer lets you sell any of them as-is, fast.",
     localAngle:
-      "Across Davidson County, Nashville's ~$425,000 median spans everything from updated East Nashville bungalows to dated homes in Madison, Antioch, and Donelson that are hard to sell traditionally. Cash is the cleanest exit for landlords done with tenants, heirs settling an estate, or owners facing foreclosure — Joshua buys in any condition, anywhere in the metro.",
+      "Across Davidson County, Nashville's ~$480,000 median (Redfin, as of August 20, 2026) spans everything from updated East Nashville bungalows to dated homes in Madison, Antioch, and Donelson that are hard to sell traditionally. Cash is the cleanest exit for landlords done with tenants, heirs settling an estate, or owners facing foreclosure — Joshua buys in any condition, anywhere in the metro.",
     faqs: [
       {
         q: 'I’m a landlord ready to sell my Nashville rental — can you buy it with tenants in place?',
@@ -164,7 +164,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Murfreesboro is one of the fastest-growing cities in the state, but plenty of homes here need work, are caught in an estate, or belong to owners who need to move before MTSU's rental rush. A cash offer lets you sell as-is and close fast.",
     localAngle:
-      "With a ~$380,000 median in Rutherford County, Murfreesboro is an affordability-driven market where speed often beats squeezing the last dollar. Joshua buys as-is — including tired student rentals near MTSU, inherited homes, and properties needing major repairs — and prices off real local comps.",
+      "With a ~$429,000 median (Redfin, as of August 20, 2026) in Rutherford County, Murfreesboro is an affordability-driven market where speed often beats squeezing the last dollar. Joshua buys as-is — including tired student rentals near MTSU, inherited homes, and properties needing major repairs — and prices off real local comps.",
     faqs: [
       {
         q: 'Can you buy my MTSU-area rental property for cash?',
@@ -186,7 +186,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Gallatin blends lakeside living with affordable Sumner County inventory. If your home needs work, is part of an estate, or you need to relocate quickly, a cash offer lets you sell as-is without the wait of a traditional listing.",
     localAngle:
-      "At a ~$350,000 median, Gallatin is one of the more affordable Sumner County markets — which means even a dated or distressed home holds usable equity. A cash sale is the simplest path for heirs, downsizers, and owners who'd rather not invest in repairs before selling.",
+      "At a ~$440,000 median (Redfin, as of August 20, 2026), Gallatin is one of the more affordable Sumner County markets — which means even a dated or distressed home holds usable equity. A cash sale is the simplest path for heirs, downsizers, and owners who'd rather not invest in repairs before selling.",
     faqs: [
       {
         q: 'Can I sell an inherited Gallatin home for cash?',
@@ -198,7 +198,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
       },
       {
         q: 'Is a cash offer competitive in an affordable market like Gallatin?',
-        a: "It can be very competitive for the right situation. In a ~$350K market, the repair-and-carry costs of getting a dated home listing-ready often eat much of the retail premium. For as-is, inherited, or time-sensitive sales, the cash net is frequently close to — or better than — a traditional sale, and Joshua will show you both.",
+        a: "It can be very competitive for the right situation. In a ~$440K market (Redfin, as of August 20, 2026), the repair-and-carry costs of getting a dated home listing-ready often eat much of the retail premium. For as-is, inherited, or time-sensitive sales, the cash net is frequently close to — or better than — a traditional sale, and Joshua will show you both.",
       },
     ],
   },
@@ -208,7 +208,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Hendersonville's Old Hickory Lake setting draws steady demand, but lakeside and older homes often need work that retail buyers won't take on. A cash offer lets you sell as-is — no repairs, no showings, no waiting.",
     localAngle:
-      "With a ~$410,000 median in Sumner County, Hendersonville sellers facing an estate, a divorce, or a relocation often value certainty over a drawn-out listing. Joshua buys as-is across the lake corridor and prices off real Hendersonville comps.",
+      "With a ~$533,000 median (Redfin, as of August 20, 2026) in Sumner County, Hendersonville sellers facing an estate, a divorce, or a relocation often value certainty over a drawn-out listing. Joshua buys as-is across the lake corridor and prices off real Hendersonville comps.",
     faqs: [
       {
         q: 'Do you buy older lakefront homes in Hendersonville that need work?',
@@ -230,7 +230,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Columbia is Maury County's hub — historic, affordable, and growing with the Spring Hill spillover. If your home needs work, is tied to an estate, or you're behind on payments, a cash offer lets you sell as-is and close fast.",
     localAngle:
-      "At a ~$340,000 median, Columbia is among the most affordable Middle TN markets, with many older and historic homes that need updating. A cash sale lets owners avoid the repair spend a traditional listing would demand — Joshua buys as-is across Maury County.",
+      "At a ~$385,000 median (Redfin, as of August 20, 2026), Columbia is among the most affordable Middle TN markets, with many older and historic homes that need updating. A cash sale lets owners avoid the repair spend a traditional listing would demand — Joshua buys as-is across Maury County.",
     faqs: [
       {
         q: 'Do you buy historic or older homes in downtown Columbia?',
@@ -252,7 +252,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Mount Juliet is one of Wilson County's hottest markets, but newer subdivisions set a high bar for condition. If your home is older, an inherited property, or you need to relocate fast, a cash offer lets you sell as-is without competing against new construction.",
     localAngle:
-      "With a ~$480,000 median, Mount Juliet homes hold strong equity — but the market favors move-in-ready inventory in Providence and Willoughby Station. A cash sale converts your equity now, with no repairs and no showings, on whatever timeline you need.",
+      "With a ~$563,000 median (Redfin, as of August 20, 2026), Mount Juliet homes hold strong equity — but the market favors move-in-ready inventory in Providence and Willoughby Station. A cash sale converts your equity now, with no repairs and no showings, on whatever timeline you need.",
     faqs: [
       {
         q: 'Can I sell an older Mount Juliet home for cash against the newer subdivisions?',
@@ -274,7 +274,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Lebanon offers affordable Wilson County living with room to grow. If your home needs work, sits on acreage that's hard to maintain, or you're settling an estate, a cash offer lets you sell as-is and close on your schedule.",
     localAngle:
-      "At a ~$380,000 median, Lebanon mixes subdivisions with rural acreage, and many sellers value a simple, certain exit over a drawn-out listing. Joshua buys as-is — including homes on land and properties needing major repairs — and prices off real Wilson County comps.",
+      "At a ~$426,000 median (Redfin, as of August 20, 2026), Lebanon mixes subdivisions with rural acreage, and many sellers value a simple, certain exit over a drawn-out listing. Joshua buys as-is — including homes on land and properties needing major repairs — and prices off real Wilson County comps.",
     faqs: [
       {
         q: 'Do you buy homes on acreage or farmland near Lebanon?',
@@ -296,7 +296,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Smyrna's affordability and Nissan-anchored job base keep it moving, but plenty of homes here need work or belong to owners relocating fast. A cash offer lets you sell as-is — no repairs, no showings, no waiting on a buyer's loan.",
     localAngle:
-      "With a ~$370,000 median in Rutherford County, Smyrna is a value market where relocation and speed often drive sales. Joshua buys as-is — including homes near the Nissan plant tied to job moves, inherited properties, and homes needing major repairs — and prices off real local comps.",
+      "With a ~$420,000 median (Redfin, as of August 20, 2026) in Rutherford County, Smyrna is a value market where relocation and speed often drive sales. Joshua buys as-is — including homes near the Nissan plant tied to job moves, inherited properties, and homes needing major repairs — and prices off real local comps.",
     faqs: [
       {
         q: 'I’m relocating for a job at Nissan — can you close fast on my Smyrna home?',
@@ -318,7 +318,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "La Vergne is one of the most affordable doorways into Rutherford County, popular with commuters and investors. If your home needs work, is a tired rental, or you need to move quickly, a cash offer lets you sell as-is and close fast.",
     localAngle:
-      "At a ~$330,000 median — the most affordable in this group — La Vergne sees a lot of rental and commuter inventory where speed beats squeezing the last dollar. Joshua buys as-is, including tenant-occupied homes and properties needing major repairs, priced off real Rutherford County comps.",
+      "At a ~$373,000 median (Redfin, as of August 20, 2026) — the most affordable in this group — La Vergne sees a lot of rental and commuter inventory where speed beats squeezing the last dollar. Joshua buys as-is, including tenant-occupied homes and properties needing major repairs, priced off real Rutherford County comps.",
     faqs: [
       {
         q: 'Can you buy my La Vergne rental property with tenants in place?',
