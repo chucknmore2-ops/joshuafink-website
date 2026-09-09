@@ -32,11 +32,11 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Not every Franklin home is ready for a Williamson County showing. If yours needs work, is tied up in an estate, or you simply can't wait out a 21-day listing cycle, a cash sale skips the prep, the repairs, and the showings entirely.",
     localAngle:
-      "Franklin's median sits around $650,000, which means even an as-is or dated home carries real equity — and a fair cash offer lets you capture it without sinking $20K into renovations to compete with the move-in-ready inventory in Cool Springs and Westhaven. Joshua prices off real Williamson County comps, not a national algorithm, so the number reflects what your home actually is.",
+      "Franklin's median sits around $870,000 (Redfin, as of August 20, 2026), which means even an as-is or dated home carries real equity — and a fair cash offer lets you capture it without sinking $20K into renovations to compete with the move-in-ready inventory in Cool Springs and Westhaven. Joshua prices off real Williamson County comps, not a national algorithm, so the number reflects what your home actually is.",
     faqs: [
       {
         q: 'Can I get a cash offer on a Franklin home that needs major repairs?',
-        a: "Yes. Franklin buyers expect pristine, updated homes — so an older or distressed property can be hard to sell traditionally without significant investment. A cash offer is built for exactly that situation: Joshua buys as-is, you skip the renovation spend, and you still capture the equity a $650K-median market provides.",
+        a: "Yes. Franklin buyers expect pristine, updated homes — so an older or distressed property can be hard to sell traditionally without significant investment. A cash offer is built for exactly that situation: Joshua buys as-is, you skip the renovation spend, and you still capture the equity a $870K-median market provides (Redfin, as of August 20, 2026).",
       },
       {
         q: 'How fast can I sell my house for cash in Franklin, TN?',
@@ -373,7 +373,7 @@ export function getAllCashOfferCitySlugs(): string[] {
 // FAQs) was last reviewed. Mirrors `marketStatsLastUpdated` in lib/suburbs.ts —
 // update when refreshing this file's content. Feeds the WebPage `dateModified`
 // on /cash-offer/[city], a freshness signal these pages previously lacked.
-export const cashOfferContentLastUpdated = '2026-07-31'
+export const cashOfferContentLastUpdated = '2026-09-09'
 
 /** Lightweight list for nav/grid linking (slug + display name), in declared order. */
 export function getCashOfferCityLinks(): Array<{ slug: string; name: string }> {
