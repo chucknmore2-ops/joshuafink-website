@@ -5,7 +5,9 @@ import TrustBadges from '@/components/TrustBadges'
 import ReviewStrip from '@/components/ReviewStrip'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
-import { getCashOfferCityLinks } from '@/lib/cash-offer-cities'
+import { getCashOfferCityLinks, cashOfferContentLastUpdated } from '@/lib/cash-offer-cities'
+
+const SITE = 'https://www.joshuafink.com'
 
 export const metadata: Metadata = {
   title: 'Sell My House Fast Nashville | Cash Offer in 24 Hours',
@@ -125,6 +127,38 @@ export default function CashOfferPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+
+      {/* WebPage Schema — freshness signal (dateModified) for GEO/AI crawlers,
+          matching the pattern already used on /cash-offer/[city],
+          /market/[suburb], and /moving-to-middle-tennessee. Previously
+          missing on this hub page. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            name: 'Sell My House Fast Nashville | Cash Offer in 24 Hours',
+            url: `${SITE}/cash-offer`,
+            datePublished: '2026-01-15',
+            dateModified: cashOfferContentLastUpdated,
+            inLanguage: 'en-US',
+            author: {
+              '@type': 'Person',
+              name: 'Joshua Fink',
+              url: `${SITE}/about`,
+              jobTitle: 'Affiliate Broker',
+              worksFor: { '@type': 'Organization', name: 'Compass Real Estate' },
+            },
+            publisher: {
+              '@type': 'Organization',
+              name: 'Joshua Fink Group',
+              url: SITE,
+              logo: { '@type': 'ImageObject', url: `${SITE}/compass-logo-black.png` },
+            },
+          }),
+        }}
       />
 
       {/* Hero */}
