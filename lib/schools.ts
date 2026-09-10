@@ -531,6 +531,32 @@ export const schools: Record<string, School> = {
       },
     ],
   },
+
+  'la-vergne-middle-school-la-vergne-tn': {
+    slug: 'la-vergne-middle-school-la-vergne-tn',
+    name: 'La Vergne Middle School',
+    level: 'Middle',
+    district: 'Rutherford County Schools',
+    suburbSlug: 'la-vergne-tn',
+    ratingNote: "Rated a 'B' overall by Niche (3.67/5) and ranked #220 among Tennessee's public middle schools — an above-average, actively-improving option in Rutherford County Schools.",
+    blurb:
+      "La Vergne Middle School serves grades 6-8 for most of the city's residential footprint and is currently La Vergne's strongest publicly rated school: Niche grades it a 'B' overall (3.67 out of 5), ranking #220 among Tennessee's public middle schools and #53 of 98 in the Nashville metro area, with an 'A' in Diversity and a 'B+' in Teachers. With roughly 1,117 students and a 15:1 student-teacher ratio, it draws from the same neighborhoods — Lake Forest, Woodland Hills, the Stones River Road corridor, and central La Vergne — that make the city's sub-$350K entry point one of the most accessible in Rutherford County.",
+    neighborhoods: ['Lake Forest', 'Woodland Hills', 'Stones River Road corridor', 'Central La Vergne'],
+    faqs: [
+      {
+        q: 'What neighborhoods feed La Vergne Middle School?',
+        a: "La Vergne Middle draws from most of the city's residential footprint, including Lake Forest, Woodland Hills, the Stones River Road corridor, and central La Vergne. Zoning is confirmed at the Rutherford County Schools level — Joshua verifies the current assignment before every tour.",
+      },
+      {
+        q: 'Is La Vergne Middle School a good school?',
+        a: "Niche grades it a 'B' overall (3.67 out of 5), ranking it #220 among Tennessee's public middle schools and #53 of 98 in the Nashville metro area — an above-average option, with an 'A' in Diversity and a 'B+' in Teachers. It's currently the highest-rated public school serving La Vergne.",
+      },
+      {
+        q: 'What do homes cost near La Vergne Middle School?',
+        a: "These homes are part of the broader La Vergne market — see the current La Vergne market report for up-to-date medians and price-per-square-foot. Joshua can pull exact, current comps for any specific street in Lake Forest, Woodland Hills, or the Stones River Road corridor.",
+      },
+    ],
+  },
 }
 
 export function getSchool(slug: string): School | undefined {
