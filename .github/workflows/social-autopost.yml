@@ -102,17 +102,10 @@ jobs:
               exit 0
             fi
 
-            parsed=$(printf '%s' "$body" | python3 -c '
-import json, sys
-try:
-    d = json.load(sys.stdin)
-except Exception:
-    d = {}
-print(d.get("creationId") or "")
-print(d.get("statusCode") or "")
-')
-            new_id=$(printf '%s\n' "$parsed" | sed -n '1p')
-            new_sc=$(printf '%s\n' "$parsed" | sed -n '2p')
+            # jq, not a column-0 python -c body: that ended the YAML `|` block
+            # and GitHub rejected the workflow as invalid (runs #33–#36).
+            new_id=$(printf '%s' "$body" | jq -r '.creationId // empty' 2>/dev/null || true)
+            new_sc=$(printf '%s' "$body" | jq -r '.statusCode // empty' 2>/dev/null || true)
             if [ "$new_sc" = "IN_PROGRESS" ] && [ -n "$new_id" ]; then
               CREATION_ID="$new_id"
             else
