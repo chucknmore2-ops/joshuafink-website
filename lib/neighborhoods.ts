@@ -2712,6 +2712,72 @@ export const neighborhoods: Record<string, Neighborhood> = {
     latitude: 35.68,
     longitude: -87,
   },
+  'downtown-columbia-historic-district-tn': {
+    slug: 'downtown-columbia-historic-district-tn',
+    name: 'Downtown Columbia Historic District',
+    city: 'Columbia',
+    citySlug: 'columbia-tn',
+    county: 'Maury County',
+    metaTitle: 'Downtown Columbia Historic District Neighborhood Guide | Columbia, TN',
+    metaDescription:
+      "Downtown Columbia's historic district in Columbia, TN: home prices, architecture, schools, and what to know before you buy a historic home near the Square. Local insight from Compass agent Joshua Fink.",
+    intro:
+      "Downtown Columbia is the original city — a walkable grid of 19th- and early-20th-century homes wrapped around the Maury County Courthouse square and the Duck River. If you've stood on the Square for First Fridays or walked Riverwalk Park at sunset, you've felt what draws buyers here: a real small-town Main Street, not a subdivision built to look like one.",
+    about:
+      "Columbia's historic district grew up around the Square in the decades after the city was chartered in 1817, and the housing stock still shows it: Victorian and Queen Anne homes with wraparound porches, Folk Victorian cottages, Greek Revival and Federal-style houses, and Craftsman bungalows filling in through the 1920s and '30s, all on a walkable grid of tree-lined streets a few blocks from the courthouse. The neighborhood is anchored by the Square itself — restaurants, boutiques, and the monthly First Fridays Art Walk — plus Riverwalk Park along the Duck River and the James K. Polk Home & Museum, the boyhood home of the 11th U.S. President. Columbia calls itself the 'Mule Town' and hosts Mule Day every April, one of Maury County's biggest annual draws. Because it's the original historic core rather than a planned community, home condition varies block to block: some houses have been fully restored with modern systems behind period detail, others are original and priced for a buyer ready to renovate. Exterior work inside the locally designated historic overlay may require design review from the city, so confirm the specific parcel's status before planning major changes.",
+    vibe: "Columbia's walkable historic core — courthouse square, Duck River, and 19th-century homes with real small-town character, not a subdivision imitation of one.",
+    priceBand: '$250K – $700K+ (wide range — original-condition cottages to fully restored Victorians)',
+    buildYears: "Mostly 1880s–1930s, with restorations, additions, and scattered infill throughout",
+    hoa: "No HOA — this is Columbia's original city grid, not a planned subdivision. Some parcels fall within a locally designated historic overlay district, which can require city design review for exterior changes — verify status for the specific address before buying with renovation plans.",
+    schoolNotes:
+      "Downtown Columbia addresses are in Maury County Public Schools and are commonly associated with Highland Park Elementary, Whitthorne Middle, and Columbia Central High School. Attendance zones can shift, so verify current zoning for the specific address with Maury County Public Schools before writing an offer.",
+    amenities: [
+      'The Square — the Maury County Courthouse, restaurants, coffee shops, and local boutiques',
+      "Riverwalk Park along the Duck River",
+      "First Fridays Art Walk on the Square",
+      "James K. Polk Home & Museum (boyhood home of the 11th U.S. President)",
+      "Mule Day festival every April, a signature Columbia tradition",
+      "Walkable street grid connecting directly to downtown dining and shopping",
+    ],
+    homeStyles: [
+      'Victorian and Queen Anne with wraparound porches',
+      'Folk Victorian cottages',
+      'Greek Revival and Federal-style houses',
+      'Craftsman bungalows (1910s–1930s)',
+      'Fully restored homes alongside original-condition fixer-uppers',
+    ],
+    whyBullets: [
+      "Character that can't be built new: original millwork, high ceilings, and mature trees on a walkable grid a planned subdivision can't replicate — that scarcity supports long-term value for well-maintained homes.",
+      'Growth-market tailwind: Maury County was Tennessee\'s #2 fastest-growing county by percentage from 2024 to 2025 (Maury Alliance), and downtown Columbia is the walkable, amenity-rich core that growth is filling in around.',
+      "Wide entry range: from move-in-ready restorations to original-condition homes priced for a renovation budget, Joshua can match the property to your timeline and appetite for a project.",
+    ],
+    faqs: [
+      {
+        q: 'How much do historic homes cost in downtown Columbia, TN?',
+        a: "Pricing swings widely by condition and lot — original-condition cottages can start in the $250Ks, while fully restored Victorians and larger homes near the Square can run $500K–$700K or more. Joshua can pull recent comps for the specific block and walk through what renovation costs typically look like for a given house.",
+      },
+      {
+        q: 'Is downtown Columbia a designated historic district?',
+        a: "The area includes a locally designated historic overlay, which can mean design review from the city for exterior changes on covered parcels. Not every downtown-adjacent home falls inside the overlay — confirm the specific address's status with the City of Columbia before buying with renovation plans.",
+      },
+      {
+        q: 'What schools serve downtown Columbia?',
+        a: 'Downtown Columbia is in Maury County Public Schools and is commonly associated with Highland Park Elementary, Whitthorne Middle, and Columbia Central High School. Verify current zoning for the specific address, since attendance boundaries can change.',
+      },
+      {
+        q: 'Is there an HOA in downtown Columbia?',
+        a: "No — this is Columbia's original city grid, not a planned community, so there's no neighborhood HOA. Any exterior restrictions come from the city's historic overlay design-review rules where they apply, not from a homeowners association.",
+      },
+      {
+        q: 'Why buy downtown instead of a newer Columbia subdivision?',
+        a: "Downtown buyers are choosing walkability and character over the amenities of a newer HOA community — you're minutes from the Square's restaurants and shops on foot, in a home with architectural detail new construction doesn't replicate. It suits buyers who want a renovation project or an already-restored historic home over a builder floor plan.",
+      },
+    ],
+    schemaCity: 'Columbia',
+    schemaState: 'TN',
+    latitude: 35.6151,
+    longitude: -87.0353,
+  },
   'bridgemore-village-thompsons-station-tn': {
     slug: 'bridgemore-village-thompsons-station-tn',
     name: "Bridgemore Village",
