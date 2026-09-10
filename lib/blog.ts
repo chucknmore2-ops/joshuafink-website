@@ -1299,6 +1299,10 @@ Price matters, but so do terms. The best offer isn't always the highest number �
 
 Most deals have a home inspection. Be prepared for repair requests — your agent will help you decide what to fix, what to credit, and what to push back on. From contract to close typically takes 30–45 days in Middle Tennessee.
 
+## Need to Sell Your Home Fast in Nashville?
+
+If a traditional listing's timeline doesn't fit — inherited property, tired rental, repairs you don't want to make, or a hard deadline — you can [sell your house fast in Nashville for cash](/cash-offer/nashville-tn) instead. Joshua makes a fair as-is offer in 24 hours and can close in as little as 7 days, with no showings and no commissions. He's a licensed Compass broker, so he'll also tell you honestly if listing would net more.
+
 ## What's Your Nashville Home Worth?
 
 I offer free, no-obligation home valuations for Nashville and Middle Tennessee homeowners. Whether you're thinking about selling now or just want to know where you stand, I'll give you a straight answer based on real data.
@@ -2476,7 +2480,7 @@ The earlier you act, the more options you have. Once the auction date is set, yo
 **Joshua Fink buys houses for cash throughout Middle Tennessee.** No commissions. No closing costs. No judgment. Just a fair offer and a straight answer.
 
 📞 **[615-551-2727](tel:6155512727)** — Call or text anytime
-🏠 **[Get your cash offer →](/cash-offer)**
+🏠 **[Get your Nashville cash offer →](/cash-offer/nashville-tn)**
     `.trim(),
   },
   {
@@ -2555,7 +2559,7 @@ When multiple family members inherit a property, everyone must agree on the sale
 Joshua Fink buys inherited properties throughout Nashville and Middle Tennessee. No repairs needed, no cleanout required, no commissions or fees. Just a fair cash offer and a closing date that works for you and your family.
 
 📞 **[615-551-2727](tel:6155512727)** — Call or text anytime
-🏠 **[Get your cash offer →](/cash-offer)**
+🏠 **[Get your Nashville cash offer →](/cash-offer/nashville-tn)**
     `.trim(),
   },
   {
@@ -2624,7 +2628,7 @@ In Tennessee, if the parties can't agree, either spouse can petition the court f
 Joshua Fink buys homes for cash throughout Nashville and Middle Tennessee. If you're going through a divorce and need to sell quickly, we can make a fair offer within 24 hours and close on your timeline. No commissions, no closing costs, no strangers in your home.
 
 📞 **[615-551-2727](tel:6155512727)** — Call or text anytime
-🏠 **[Get your cash offer →](/cash-offer)**
+🏠 **[Get your Nashville cash offer →](/cash-offer/nashville-tn)**
     `.trim(),
   },
   {
@@ -2710,7 +2714,7 @@ A good rule of thumb: take your home's as-is market value, subtract what you'd p
 Joshua Fink buys houses for cash throughout Nashville and all of Middle Tennessee. No commissions, no closing costs, no repairs. Fair offer in 24 hours. Close in 7 days or on your schedule.
 
 📞 **[615-551-2727](tel:6155512727)** — Call or text anytime
-🏠 **[Get your cash offer →](/cash-offer)**
+🏠 **[Get your Nashville cash offer →](/cash-offer/nashville-tn)**
     `.trim(),
   },
   {
@@ -2794,8 +2798,11 @@ Here's something most people don't realize: **you can get a cash offer first and
 
 Joshua Fink is both a licensed Compass agent who can list your home traditionally **and** a cash buyer who can make a direct offer. That means you get honest advice on which path actually nets you more — not a sales pitch for one approach.
 
+If you need to sell your home fast in Nashville, start with a no-obligation cash number and compare it to a traditional listing:
+
 📞 **[615-551-2727](tel:6155512727)** — Call or text for a free, no-obligation comparison
-🏠 **[Get your cash offer →](/cash-offer)**
+🏠 **[Get your Nashville cash offer →](/cash-offer/nashville-tn)**
+🏠 **[Compare cash vs. iBuyer vs. listing →](/blog/cash-offer-vs-ibuyer-vs-listing-middle-tennessee)**
     `.trim(),
   },
   {
@@ -4811,7 +4818,7 @@ If you're leaning this direction, the [Nashville seller page](/sell/nashville-tn
 
 There's no universally right answer — there's a right answer for your house, your timeline, and your situation. Most sellers in good condition with time should list. Sellers with a repair problem, a deadline problem, or a complicated situation often do better with a cash sale even after the discount. The only genuinely wrong move is choosing without seeing all three numbers.
 
-I'll give you the honest comparison either way, including the listing number when it's the better deal for you. Reach out: [615-551-2727](tel:6155512727) or [joshua@joshuafink.com](mailto:joshua@joshuafink.com).
+I'll give you the honest comparison either way, including the listing number when it's the better deal for you. Start with a [Nashville cash offer](/cash-offer/nashville-tn), or reach out: [615-551-2727](tel:6155512727) or [joshua@joshuafink.com](mailto:joshua@joshuafink.com).
     `.trim(),
   },
   {

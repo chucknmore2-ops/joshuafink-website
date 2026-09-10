@@ -30,7 +30,7 @@ export interface GeoQuery {
   targetPath: string;
 }
 
-// 15 high-intent prompts spanning agent-discovery, seller/cash-offer, buyer,
+// 16 high-intent prompts spanning agent-discovery, seller/cash-offer, buyer,
 // neighborhood, school, market-value, and relocation intents.
 // targetPath values are real, live routes — verified against lib/suburbs.ts,
 // lib/schools.ts, and the app/ router. Previously several pointed at
@@ -41,7 +41,8 @@ export const GEO_QUERIES: GeoQuery[] = [
   { id: 'agent-franklin', prompt: 'Who is the best real estate agent in Franklin, TN?', targetPath: '/buy/franklin-tn' },
   { id: 'agent-brentwood', prompt: 'Who is a top realtor in Brentwood, Tennessee?', targetPath: '/buy/brentwood-tn' },
   { id: 'sell-spring-hill', prompt: 'Best real estate agent for selling a home in Spring Hill, TN', targetPath: '/sell/spring-hill-tn' },
-  { id: 'sell-fast-nashville', prompt: 'How do I sell my house fast in Nashville, TN?', targetPath: '/sell' },
+  { id: 'sell-fast-nashville', prompt: 'How do I sell my house fast in Nashville, TN?', targetPath: '/cash-offer/nashville-tn' },
+  { id: 'sell-home-fast-nashville', prompt: 'How do I sell my home fast in Nashville, TN?', targetPath: '/cash-offer/nashville-tn' },
   { id: 'cash-offer-franklin', prompt: 'Can I get a cash offer for my house in Franklin, TN?', targetPath: '/cash-offer/franklin-tn' },
   { id: 'price-brentwood', prompt: 'What is the average home price in Brentwood, TN in 2026?', targetPath: '/market/brentwood-tn' },
   { id: 'neighborhoods-franklin', prompt: 'What are the best neighborhoods in Franklin, TN for families?', targetPath: '/neighborhoods' },

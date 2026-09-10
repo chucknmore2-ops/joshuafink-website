@@ -12,6 +12,21 @@ import { getSuburb } from './suburbs'
  * disclosure) live in the page template, not here — only what varies by city does.
  */
 
+export type CashOfferSeo = {
+  title: string
+  description: string
+  ogTitle: string
+  ogDescription: string
+  keywords: string[]
+  /** Replaces the shared "{county} · Cash Home Buyers" hero eyebrow. */
+  eyebrow?: string
+}
+
+export type CashOfferRelatedLink = {
+  href: string
+  label: string
+}
+
 export type CashOfferCityContent = {
   /** Matches the suburb slug so /cash-offer/<slug> mirrors /sell/<slug>. */
   slug: string
@@ -21,8 +36,18 @@ export type CashOfferCityContent = {
   intro: string
   /** Who sells for cash here + why — distinct local framing. */
   localAngle: string
-  /** 3 city-specific cash-offer FAQs (in addition to the shared global FAQ set). */
+  /** City-specific cash-offer FAQs (in addition to the shared global FAQ set). */
   faqs: { q: string; a: string }[]
+  /** Optional on-page SEO overrides. Omit to use the shared city-template strings. */
+  seo?: CashOfferSeo
+  /** Licensed-broker vs cash-buyer-site callout. Nashville-only for now. */
+  differentiator?: string
+  /** Extra compare-table closer. Rendered under the shared traditional-vs-cash grid. */
+  compareNote?: string
+  /** Expanded situational copy (inherited, foreclosure, etc.). Omit to keep icon cards only. */
+  situationDetails?: { id: string; heading: string; body: string; href?: string; linkLabel?: string }[]
+  /** Optional related-reading links rendered on this city's cash-offer page only. */
+  relatedReading?: CashOfferRelatedLink[]
 }
 
 const cityContent: Record<string, CashOfferCityContent> = {
@@ -140,10 +165,94 @@ const cityContent: Record<string, CashOfferCityContent> = {
     slug: 'nashville-tn',
     areas: 'East Nashville, Wedgewood-Houston, Madison, Antioch, Donelson, and the urban core',
     intro:
-      "Nashville is the most varied market in Middle TN — and the most common place for cash situations: inherited homes, tired rentals, pre-foreclosure, and properties that need more work than a retail buyer will take on. A cash offer lets you sell any of them as-is, fast.",
+      'Need to sell your home fast in Nashville? This is the most varied market in Middle TN — and the most common place for cash situations: inherited homes, tired rentals, pre-foreclosure, vacant houses, and properties that need more work than a retail buyer will take on. A cash offer lets you sell any of them as-is, without waiting on a traditional listing.',
     localAngle:
       "Across Davidson County, Nashville's ~$480,000 median (Redfin, as of August 20, 2026) spans everything from updated East Nashville bungalows to dated homes in Madison, Antioch, and Donelson that are hard to sell traditionally. Cash is the cleanest exit for landlords done with tenants, heirs settling an estate, or owners facing foreclosure — Joshua buys in any condition, anywhere in the metro.",
+    seo: {
+      title: 'Sell My House Fast Nashville | Sell My Home Fast for Cash',
+      description:
+        'Sell my home fast in Nashville for cash — any condition. Fair offer in 24 hours, close in as little as 7 days. Licensed Compass broker (TREC #351484). No repairs, no commissions. 218+ five-star reviews.',
+      ogTitle: 'Sell My Home Fast in Nashville, TN — Cash Offer in 24 Hours',
+      ogDescription:
+        'Need to sell your house fast in Nashville? Fair cash offer in 24 hours. Close in as little as 7 days. Licensed Compass broker — cash or traditional listing, your call. 615-551-2727.',
+      keywords: [
+        'sell my home fast Nashville',
+        'sell my house fast Nashville',
+        'sell my house fast Nashville TN',
+        'sell my home fast Nashville TN',
+        'we buy houses Nashville TN',
+        'cash home buyer Nashville',
+        'cash offer for my home Nashville',
+        'sell house as-is Nashville',
+        'Joshua Fink',
+      ],
+      eyebrow: 'Sell My Home Fast · Davidson County',
+    },
+    differentiator:
+      "Most “sell my house fast Nashville” results are cash-buyer websites. Joshua is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate — 218+ five-star reviews and 17+ years in Middle Tennessee. He can buy your Nashville home for cash or list it for full market value, and he shows you both numbers in writing before you choose.",
+    compareNote:
+      "The table is the tradeoff in plain numbers. What it doesn’t show: Joshua runs both paths. If your Nashville home is in good shape and you can wait 30–90 days, listing usually nets more — and he’ll say so. If you need to sell your house fast in Nashville, cash is the certain close. Either way you deal with the same licensed broker, not a call center.",
+    situationDetails: [
+      {
+        id: 'inherited',
+        heading: 'Selling an inherited house in Nashville',
+        body: 'Probate, siblings who don’t agree, and a house that hasn’t been updated in years are the usual mix. Joshua buys inherited Nashville homes as-is — cleanout, repairs, and leftover belongings included — and the closing attorney coordinates title around the probate timeline. Out-of-state heirs can sign remotely.',
+        href: '/blog/sell-inherited-house-nashville-tn',
+        linkLabel: 'Inherited-home guide',
+      },
+      {
+        id: 'divorce',
+        heading: 'Selling a house during a Nashville divorce',
+        body: 'When the house is the last asset tying two people together, a cash close is often cleaner than months of showings. Joshua gives one written offer, coordinates with both parties and the closing attorney, and splits proceeds per your agreement — often within a couple of weeks.',
+      },
+      {
+        id: 'foreclosure',
+        heading: 'Behind on payments or facing foreclosure',
+        body: 'A notice of default or a sale date on the calendar shrinks your options every week. A fast cash close can pay off the lender before the auction and protect remaining equity and credit. Call as early as you can; if you’re upside-down, Joshua can still walk a short sale with most major Tennessee lenders.',
+        href: '/blog/facing-foreclosure-nashville-tn',
+        linkLabel: 'Foreclosure guide',
+      },
+      {
+        id: 'vacant',
+        heading: 'Selling a vacant Nashville house',
+        body: 'Empty houses get expensive fast — insurance, vandalism, frozen pipes, code violations. There are no tenants to coordinate and no need to keep the place show-ready. Send the address; Joshua prices it as-is and can often close inside two weeks.',
+      },
+      {
+        id: 'liens',
+        heading: 'Selling a Nashville house with liens',
+        body: 'Tax liens, contractor liens, HOA liens, and judgments attach to the property — they don’t have to kill the deal. The closing attorney pays lienholders from the proceeds before you get your check. If the liens exceed value, Joshua will talk through whether a short sale or negotiated payoff still works.',
+      },
+      {
+        id: 'as-is',
+        heading: 'As-is, fire-damaged, or major repairs',
+        body: 'Fire, water, mold, foundation, hoarder conditions — Joshua buys Nashville homes completely as-is. You’re not warranting condition or negotiating after an inspector finds something. Damage is priced into the offer up front, and that’s the number that funds.',
+      },
+      {
+        id: 'tenants',
+        heading: 'Tired of tenants — or can’t get them out',
+        body: 'You don’t have to evict, turn the unit, or wait for a lease to end. Joshua buys tenant-occupied Nashville rentals as-is and handles occupancy after closing, so you exit the property and the landlord headaches in one step.',
+      },
+    ],
+    relatedReading: [
+      { href: '/blog/cash-offer-vs-ibuyer-vs-listing-middle-tennessee', label: 'Cash offer vs. iBuyer vs. listing' },
+      { href: '/blog/traditional-sale-vs-cash-offer-nashville', label: 'Traditional sale vs. cash offer in Nashville' },
+      { href: '/blog/sell-inherited-house-nashville-tn', label: 'Selling an inherited Nashville house' },
+      { href: '/blog/facing-foreclosure-nashville-tn', label: 'Facing foreclosure in Nashville' },
+      { href: '/sell/nashville-tn', label: 'List your Nashville home instead' },
+    ],
     faqs: [
+      {
+        q: 'How fast can I sell my home in Nashville?',
+        a: "You'll have a no-obligation cash offer within 24 hours, and you can close in as little as 7 days. There's no lender, appraisal, or inspection-repair loop — a Tennessee title attorney clears title and schedules closing, usually within the same week you accept. If you need to sell your home fast in Nashville, this is the path built for a firm timeline rather than a 30–90 day listing. Need longer? Joshua closes on your schedule.",
+      },
+      {
+        q: 'Can I sell my house fast in Nashville without listing it?',
+        a: "Yes. A cash sale skips MLS, showings, staging, and buyer financing. Joshua buys as-is across Davidson County — East Nashville, Madison, Antioch, Donelson, and the urban core included — so you can sell your house fast in Nashville without listing it. If you'd rather chase full retail, he can also list it traditionally and walk you through both numbers.",
+      },
+      {
+        q: 'How do cash home buyers work in Nashville?',
+        a: "A cash buyer looks at your Nashville home, estimates after-repair value, subtracts repairs and holding costs, and offers a number they can close without a bank. Joshua's offers typically land at 70–85% of after-repair value. There is no appraisal contingency and no inspection re-trade — the offer you accept is the number that funds at a Tennessee closing attorney. If listing would net more, he'll show you that math too, because he also sells homes the traditional way with Compass.",
+      },
       {
         q: 'I’m a landlord ready to sell my Nashville rental — can you buy it with tenants in place?',
         a: "Yes. Tenant-occupied Nashville rentals are one of the most common cash purchases — you don't have to evict, turn the unit, or wait for a lease to end. Joshua buys with tenants in place and handles the occupancy, so you exit the property and the landlord headaches at once.",
@@ -155,6 +264,22 @@ const cityContent: Record<string, CashOfferCityContent> = {
       {
         q: 'Do you buy homes in every part of Nashville?',
         a: "Yes — East Nashville, Madison, Antioch, Donelson, Bordeaux, Hermitage, and the urban core. Condition and neighborhood don't disqualify a home; Joshua makes as-is cash offers across all of Davidson County and the surrounding metro.",
+      },
+      {
+        q: 'I inherited a Nashville home and I live out of state — can I still sell?',
+        a: "Yes. Out-of-state heirs sell Nashville homes this way all the time. Joshua and the closing attorney coordinate probate and title; you sign remotely. You don't have to fly in, clean out the house, or make repairs. If the estate is still in probate, the contract can wait on the court — no penalty for a longer timeline.",
+      },
+      {
+        q: 'What if my Nashville house is already listed with an agent?',
+        a: "If you're under a listing agreement, you may still owe your agent a commission on a private sale — check the contract first. Joshua is a licensed broker, so he can talk with your listing agent directly or wait until the listing expires. He won't ask you to break an agreement.",
+      },
+      {
+        q: 'Do you buy vacant or fire-damaged Nashville homes as-is?',
+        a: 'Yes. Vacant houses, fire or water damage, code violations, hoarder conditions — Joshua buys Nashville homes completely as-is. You make zero repairs. Condition is priced into the offer up front, and that’s the number that funds.',
+      },
+      {
+        q: 'Can I sell my Nashville house during a divorce?',
+        a: 'Yes. A cash close avoids months of showings while a marriage is ending. Joshua coordinates with both parties and the closing attorney so proceeds split per your agreement, often within a couple of weeks.',
       },
     ],
   },
@@ -373,7 +498,7 @@ export function getAllCashOfferCitySlugs(): string[] {
 // FAQs) was last reviewed. Mirrors `marketStatsLastUpdated` in lib/suburbs.ts —
 // update when refreshing this file's content. Feeds the WebPage `dateModified`
 // on /cash-offer/[city], a freshness signal these pages previously lacked.
-export const cashOfferContentLastUpdated = '2026-09-09'
+export const cashOfferContentLastUpdated = '2026-09-10'
 
 /** Lightweight list for nav/grid linking (slug + display name), in declared order. */
 export function getCashOfferCityLinks(): Array<{ slug: string; name: string }> {
@@ -383,4 +508,43 @@ export function getCashOfferCityLinks(): Array<{ slug: string; name: string }> {
       return s ? { slug, name: s.name } : null
     })
     .filter((x): x is { slug: string; name: string } => x !== null)
+}
+
+export type ResolvedCashOfferSeo = {
+  title: string
+  description: string
+  ogTitle: string
+  ogDescription: string
+  keywords: string[]
+  eyebrow: string
+}
+
+/** Shared template strings, with optional per-city SEO overrides. */
+export function cashOfferSeo(city: CashOfferCity): ResolvedCashOfferSeo {
+  return {
+    title: city.seo?.title ?? `Sell My House Fast ${city.displayName} | Cash Offer in 24 Hours`,
+    description:
+      city.seo?.description ??
+      `Sell your ${city.name} house fast for cash — any condition, any situation. Fair cash offer in 24 hours, close in as little as 7 days. No repairs, no commissions, no fees. Serving all of ${city.county}.`,
+    ogTitle: city.seo?.ogTitle ?? `We Buy Houses ${city.name}, TN — Cash Offer in 24 Hours`,
+    ogDescription:
+      city.seo?.ogDescription ??
+      `Get a fair cash offer on your ${city.name} home in 24 hours. No repairs, no commissions, no hassle. Close in as little as 7 days.`,
+    keywords: city.seo?.keywords ?? [
+      `sell my house fast ${city.name} TN`,
+      `we buy houses ${city.name} TN`,
+      `cash home buyer ${city.name}`,
+      `cash offer for my home ${city.name}`,
+      `sell house as-is ${city.name}`,
+      `sell my ${city.name} house for cash`,
+      `cash for homes ${city.name} TN`,
+      'Joshua Fink',
+    ],
+    eyebrow: city.seo?.eyebrow ?? `${city.county} · Cash Home Buyers`,
+  }
+}
+
+/** City landing when one exists; otherwise the cash-offer hub. */
+export function cashOfferPath(slug: string): string {
+  return getCashOfferCity(slug) ? `/cash-offer/${slug}` : '/cash-offer'
 }

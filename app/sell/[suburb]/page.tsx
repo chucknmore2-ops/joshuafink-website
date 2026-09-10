@@ -5,6 +5,7 @@ import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated, suburbCityGeo } f
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
 import { linkifyNeighborhoods } from '@/lib/linkify-neighborhoods'
 import { reviewStats } from '@/lib/reviews'
+import { cashOfferPath } from '@/lib/cash-offer-cities'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
 
@@ -289,7 +290,7 @@ export default async function SuburbPage({ params }: Props) {
                   ← Back to Seller Hub
                 </Link>
                 <Link
-                  href="/cash-offer"
+                  href={cashOfferPath(slug)}
                   className="inline-block text-sm font-bold px-6 py-3 tracking-wide transition-colors text-center"
                   style={{ backgroundColor: '#0A1628', color: '#FFFFFF' }}
                 >
@@ -445,7 +446,7 @@ export default async function SuburbPage({ params }: Props) {
                 <div className="border-l-2 pl-5" style={{ borderColor: '#C41E3A' }}>
                   <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mb-1">Also Consider</p>
                   <div className="space-y-1">
-                    <Link href="/cash-offer" className="block text-sm font-semibold text-black hover:underline">
+                    <Link href={cashOfferPath(slug)} className="block text-sm font-semibold text-black hover:underline">
                       → Request a cash offer instead
                     </Link>
                     <Link href={`/buy/${slug}`} className="block text-sm font-semibold text-black hover:underline">
@@ -635,7 +636,7 @@ export default async function SuburbPage({ params }: Props) {
                 Get My Free Valuation
               </a>
               <Link
-                href="/cash-offer"
+                href={cashOfferPath(slug)}
                 className="inline-block border border-white text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-white hover:text-black transition-colors text-center"
               >
                 Request Cash Offer

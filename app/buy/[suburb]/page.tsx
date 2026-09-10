@@ -12,6 +12,7 @@ import { reviewStats } from '@/lib/reviews'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import GnarRegionalSnapshot from '@/components/GnarRegionalSnapshot'
+import { cashOfferPath } from '@/lib/cash-offer-cities'
 
 type Props = {
   params: Promise<{ suburb: string }>
@@ -353,7 +354,7 @@ export default async function BuySuburbPage({ params }: Props) {
                   <div className="space-y-1">
                     <Link href="/listings" className="block text-sm font-semibold text-black hover:underline">→ View active listings</Link>
                     <Link href={`/sell/${slug}`} className="block text-sm font-semibold text-black hover:underline">→ Selling in {suburb.name}?</Link>
-                    <Link href="/cash-offer" className="block text-sm font-semibold text-black hover:underline">→ Want a cash offer instead?</Link>
+                    <Link href={cashOfferPath(slug)} className="block text-sm font-semibold text-black hover:underline">→ Want a cash offer instead?</Link>
                   </div>
                 </div>
               </div>
@@ -776,7 +777,7 @@ export default async function BuySuburbPage({ params }: Props) {
                   out-of-state moves, or freeing up a non-contingent {suburb.name} offer.
                 </p>
                 <Link
-                  href="/cash-offer"
+                  href={cashOfferPath(slug)}
                   className="inline-block text-sm font-bold px-6 py-3 tracking-wide transition-colors text-center"
                   style={{ backgroundColor: '#C41E3A', color: '#FFFFFF' }}
                 >
