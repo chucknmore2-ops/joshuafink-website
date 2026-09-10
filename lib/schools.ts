@@ -128,9 +128,9 @@ export const schools: Record<string, School> = {
     level: 'High',
     district: 'Williamson County Schools',
     suburbSlug: 'nolensville-tn',
-    ratingNote: 'A newer Williamson County high school with strong community engagement and rising academic performance.',
+    ratingNote: 'A 5-star SchoolDigger school, A-graded on Niche, ranked among the top 20 public high schools in Tennessee.',
     blurb:
-      "Nolensville High School opened to consolidate Nolensville's rapidly growing student population and quickly became a defining piece of the Nolensville identity. The school draws from the entire Nolensville footprint plus parts of southeast Brentwood and central southern Williamson County — Bent Creek, Burberry Glen, Scales Farmstead, and Benington all feed in. Strong academics, growing AP programs, and a tight community atmosphere make the Nolensville zone increasingly competitive for relocating families.",
+      "Nolensville High School opened to consolidate Nolensville's rapidly growing student population and quickly became a defining piece of the Nolensville identity. The school draws from the entire Nolensville footprint plus parts of southeast Brentwood and central southern Williamson County — Bent Creek, Burberry Glen, Scales Farmstead, and Benington all feed in. SchoolDigger gives it a 5-star rating and ranks it among Tennessee's top 20 public high schools; Niche grades it an A and ranks it #18 statewide. Strong academics, growing AP programs, and a tight community atmosphere make the Nolensville zone increasingly competitive for relocating families.",
     neighborhoods: ['Bent Creek', 'Burberry Glen', 'Scales Farmstead', 'Benington'],
     faqs: [
       {
@@ -138,8 +138,8 @@ export const schools: Record<string, School> = {
         a: 'Most of Nolensville including Bent Creek, Burberry Glen, Scales Farmstead, Benington, and Winterset Woods, plus selected southeast Brentwood addresses. Zoning is confirmed at the district level — Joshua verifies for every home before tour.',
       },
       {
-        q: 'How does Nolensville High compare to other Williamson County high schools?',
-        a: 'Nolensville is newer than Brentwood, Ravenwood, or Page but is in the same district and has rapidly built academic and athletic credibility. The school is a major reason Nolensville has emerged as one of the fastest-growing family destinations in Middle Tennessee.',
+        q: 'Is Nolensville High School a good school?',
+        a: "Yes. SchoolDigger rates Nolensville High School 5 stars and ranks it among the top 20 public high schools in Tennessee (4th of 11 ranked Williamson County high schools). Niche gives it an overall A grade and ranks it #18 in the state. It's a newer school than Brentwood, Ravenwood, or Page, but it's in the same district and has quickly built comparable academic credibility.",
       },
       {
         q: 'How much do homes in the Nolensville High zone cost?',
