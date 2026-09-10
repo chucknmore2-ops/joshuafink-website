@@ -18,6 +18,10 @@ export const metadata: Metadata = {
 
 const faqs = [
   {
+    q: 'What are the best neighborhoods in Franklin, TN for families?',
+    a: 'For families, the strongest Franklin, TN subdivisions are Westhaven (walkable master-planned community with a golf course and town center, $650K–$2.5M+), McKay\'s Mill (large, established family subdivision with multiple pools, $650K–$1.2M), Fieldstone Farms (mature trees and bigger lots than newer builds, $650K–$1.1M), Berry Farms (newer walkable town center on the south side, $550K–$1.8M), and The Highlands at Ladd Park (newer construction on larger-than-builder lots, $900K–$2M). All five are zoned to Williamson County Schools, one of the top-rated districts in Tennessee. Each has its own dedicated guide below with exact school assignments, HOA details, and current pricing.',
+  },
+  {
     q: 'What is the best Middle Tennessee neighborhood for families?',
     a: 'Family-first searches usually start with Brentwood, Franklin, and Nolensville — all anchored by top-rated Williamson County Schools, low crime, and strong long-term appreciation. Spring Hill and Thompson’s Station offer similar schools at a lower price band. Open any neighborhood guide for the specific school zones, HOA, and price range.',
   },
