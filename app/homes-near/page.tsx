@@ -7,7 +7,7 @@ const SITE = 'https://www.joshuafink.com'
 export const metadata: Metadata = {
   title: 'Homes Near Top Middle Tennessee Schools — Search by School Zone',
   description:
-    'Find homes for sale near Ravenwood, Brentwood, Page, Independence, Centennial, Nolensville, Blackman, Station Camp, Beech, Wilson Central, and Julia Green Elementary school zones. School-zone-first home search from Joshua Fink at Compass Real Estate.',
+    'Find homes for sale near Ravenwood, Brentwood, Page, Independence, Centennial, Nolensville, Blackman, Station Camp, Beech, Wilson Central, Smyrna, and Julia Green Elementary school zones. School-zone-first home search from Joshua Fink at Compass Real Estate.',
   alternates: { canonical: `${SITE}/homes-near` },
 }
 

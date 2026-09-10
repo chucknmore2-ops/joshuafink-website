@@ -531,6 +531,36 @@ export const schools: Record<string, School> = {
       },
     ],
   },
+
+  'smyrna-high-school-smyrna-tn': {
+    slug: 'smyrna-high-school-smyrna-tn',
+    name: 'Smyrna High School',
+    level: 'High',
+    district: 'Rutherford County Schools',
+    suburbSlug: 'smyrna-tn',
+    ratingNote: 'Niche grades Smyrna High School a B (3.7/5 from 417 reviews) — #9 among Rutherford County public high schools and #63 statewide.',
+    blurb:
+      "Smyrna High School serves central and east Smyrna, the largest town in Tennessee and home to the Nissan Smyrna Vehicle Assembly Plant — the largest single-site auto plant in North America and the town's largest employer at roughly 8,000 workers. Niche grades the school a B (3.7 out of 5 from 417 reviews), ranking it #9 among Rutherford County's public high schools and #63 statewide, across 2,254 students at a 17:1 student-teacher ratio. For buyers targeting Smyrna's $420,000 median price point, the Smyrna High zone offers an employment-anchored market with a solidly rated public school and easy I-24 access to both Nashville and Murfreesboro.",
+    neighborhoods: ['Central Smyrna', 'Downtown Smyrna', 'Sam Ridley Parkway corridor', 'East Smyrna'],
+    faqs: [
+      {
+        q: 'Is Smyrna High School a good school?',
+        a: 'Niche grades Smyrna High School a B, with a 3.7-out-of-5 rating from 417 reviews. It ranks #9 among Rutherford County public high schools and #63 among all Tennessee public high schools, with 2,254 students and a 17-to-1 student-teacher ratio.',
+      },
+      {
+        q: 'What neighborhoods are zoned to Smyrna High School?',
+        a: "Smyrna High draws from central and east Smyrna within Rutherford County Schools; some newer south-Smyrna subdivisions along the Stewarts Creek corridor are zoned to Stewarts Creek High School instead. Rutherford County has adjusted school zone lines in recent years, so always confirm the current attendance assignment with Rutherford County Schools for a specific address before writing an offer.",
+      },
+      {
+        q: 'How much do homes near Smyrna High School cost?',
+        a: "Smyrna's 2026 median home price is around $419,790, with homes averaging about $216 per square foot and roughly 55 days on market. Joshua can pull exact, current comps for any specific street in the Smyrna High zone.",
+      },
+      {
+        q: 'Why do buyers consider Smyrna for schools and value?',
+        a: "Smyrna pairs a solidly rated public high school with one of Middle Tennessee's most accessible median prices, backed by steady, employment-driven demand from the Nissan Smyrna plant's roughly 8,000 jobs. For buyers priced out of Williamson County but who still want a strong I-24 commute to Nashville or Murfreesboro, the Smyrna High zone is a frequently shortlisted alternative.",
+      },
+    ],
+  },
 }
 
 export function getSchool(slug: string): School | undefined {
