@@ -531,6 +531,35 @@ export const schools: Record<string, School> = {
       },
     ],
   },
+  'columbia-central-high-school-columbia-tn': {
+    slug: 'columbia-central-high-school-columbia-tn',
+    name: 'Columbia Central High School',
+    level: 'High',
+    district: 'Maury County Public Schools',
+    suburbSlug: 'columbia-tn',
+    ratingNote: 'Niche grades Columbia Central a C+ (4/10 on GreatSchools) — the draw for most buyers here is Columbia\'s affordability and growth, not the school ranking.',
+    blurb:
+      "Columbia Central High School is the comprehensive public high school serving the city of Columbia, seat of Maury County — Tennessee's #2 fastest-growing county by percentage from 2024 to 2025. Niche grades the school a C+ and GreatSchools rates it 4/10, putting it in the bottom half of Tennessee public high schools by US News' ranking; it isn't a Williamson County-caliber school zone, and buyers shouldn't be told otherwise. What Columbia does offer is real: a $385,000 median home price — the most attainable in Joshua's Middle Tennessee coverage area — backed by genuine employment growth from Maury Regional Health (3,000+ jobs) and continued spillover from GM's Ultium Cells plant in neighboring Spring Hill. For buyers prioritizing space and price over school ranking, or willing to trade school quality for affordability while Maury County's rapid growth plays out, Columbia is worth a serious look.",
+    neighborhoods: ['Downtown Columbia', 'Sunnyside', 'North Columbia', 'The Crossings'],
+    faqs: [
+      {
+        q: 'Is Columbia Central High School a good school?',
+        a: 'Honestly, its ratings are middling: Niche grades it a C+ (3.55/5 from 179 reviews), GreatSchools rates it 4/10, and US News ranks it in the bottom half of Tennessee public high schools. Families who need a top-ranked zone typically look toward Williamson County (Franklin, Brentwood, Nolensville) instead. Columbia&apos;s draw is affordability and growth, not school rankings — Joshua gives you the honest trade-off, not just the pitch that helps a sale.',
+      },
+      {
+        q: 'What neighborhoods are zoned to Columbia Central High School?',
+        a: 'Columbia Central serves the core of the city, including Downtown Columbia, Sunnyside, North Columbia, and The Crossings. Maury County Public Schools sets zones by address, and boundaries can shift as the district adds capacity for a fast-growing population — confirm the current assignment with the district for any specific address before writing an offer.',
+      },
+      {
+        q: 'How much do homes near Columbia Central High School cost?',
+        a: 'Columbia Central-zoned homes are part of the broader Columbia market — see the current Columbia market report for up-to-date medians (around $385,000) and price-per-square-foot. Joshua can pull exact, current comps for any specific street in Downtown Columbia, Sunnyside, or North Columbia.',
+      },
+      {
+        q: 'Should I buy in Columbia if school rating is a top priority?',
+        a: 'If a top-ranked school zone is a hard requirement, Columbia Central&apos;s current ratings (C+ on Niche, 4/10 on GreatSchools) likely won&apos;t fit — Williamson County zones like Page, Independence, or Nolensville rank far higher. But Maury County is one of the fastest-growing counties in Tennessee, and Columbia&apos;s population is up roughly 17% since the 2020 Census, so school investment and options are likely to keep evolving. Joshua will walk through the full trade-off, not just the upside, before you commit.',
+      },
+    ],
+  },
 }
 
 export function getSchool(slug: string): School | undefined {
