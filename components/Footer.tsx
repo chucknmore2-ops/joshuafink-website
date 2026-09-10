@@ -142,6 +142,7 @@ export default function Footer() {
               {[
                 { href: '/sell', label: 'Free Home Valuation' },
                 { href: '/cash-offer', label: 'Cash Offer in 24h' },
+                { href: '/cash-offer/nashville-tn', label: 'Sell My Home Fast Nashville' },
                 { href: '/sell/franklin-tn', label: 'Sell in Franklin' },
                 { href: '/sell/brentwood-tn', label: 'Sell in Brentwood' },
                 { href: '/sell/spring-hill-tn', label: 'Sell in Spring Hill' },
