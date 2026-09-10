@@ -24,14 +24,18 @@ export const schools: Record<string, School> = {
     level: 'High',
     district: 'Williamson County Schools',
     suburbSlug: 'brentwood-tn',
-    ratingNote: 'Consistently ranks among the top public high schools in Tennessee.',
+    ratingNote: 'Ranked #3 among Tennessee public high schools by Niche for 2026, with a 4.06/5 rating from 564 reviews.',
     blurb:
-      "Ravenwood High School is one of the most academically distinguished public high schools in the Southeast, drawing families to south Brentwood specifically for its school zone. Strong AP participation, competitive athletics, and a long track record of college placement at top universities make Ravenwood-zoned homes a meaningful resale-value driver in Brentwood — buyers actively filter by 'Ravenwood zone' when searching.",
+      "Ravenwood High School is one of the most academically distinguished public high schools in the Southeast, drawing families to south Brentwood specifically for its school zone. Niche ranks it #3 among all Tennessee public high schools for 2026 (and 216th nationally out of over 20,000 public high schools). Strong AP participation, competitive athletics, and a long track record of college placement at top universities make Ravenwood-zoned homes a meaningful resale-value driver in Brentwood — buyers actively filter by 'Ravenwood zone' when searching.",
     neighborhoods: ['Governors Club', 'Annandale', 'Raintree Forest', 'Taramore'],
     faqs: [
       {
         q: 'What neighborhoods are zoned to Ravenwood High School?',
         a: 'Ravenwood draws from much of southern Brentwood including Governors Club, Annandale, Raintree Forest, Taramore, and surrounding subdivisions. Zoning can change at the district level, so always confirm with Williamson County Schools for any specific address before writing an offer.',
+      },
+      {
+        q: 'What is Ravenwood High School ranked?',
+        a: "Niche ranks Ravenwood #3 among Tennessee's public high schools for 2026, with an overall 4.06/5 rating from 564 reviews, and 216th nationally out of more than 20,000 public high schools (source: Niche.com). Rankings shift year to year, so confirm the current figures directly with Niche before citing them to a client.",
       },
       {
         q: 'How much do homes in the Ravenwood High zone cost?',
