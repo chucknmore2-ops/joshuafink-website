@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getSuburb, getAllSuburbSlugs, getSuburbSlugForListing, citywideStatsCitation, suburbCityGeo, type Suburb } from '@/lib/suburbs'
+import { getSuburb, getAllSuburbSlugs, getSuburbSlugForListing, citywideStatsCitation, marketStatsLastUpdated, suburbCityGeo, type Suburb } from '@/lib/suburbs'
 import { listings } from '@/lib/listings'
 import { schools } from '@/lib/schools'
 import ListingCard from '@/components/ListingCard'
