@@ -1,7 +1,16 @@
 name: Daily tasks Pushover
 
-# Sends Josh his 5-10 minute daily growth tasks via Pushover every morning.
-# Runs from GitHub Actions because the Vercel Hobby cron slots are maxed.
+# Sends Josh his 5-10 minute daily growth tasks via Pushover on weekday
+# mornings that are not US federal holidays. Runs from GitHub Actions
+# because the Vercel Hobby cron slots are maxed.
+#
+# Weekends: cron is Mon–Fri (`1-5`). At 12:00 UTC that is still the same
+# civil day in America/Chicago, so UTC weekday == Chicago weekday.
+# Holidays: scripts/should-send-daily-tasks.mjs no-ops scheduled runs on
+# US federal holidays (5 U.S.C. 6103 / OPM), including observed Friday
+# or Monday when the holiday falls on a weekend. Calendar day is
+# America/Chicago. workflow_dispatch still sends so on-demand testing
+# works on a weekend or holiday.
 #
 # Required repository secrets (Settings -> Secrets and variables -> Actions):
 #   PUSHOVER_TOKEN   Pushover application API token (same value as in Vercel)
@@ -13,8 +22,8 @@ name: Daily tasks Pushover
 
 on:
   schedule:
-    # 7am CDT / 8am CST, every day. DST drift is acceptable.
-    - cron: '0 12 * * *'
+    # 7am CDT / 8am CST, weekdays only. DST drift is acceptable.
+    - cron: '0 12 * * 1-5'
   workflow_dispatch: {}
 
 permissions:
@@ -24,17 +33,39 @@ concurrency:
   group: daily-tasks-pushover
   cancel-in-progress: true
 
+# actions/checkout ships as a Node 20 JS action; GitHub forces the Node 24
+# runtime on 2026-06-16. This env var keeps it running across the cutover.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   push:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Send daily tasks to Pushover
         shell: bash
         env:
           PUSHOVER_TOKEN: ${{ secrets.PUSHOVER_TOKEN }}
           PUSHOVER_USER: ${{ secrets.PUSHOVER_USER }}
+          EVENT_NAME: ${{ github.event_name }}
         run: |
+          if [ "$EVENT_NAME" = "schedule" ]; then
+            DECISION=$(node scripts/should-send-daily-tasks.mjs)
+            echo "$DECISION"
+            if [[ "$DECISION" == SKIP* ]]; then
+              echo "Scheduled run skipped — no Pushover (weekend or US federal holiday)."
+              exit 0
+            fi
+            if [ "$DECISION" != "SEND" ]; then
+              echo "Unexpected calendar decision: $DECISION" >&2
+              exit 1
+            fi
+          fi
+
           if [ -z "$PUSHOVER_TOKEN" ] || [ -z "$PUSHOVER_USER" ]; then
             echo "PUSHOVER_TOKEN or PUSHOVER_USER not set — skipping (no failure)."
             exit 0
