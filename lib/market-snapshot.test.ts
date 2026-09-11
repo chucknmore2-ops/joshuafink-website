@@ -3,11 +3,13 @@ import assert from 'node:assert/strict'
 import { blogPosts } from './blog.ts'
 import {
   currentSnapshot,
+  gnarRegionalBuySlugs,
   latestSnapshot,
   marketReadFromSupply,
   marketSnapshots,
   marketUpdateSlug,
   monthLabel,
+  showsGnarRegionalSnapshot,
   snapshotMedianLine,
   snapshotStatLines,
 } from './market-snapshot.ts'
@@ -24,6 +26,13 @@ describe('August 2026 GNAR snapshot', () => {
       'middle-tennessee-market-update-august-2026',
     )
     assert.equal(marketSnapshots[1]?.month, '2026-07')
+  })
+
+  it('is reused on Franklin and Nolensville buy pages', () => {
+    assert.deepEqual([...gnarRegionalBuySlugs], ['franklin-tn', 'nolensville-tn'])
+    assert.equal(showsGnarRegionalSnapshot('franklin-tn'), true)
+    assert.equal(showsGnarRegionalSnapshot('nolensville-tn'), true)
+    assert.equal(showsGnarRegionalSnapshot('brentwood-tn'), false)
   })
 
   it('uses official nine-county chart figures only', () => {

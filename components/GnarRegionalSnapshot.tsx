@@ -28,9 +28,9 @@ function snapshotHref(s: MarketSnapshot): string {
 /**
  * Nine-county Greater Nashville REALTORS® totals from lib/market-snapshot.ts.
  * Shown separately from Redfin citywide medians so the two sources cannot
- * be read as Franklin-only GNAR breakdowns.
+ * be read as a city-only GNAR breakdown.
  */
-export default function GnarRegionalSnapshot() {
+export default function GnarRegionalSnapshot({ cityName }: { cityName: string }) {
   const s = latestSnapshot()
   if (!s) return null
 
@@ -58,12 +58,12 @@ export default function GnarRegionalSnapshot() {
           </p>
         </div>
         <h2 className="text-2xl font-black text-black tracking-tight mb-2">
-          Regional context for Franklin buyers
+          Regional context for {cityName} buyers
         </h2>
         <p className="text-sm text-[#6B6B6B] leading-relaxed max-w-3xl mb-8">
           Greater Nashville REALTORS® publishes nine-county totals (Davidson,
           Cheatham, Dickson, Maury, Robertson, Rutherford, Sumner, Williamson,
-          and Wilson) — not a Franklin-only breakdown. The city snapshot above
+          and Wilson) — not a {cityName}-only breakdown. The city snapshot above
           is a separate Redfin citywide median. Use both as direction, then
           price the specific street.
         </p>

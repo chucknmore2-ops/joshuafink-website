@@ -226,3 +226,14 @@ export function marketReadFromSupply(
   if (months >= 4) return 'a market tilting from sellers toward balanced'
   return "still a seller's market"
 }
+
+/**
+ * Buy-page slugs that show the nine-county GNAR block under the Redfin
+ * city snapshot. Same figures and citations on every city — only the
+ * city name in the heading/disclosure changes.
+ */
+export const gnarRegionalBuySlugs = ['franklin-tn', 'nolensville-tn'] as const
+
+export function showsGnarRegionalSnapshot(slug: string): boolean {
+  return (gnarRegionalBuySlugs as readonly string[]).includes(slug)
+}

@@ -12,6 +12,7 @@ import { reviewStats } from '@/lib/reviews'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import GnarRegionalSnapshot from '@/components/GnarRegionalSnapshot'
+import { showsGnarRegionalSnapshot } from '@/lib/market-snapshot'
 import { cashOfferPath } from '@/lib/cash-offer-cities'
 
 type Props = {
@@ -505,7 +506,9 @@ export default async function BuySuburbPage({ params }: Props) {
           </div>
         </div>
 
-        {slug === 'franklin-tn' && <GnarRegionalSnapshot />}
+        {showsGnarRegionalSnapshot(slug) && (
+          <GnarRegionalSnapshot cityName={suburb.name} />
+        )}
 
         {/* About the Market */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
