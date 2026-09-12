@@ -915,7 +915,12 @@ export default function BuyerGuidePage() {
             </p>
             <p className="text-[#444] text-base leading-relaxed mb-6">
               The cash-offer page spells out how that path works. The sell page is the traditional
-              listing. If you are unsure which one fits the move, start with a conversation.
+              listing. The companion{' '}
+              <Link href="/guide/seller" className="text-black underline hover:no-underline">
+                Seller&apos;s Guide
+              </Link>{' '}
+              covers pricing, prep, and closing. If you are unsure which path fits the move, start
+              with a conversation.
             </p>
             <div className="flex flex-col sm:flex-row flex-wrap gap-3">
               <Link

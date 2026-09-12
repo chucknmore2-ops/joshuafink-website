@@ -36,6 +36,7 @@ test('no page adds a second website honeypot beside the shared component', () =>
     'app/buy/page.tsx',
     'app/neighborhoods/page.tsx',
     'app/guide/buyer/page.tsx',
+    'app/guide/seller/page.tsx',
     'app/page.tsx',
     'app/sell/page.tsx',
     'app/contact/page.tsx',

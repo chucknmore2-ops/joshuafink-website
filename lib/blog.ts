@@ -215,6 +215,62 @@ const marketUpdatePosts: BlogPost[] = marketSnapshots.map(buildMarketUpdatePost)
 export const blogPosts: BlogPost[] = [
   ...marketUpdatePosts,
   {
+    slug: "middle-tennessee-sellers-guide-2026",
+    title: "The 2026 Middle Tennessee Seller's Guide",
+    date: "October 7, 2026",
+    dateModified: "October 7, 2026",
+    excerpt:
+      "How to price, prep, and close a Middle Tennessee home in 2026, with the September Greater Nashville REALTORS® figures and Redfin city medians as of October 5, 2026. Written by Joshua Fink at Compass, licensed since 2008.",
+    category: "For Sellers",
+    faq: [
+      {
+        q: "How long does it take to sell a house in Middle Tennessee right now?",
+        a: "Greater Nashville REALTORS® reported an average list-to-contract time of 57 days for September 2026, published October 5, 2026. That is a nine-county average. A home priced to recent comps can move faster, and one anchored to an old comp sits past it. Once under contract, a Tennessee closing typically takes 30–45 days.",
+      },
+      {
+        q: "What are seller closing costs in Tennessee?",
+        a: "Tennessee sellers typically pay 1–2% in closing costs (title work, transfer tax, prorated property taxes) on top of the real estate commission. A net sheet shows the check at the closing table before you accept an offer.",
+      },
+      {
+        q: "What is the Middle Tennessee median home price in September 2026?",
+        a: "The nine-county residential median was $510,000, up 4.1% from $490,000 in September 2025, per Greater Nashville REALTORS®. City medians are different: Franklin $862,929, Brentwood $1,424,058, Spring Hill $508,284, Nolensville $929,385, and Nashville $475,538 (Redfin, as of October 5, 2026).",
+      },
+    ],
+    content: `
+**Quick answer:** Price to the newest comps, not to last spring and not to what you need the number to be. In September 2026, Greater Nashville REALTORS® reported a nine-county residential median of **$510,000** (+4.1% from $490,000 a year earlier), an average list-to-contract time of **57 days**, **2,885** closed sales, **15,536** active listings, **2,045** pending sales, a condominium median of **$331,780**, and **5.7** months of supply. Those figures were published October 5, 2026. The full walkthrough is the [Seller's Guide](/guide/seller).
+
+Joshua Fink is an Affiliate Broker with Compass Real Estate, licensed since 2008, and sells 40+ homes a year in Middle Tennessee. Office: Compass, 8119 Isabella Lane, Suite 105, Brentwood, TN 37027. TREC #351484. Call or text [615-551-2727](tel:6155512727).
+
+## The September 2026 market sellers are pricing into
+
+These are nine-county totals (Davidson, Cheatham, Dickson, Maury, Robertson, Rutherford, Sumner, Williamson, and Wilson), not a price for one street. At 5.7 months of supply the metro reads as a market tilting from sellers toward balanced. Six months is the line economists use to call a market balanced. Your subdivision can sit on either side of that line.
+
+The write-up, with the same figures, is the [September 2026 market update](/blog/middle-tennessee-market-update-september-2026). Source: [Greater Nashville REALTORS®](https://www.greaternashvillerealtors.org/news/september-homes-sales-continued-to-show-mixed-results-across-counties-and-price-points), published October 5, 2026.
+
+## City medians are not the regional median
+
+Redfin city medians as of October 5, 2026 (median sale price, median days on market, sale-price change):
+
+- **Franklin:** $862,929, 49 days on market, up 12.43%
+- **Brentwood:** $1,424,058, 63 days on market, up 5.1%
+- **Spring Hill:** $508,284, 62 days on market, down 4.14%
+- **Nolensville:** $929,385, 63 days on market, down 7.06%
+- **Nashville:** $475,538, 64 days on market, down 0.52%
+
+City pages for sellers: [Franklin](/sell/franklin-tn), [Brentwood](/sell/brentwood-tn), [Spring Hill](/sell/spring-hill-tn), [Nolensville](/sell/nolensville-tn), [Nashville](/sell/nashville-tn). Homes already on the market are on [listings](/listings).
+
+## What actually decides the sale
+
+A new listing gets a burst of attention in the first two weeks that it does not get back. Price to sold comps within about a half-mile, adjusted for condition, lot, and updates. Professional photos, a clean house, and a Compass Coming Soon period before the public launch are the prep that changes showings. The highest offer on paper is not always the strongest one: financing, contingencies, earnest money, and a closing date that matches your move all belong on the comparison.
+
+Tennessee closings are handled by attorneys or title companies and typically take 30–45 days from contract. Sellers generally pay 1–2% in closing costs on top of commission. The [net-sheet breakdown](/blog/cost-to-sell-home-tennessee-2026-net-sheet) lists the line items. Verify any wire instructions by phone with the title company, using a number you already have.
+
+If the timeline will not stretch for a traditional listing, compare a cash offer with the retail number before you choose. Start at [cash offer](/cash-offer), including [Nashville](/cash-offer/nashville-tn) and [Franklin](/cash-offer/franklin-tn).
+
+Buying the next house at the same time? The [Buyer's Guide](/guide/buyer) covers that side. The long version of this post is the [2026 Seller's Guide](/guide/seller).
+    `.trim(),
+  },
+  {
     slug: "middle-tennessee-real-estate-market-july-2026-update",
     title: "Middle Tennessee Real Estate Market: July 2026 Update",
     date: "July 11, 2026",

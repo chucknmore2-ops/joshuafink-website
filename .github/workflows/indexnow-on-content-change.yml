@@ -22,6 +22,7 @@ on:
       - 'app/blog/**'
       - 'app/buy/**'
       - 'app/sell/**'
+      - 'app/guide/**'
       - 'public/sitemap.xml'
       - 'app/sitemap.ts'
   workflow_dispatch: # manual trigger from the Actions UI
