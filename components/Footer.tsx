@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import TrackedTelLink from '@/components/TrackedTelLink'
 
 export default function Footer() {
   const year = new Date().getFullYear()
@@ -19,12 +20,13 @@ export default function Footer() {
               TN License #351484
             </p>
             <div className="mt-5 space-y-2 text-sm">
-              <a
+              <TrackedTelLink
                 href="tel:6155512727"
                 className="block text-[#A0A0A0] hover:text-white transition-colors"
+                data-cta="footer-call"
               >
                 615-551-2727
-              </a>
+              </TrackedTelLink>
               <a
                 href="mailto:joshua@joshuafink.com"
                 className="block text-[#A0A0A0] hover:text-white transition-colors"
