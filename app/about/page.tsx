@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { reviews, reviewStats, reviewDateToIso } from '@/lib/reviews'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 import GoogleReviewCTA from '@/components/GoogleReviewCTA'
+import TrackedTelLink from '@/components/TrackedTelLink'
 
 export const metadata: Metadata = {
   alternates: { canonical: 'https://www.joshuafink.com/about' },
@@ -171,13 +172,14 @@ export default function AboutPage() {
                 Get In Touch
               </p>
               <div className="space-y-3 text-sm">
-                <a
+                <TrackedTelLink
                   href="tel:6155512727"
                   className="flex items-center gap-3 text-black hover:underline font-medium"
+                  data-cta="about-contact-call"
                 >
                   <span className="text-[#A0A0A0]">📞</span>
                   615-551-2727
-                </a>
+                </TrackedTelLink>
                 <a
                   href="mailto:joshua@joshuafink.com"
                   className="flex items-center gap-3 text-black hover:underline font-medium"
