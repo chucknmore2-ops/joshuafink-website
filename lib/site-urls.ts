@@ -58,6 +58,7 @@ export function getSiteUrlCatalog(): SiteUrlEntry[] {
     { path: '/compare', priority: 0.8, changeFrequency: 'monthly' },
     { path: '/homes-near', priority: 0.8, changeFrequency: 'monthly' },
     { path: '/guide/buyer', priority: 0.7, changeFrequency: 'monthly' },
+    { path: '/guide/seller', priority: 0.7, changeFrequency: 'monthly' },
     { path: '/moving-to-middle-tennessee', priority: 0.85, changeFrequency: 'monthly' },
     // Legal page — indexable and footer-linked, so include it here to keep this
     // catalog a true single source of truth for the sitemap + IndexNow. Low

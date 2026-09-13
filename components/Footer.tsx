@@ -143,6 +143,7 @@ export default function Footer() {
             <ul className="space-y-2">
               {[
                 { href: '/sell', label: 'Free Home Valuation' },
+                { href: '/guide/seller', label: "Free Seller's Guide" },
                 { href: '/cash-offer', label: 'Cash Offer in 24h' },
                 { href: '/cash-offer/nashville-tn', label: 'Sell My Home Fast Nashville' },
                 { href: '/sell/franklin-tn', label: 'Sell in Franklin' },
