@@ -52,7 +52,7 @@ const BUYER_GUIDE_FAQS: { q: string; a: string }[] = [
   },
   {
     q: 'How do I find off-market homes in Franklin, Brentwood, or Nashville?',
-    a: 'A meaningful share of Middle Tennessee transactions — especially $1M+ and established luxury neighborhoods — never hit public MLS. Compass Coming Soon listings, pocket listings, and word-of-mouth deals fill that gap, so buyers searching only Zillow miss real inventory. Ask for the off-market list for your target suburb or price tier.',
+    a: 'A meaningful share of Middle Tennessee transactions — especially $1M+ and established luxury neighborhoods — never hit public MLS. Compass Coming Soon listings, pocket listings, and word-of-mouth deals fill that gap, so buyers searching only Zillow miss real inventory. Tell Joshua your target suburb or price tier and he will share relevant off-market and Coming Soon opportunities as they surface.',
   },
   {
     q: 'What is the biggest mistake first-time buyers make in this market?',
@@ -156,7 +156,7 @@ export default function BuyerGuidePage() {
               <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
                 <div className="lg:col-span-2">
                   <p className="text-xs font-semibold tracking-widest text-[#C41E3A] uppercase mb-3">
-                    Optional — Get Joshua&apos;s Off-Market List
+                    Optional — Personalized Off-Market Alerts
                   </p>
                   <h2 className="text-2xl font-black text-black tracking-tight mb-3">
                     See homes before they hit Zillow
@@ -168,7 +168,7 @@ export default function BuyerGuidePage() {
                   <ul className="mt-3 space-y-2 text-sm text-[#444]">
                     <li className="flex items-start gap-2">
                       <span style={{ color: '#C41E3A' }} className="mt-0.5">→</span>
-                      <span>His weekly off-market &amp; Coming Soon list — Compass-exclusive homes you won&apos;t find on Zillow</span>
+                      <span>Personalized off-market alerts — when Compass Coming Soon or pocket listings match what you&apos;re looking for, Joshua will share them. Not a weekly blast list.</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span style={{ color: '#C41E3A' }} className="mt-0.5">→</span>
@@ -182,11 +182,11 @@ export default function BuyerGuidePage() {
                 </div>
                 <div className="lg:col-span-3">
                   <SuburbLeadForm
-                    successTitle="You're on the list!"
+                    successTitle="You're in!"
                     successMessage={
                       <>
-                        Joshua will email you his off-market list and a personal reply — usually
-                        same-day. For anything urgent, call{' '}
+                        Joshua will reply personally — usually same-day — and share relevant
+                        off-market opportunities as they come up. For anything urgent, call{' '}
                         <TrackedTelLink href="tel:6155512727" className="text-black font-semibold underline" data-cta="guide-buyer-form-success-call">615-551-2727</TrackedTelLink>.
                       </>
                     }
@@ -426,8 +426,9 @@ export default function BuyerGuidePage() {
             Buyers using only Zillow miss real inventory.
           </p>
           <p className="text-[#444] text-base leading-relaxed mb-4">
-            Joshua monitors this layer for every client. If you want on the off-market list for
-            a specific suburb or price tier, just email — there&apos;s no obligation to receive it.
+            Joshua monitors this layer for every client. If you want personalized off-market
+            alerts for a specific suburb or price tier, just email — there is no weekly blast
+            and no obligation.
           </p>
 
           <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3 mt-12">
@@ -588,7 +589,7 @@ export default function BuyerGuidePage() {
                 href="#get-guide"
                 className="inline-flex items-center justify-center text-sm font-bold px-6 py-3 tracking-wide text-black underline underline-offset-4"
               >
-                Or get the off-market list →
+                Or ask about off-market homes →
               </a>
             </div>
           </div>

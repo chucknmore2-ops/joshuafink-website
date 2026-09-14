@@ -56,11 +56,12 @@ export default function CashOfferForm({ source = 'cash-offer', cityName }: CashO
       if (res.ok) {
         setState('success')
         form.reset()
-        // Fire Google Ads + GA4 conversion event
+        // Fire Google Ads + GA4 conversion event. Never send the seller's
+        // street address — GA4 event_label is not a PII-safe field.
         if (typeof window !== 'undefined' && (window as any).gtag) {
           ;(window as any).gtag('event', 'generate_lead', {
             event_category: 'cash_offer',
-            event_label: data.property_address || 'unknown',
+            event_label: 'cash_offer',
             value: 1,
           })
         }
@@ -112,7 +113,7 @@ export default function CashOfferForm({ source = 'cash-offer', cityName }: CashO
         Free. No Obligation. 24 Hours.
       </h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form method="POST" action="/api/contact" onSubmit={handleSubmit} className="space-y-4">
         <input type="hidden" name="lead_type" value="sell" />
         <input type="hidden" name="subject" value="sell" />
         <input type="hidden" name="source" value={source} />

@@ -97,7 +97,13 @@ export default function SuburbLeadForm({ children, successTitle, successMessage,
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5" aria-busy={state === 'submitting'}>
+    <form
+      method="POST"
+      action="/api/contact"
+      onSubmit={handleSubmit}
+      className="space-y-5"
+      aria-busy={state === 'submitting'}
+    >
       {/* Honeypot — invisible to humans, bots auto-fill it. /api/contact drops
           any submission where this is non-empty. Living here rather than at
           each call site means every page using SuburbLeadForm gets bot

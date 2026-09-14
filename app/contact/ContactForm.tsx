@@ -102,7 +102,7 @@ export default function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form method="POST" action="/api/contact" onSubmit={handleSubmit} className="space-y-5">
       {/* Honeypot — invisible to humans, bots auto-fill it. */}
       <input type="text" name="website" autoComplete="off" tabIndex={-1} aria-hidden="true"
         style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, width: 0 }} />

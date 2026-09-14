@@ -2,11 +2,17 @@ import { NextRequest, NextResponse } from 'next/server'
 import { classifyLead } from '@/lib/classify-lead'
 import { sendEmail, activeEmailProvider, fetchWithTimeout } from '@/lib/send-email'
 
+// Lead notifiers use fetchWithTimeout (LEAD_CHANNEL_TIMEOUT_MS, default 6s)
+// in parallel. 30s leaves room for the emergency Pushover fallback without
+// sitting until the platform default.
+export const maxDuration = 30
+
 // ClickUp — one task per lead (replaced Slack after its account went
 // inactive). Same pk_... personal token the weekly agent-briefing cron uses.
 const CLICKUP_TOKEN = process.env.CLICKUP_API_TOKEN
-// Defaults to the JFG agent-briefing list (workspace 90141200625); set
-// CLICKUP_LEADS_LIST_ID in Vercel to route leads to a dedicated Leads list.
+// Fallback ID is the JFG research / agent-briefing Tasks board (901415978281).
+// Production MUST set CLICKUP_LEADS_LIST_ID in Vercel to a dedicated Leads
+// list — do not dump website leads onto that research board.
 const CLICKUP_LIST_ID = process.env.CLICKUP_LEADS_LIST_ID || '901415978281'
 const TO_EMAIL = 'joshua@joshuafink.com'
 const N8N_BASE = process.env.N8N_WEBHOOK_BASE || 'http://localhost:5678/webhook'
@@ -46,6 +52,21 @@ type ChannelResult = {
 }
 
 const skip = (channel: string): ChannelResult => ({ channel, configured: false, ok: false })
+
+/**
+ * Localhost / loopback webhook bases are for FlipIntel/n8n on a laptop.
+ * The env defaults point there; awaiting them from Vercel burns the
+ * function budget on a connection that can never succeed. Do not invent
+ * a production URL — just skip until a real non-loopback base is set.
+ */
+function isLoopbackWebhookBase(base: string): boolean {
+  try {
+    const host = new URL(base).hostname.toLowerCase()
+    return host === 'localhost' || host === '127.0.0.1' || host === '::1' || host.endsWith('.localhost')
+  } catch {
+    return true
+  }
+}
 
 // ---------------------------------------------------------------------------
 // ClickUp notification — one task per lead
@@ -494,8 +515,21 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const body = await req.json().catch(() => null)
-    const form = body || Object.fromEntries((await req.formData()).entries())
+    // JS forms POST JSON. Native <form method="POST"> (progressive
+    // enhancement) posts urlencoded / multipart. Reading json() first on a
+    // form body consumes it and then formData() throws "Body is unusable".
+    const contentType = req.headers.get('content-type') || ''
+    let form: Record<string, unknown>
+    if (contentType.includes('application/json')) {
+      const body = await req.json().catch(() => null)
+      form = body && typeof body === 'object' && !Array.isArray(body) ? body : {}
+    } else {
+      try {
+        form = Object.fromEntries((await req.formData()).entries())
+      } catch {
+        form = {}
+      }
+    }
     const lead = Object.fromEntries(
       Object.entries(form).map(([k, v]) => [k, String(v)])
     ) as Record<string, string>
@@ -557,51 +591,48 @@ export async function POST(req: NextRequest) {
     ])
 
     // ---------- Best-effort local integrations (n8n / webhooks) ----------
-    // These target localhost by default and usually aren't reachable from
-    // Vercel; they're fire-and-forget and never count toward delivery.
+    // These never count toward delivery. Env defaults are localhost (FlipIntel /
+    // n8n on a laptop); skip loopback bases so they cannot hang the function
+    // on Vercel. A real non-loopback base is still awaited under
+    // fetchWithTimeout (LEAD_CHANNEL_TIMEOUT_MS).
     const leadType = (lead.subject || lead.lead_type || '').toLowerCase()
     const isCashOffer = lead.source === 'cash-offer' || ['sell', 'seller'].includes(leadType)
     const isBuyerLead = ['buy', 'both', 'invest', 'rent', 'other', 'buyer'].includes(leadType)
     const bestEffort: Promise<unknown>[] = []
 
-    const isSeller = ['sell', 'seller'].includes(leadType)
-    const drip = isSeller ? 'seller-lead' : 'buyer-lead'
-    bestEffort.push(
-      fetchWithTimeout(`${N8N_BASE}/${drip}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(lead),
-      }).then(() => undefined).catch(() => undefined)
-    )
-
-    if (isCashOffer) {
+    const enqueueWebhook = (base: string, url: string, payload: unknown) => {
+      if (isLoopbackWebhookBase(base)) return
       bestEffort.push(
-        fetchWithTimeout(`${CASH_OFFER_BASE}/cash-offer`, {
+        fetchWithTimeout(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(lead),
+          body: JSON.stringify(payload),
         }).then(() => undefined).catch(() => undefined)
       )
+    }
+
+    const isSeller = ['sell', 'seller'].includes(leadType)
+    const drip = isSeller ? 'seller-lead' : 'buyer-lead'
+    enqueueWebhook(N8N_BASE, `${N8N_BASE}/${drip}`, lead)
+
+    if (isCashOffer) {
+      enqueueWebhook(CASH_OFFER_BASE, `${CASH_OFFER_BASE}/cash-offer`, lead)
     }
 
     if (isBuyerLead) {
-      bestEffort.push(
-        fetchWithTimeout(`${BUYER_LEAD_WEBHOOK_BASE}/buyer-lead`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: lead.name || '',
-            phone: lead.phone || '',
-            email: lead.email || '',
-            subject: lead.subject || lead.lead_type || '',
-            body: lead.body || '',
-            source: lead.source || 'joshuafink.com',
-          }),
-        }).then(() => undefined).catch(() => undefined)
-      )
+      enqueueWebhook(BUYER_LEAD_WEBHOOK_BASE, `${BUYER_LEAD_WEBHOOK_BASE}/buyer-lead`, {
+        name: lead.name || '',
+        phone: lead.phone || '',
+        email: lead.email || '',
+        subject: lead.subject || lead.lead_type || '',
+        body: lead.body || '',
+        source: lead.source || 'joshuafink.com',
+      })
     }
 
-    await Promise.allSettled(bestEffort)
+    if (bestEffort.length > 0) {
+      await Promise.allSettled(bestEffort)
+    }
 
     // ---------- Delivery detection ----------
     // A lead "reached Joshua" if any Joshua-facing channel succeeded.

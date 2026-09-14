@@ -35,8 +35,10 @@ after(() => {
   globalThis.fetch = realFetch
 })
 
-// The route also fires best-effort localhost webhooks; only the sheet URL gets
-// the scripted body, everything else gets an inert 200.
+// The route also fires best-effort n8n / FlipIntel webhooks, but only when
+// the base is a non-loopback URL. Localhost defaults are skipped so they
+// cannot hang the function; the mock still returns an inert 200 for any
+// other URL that does fire.
 function mockFetch(sheetBody: string, contentType: string) {
   globalThis.fetch = (async (input: RequestInfo | URL) => {
     if (String(input).includes('script.google.com')) {
@@ -163,4 +165,42 @@ test('a hung sheet call is aborted and reported as a failed channel, not a hang'
   assert.equal(sheet.ok, false)
   assert.match(sheet.detail, /timeout/)
   assert.equal(status, 502)
+})
+
+test('a native form POST (urlencoded) is accepted without consuming the body twice', async () => {
+  mockFetch('{"ok":true}', 'application/json')
+  const { POST } = await import('./route.ts')
+  const res = await POST(
+    new NextRequest('http://localhost/api/contact', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'x-healthcheck-secret': 'test-cron-secret',
+      },
+      body: 'name=Jane+Doe&email=jane%40example.com&body=Hello+from+a+no-JS+submit',
+    })
+  )
+  assert.equal(res.status, 200)
+  const json = await res.json()
+  assert.equal(json.ok, true)
+})
+
+test('localhost webhook defaults are not fetched', async () => {
+  const urls: string[] = []
+  globalThis.fetch = (async (input: RequestInfo | URL) => {
+    urls.push(String(input))
+    if (String(input).includes('script.google.com')) {
+      return new Response('{"ok":true}', { status: 200, headers: { 'Content-Type': 'application/json' } })
+    }
+    return new Response('{}', { status: 200 })
+  }) as typeof fetch
+
+  const { status, sheet } = await submitLead()
+  assert.equal(status, 200)
+  assert.equal(sheet.ok, true)
+  assert.equal(
+    urls.some((u) => /localhost|127\.0\.0\.1/.test(u)),
+    false,
+    `loopback webhook was fetched: ${urls.join(', ')}`,
+  )
 })
