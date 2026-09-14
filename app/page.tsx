@@ -27,6 +27,40 @@ const stats = [
   { value: '★', label: 'Diamond & Titan Award Winner' },
 ]
 
+// Homepage FAQ — every answer restates copy already published elsewhere on
+// this same page (About Teaser, Why Joshua, lead-form microcopy) rather than
+// introducing new bio/claim language. This is the one major page template
+// on the site without FAQPage schema (suburbs, neighborhoods, cash-offer,
+// schools, compare, and the moving guide all have it) — closing that gap
+// gives AI answer engines a direct-answer block for brand and service
+// queries anchored on the page that matters most for them.
+const faqs = [
+  {
+    q: 'What areas does Joshua Fink serve in Middle Tennessee?',
+    a: "Joshua serves the full Middle Tennessee market — Franklin, Brentwood, Spring Hill, Nolensville, Thompson's Station, Nashville, Murfreesboro, Gallatin, Hendersonville, Columbia, Mount Juliet, Lebanon, Smyrna, and La Vergne — with hyperlocal guides for pricing trends, school zones, and commute patterns in each.",
+  },
+  {
+    q: 'How much real estate experience does Joshua Fink have?',
+    a: 'Over 17 years of experience and 100+ homes sold annually, making Joshua one of Middle Tennessee’s most trusted Affiliate Brokers. Since 2008 he has closed 1,000+ transactions across Davidson, Williamson, Maury, Rutherford, and Sumner counties.',
+  },
+  {
+    q: 'Does Joshua Fink work with both buyers and sellers?',
+    a: 'Yes. Joshua represents both buyers and sellers throughout Middle Tennessee — home valuations and listing strategy for sellers, and off-market Compass Coming Soon access plus neighborhood guidance for buyers.',
+  },
+  {
+    q: 'How much does a home valuation from Joshua Fink cost?',
+    a: "Nothing. Joshua provides free, same-day home valuations built from actual sold comps — not an algorithm — adjusted for condition, lot size, school zone, upgrades, and recent market shifts, with zero obligation.",
+  },
+  {
+    q: 'How quickly does Joshua Fink respond to inquiries?',
+    a: 'Same-day, in most cases. Send a message through the contact form or call/text 615-551-2727 and Joshua personally follows up.',
+  },
+  {
+    q: "What does working with a Compass agent offer that other brokerages don't?",
+    a: "Compass is a technology-driven brokerage. Joshua's clients get access to Compass Coming Soon for pre-market listing exposure, Compass Concierge for fronted funds on strategic pre-listing improvements, and AI-powered market analytics — plus visibility to Compass's 30,000+ agent network nationwide.",
+  },
+]
+
 export default function HomePage() {
   const featuredItemList = buildListingItemList(
     featuredListings,
@@ -58,6 +92,16 @@ export default function HomePage() {
     ],
   }
 
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  }
+
   return (
     <>
       <script
@@ -67,6 +111,10 @@ export default function HomePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(featuredItemList) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
       {/* ── HERO ── cinematic, curated showcase deck (decoupled from active listings) */}
       <CinematicHero slides={heroSlides} />
@@ -423,6 +471,26 @@ export default function HomePage() {
               <div key={item.title} className="rounded-2xl border border-white/15 bg-white/5 p-6">
                 <h3 className="text-lg font-bold mb-3">{item.title}</h3>
                 <p className="text-sm text-neutral-300 leading-relaxed">{item.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQ ── */}
+      <section className="bg-white py-20 border-t border-neutral-200">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
+            Frequently Asked Questions
+          </p>
+          <h2 className="text-3xl sm:text-4xl font-black text-black tracking-tight mb-10">
+            Common <span className="font-display italic font-semibold">Questions</span>
+          </h2>
+          <div className="space-y-8">
+            {faqs.map((faq) => (
+              <div key={faq.q} className="border-b border-neutral-200 pb-6">
+                <h3 className="text-lg font-black text-black mb-2">{faq.q}</h3>
+                <p className="text-sm text-neutral-600 leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>
