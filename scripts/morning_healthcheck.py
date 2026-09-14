@@ -41,8 +41,10 @@ COVERED (per `lib/admin-schedule.ts`):
   Public uptime — GET https://joshuafink.com/api/healthcheck
   Lead delivery channels — POSTs a tagged SYSTEM TEST lead to /api/contact
     (silent Pushover, lead_type=system-test so the CRM sheet can filter it)
-    and alerts if any configured channel — clickup / joshua-email / sheet /
-    pushover — fails. Needs CRON_SECRET; without it this is a GAP.
+    and alerts if any configured channel — joshua-email / sheet /
+    pushover — fails. ClickUp lead tasks are off by default
+    (configured:false / unconfigured, not a failure) unless
+    CLICKUP_LEADS_ENABLED=true. Needs CRON_SECRET; without it this is a GAP.
 
 NOT COVERED (documented gaps — listed in every alert email):
   /api/cron/indexnow            no DB write; signal lives in Vercel logs
@@ -234,8 +236,9 @@ HEALTHCHECK_TIMEOUT_S = 15
 HEALTHCHECK_RETRIES = 2
 
 # Live test lead through the real lead route (see check_lead_pipeline). The
-# generous timeout is because the route awaits ClickUp + email + sheet +
-# Pushover before answering. Must be the www host: the apex 307-redirects
+# generous timeout is because the route awaits email + sheet +
+# Pushover (and ClickUp only if CLICKUP_LEADS_ENABLED=true) before answering.
+# Must be the www host: the apex 307-redirects
 # to www (Vercel domain config), and urllib refuses to follow a redirect
 # on a POST with a body — the apex URL fails with HTTP 307 'Redirecting...'.
 CONTACT_URL_DEFAULT = "https://www.joshuafink.com/api/contact"
@@ -1472,11 +1475,13 @@ def _remediation_for(result: CheckResult) -> Optional[str]:
     if "lead pipeline" in name:
         return (
             "A live test lead failed on the channel(s) named in the detail. "
-            "Per channel: clickup → CLICKUP_API_TOKEN dead/revoked or the "
-            "leads list gone (CLICKUP_LEADS_LIST_ID); joshua-email → "
+            "Per channel: joshua-email → "
             "Resend (RESEND_API_KEY / send.joshuafink.com domain verification); "
             "sheet → the Apps Script GOOGLE_SHEET_WEBHOOK_URL deployment; "
-            "pushover → PUSHOVER_TOKEN/PUSHOVER_USER. All live in Vercel → "
+            "pushover → PUSHOVER_TOKEN/PUSHOVER_USER. ClickUp is not a lead "
+            "destination unless CLICKUP_LEADS_ENABLED=true (plus "
+            "CLICKUP_API_TOKEN and a dedicated CLICKUP_LEADS_LIST_ID). "
+            "All live in Vercel → "
             "joshuafink-website → Settings → Environment Variables; redeploy "
             "after changing one. Real leads still deliver via the remaining "
             "channels, but fix this before the last one dies too."

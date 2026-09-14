@@ -15,7 +15,7 @@ Run this order every day. It's **measure → improve one thing → find one link
 1. **Measure.** Read the GEO scoreboard (`/api/cron/geo-audit` result): today's GEO score, per-engine breakdown, and the **gap list** (which buyer/seller questions we lost + the page to fix). Note week-over-week trend.
 2. **Improve one page.** Take the #1 GEO gap (or a thin/decaying page) and strengthen it — more sourced local stats, a tighter direct-answer intro, FAQ + schema, entity/NAP consistency. Ship on a branch → PR. Low-risk SEO edits ride the existing auto-merge-on-green; anything client-facing (bio, contact, claims) is flagged for Josh.
 3. **Find one link.** Identify **one specific, named** off-site authority target for the day (local directory, chamber/association, local blog/news, a HARO/Qwoted query, a relevant Reddit/Nextdoor thread, a partner site). Hand Josh the exact action + copy.
-4. **Protect the leads.** Confirm the lead pipeline is healthy (form → `/api/contact` → Slack + email + Google Sheet CRM + Pushover). Watch for indexing regressions (GSC "not indexed" reasons, sitemap/canonical issues, broken pages).
+4. **Protect the leads.** Confirm the lead pipeline is healthy (form → `/api/contact` → email + Google Sheet CRM + Pushover; ClickUp lead tasks are off unless `CLICKUP_LEADS_ENABLED=true`). Watch for indexing regressions (GSC "not indexed" reasons, sitemap/canonical issues, broken pages).
 5. **Report.** Post a short daily digest to Josh: GEO score + trend, what shipped, **today's link target**, and anything needing him.
 
 Weekly (Chuck): refresh the backlink target rotation; summarize rank movement; re-run the completeness pass on the newest pages; propose the next content batch.

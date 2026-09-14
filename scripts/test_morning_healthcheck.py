@@ -772,11 +772,12 @@ def test_lead_pipeline_failure_has_remediation():
     r = hc.CheckResult(
         name="lead pipeline — /api/contact test lead",
         status="error",
-        detail="test lead FAILED on configured channel(s): clickup(HTTP 401)",
+        detail="test lead FAILED on configured channel(s): sheet(HTTP 500)",
     )
     tip = hc._remediation_for(r)
     assert tip is not None
-    assert "CLICKUP_API_TOKEN" in tip
+    assert "GOOGLE_SHEET_WEBHOOK_URL" in tip
+    assert "CLICKUP_LEADS_ENABLED" in tip
     assert "Vercel" in tip
 
 

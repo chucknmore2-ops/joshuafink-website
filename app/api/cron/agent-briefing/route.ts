@@ -46,6 +46,8 @@ export const runtime = 'nodejs'
 
 const TO_EMAIL = 'chucknmore2@gmail.com'
 const CLICKUP_LIST_ID = '901415978281' // JFG agent-briefing list (workspace 90141200625)
+// Website / contact / cash-offer leads do NOT use this list. /api/contact
+// keeps ClickUp off unless CLICKUP_LEADS_ENABLED=true.
 
 const AGENTS = [
   {

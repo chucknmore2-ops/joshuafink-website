@@ -91,7 +91,7 @@ routes — but the following features require them:
 | Feature | Env vars |
 | --- | --- |
 | Google Analytics | `NEXT_PUBLIC_GA_ID` |
-| Lead capture (`/api/contact`) — ClickUp + email + Google Sheet + Pushover | `RESEND_API_KEY` (preferred) or `SENDGRID_API_KEY` (legacy), `EMAIL_FROM`, `CLICKUP_API_TOKEN`, `CLICKUP_LEADS_LIST_ID` (**required in production** — a dedicated Leads list, **not** the research Tasks board `901415978281`; the code default is that board for local fallback only), `GOOGLE_SHEET_WEBHOOK_URL`, `PUSHOVER_TOKEN`, `PUSHOVER_USER`, `N8N_WEBHOOK_BASE`, `CASH_OFFER_WEBHOOK_BASE`, `BUYER_LEAD_WEBHOOK_BASE` (localhost defaults are skipped on the contact route so they cannot hang Vercel) |
+| Lead capture (`/api/contact`) — email + Google Sheet + Pushover | `RESEND_API_KEY` (preferred) or `SENDGRID_API_KEY` (legacy), `EMAIL_FROM`, `GOOGLE_SHEET_WEBHOOK_URL`, `PUSHOVER_TOKEN`, `PUSHOVER_USER`, `N8N_WEBHOOK_BASE`, `CASH_OFFER_WEBHOOK_BASE`, `BUYER_LEAD_WEBHOOK_BASE` (localhost defaults are skipped on the contact route so they cannot hang Vercel). ClickUp is **not** a lead destination (default off). To opt in: `CLICKUP_LEADS_ENABLED=true` plus `CLICKUP_API_TOKEN` and `CLICKUP_LEADS_LIST_ID` (a dedicated Leads list — never the research/briefing board `901415978281`). `CLICKUP_API_TOKEN` is still used by the weekly agent-briefing cron. |
 | Cron routes (IndexNow, GBP, LinkedIn, Instagram) | `CRON_SECRET` |
 | Google Business Profile auto-poster | `GBP_CLIENT_ID`, `GBP_CLIENT_SECRET`, `GBP_REFRESH_TOKEN`, `GBP_ACCOUNT_ID`, `GBP_LOCATION_ID` |
 | LinkedIn auto-poster | `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET`, `LINKEDIN_REDIRECT_URI`, `LINKEDIN_ACCESS_TOKEN`, `LINKEDIN_AUTHOR_URN` |

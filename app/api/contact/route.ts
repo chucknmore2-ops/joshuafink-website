@@ -7,13 +7,11 @@ import { sendEmail, activeEmailProvider, fetchWithTimeout } from '@/lib/send-ema
 // sitting until the platform default.
 export const maxDuration = 30
 
-// ClickUp — one task per lead (replaced Slack after its account went
-// inactive). Same pk_... personal token the weekly agent-briefing cron uses.
-const CLICKUP_TOKEN = process.env.CLICKUP_API_TOKEN
-// Fallback ID is the JFG research / agent-briefing Tasks board (901415978281).
-// Production MUST set CLICKUP_LEADS_LIST_ID in Vercel to a dedicated Leads
-// list — do not dump website leads onto that research board.
-const CLICKUP_LIST_ID = process.env.CLICKUP_LEADS_LIST_ID || '901415978281'
+// ClickUp lead tasks are OFF by default. Josh does not want website /
+// cash-offer / sell leads in ClickUp (that board is for agent briefings).
+// Opt in only with an explicit CLICKUP_LEADS_ENABLED=true plus token and
+// CLICKUP_LEADS_LIST_ID — never fall back to the research/briefing list
+// 901415978281. The weekly agent-briefing cron has its own ClickUp helper.
 const TO_EMAIL = 'joshua@joshuafink.com'
 const N8N_BASE = process.env.N8N_WEBHOOK_BASE || 'http://localhost:5678/webhook'
 const CASH_OFFER_BASE = process.env.CASH_OFFER_WEBHOOK_BASE || 'http://localhost:5679/webhook'
@@ -51,7 +49,20 @@ type ChannelResult = {
   detail?: string
 }
 
-const skip = (channel: string): ChannelResult => ({ channel, configured: false, ok: false })
+const skip = (channel: string, detail?: string): ChannelResult => ({
+  channel,
+  configured: false,
+  ok: false,
+  ...(detail ? { detail } : {}),
+})
+
+function clickupLeadsEnabled(): boolean {
+  return process.env.CLICKUP_LEADS_ENABLED === 'true'
+}
+
+function clickupLeadsConfigured(): boolean {
+  return clickupLeadsEnabled() && !!process.env.CLICKUP_API_TOKEN && !!process.env.CLICKUP_LEADS_LIST_ID
+}
 
 /**
  * Localhost / loopback webhook bases are for FlipIntel/n8n on a laptop.
@@ -69,11 +80,21 @@ function isLoopbackWebhookBase(base: string): boolean {
 }
 
 // ---------------------------------------------------------------------------
-// ClickUp notification — one task per lead
+// ClickUp notification — opt-in only (CLICKUP_LEADS_ENABLED=true)
 // ---------------------------------------------------------------------------
 
 async function sendClickUp(lead: Record<string, string>, testMode = false): Promise<ChannelResult> {
-  if (!CLICKUP_TOKEN) return skip('clickup')
+  // Default OFF — healthcheck treats configured:false as an expected no-op,
+  // not a failed channel.
+  if (!clickupLeadsEnabled()) {
+    return skip('clickup', 'disabled unless CLICKUP_LEADS_ENABLED=true')
+  }
+  const token = process.env.CLICKUP_API_TOKEN
+  const listId = process.env.CLICKUP_LEADS_LIST_ID
+  if (!token || !listId) {
+    console.log('ClickUp leads: skipping — CLICKUP_LEADS_ENABLED=true but CLICKUP_API_TOKEN or CLICKUP_LEADS_LIST_ID is unset')
+    return skip('clickup', 'CLICKUP_API_TOKEN or CLICKUP_LEADS_LIST_ID unset')
+  }
 
   const typeEmoji: Record<string, string> = {
     buy: '🏠', sell: '💰', both: '🔄', invest: '📈', rent: '🏢', other: '💬',
@@ -103,9 +124,9 @@ async function sendClickUp(lead: Record<string, string>, testMode = false): Prom
   try {
     // Like the agent-briefing route: markdown_content renders in the ClickUp
     // UI, plain description is the API-side fallback.
-    const res = await fetchWithTimeout(`https://api.clickup.com/api/v2/list/${CLICKUP_LIST_ID}/task`, {
+    const res = await fetchWithTimeout(`https://api.clickup.com/api/v2/list/${listId}/task`, {
       method: 'POST',
-      headers: { Authorization: CLICKUP_TOKEN, 'Content-Type': 'application/json' },
+      headers: { Authorization: token, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name: `${flag}${emoji} New Lead — ${lead.name || 'Unknown'}${suburb}`,
         markdown_content: description,
@@ -132,7 +153,7 @@ async function sendClickUp(lead: Record<string, string>, testMode = false): Prom
     if (testMode) {
       await fetchWithTimeout(`https://api.clickup.com/api/v2/task/${data.id}`, {
         method: 'DELETE',
-        headers: { Authorization: CLICKUP_TOKEN },
+        headers: { Authorization: token },
       }).catch(() => undefined)
     }
     return { channel: 'clickup', configured: true, ok: true }
@@ -491,9 +512,10 @@ function exceedsFloodLimit(ip: string, now: number = Date.now()): boolean {
 }
 
 export async function POST(req: NextRequest) {
-  // A lead reaches Joshua through ClickUp, the lead email, Pushover, or the
-  // Google Sheet log. As long as at least ONE of those is configured we can
-  // accept the submission; only fail closed when nothing is wired up.
+  // A lead reaches Joshua through the lead email, Pushover, or the Google
+  // Sheet log (ClickUp only if CLICKUP_LEADS_ENABLED=true). As long as at
+  // least ONE of those is configured we can accept the submission; only fail
+  // closed when nothing is wired up.
 
   const ip = clientIp(req)
   if (exceedsFloodLimit(ip)) {
@@ -505,7 +527,7 @@ export async function POST(req: NextRequest) {
   }
 
   const anyChannelConfigured =
-    !!CLICKUP_TOKEN || activeEmailProvider() !== 'none' || (!!PUSHOVER_TOKEN && !!PUSHOVER_USER) || !!GOOGLE_SHEET_WEBHOOK_URL
+    clickupLeadsConfigured() || activeEmailProvider() !== 'none' || (!!PUSHOVER_TOKEN && !!PUSHOVER_USER) || !!GOOGLE_SHEET_WEBHOOK_URL
   if (!anyChannelConfigured) {
     console.error('Contact API misconfigured: no lead-delivery channel is set')
     return NextResponse.json(
@@ -583,7 +605,7 @@ export async function POST(req: NextRequest) {
     // Each of these resolves to a ChannelResult and never throws, so we can
     // inspect exactly what got through and react when nothing did.
     const [clickupRes, joshuaEmailRes, sheetRes, pushoverRes, autoReplyRes] = await Promise.all([
-      sendClickUp(lead, isHealthcheck), // test-lead task is deleted after it proves delivery
+      sendClickUp(lead, isHealthcheck), // no-op unless CLICKUP_LEADS_ENABLED=true; test-lead task is deleted after it proves delivery
       forwardToJoshua(lead, isHealthcheck), // still sends, but with an "ignore" subject, never "New Lead"
       pushToSheet(lead, undefined, isHealthcheck), // tagged → sheet's "System" tab, not the CRM tab
       sendPushover(lead, isHealthcheck), // silent — a test lead must not buzz the phone
