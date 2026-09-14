@@ -5,6 +5,7 @@ import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated, suburbs } from '@
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import ReviewStrip from '@/components/ReviewStrip'
+import TrustBadges from '@/components/TrustBadges'
 import SoldPropertyExperience from '@/components/SoldPropertyExperience'
 import { soldListingsForSuburb } from '@/lib/sold-proof'
 
@@ -254,6 +255,11 @@ export default async function MarketSuburbPage({ params }: Props) {
               >
                 Buy a Home in {s.name} →
               </Link>
+            </div>
+
+            {/* Trust signals — credentials and rating in view before the stats */}
+            <div className="mt-8">
+              <TrustBadges variant="dark" />
             </div>
           </div>
         </div>
