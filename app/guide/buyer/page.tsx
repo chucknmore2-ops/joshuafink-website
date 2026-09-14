@@ -556,6 +556,13 @@ export default function BuyerGuidePage() {
             ))}
           </div>
 
+          <p className="text-[#444] text-base leading-relaxed mb-4">
+            Selling your current home at the same time?{' '}
+            <Link href="/guide/seller" className="text-black underline hover:no-underline">
+              Read the companion Seller&apos;s Guide
+            </Link>.
+          </p>
+
           <div className="mt-16 p-8 bg-[#F9F9F9] border-l-4" style={{ borderColor: '#C41E3A' }}>
             <p className="text-xs font-semibold tracking-widest text-[#C41E3A] uppercase mb-3">
               Next Step
