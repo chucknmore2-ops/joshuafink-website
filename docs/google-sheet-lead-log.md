@@ -13,8 +13,9 @@ The daily healthcheck's SYSTEM TEST lead is routed the same way: it arrives
 tagged `system_test` and files into an auto-created **System** tab, so the CRM
 tab only ever holds real leads.
 
-This replaced the retired Monday.com integration. Leads still also arrive via
-Slack (#joshpersonal) and email — the Sheet is the durable, trackable record.
+This replaced the retired Monday.com integration. Leads arrive via email,
+Pushover, and this Sheet — ClickUp is not a lead destination unless
+`CLICKUP_LEADS_ENABLED=true` is set. The Sheet is the durable, trackable record.
 
 ## One-time setup (~5 min)
 

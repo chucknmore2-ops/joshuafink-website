@@ -106,7 +106,7 @@ export default function SellForm() {
   const labelClass = "block text-xs font-semibold text-black tracking-widest uppercase mb-2"
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form method="POST" action="/api/contact" onSubmit={handleSubmit} className="space-y-5">
       <input type="hidden" name="lead_type" value="seller" />
       <input type="hidden" name="subject" value="sell" />
       {/* Honeypot — invisible to humans, bots auto-fill it. */}

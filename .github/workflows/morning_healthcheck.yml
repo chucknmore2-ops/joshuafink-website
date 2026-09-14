@@ -21,8 +21,9 @@ name: Morning healthcheck
 #                         a repo secret — the monthly-market-update and
 #                         indexnow workflows use it). Unlocks the /api/contact
 #                         test mode so the daily SYSTEM TEST lead can verify
-#                         all four delivery channels. Without it that check
-#                         reports a GAP instead of alerting.
+#                         email / sheet / Pushover (ClickUp lead tasks are off
+#                         unless CLICKUP_LEADS_ENABLED=true). Without it that
+#                         check reports a GAP instead of alerting.
 #
 # Optional repository variables (Settings → Secrets and variables → Actions
 # → Variables tab):
