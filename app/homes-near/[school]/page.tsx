@@ -11,7 +11,7 @@ import {
   schoolHeroLine,
   schoolHeroKicker,
 } from '@/lib/schools'
-import { citywideStatsCitation } from '@/lib/suburbs'
+import { citywideStatsCitation, suburbStatsAsOf, marketStatsLastUpdated } from '@/lib/suburbs'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
 
@@ -86,6 +86,31 @@ export default async function HomesNearSchoolPage({ params }: Props) {
     })),
   }
 
+  // Freshness signal for crawlers/AI answer engines — /homes-near/[school] had
+  // no page-level dateModified, unlike /buy/[suburb], /market/[suburb], and
+  // /cash-offer/[city], which all key off the same suburb market-data date.
+  const webPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: schoolPageTitle(s, suburb),
+    url: `${SITE}/homes-near/${slug}`,
+    dateModified: suburb ? suburbStatsAsOf(suburb) : marketStatsLastUpdated,
+    inLanguage: 'en-US',
+    author: {
+      '@type': 'Person',
+      name: 'Joshua Fink',
+      url: `${SITE}/about`,
+      jobTitle: 'Affiliate Broker',
+      worksFor: { '@type': 'Organization', name: 'Compass Real Estate' },
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Joshua Fink Group',
+      url: SITE,
+      logo: { '@type': 'ImageObject', url: `${SITE}/compass-logo-black.png` },
+    },
+  }
+
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -106,6 +131,7 @@ export default async function HomesNearSchoolPage({ params }: Props) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schoolSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
 
       <div className="bg-white">
         {/* Hero */}
