@@ -65,3 +65,31 @@ export function pickPromotable(
   const idx = (((epochDay + channelOffset) % pool.length) + pool.length) % pool.length
   return pool[idx]
 }
+
+/**
+ * Same rotation, for channels that post once a week (Instagram Wed, LinkedIn Thu).
+ *
+ * The daily rotator is wrong for them. A weekly job's day number advances by 7
+ * between runs, so when the pool length divides 7 — and today there are exactly
+ * 7 promotable homes — `(epochDay + offset) % 7` is identical every week and the
+ * channel features the same house forever (which is how one Compass image kept
+ * Instagram stuck in September).
+ *
+ * Rotating on the week instead advances exactly one home per run. Weeks start
+ * Monday: epoch day 0 was a Thursday, so a naive `epochDay / 7` would split Wed
+ * and Thu into different weeks and hand Instagram's Wednesday home straight to
+ * LinkedIn the next day. Offset by 3 so the pair share a week and the channel
+ * offset keeps them on different homes.
+ */
+export function pickWeeklyPromotable(
+  channelOffset = 0,
+  now: Date = new Date(),
+  source: readonly Listing[] = listings,
+): Listing | null {
+  const pool = promotableListings(source)
+  if (pool.length === 0) return null
+  const epochDay = Math.floor(now.getTime() / 86_400_000)
+  const week = Math.floor((epochDay + 3) / 7)
+  const idx = (((week + channelOffset) % pool.length) + pool.length) % pool.length
+  return pool[idx]
+}
