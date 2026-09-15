@@ -10,8 +10,9 @@ export const runtime = 'nodejs'
 //
 // Fires every Monday at 7am CT (12:00 UTC). Pulls last 7 days of autoposter
 // activity from /admin Postgres, formats a markdown briefing covering all
-// five JFG agents (see marketing/agent-prompts/), emails it to Chuck via
-// SendGrid, and creates a ClickUp task in the JFG list for tracking.
+// five JFG agents (see marketing/agent-prompts/), and emails it to Chuck via
+// Resend (lib/send-email). It also used to file a ClickUp task; ClickUp is
+// retired, so email is the only delivery.
 //
 // Phase 1 (reminder mode): when ANTHROPIC_API_KEY is NOT set, Chuck gets
 // the prefilled prompt bodies and runs them through a Claude Project /
@@ -26,28 +27,16 @@ export const runtime = 'nodejs'
 //
 // Required env vars (already in Vercel from the contact-form integration):
 //   CRON_SECRET            — bearer auth on /api/cron/*
-//   RESEND_API_KEY         — email delivery (preferred)
-//   SENDGRID_API_KEY       — email delivery (legacy fallback; out of credits)
+//   RESEND_API_KEY         — email delivery
 //   DATABASE_URL           — Postgres for autoposter activity (optional)
-//   CLICKUP_API_TOKEN      — ClickUp task creation (optional, gracefully degrades)
 //
 // Optional env var for Phase 2 (autopilot):
 //   ANTHROPIC_API_KEY      — sk-ant-... key from console.anthropic.com.
 //                            When present, route auto-runs Agent 02
 //                            against the activity data and emails the
 //                            AI report instead of the raw prompt.
-//
-// Optional env var for ClickUp delivery:
-//   CLICKUP_API_TOKEN      — pk_... personal token from ClickUp.
-//                            Settings → Apps → API Token → Generate.
-//                            When set, route also creates a task in the
-//                            JFG ClickUp list each week so Chuck can mark
-//                            done / comment / discuss.
 
 const TO_EMAIL = 'chucknmore2@gmail.com'
-const CLICKUP_LIST_ID = '901415978281' // JFG agent-briefing list (workspace 90141200625)
-// Website / contact / cash-offer leads do NOT use this list. /api/contact
-// keeps ClickUp off unless CLICKUP_LEADS_ENABLED=true.
 
 const AGENTS = [
   {
@@ -266,10 +255,8 @@ function buildBriefing(
   return { subject, markdown: md, html: wrappedHtml }
 }
 
-// Local name kept so callers are untouched; delivery now goes through
-// lib/send-email, which prefers Resend and falls back to SendGrid. This
-// briefing has been silently undelivered since the SendGrid account ran out of
-// credits — it will start arriving again the moment RESEND_API_KEY is set.
+// Local name kept so callers are untouched; delivery goes through
+// lib/send-email (Resend).
 async function sendEmail(subject: string, html: string, plain: string): Promise<boolean> {
   void plain // the HTML part is what actually gets read; Resend takes one body
   const sent = await deliverEmail({
@@ -355,55 +342,6 @@ async function runAgent02Autopilot(activitySection: string): Promise<AnthropicRe
   }
 }
 
-// ---------------------------------------------------------------------------
-// ClickUp — create a task per weekly briefing so Chuck can mark done / discuss
-// ---------------------------------------------------------------------------
-
-async function createClickUpTask(
-  title: string,
-  markdownDescription: string,
-): Promise<{ ok: boolean; taskId?: string; url?: string; error?: string }> {
-  const token = process.env.CLICKUP_API_TOKEN
-  if (!token) return { ok: false, error: 'no_token' }
-
-  // ClickUp's task description supports markdown when sent via
-  // `markdown_content`. Plain `description` strips formatting on the
-  // API side. Sending both keeps email/Slack in sync as plaintext while
-  // the ClickUp UI renders markdown.
-  try {
-    const res = await fetch(
-      `https://api.clickup.com/api/v2/list/${CLICKUP_LIST_ID}/task`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: token,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: title,
-          markdown_content: markdownDescription,
-          description: markdownDescription,
-          tags: ['agent-briefing', 'autopilot'],
-          notify_all: false,
-        }),
-      },
-    )
-    if (!res.ok) {
-      const snippet = await res
-        .text()
-        .then((t) => t.slice(0, 200).replace(/[^\w\s.:,\-]/g, ''))
-        .catch(() => '')
-      console.error('[agent-briefing] clickup error', res.status, snippet)
-      return { ok: false, error: `upstream_${res.status}` }
-    }
-    const data = (await res.json()) as { id?: string; url?: string }
-    return { ok: true, taskId: data.id, url: data.url }
-  } catch (err) {
-    console.error('[agent-briefing] clickup network', err)
-    return { ok: false, error: 'network' }
-  }
-}
-
 export async function GET(request: Request) {
   const expected = process.env.CRON_SECRET
   if (!expected) {
@@ -439,14 +377,10 @@ export async function GET(request: Request) {
     agent02Report,
   })
   const emailed = await sendEmail(subject, html, markdown)
-  const clickup = await createClickUpTask(subject, markdown)
 
   return NextResponse.json({
     sent: true,
     emailed,
-    clickup: clickup.ok
-      ? { ok: true, taskId: clickup.taskId, url: clickup.url }
-      : { ok: false, error: clickup.error },
     autopilot: agent02Report
       ? 'agent_02_ran'
       : autopilotError

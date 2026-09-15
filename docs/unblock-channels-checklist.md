@@ -25,11 +25,10 @@ The GBP autoposter already runs (Tuesdays) — but a profile only ranks in the m
 
 ### 3. 🔑💳 Turn on the monthly email newsletter ⏱️ 2–3 hrs setup
 Email is the highest-ROI channel (3–8% annual referral rate from past clients) and it's documented but **never activated**.
-- 💳 Create **HubSpot Starter (~$20/mo)** — free tier can't do automation. Add a Zapier account.
-- 🔑 Verify sending domain (SPF/DKIM) for `joshua@joshuafink.com`.
-- Wire it up per [`docs/hubspot-zapier-setup.md`](./hubspot-zapier-setup.md): form → Zapier → HubSpot contact → workflow.
+- 🔑 Pick the sending tool. **Resend is already live** and verified for `send.joshuafink.com` (free to 3,000/mo), so it can send with no new subscription; HubSpot Starter (~$20/mo) is the paid option if you want a visual editor + CRM. (The old HubSpot + Zapier + Formspree plan is retired — the site's forms post to `/api/contact`, not Formspree.)
+- Don't add a second sender to the root `joshuafink.com` SPF record: it belongs to Microsoft 365, which is why Resend sends from the `send.` subdomain.
 - Content is ready: send **Issue #1** from [`marketing/email-newsletter-monthly.md`](../marketing/email-newsletter-monthly.md) (fill the `[PLACEHOLDER]` specifics first).
-- The existing 6-email **seller drip** lives in [`docs/seller-email-sequence.md`](./seller-email-sequence.md) — load that into HubSpot too.
+- The existing 6-email **seller drip** lives in [`docs/seller-email-sequence.md`](./seller-email-sequence.md) — not yet built; the no-cost path is Resend + the Railway Postgres + a scheduled GitHub Action.
 
 ---
 
