@@ -442,8 +442,8 @@ export default async function ListingDetailPage({ params }: Props) {
               >
                 <input type="hidden" name="lead_type" value="buyer" />
                 <input type="hidden" name="source" value={sold ? 'listing-detail-sold' : 'listing-detail'} />
-                {/* property_address is the field the contact webhook already
-                    surfaces (Slack "Property" field + Monday item name). */}
+                {/* property_address tells Joshua which home the lead is about —
+                    it lands in the lead email and the sheet's property_address column. */}
                 <input type="hidden" name="property_address" value={`${listing.address}, ${city}`} />
                 {suburbName && <input type="hidden" name="suburb" value={suburbName} />}
 

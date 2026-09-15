@@ -48,7 +48,7 @@ COVERED (per `lib/admin-schedule.ts`):
 
 NOT COVERED (documented gaps — listed in every alert email):
   /api/cron/indexnow            no DB write; signal lives in Vercel logs
-  /api/cron/agent-briefing      sends email + ClickUp task, no DB write
+  /api/cron/agent-briefing      sends email (Resend), no DB write
   Local content engine          runs on Joshua's Mac via Ollama; out of
                                 GitHub Actions reach
   Holidays                      v1 is holiday-naive — a US federal
@@ -302,7 +302,7 @@ DOCUMENTED_GAPS: tuple[tuple[str, str], ...] = (
     ),
     (
         "/api/cron/agent-briefing (Mon)",
-        "Sends SendGrid email + creates a ClickUp task. No DB write. Signal "
+        "Emails the briefing via Resend. No DB write. Signal "
         "is the email landing in Chuck's inbox.",
     ),
     (

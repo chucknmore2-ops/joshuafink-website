@@ -30,7 +30,6 @@ delete process.env.CLICKUP_LEADS_ENABLED
 delete process.env.PUSHOVER_TOKEN
 delete process.env.PUSHOVER_USER
 delete process.env.RESEND_API_KEY
-delete process.env.SENDGRID_API_KEY
 
 const realFetch = globalThis.fetch
 after(() => {

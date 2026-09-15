@@ -5,7 +5,7 @@ appended as a row to a Google Sheet tab named **CRM**. No paid CRM, no OAuth —
 the site POSTs each lead to a Google Apps Script Web App bound to the sheet.
 
 Submissions the honeypot blocks are logged too, but to a separate **Blocked**
-tab (auto-created, with the block reason) — sheet-only, no Slack/Pushover/email,
+tab (auto-created, with the block reason) — sheet-only, no Pushover/email,
 so bots stay silent. The honeypot can misfire on a real person whose browser
 autofills the hidden field, so skim the Blocked tab weekly for anything human.
 
@@ -128,7 +128,7 @@ property_address · situation · timeline · body`
 
 The **Blocked** tab has the same columns except `status` is replaced by
 `blocked_reason` (e.g. `honeypot`). Nothing else fires for these rows — no
-Slack, Pushover, or email — so the tab is skim-at-your-leisure.
+Pushover or email — so the tab is skim-at-your-leisure.
 
 The **System** tab has the same columns as CRM and holds one row per weekday
 from the morning healthcheck's test lead — proof the sheet channel is alive,

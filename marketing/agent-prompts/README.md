@@ -71,12 +71,12 @@ manually via Claude Project / custom GPT.
 
 ## Delivery destinations
 
-The weekly cron writes to all of these in parallel — each gracefully
-degrades if its credential is missing:
+The weekly cron emails the briefing; it skips delivery if the credential is
+missing:
 
 | Channel | Env var | What lands there |
 |---|---|---|
-| Email | `SENDGRID_API_KEY` | Full markdown briefing to `chucknmore2@gmail.com` |
-| ClickUp | `CLICKUP_API_TOKEN` | Task in JFG list (ID `901415978281`, workspace `90141200625`) — title and full markdown body, tagged `agent-briefing` + `autopilot` |
+| Email | `RESEND_API_KEY` | Full markdown briefing to `chucknmore2@gmail.com` |
 
-**To get a ClickUp API token:** ClickUp → top-left avatar → **Settings** → **Apps** → click **Generate** under API Token. Paste into Vercel as `CLICKUP_API_TOKEN` (check all 3 environments) → redeploy.
+ClickUp task delivery was removed on 2026-09-15 (ClickUp is retired), as was
+the SendGrid email fallback.

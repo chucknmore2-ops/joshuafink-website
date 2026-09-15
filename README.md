@@ -91,10 +91,10 @@ routes — but the following features require them:
 | Feature | Env vars |
 | --- | --- |
 | Google Analytics | `NEXT_PUBLIC_GA_ID` |
-| Lead capture (`/api/contact`) — email + Google Sheet + Pushover | `RESEND_API_KEY` (preferred) or `SENDGRID_API_KEY` (legacy), `EMAIL_FROM`, `GOOGLE_SHEET_WEBHOOK_URL`, `PUSHOVER_TOKEN`, `PUSHOVER_USER`, `N8N_WEBHOOK_BASE`, `CASH_OFFER_WEBHOOK_BASE`, `BUYER_LEAD_WEBHOOK_BASE` (localhost defaults are skipped on the contact route so they cannot hang Vercel). ClickUp is **not** a lead destination (default off). To opt in: `CLICKUP_LEADS_ENABLED=true` plus `CLICKUP_API_TOKEN` and `CLICKUP_LEADS_LIST_ID` (a dedicated Leads list — never the research/briefing board `901415978281`). `CLICKUP_API_TOKEN` is still used by the weekly agent-briefing cron. |
+| Lead capture (`/api/contact`) — email + Google Sheet + Pushover | `RESEND_API_KEY`, `EMAIL_FROM`, `GOOGLE_SHEET_WEBHOOK_URL`, `PUSHOVER_TOKEN`, `PUSHOVER_USER`, `N8N_WEBHOOK_BASE`, `CASH_OFFER_WEBHOOK_BASE`, `BUYER_LEAD_WEBHOOK_BASE` (localhost defaults are skipped on the contact route so they cannot hang Vercel). ClickUp is **not** a lead destination (default off). To opt in: `CLICKUP_LEADS_ENABLED=true` plus `CLICKUP_API_TOKEN` and `CLICKUP_LEADS_LIST_ID` (a dedicated Leads list — never the research/briefing board `901415978281`). ClickUp is retired as of 2026-09-15, so leave it off. |
 | Cron routes (IndexNow, GBP, LinkedIn, Instagram) | `CRON_SECRET` |
 | Google Business Profile auto-poster | `GBP_CLIENT_ID`, `GBP_CLIENT_SECRET`, `GBP_REFRESH_TOKEN`, `GBP_ACCOUNT_ID`, `GBP_LOCATION_ID` |
-| LinkedIn auto-poster | `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET`, `LINKEDIN_REDIRECT_URI`, `LINKEDIN_ACCESS_TOKEN`, `LINKEDIN_AUTHOR_URN` |
+| LinkedIn auto-poster | `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET`, `LINKEDIN_REDIRECT_URI`, `LINKEDIN_ACCESS_TOKEN`, `LINKEDIN_AUTHOR_URN`, `LINKEDIN_TOKEN_EXPIRES_AT_MS` (all three token values are printed by `/api/linkedin/callback`) |
 | Instagram auto-poster | `IG_BUSINESS_ACCOUNT_ID`, `IG_ACCESS_TOKEN` |
 | Morning healthcheck (`scripts/morning_healthcheck.py`) | `DATABASE_URL` |
 | Content engine (Phase 2A+) | `ANTHROPIC_API_KEY` |
@@ -170,29 +170,12 @@ The blog renderer supports:
 
 ## Updating Listings
 
-All listings are in `lib/listings.ts`. To add, remove, or update a listing:
+Don't hand-edit `lib/listings.ts` or `lib/sold-listings.ts` — both are generated. The **Sync Compass Listings** workflow (`.github/workflows/sync-listings.yml`) scrapes Joshua's Compass profile nightly (08:00 UTC), regenerates both files, and opens a PR that merges itself once the `build` check passes. A manual edit is overwritten by the next sync.
 
-1. Open `lib/listings.ts`
-2. Edit the `listings` array
-
-```ts
-{
-  address: "123 Main Street",
-  city: "Nashville, TN 37201",
-  price: 450000,
-  beds: 3,
-  baths: 2,
-  sqft: 1800,
-  acres: 0.25,           // optional
-  status: "Active",      // "Active" | "Active Under Contract" | "Open House 3/22"
-  note: "Land only",     // optional — replaces beds/baths display
-  compassUrl: "https://www.compass.com/homedetails/...",
-}
-```
-
-**Featured listings** on the home page are automatically the first 3 entries in the array. Reorder the array to change which listings appear featured.
-
-3. Run `npm run build` and deploy
+- **Refresh now:** GitHub → Actions → Sync Compass Listings → Run workflow.
+- **A listing is wrong or missing:** fix it on Compass; the next sync picks it up.
+- **Featured order** (home page, hero) follows the synced array, i.e. Compass's order.
+- The sync opens its PR with the `SYNC_PAT` secret; the workflow's `SYNC_PAT expiry` job turns the run red two weeks before that token expires.
 
 ---
 

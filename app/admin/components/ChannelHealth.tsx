@@ -6,26 +6,45 @@ interface ChannelStatus {
   warningDays?: number;
 }
 
-function linkedinTokenWarning(): { detail: string; warningDays?: number } {
-  // LinkedIn tokens expire ~60 days after issue. Last refresh recorded
-  // 2026-03-21, expires ~2026-05-20. Surface a warning at <14 days.
-  const expiry = new Date("2026-05-20T00:00:00Z");
-  const daysLeft = Math.floor((expiry.getTime() - Date.now()) / 86_400_000);
+// Statuses are derived from the same env vars the crons read, so this card
+// can't drift the way the hard-coded version did — it showed Google Business
+// Profile and Instagram as "pending" months after both went live, and counted
+// LinkedIn down to an expiry date from May.
+
+function linkedinStatus(): Pick<ChannelStatus, "configured" | "detail" | "warningDays"> {
+  if (!process.env.LINKEDIN_ACCESS_TOKEN) {
+    return { configured: false, detail: "LINKEDIN_ACCESS_TOKEN not set — authorize at /api/linkedin/auth" };
+  }
+  const expiresAt = Number(process.env.LINKEDIN_TOKEN_EXPIRES_AT_MS ?? 0);
+  if (!expiresAt) {
+    // Unknown is treated as a warning: the token lasts ~60 days and nothing
+    // can say how many of them are left.
+    return {
+      configured: true,
+      detail: "Expiry unknown — re-auth at /api/linkedin/auth and save LINKEDIN_TOKEN_EXPIRES_AT_MS",
+      warningDays: 0,
+    };
+  }
+  const daysLeft = Math.floor((expiresAt - Date.now()) / 86_400_000);
   if (daysLeft < 0)
     return {
       detail: `Token expired ${Math.abs(daysLeft)}d ago — re-auth at /api/linkedin/auth`,
+      configured: true,
       warningDays: daysLeft,
     };
   if (daysLeft <= 14)
     return {
       detail: `Token expires in ${daysLeft}d — re-auth at /api/linkedin/auth`,
+      configured: true,
       warningDays: daysLeft,
     };
-  return { detail: `Token healthy (${daysLeft}d left)` };
+  return { configured: true, detail: `Token healthy (${daysLeft}d left) — posts Thursdays` };
 }
 
 export default function ChannelHealth() {
-  const li = linkedinTokenWarning();
+  const li = linkedinStatus();
+  const gbpReady = Boolean(process.env.GBP_REFRESH_TOKEN && process.env.GBP_LOCATION_ID);
+  const igReady = Boolean(process.env.IG_ACCESS_TOKEN && process.env.IG_BUSINESS_ACCOUNT_ID);
 
   const channels: ChannelStatus[] = [
     {
@@ -37,27 +56,25 @@ export default function ChannelHealth() {
     {
       channel: "LinkedIn",
       emoji: "💼",
-      configured: true,
-      detail: li.detail,
-      warningDays: li.warningDays,
+      ...li,
     },
     {
       channel: "Google Business Profile",
       emoji: "🟦",
-      configured: false,
-      detail: "Awaiting Google Cloud quota increase + GBP_* env vars",
+      configured: gbpReady,
+      detail: gbpReady ? "Posts Tuesdays" : "GBP_REFRESH_TOKEN / GBP_LOCATION_ID not set",
     },
     {
       channel: "Instagram",
       emoji: "📷",
-      configured: false,
-      detail: "Cron live (Wed 9am CT) — awaiting IG_BUSINESS_ACCOUNT_ID + IG_ACCESS_TOKEN env vars",
+      configured: igReady,
+      detail: igReady ? "Posts Wednesdays" : "IG_BUSINESS_ACCOUNT_ID / IG_ACCESS_TOKEN not set",
     },
     {
       channel: "YouTube",
       emoji: "▶️",
       configured: false,
-      detail: "Walkthrough pipeline not built yet (Phase 4)",
+      detail: "Walkthrough videos are generated locally; the upload step isn't built yet",
     },
   ];
 

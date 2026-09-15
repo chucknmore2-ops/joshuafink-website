@@ -233,7 +233,6 @@ async function sendAutoReply(lead: Record<string, string>): Promise<ChannelResul
 
   const sent = await sendEmail({
     to: lead.email,
-    toName: lead.name,
     fromName: 'Joshua Fink',
     replyTo: { email: TO_EMAIL, name: 'Joshua Fink' },
     subject: `Got your message, ${firstName} — Joshua Fink Group`,
@@ -260,7 +259,6 @@ async function forwardToJoshua(lead: Record<string, string>, testMode = false): 
 
   const sent = await sendEmail({
     to: TO_EMAIL,
-    toName: 'Joshua Fink',
     fromName: 'joshuafink.com Lead',
     ...(lead.email ? { replyTo: { email: lead.email, name: lead.name } } : {}),
     // The daily test email still sends — the provider's 200 is the delivery
