@@ -1456,7 +1456,10 @@ def _remediation_for(result: CheckResult) -> Optional[str]:
             "Open the failing run linked in the detail above → read the red "
             "step, fix, then Actions tab → that workflow → Re-run. A red "
             "'Sync Compass Listings' means Compass updates are NOT reaching "
-            "the site even though the scrape itself may have worked."
+            "the site even though the scrape itself may have worked. If the "
+            "red job is 'SYNC_PAT expiry', the sync itself is fine — "
+            "regenerate the token at github.com/settings/personal-access-tokens "
+            "and run `gh secret set SYNC_PAT`."
         )
     if "postgres reachable" in name or "postgres" == name:
         return (
