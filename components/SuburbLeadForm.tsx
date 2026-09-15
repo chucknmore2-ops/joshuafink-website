@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, FormEvent, ReactNode } from 'react'
 import { captureAttribution, getAttribution } from '@/lib/attribution'
+import { MISSING_CONTACT_MESSAGE, missingContact, trackLeadFormError } from '@/lib/lead-form'
 
 type Props = {
   children: ReactNode
@@ -36,14 +37,23 @@ export default function SuburbLeadForm({ children, successTitle, successMessage,
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (state === 'submitting') return
-    setState('submitting')
-    setErrorMsg('')
 
     const form = e.currentTarget
     const data: Record<string, FormDataEntryValue | string> = {
       ...Object.fromEntries(new FormData(form).entries()),
       ...getAttribution(),
     }
+    const formLabel = (data.source as string) || (data.suburb as string) || 'suburb_lead_form'
+
+    if (missingContact(form)) {
+      setErrorMsg(MISSING_CONTACT_MESSAGE)
+      setState('error')
+      trackLeadFormError(formLabel, 'missing_contact')
+      return
+    }
+
+    setState('submitting')
+    setErrorMsg('')
 
     try {
       const res = await fetch('/api/contact', {
@@ -59,7 +69,7 @@ export default function SuburbLeadForm({ children, successTitle, successMessage,
         if (typeof window !== 'undefined' && (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag) {
           ;(window as unknown as { gtag: (...args: unknown[]) => void }).gtag('event', 'generate_lead', {
             event_category: 'lead_form',
-            event_label: (data.source as string) || (data.suburb as string) || 'suburb_lead_form',
+            event_label: formLabel,
             value: 1,
           })
         }
@@ -67,10 +77,12 @@ export default function SuburbLeadForm({ children, successTitle, successMessage,
         const json = await res.json().catch(() => ({}))
         setErrorMsg(json.error || 'Something went wrong. Please try again.')
         setState('error')
+        trackLeadFormError(formLabel, `http_${res.status}`)
       }
     } catch {
       setErrorMsg('Network error — please check your connection and try again.')
       setState('error')
+      trackLeadFormError(formLabel, 'network')
     }
   }
 

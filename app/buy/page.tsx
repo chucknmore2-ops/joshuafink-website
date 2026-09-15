@@ -208,16 +208,17 @@ export default function BuyHubPage() {
                       className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
                   </div>
                   <div>
-                    <label htmlFor="phone" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Phone *</label>
-                    <input type="tel" id="phone" name="phone" required placeholder="(615) 555-0123" autoComplete="tel"
+                    <label htmlFor="phone" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Phone</label>
+                    <input type="tel" id="phone" name="phone" placeholder="(615) 555-0123" autoComplete="tel"
                       className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Email Address *</label>
-                  <input type="email" id="email" name="email" required placeholder="you@example.com" autoComplete="email"
+                  <label htmlFor="email" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Email Address</label>
+                  <input type="email" id="email" name="email" placeholder="you@example.com" autoComplete="email"
                     className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                  <p className="mt-2 text-xs text-[#A0A0A0]">Phone or email — whichever you prefer.</p>
                 </div>
 
                 <div>

@@ -83,7 +83,10 @@ export function classifyLead(lead: Record<string, string>): LeadVerdict {
     }
   }
 
-  if (lead.source === 'cash-offer' && (lead.property_address || '').trim().length < 5) {
+  // The 14 /cash-offer/[city] pages submit as `cash-offer-<city>`, and they are
+  // the same form asking for the same address.
+  const isCashOffer = lead.source === 'cash-offer' || (lead.source || '').startsWith('cash-offer-')
+  if (isCashOffer && (lead.property_address || '').trim().length < 5) {
     return {
       kind: 'invalid',
       reason: 'address_too_short',
