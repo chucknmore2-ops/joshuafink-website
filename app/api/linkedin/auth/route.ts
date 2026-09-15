@@ -1,4 +1,9 @@
 import { NextResponse } from 'next/server'
+import {
+  LINKEDIN_STATE_COOKIE,
+  LINKEDIN_STATE_COOKIE_PATH,
+  LINKEDIN_STATE_MAX_AGE_S,
+} from '@/lib/linkedin-oauth'
 
 // Must be evaluated per request, not at build time.
 //
@@ -24,12 +29,18 @@ export async function GET() {
   authUrl.searchParams.set('state', state)
   authUrl.searchParams.set('scope', scope)
 
-  // KNOWN GAP, deliberately left: app/api/linkedin/callback/route.ts never
-  // reads `state` back, so this is not yet real CSRF protection — closing it
-  // properly means persisting the nonce (a signed, short-lived cookie) and
-  // rejecting a mismatch on return. That is a change to the live OAuth flow,
-  // and this route is the one Josh must use to re-authorise before the token
-  // expires 2026-08-25, so it is not something to rework days beforehand.
-  // Revisit once the token is renewed and there is no deadline attached.
-  return NextResponse.redirect(authUrl.toString())
+  const res = NextResponse.redirect(authUrl.toString())
+  // The callback only finishes a flow whose `state` matches this cookie, so a
+  // callback link carrying someone else's code is rejected instead of handing
+  // Josh a token for the wrong LinkedIn account to paste into Vercel.
+  // SameSite=Lax, not Strict: LinkedIn's redirect back is a cross-site
+  // top-level GET, and Strict would drop the cookie on exactly that request.
+  res.cookies.set(LINKEDIN_STATE_COOKIE, state, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'lax',
+    path: LINKEDIN_STATE_COOKIE_PATH,
+    maxAge: LINKEDIN_STATE_MAX_AGE_S,
+  })
+  return res
 }
