@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { blogPosts } from '@/lib/blog'
-import { pickPromotable } from '@/lib/promotable-listings'
+import { pickWeeklyPromotable } from '@/lib/promotable-listings'
 import { soldListings } from '@/lib/sold-listings'
 import { listingSlug } from '@/lib/listing-detail'
 import { reviews, reviewStats } from '@/lib/reviews'
@@ -104,11 +104,11 @@ function buildFromLatestBlog(excludeSlug?: string): PostPayload | null {
 }
 
 function buildFromListing(): PostPayload | null {
-  // Rotates daily and skips anything not positively Active — the old
-  // `.find()` returned the array head every run, and the head is currently
-  // "Active Under Contract", so this caption was announcing an unavailable
-  // home. See lib/promotable-listings.ts.
-  const l = pickPromotable(0)
+  // Rotates weekly (this cron runs Thursdays only) and skips anything not
+  // positively Active — the old `.find()` returned the array head every run,
+  // and the head was "Active Under Contract", so this caption announced an
+  // unavailable home. See lib/promotable-listings.ts.
+  const l = pickWeeklyPromotable(0)
   if (!l) return null
   // Locality only (strip ", TN 37027 | MLS #…") so the caption reads
   // "in Brentwood, TN", not "in Brentwood, TN 37027, TN".
