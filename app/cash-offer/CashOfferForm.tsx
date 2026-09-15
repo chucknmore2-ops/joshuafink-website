@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, FormEvent } from 'react'
 import { captureAttribution, getAttribution } from '@/lib/attribution'
+import { trackLeadFormError } from '@/lib/lead-form'
 import TrackedTelLink from '@/components/TrackedTelLink'
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error'
@@ -69,10 +70,12 @@ export default function CashOfferForm({ source = 'cash-offer', cityName }: CashO
         const json = await res.json().catch(() => ({}))
         setErrorMsg(json.error || 'Something went wrong. Please try again.')
         setState('error')
+        trackLeadFormError('cash_offer', `http_${res.status}`)
       }
     } catch {
       setErrorMsg('Network error — please try again.')
       setState('error')
+      trackLeadFormError('cash_offer', 'network')
     }
   }
 

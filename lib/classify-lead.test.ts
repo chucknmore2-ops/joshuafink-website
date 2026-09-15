@@ -127,6 +127,16 @@ test('the address rule only applies to cash-offer leads', () => {
   assert.equal(classifyLead(lead({ source: 'contact', property_address: '' })).kind, 'clean')
 })
 
+test('city cash-offer pages (source cash-offer-<city>) get the same address rule', () => {
+  const v = classifyLead(lead({ source: 'cash-offer-franklin-tn', property_address: '' }))
+  assert.equal(v.kind, 'invalid')
+  assert.equal(v.reason, 'address_too_short')
+  assert.equal(
+    classifyLead(lead({ source: 'cash-offer-franklin-tn', property_address: '123 Main St, Franklin' })).kind,
+    'clean',
+  )
+})
+
 // ---------------------------------------------------------------------------
 // Genuine junk is still caught — just tagged rather than vanished.
 // ---------------------------------------------------------------------------

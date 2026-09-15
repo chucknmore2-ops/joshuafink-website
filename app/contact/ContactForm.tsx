@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, FormEvent } from 'react'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import { captureAttribution, getAttribution } from '@/lib/attribution'
+import { MISSING_CONTACT_MESSAGE, missingContact, trackLeadFormError } from '@/lib/lead-form'
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error'
 
@@ -30,14 +31,22 @@ export default function ContactForm() {
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setState('submitting')
-    setErrorMsg('')
 
     const form = e.currentTarget
     const data: Record<string, FormDataEntryValue | string> = {
       ...Object.fromEntries(new FormData(form).entries()),
       ...getAttribution(),
     }
+
+    if (missingContact(form)) {
+      setErrorMsg(MISSING_CONTACT_MESSAGE)
+      setState('error')
+      trackLeadFormError((data.source as string) || 'contact_form', 'missing_contact')
+      return
+    }
+
+    setState('submitting')
+    setErrorMsg('')
 
     try {
       const res = await fetch('/api/contact', {
@@ -62,10 +71,12 @@ export default function ContactForm() {
         const json = await res.json().catch(() => ({}))
         setErrorMsg(json.error || 'Something went wrong. Please try again.')
         setState('error')
+        trackLeadFormError((data.source as string) || 'contact_form', `http_${res.status}`)
       }
     } catch {
       setErrorMsg('Network error — please check your connection and try again.')
       setState('error')
+      trackLeadFormError((data.source as string) || 'contact_form', 'network')
     }
   }
 

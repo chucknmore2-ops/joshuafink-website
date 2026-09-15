@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, FormEvent } from 'react'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import { captureAttribution, getAttribution } from '@/lib/attribution'
+import { MISSING_CONTACT_MESSAGE, missingContact, trackLeadFormError } from '@/lib/lead-form'
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error'
 
@@ -30,14 +31,23 @@ export default function SellForm() {
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setState('submitting')
-    setErrorMsg('')
 
     const form = e.currentTarget
     const data: Record<string, FormDataEntryValue | string> = {
       ...Object.fromEntries(new FormData(form).entries()),
       ...getAttribution(),
     }
+    const formLabel = (data.source as string) || (data.suburb as string) || 'sell_valuation_form'
+
+    if (missingContact(form)) {
+      setErrorMsg(MISSING_CONTACT_MESSAGE)
+      setState('error')
+      trackLeadFormError(formLabel, 'missing_contact')
+      return
+    }
+
+    setState('submitting')
+    setErrorMsg('')
 
     try {
       const res = await fetch('/api/contact', {
@@ -54,7 +64,7 @@ export default function SellForm() {
         if (typeof window !== 'undefined' && (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag) {
           ;(window as unknown as { gtag: (...args: unknown[]) => void }).gtag('event', 'generate_lead', {
             event_category: 'lead_form',
-            event_label: (data.source as string) || (data.suburb as string) || 'sell_valuation_form',
+            event_label: formLabel,
             value: 1,
           })
         }
@@ -62,10 +72,12 @@ export default function SellForm() {
         const json = await res.json().catch(() => ({}))
         setErrorMsg(json.error || 'Something went wrong. Please try again.')
         setState('error')
+        trackLeadFormError(formLabel, `http_${res.status}`)
       }
     } catch {
       setErrorMsg('Network error — please try again.')
       setState('error')
+      trackLeadFormError(formLabel, 'network')
     }
   }
 
@@ -116,23 +128,24 @@ export default function SellForm() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div>
           <label htmlFor="name" className={labelClass}>Full Name *</label>
-          <input type="text" id="name" name="name" required placeholder="Jane Smith" className={inputClass} />
+          <input type="text" id="name" name="name" required placeholder="Jane Smith" autoComplete="name" className={inputClass} />
         </div>
         <div>
-          <label htmlFor="phone" className={labelClass}>Phone *</label>
-          <input type="tel" id="phone" name="phone" required placeholder="615-555-0000" className={inputClass} />
+          <label htmlFor="phone" className={labelClass}>Phone</label>
+          <input type="tel" id="phone" name="phone" placeholder="615-555-0000" autoComplete="tel" className={inputClass} />
         </div>
       </div>
 
       <div>
-        <label htmlFor="email" className={labelClass}>Email Address *</label>
-        <input type="email" id="email" name="email" required placeholder="you@example.com" className={inputClass} />
+        <label htmlFor="email" className={labelClass}>Email Address</label>
+        <input type="email" id="email" name="email" placeholder="you@example.com" autoComplete="email" className={inputClass} />
+        <p className="mt-2 text-xs text-neutral-400">Phone or email — whichever you prefer.</p>
       </div>
 
       <div>
         <label htmlFor="property_address" className={labelClass}>Property Address *</label>
         <input
-          type="text" id="property_address" name="property_address" required
+          type="text" id="property_address" name="property_address" required autoComplete="street-address"
           placeholder="123 Main St, Nashville, TN 37201"
           className={inputClass}
         />
