@@ -1081,6 +1081,11 @@ def check_site_uptime(
     )
 
 
+# Channels a real lead depends on. ClickUp is intentionally absent: it is off
+# unless CLICKUP_LEADS_ENABLED=true, so "unconfigured" is its normal state.
+LEAD_CRITICAL_CHANNELS: frozenset[str] = frozenset({"joshua-email", "sheet", "pushover"})
+
+
 def check_lead_pipeline(
     url: str,
     secret: Optional[str],
@@ -1233,6 +1238,24 @@ def check_lead_pipeline(
     if unconfigured:
         # Named so a channel silently dropping out of the env is visible.
         detail += f" (not configured: {', '.join(unconfigured)})"
+
+    # A lead-critical channel going unconfigured is a silent env regression: no
+    # error anywhere, just fewer places the lead lands. Deleting RESEND_API_KEY
+    # or PUSHOVER_TOKEN would otherwise leave this check green. ClickUp is
+    # deliberately off (see /api/contact), so it never pages.
+    missing_critical = [c for c in unconfigured if c in LEAD_CRITICAL_CHANNELS]
+    if missing_critical:
+        return CheckResult(
+            name=name,
+            status=STATUS_ERROR,
+            detail=(
+                f"lead channel(s) NOT CONFIGURED: {', '.join(missing_critical)}. "
+                f"Real leads are no longer reaching them. "
+                f"Still delivering: {', '.join(str(c.get('channel')) for c in configured) or 'none'}."
+            ),
+            duration_ms=int((time.monotonic() - t0) * 1000),
+        )
+
     return CheckResult(
         name=name,
         status=STATUS_PASS,

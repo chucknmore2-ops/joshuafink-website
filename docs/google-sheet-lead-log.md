@@ -66,14 +66,23 @@ the top of the script — the script then rejects any POST without it.
 // If you set SHEET_WEBHOOK_SECRET in Vercel, put the SAME value here; else ''.
 var SECRET = '';
 
+// /api/contact POSTs EVERY field the lead carried, so adding a name to this
+// list is all it takes to start recording it — no site deploy needed. The
+// extras below were being collected and thrown away: traffic_source /
+// landing_page / referrer come from lib/attribution.ts, suspected_spam is set
+// when a heuristic fires (delivered anyway, see lib/classify-lead.ts), and
+// budget / bedrooms / bathrooms come from the buy and sell forms.
 var HEADERS = [
   'received_at', 'status', 'name', 'phone', 'email', 'lead_type',
-  'suburb', 'source', 'property_address', 'situation', 'timeline', 'body'
+  'suburb', 'source', 'property_address', 'situation', 'timeline', 'body',
+  'traffic_source', 'landing_page', 'referrer', 'suspected_spam',
+  'budget', 'bedrooms', 'bathrooms'
 ];
 
 var BLOCKED_HEADERS = [
   'received_at', 'blocked_reason', 'name', 'phone', 'email', 'lead_type',
-  'suburb', 'source', 'property_address', 'situation', 'timeline', 'body'
+  'suburb', 'source', 'property_address', 'situation', 'timeline', 'body',
+  'traffic_source', 'landing_page', 'referrer'
 ];
 
 function doPost(e) {
@@ -119,12 +128,36 @@ function json(obj) {
 ## Columns
 
 `received_at · status · name · phone · email · lead_type · suburb · source ·
-property_address · situation · timeline · body`
+property_address · situation · timeline · body · traffic_source · landing_page ·
+referrer · suspected_spam · budget · bedrooms · bathrooms`
 
 - **status** defaults to `New`. This is your tracking column — change it to
   `Called`, `Showing`, `Under Contract`, `Closed`, `Dead`, etc.
 - **source** tells you which page produced the lead (e.g. `buy-hub`,
   `cash-offer`, `listings`) — useful for seeing what's actually converting.
+- **traffic_source / landing_page / referrer** say which channel brought the
+  visitor (`utm_source`, else the referring host, else `direct`) and the first
+  page they landed on. This is what makes "which marketing actually produced a
+  lead" answerable.
+- **suspected_spam** holds a heuristic's reason (e.g. `url_in_field`) when one
+  fired. The lead was still delivered on every channel — judge it yourself.
+  Empty for normal leads.
+- **budget / bedrooms / bathrooms** come from the buy and sell forms when the
+  visitor filled them in.
+
+### Adding the new columns to a sheet that already has rows
+
+Appending names to `HEADERS` only writes a header row on an EMPTY tab, so on a
+sheet with existing rows:
+
+1. Paste the updated script (Extensions → Apps Script), then **Deploy → Manage
+   deployments → edit the existing deployment → Version: New version → Deploy**.
+   Keep the same deployment so the URL in `GOOGLE_SHEET_WEBHOOK_URL` still works.
+2. In the CRM tab, type the seven new header names into the empty cells to the
+   right of `body` (row 1), spelled exactly as above.
+3. Do the same on the Blocked tab for the three it gains.
+
+New rows then fill the new columns; older rows stay blank there.
 
 The **Blocked** tab has the same columns except `status` is replaced by
 `blocked_reason` (e.g. `honeypot`). Nothing else fires for these rows — no
