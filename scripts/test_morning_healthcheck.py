@@ -692,9 +692,10 @@ def test_lead_pipeline_alerts_on_failed_channel():
     assert "clickup(HTTP 401)" in r.detail
 
 
-def test_lead_pipeline_unconfigured_channel_is_not_a_failure():
-    """configured:false is an expected no-op (creds not set), not a page —
-    but the channel is still named so silent shrinkage stays visible."""
+def test_lead_pipeline_unconfigured_clickup_is_not_a_failure():
+    """ClickUp configured:false is its NORMAL state (off unless
+    CLICKUP_LEADS_ENABLED=true), not a page — but it is still named so silent
+    shrinkage stays visible."""
     payload = {"ok": True, "channels": [
         _channel("clickup", configured=False, ok=False),
         _channel("joshua-email"), _channel("sheet"), _channel("pushover"),
@@ -704,6 +705,27 @@ def test_lead_pipeline_unconfigured_channel_is_not_a_failure():
     )
     assert r.status == hc.STATUS_PASS
     assert "not configured: clickup" in r.detail
+
+
+def test_lead_pipeline_alerts_when_a_lead_critical_channel_goes_unconfigured():
+    """Deleting RESEND_API_KEY or PUSHOVER_TOKEN produces no error anywhere —
+    the channel just reports configured:false and the lead quietly reaches
+    fewer places. That must page, naming the channel."""
+    for channel in ("joshua-email", "sheet", "pushover"):
+        others = [c for c in ("joshua-email", "sheet", "pushover") if c != channel]
+        payload = {"ok": True, "channels": [
+            _channel("clickup", configured=False, ok=False),
+            _channel(channel, configured=False, ok=False),
+            *(_channel(c) for c in others),
+        ]}
+        r = hc.check_lead_pipeline(
+            "https://x/api/contact", "s3cret", opener=_contact_opener(payload),
+        )
+        assert r.status == hc.STATUS_ERROR, channel
+        assert r.is_alert, channel
+        assert channel in r.detail
+        # The intentionally-off channel must not be blamed alongside it.
+        assert "clickup" not in r.detail.split("NOT CONFIGURED:")[1].split(".")[0]
 
 
 def test_lead_pipeline_alerts_on_502_with_channel_results():
