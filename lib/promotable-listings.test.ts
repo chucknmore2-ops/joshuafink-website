@@ -12,7 +12,13 @@
 
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { isPromotable, promotableListings, pickPromotable, pickWeeklyPromotable } from './promotable-listings.ts'
+import {
+  isPromotable,
+  promotableListings,
+  pickPromotable,
+  pickWeeklyPromotable,
+  nextPromotable,
+} from './promotable-listings.ts'
 import type { Listing } from './listings.ts'
 
 const mk = (over: Partial<Listing> = {}): Listing => ({
@@ -129,6 +135,26 @@ test("LinkedIn's Thursday home differs from Instagram's Wednesday home that week
       )
     }
   }
+})
+
+test('nextPromotable wraps to the following Active home', () => {
+  const pool = [mk({ address: 'A' }), mk({ address: 'B' }), mk({ address: 'C' })]
+  assert.equal(nextPromotable(pool[0], pool)!.address, 'B')
+  assert.equal(nextPromotable(pool[2], pool)!.address, 'A')
+})
+
+test('nextPromotable skips homes that are not promotable', () => {
+  const pool = [
+    mk({ address: 'A' }),
+    mk({ address: 'UNDER', status: 'Active Under Contract' }),
+    mk({ address: 'C' }),
+  ]
+  assert.equal(nextPromotable(pool[0], pool)!.address, 'C')
+})
+
+test('nextPromotable returns null when there is nothing else to fall back to', () => {
+  assert.equal(nextPromotable(mk({ address: 'A' }), [mk({ address: 'A' })]), null)
+  assert.equal(nextPromotable(mk({ address: 'A' }), []), null)
 })
 
 test('weekly rotation still skips unavailable homes and handles an empty pool', () => {

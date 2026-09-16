@@ -93,3 +93,24 @@ export function pickWeeklyPromotable(
   const idx = (((week + channelOffset) % pool.length) + pool.length) % pool.length
   return pool[idx]
 }
+
+/**
+ * The next home after `current`, wrapping at the end of the pool.
+ *
+ * Instagram uses this when Meta leaves a container IN_PROGRESS: one particular
+ * photo can stall indefinitely (2026-09-16 burned every retry on the same
+ * asset), and the next listing's photo is a fresh chance at the same slot.
+ * Returns null when the pool has nothing else to offer.
+ */
+export function nextPromotable(
+  current: Listing,
+  source: readonly Listing[] = listings,
+): Listing | null {
+  const pool = promotableListings(source)
+  if (pool.length < 2) return null
+  const i = pool.findIndex(
+    (l) => l.address === current.address && l.compassUrl === current.compassUrl,
+  )
+  if (i < 0) return pool[0] ?? null
+  return pool[(i + 1) % pool.length] ?? null
+}
