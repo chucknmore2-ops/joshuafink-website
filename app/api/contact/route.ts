@@ -29,9 +29,12 @@ const PUSHOVER_USER = process.env.PUSHOVER_USER || ''
 // Healthcheck test mode — scripts/morning_healthcheck.py POSTs a tagged
 // SYSTEM TEST lead daily carrying this secret (the same CRON_SECRET the
 // /api/cron/* routes use) in an `x-healthcheck-secret` header. In that mode
-// the response includes the per-channel delivery results and the Pushover
-// goes out silently, so a channel dying pages the next morning instead of
-// rotting in a console.warn nobody reads (how SendGrid sat dead from June).
+// the response includes the per-channel delivery results, Pushover still
+// fires as a normal lead alert (Josh wants the phone ping), and the Joshua
+// email send is skipped (CI/chat is the alert path — no "ignore me" Resend
+// message in the inbox). A channel dying still reds the weekday healthcheck
+// instead of rotting in a console.warn nobody reads (how SendGrid sat dead
+// from June).
 const CRON_SECRET = process.env.CRON_SECRET || ''
 
 // ---------------------------------------------------------------------------
@@ -149,7 +152,7 @@ async function sendClickUp(lead: Record<string, string>, testMode = false): Prom
     }
     // The daily healthcheck test lead has proven the token + list are live by
     // this point — delete its task again (best-effort) so SYSTEM TEST tasks
-    // don't pile up in the list the way a silent Pushover doesn't buzz.
+    // don't pile up in the list.
     if (testMode) {
       await fetchWithTimeout(`https://api.clickup.com/api/v2/task/${data.id}`, {
         method: 'DELETE',
@@ -252,6 +255,19 @@ async function sendAutoReply(lead: Record<string, string>): Promise<ChannelResul
 async function forwardToJoshua(lead: Record<string, string>, testMode = false): Promise<ChannelResult> {
   if (activeEmailProvider() === 'none') return skip('joshua-email')
 
+  // Healthcheck test lead: do not deliver a real "ignore me" email. CI going
+  // red is the alert path. We still report the channel as configured so a
+  // missing RESEND_API_KEY pages, but we do not call Resend — a live send is
+  // reserved for real form submissions.
+  if (testMode) {
+    return {
+      channel: 'joshua-email',
+      configured: true,
+      ok: true,
+      detail: 'send skipped (healthcheck)',
+    }
+  }
+
   const lines = Object.entries(lead)
     .filter(([k]) => !k.startsWith('_') && k !== 'website')
     .map(([k, v]) => `<tr><td style="padding:6px 12px;color:#666;font-size:13px;width:140px;vertical-align:top;">${escapeHtml(k)}</td><td style="padding:6px 12px;font-size:13px;">${escapeHtml(v)}</td></tr>`)
@@ -261,12 +277,7 @@ async function forwardToJoshua(lead: Record<string, string>, testMode = false): 
     to: TO_EMAIL,
     fromName: 'joshuafink.com Lead',
     ...(lead.email ? { replyTo: { email: lead.email, name: lead.name } } : {}),
-    // The daily test email still sends — the provider's 200 is the delivery
-    // proof — but it must never share a subject with real leads, or Joshua
-    // (or an inbox rule) learns to skim past "New Lead".
-    subject: testMode
-      ? '🩺 Daily lead-channel test — ignore'
-      : `🏡 New Lead: ${lead.name || 'Unknown'} — ${lead.suburb || lead.subject || 'joshuafink.com'}`,
+    subject: `🏡 New Lead: ${lead.name || 'Unknown'} — ${lead.suburb || lead.subject || 'joshuafink.com'}`,
     html: `<table style="font-family:sans-serif;border-collapse:collapse;">${lines}</table>`,
   })
   if (!sent.ok) {
@@ -348,8 +359,12 @@ async function pushToSheet(
 // High priority (1) so it bypasses quiet hours. No-ops until creds are set.
 // ---------------------------------------------------------------------------
 
-async function sendPushover(lead: Record<string, string>, silent = false): Promise<ChannelResult> {
-  if (!PUSHOVER_TOKEN || !PUSHOVER_USER) {
+async function sendPushover(lead: Record<string, string>): Promise<ChannelResult> {
+  // Read env per call so tests (and a mid-deploy env fix) see current creds.
+  // Module-level PUSHOVER_* still gates anyChannelConfigured at request start.
+  const token = process.env.PUSHOVER_TOKEN || PUSHOVER_TOKEN
+  const user = process.env.PUSHOVER_USER || PUSHOVER_USER
+  if (!token || !user) {
     console.log('Pushover: skipping — PUSHOVER_TOKEN or PUSHOVER_USER not set')
     return skip('pushover')
   }
@@ -366,15 +381,14 @@ async function sendPushover(lead: Record<string, string>, silent = false): Promi
   ].filter(Boolean).join('\n') || 'New lead from joshuafink.com'
 
   const params = new URLSearchParams({
-    token: PUSHOVER_TOKEN,
-    user: PUSHOVER_USER,
+    token,
+    user,
     title: `${lead.suspected_spam ? '⚠️ ' : '🏡 '}New Lead — ${lead.name || 'Unknown'} (${type})${source}`,
     message,
-    // Silent (-2, no alert at all) for healthcheck test leads — the API call
-    // still proves the channel works. High (1) for real leads — bypasses
-    // quiet hours.
-    priority: silent ? '-2' : '1',
-    sound: silent ? 'none' : 'cashregister',
+    // Always a real alert — including the weekday SYSTEM TEST lead. Josh
+    // wants the phone ping; only the Resend inbox email is skipped.
+    priority: '1',
+    sound: 'cashregister',
   })
 
   // Tap the notification to call the lead directly.
@@ -604,9 +618,9 @@ export async function POST(req: NextRequest) {
     // inspect exactly what got through and react when nothing did.
     const [clickupRes, joshuaEmailRes, sheetRes, pushoverRes, autoReplyRes] = await Promise.all([
       sendClickUp(lead, isHealthcheck), // no-op unless CLICKUP_LEADS_ENABLED=true; test-lead task is deleted after it proves delivery
-      forwardToJoshua(lead, isHealthcheck), // still sends, but with an "ignore" subject, never "New Lead"
+      forwardToJoshua(lead, isHealthcheck), // test mode skips Resend; real leads still email
       pushToSheet(lead, undefined, isHealthcheck), // tagged → sheet's "System" tab, not the CRM tab
-      sendPushover(lead, isHealthcheck), // silent — a test lead must not buzz the phone
+      sendPushover(lead), // real alert even for the SYSTEM TEST — only email is skipped
       sendAutoReply(lead), // no-ops when no email; courtesy to the lead, not a Joshua channel
     ])
 
@@ -669,9 +683,9 @@ export async function POST(req: NextRequest) {
         'CRITICAL: lead not delivered to any Joshua channel',
         JSON.stringify({ lead, failedChannels })
       )
-      // A test lead must never fire the priority-2 siren — the healthcheck's
-      // alert email is the paging path for it, and the 502 below still carries
-      // the per-channel results.
+      // A test lead must never fire the priority-2 siren — the healthcheck
+      // going red (CI/chat) is the paging path, and the 502 below still
+      // carries the per-channel results.
       const rescued = isHealthcheck ? false : await sendEmergencyPushover(lead, failedChannels)
 
       if (!rescued) {

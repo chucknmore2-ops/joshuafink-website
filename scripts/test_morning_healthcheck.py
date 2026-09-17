@@ -656,7 +656,8 @@ ALL_CHANNELS_OK = {"ok": True, "channels": [
 def test_lead_pipeline_pass_and_payload_shape():
     """Green path — and pin the request contract: the secret header that
     unlocks the route's test mode, plus the SYSTEM TEST / system-test tagging
-    that keeps the CRM sheet filterable and Josh's phone silent."""
+    that keeps the CRM sheet filterable and his inbox free of an ignore-me
+    test email. Pushover is still a real phone ping."""
     captured: dict = {}
     r = hc.check_lead_pipeline(
         "https://x/api/contact", "s3cret",
