@@ -97,11 +97,12 @@ test('a 200 {ok:true} still counts as delivered', async () => {
   assert.equal(status, 200)
 })
 
-test('the healthcheck lead skips Resend and tags the sheet row', async () => {
-  // The daily test must not pose as a real lead: no Resend call (CI/chat is
-  // the alert path), and the sheet row carries the system_test tag that files
-  // it into the "System" tab. The joshua-email channel still reports as
-  // configured so a missing RESEND_API_KEY pages.
+test('the healthcheck lead skips Resend, tags the sheet row, and still pings Pushover', async () => {
+  // The daily test must not email Joshua (CI/chat is the alert path), but
+  // Pushover is a real alert — Josh does not want that channel silenced.
+  // The sheet row carries the system_test tag that files it into the
+  // "System" tab. The joshua-email channel still reports as configured so
+  // a missing RESEND_API_KEY pages.
   const captured: { url: string; body: string }[] = []
   globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = String(input)
@@ -109,12 +110,17 @@ test('the healthcheck lead skips Resend and tags the sheet row', async () => {
     if (url.includes('script.google.com')) {
       return new Response('{"ok":true}', { status: 200, headers: { 'Content-Type': 'application/json' } })
     }
+    if (url.includes('api.pushover.net')) {
+      return new Response('{"status":1}', { status: 200, headers: { 'Content-Type': 'application/json' } })
+    }
     return new Response('{}', { status: 200 })
   }) as typeof fetch
 
-  // activeEmailProvider() reads env per call, so the key can be set here
-  // despite route.ts already being imported.
+  // activeEmailProvider() / sendPushover read env per call, so these can be
+  // set here despite route.ts already being imported.
   process.env.RESEND_API_KEY = 're_test_key'
+  process.env.PUSHOVER_TOKEN = 'po_test_token'
+  process.env.PUSHOVER_USER = 'po_test_user'
   try {
     const { POST } = await import('./route.ts')
     const res = await POST(
@@ -139,6 +145,9 @@ test('the healthcheck lead skips Resend and tags the sheet row', async () => {
     assert.equal(joshuaEmail.configured, true)
     assert.equal(joshuaEmail.ok, true)
     assert.match(joshuaEmail.detail, /skipped/)
+    const pushover = json.channels.find((c: { channel: string }) => c.channel === 'pushover')
+    assert.equal(pushover.configured, true)
+    assert.equal(pushover.ok, true)
 
     const emails = captured.filter((c) => c.url.includes('api.resend.com'))
     assert.equal(emails.length, 0)
@@ -146,8 +155,17 @@ test('the healthcheck lead skips Resend and tags the sheet row', async () => {
     const sheetCall = captured.find((c) => c.url.includes('script.google.com'))
     assert.ok(sheetCall)
     assert.equal(JSON.parse(sheetCall.body).system_test, 'true')
+
+    const pushCall = captured.find((c) => c.url.includes('api.pushover.net'))
+    assert.ok(pushCall)
+    const pushBody = new URLSearchParams(pushCall.body)
+    assert.equal(pushBody.get('priority'), '1')
+    assert.equal(pushBody.get('sound'), 'cashregister')
+    assert.notEqual(pushBody.get('priority'), '-2')
   } finally {
     delete process.env.RESEND_API_KEY
+    delete process.env.PUSHOVER_TOKEN
+    delete process.env.PUSHOVER_USER
   }
 })
 

@@ -24,7 +24,7 @@ stay silent.
 | GitHub Actions | sync-listings | `git log -1 lib/listings.ts` (daily sync, but only commits on a diff — hence the loose threshold) | 17 days |
 | GitHub Actions | scheduled workflow runs | latest **completed** run of `sync-listings`, `social-autopost`, `geo-audit`, `daily-tasks-pushover` concluded `success` | n/a (red = alert same morning) |
 | Vercel | site uptime | `GET /api/healthcheck` returns 200 with status:ok | n/a |
-| Vercel | lead pipeline | POST `/api/contact` SYSTEM TEST lead; sheet + silent Pushover live-tested. Joshua email send is skipped (CI/chat is the alert path); `RESEND_API_KEY` must still be set. | n/a (any configured-channel fail = exit 1) |
+| Vercel | lead pipeline | POST `/api/contact` SYSTEM TEST lead; sheet + real Pushover live-tested. Joshua email send is skipped (CI/chat is the alert path); `RESEND_API_KEY` must still be set. | n/a (any configured-channel fail = exit 1) |
 
 The weekday SYSTEM TEST lead does **not** deliver a Resend "ignore me" email to
 Joshua's inbox. Real form submissions still email him. Live Resend delivery is

@@ -32,7 +32,7 @@ They should roughly agree. What a mismatch means:
 - **A real person in Blocked** → the honeypot misfired. Call them, then say so,
   because the rule may need changing.
 - **Both near zero** → it's a traffic/conversion problem, not a plumbing one.
-  The plumbing is proven daily by the System tab's test row (sheet + silent
+  The plumbing is proven daily by the System tab's test row (sheet +
   Pushover). The test lead does not email the inbox.
 
 **3. Check `post_log` on /admin.** https://www.joshuafink.com/admin — "Posted

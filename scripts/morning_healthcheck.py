@@ -40,9 +40,9 @@ COVERED (per `lib/admin-schedule.ts`):
     auto-merge jammed even though the workflow run itself concluded green.
   Public uptime — GET https://joshuafink.com/api/healthcheck
   Lead delivery channels — POSTs a tagged SYSTEM TEST lead to /api/contact
-    (silent Pushover, lead_type=system-test so the CRM sheet can filter it,
-    Joshua email send skipped — CI/chat is the alert path) and alerts if any
-    configured channel — joshua-email / sheet / pushover — fails.
+    (real Pushover alert, lead_type=system-test so the CRM sheet can filter
+    it, Joshua email send skipped — CI/chat is the alert path) and alerts if
+    any configured channel — joshua-email / sheet / pushover — fails.
     joshua-email is still required to be configured (RESEND_API_KEY) but the
     test lead does not deliver a real inbox message. ClickUp lead tasks are
     off by default (configured:false / unconfigured, not a failure) unless
@@ -1098,14 +1098,15 @@ def check_lead_pipeline(
     verify every configured delivery channel reports success.
 
     The route's test mode (`x-healthcheck-secret: CRON_SECRET`) returns the
-    per-channel results it already computes internally, sends the Pushover
-    silently, skips the Joshua email send (CI/chat is the alert path; a
-    missing RESEND_API_KEY still pages as unconfigured), and tags the sheet
-    row so it files under a "System" tab — so this costs no phone buzz, no
-    ignore-me email in the inbox, and no fake CRM row. Partial channel death
-    used to be only a console.warn in Vercel logs — SendGrid sat dead from
-    June with every other check green. Live Resend delivery is proven by
-    real form submissions, not this test lead.
+    per-channel results it already computes internally, sends a real
+    Pushover (Josh wants the phone ping; do not silence it), skips the
+    Joshua email send (CI/chat is the alert path; a missing RESEND_API_KEY
+    still pages as unconfigured), and tags the sheet row so it files under
+    a "System" tab — so this costs no ignore-me email in the inbox and no
+    fake CRM row. Partial channel death used to be only a console.warn in
+    Vercel logs — SendGrid sat dead from June with every other check green.
+    Live Resend delivery is proven by real form submissions, not this test
+    lead.
 
     The lead payload must stay classifier-clean: name with a space (no
     random_name), no token >= 25 chars in the body (no gibberish_body), no

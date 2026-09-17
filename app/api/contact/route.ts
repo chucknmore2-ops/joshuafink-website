@@ -29,11 +29,12 @@ const PUSHOVER_USER = process.env.PUSHOVER_USER || ''
 // Healthcheck test mode — scripts/morning_healthcheck.py POSTs a tagged
 // SYSTEM TEST lead daily carrying this secret (the same CRON_SECRET the
 // /api/cron/* routes use) in an `x-healthcheck-secret` header. In that mode
-// the response includes the per-channel delivery results, Pushover goes out
-// silently, and the Joshua email send is skipped (CI/chat is the alert path —
-// no "ignore me" Resend message in the inbox). A channel dying still reds
-// the weekday healthcheck instead of rotting in a console.warn nobody reads
-// (how SendGrid sat dead from June).
+// the response includes the per-channel delivery results, Pushover still
+// fires as a normal lead alert (Josh wants the phone ping), and the Joshua
+// email send is skipped (CI/chat is the alert path — no "ignore me" Resend
+// message in the inbox). A channel dying still reds the weekday healthcheck
+// instead of rotting in a console.warn nobody reads (how SendGrid sat dead
+// from June).
 const CRON_SECRET = process.env.CRON_SECRET || ''
 
 // ---------------------------------------------------------------------------
@@ -151,7 +152,7 @@ async function sendClickUp(lead: Record<string, string>, testMode = false): Prom
     }
     // The daily healthcheck test lead has proven the token + list are live by
     // this point — delete its task again (best-effort) so SYSTEM TEST tasks
-    // don't pile up in the list the way a silent Pushover doesn't buzz.
+    // don't pile up in the list.
     if (testMode) {
       await fetchWithTimeout(`https://api.clickup.com/api/v2/task/${data.id}`, {
         method: 'DELETE',
@@ -358,8 +359,12 @@ async function pushToSheet(
 // High priority (1) so it bypasses quiet hours. No-ops until creds are set.
 // ---------------------------------------------------------------------------
 
-async function sendPushover(lead: Record<string, string>, silent = false): Promise<ChannelResult> {
-  if (!PUSHOVER_TOKEN || !PUSHOVER_USER) {
+async function sendPushover(lead: Record<string, string>): Promise<ChannelResult> {
+  // Read env per call so tests (and a mid-deploy env fix) see current creds.
+  // Module-level PUSHOVER_* still gates anyChannelConfigured at request start.
+  const token = process.env.PUSHOVER_TOKEN || PUSHOVER_TOKEN
+  const user = process.env.PUSHOVER_USER || PUSHOVER_USER
+  if (!token || !user) {
     console.log('Pushover: skipping — PUSHOVER_TOKEN or PUSHOVER_USER not set')
     return skip('pushover')
   }
@@ -376,15 +381,14 @@ async function sendPushover(lead: Record<string, string>, silent = false): Promi
   ].filter(Boolean).join('\n') || 'New lead from joshuafink.com'
 
   const params = new URLSearchParams({
-    token: PUSHOVER_TOKEN,
-    user: PUSHOVER_USER,
+    token,
+    user,
     title: `${lead.suspected_spam ? '⚠️ ' : '🏡 '}New Lead — ${lead.name || 'Unknown'} (${type})${source}`,
     message,
-    // Silent (-2, no alert at all) for healthcheck test leads — the API call
-    // still proves the channel works. High (1) for real leads — bypasses
-    // quiet hours.
-    priority: silent ? '-2' : '1',
-    sound: silent ? 'none' : 'cashregister',
+    // Always a real alert — including the weekday SYSTEM TEST lead. Josh
+    // wants the phone ping; only the Resend inbox email is skipped.
+    priority: '1',
+    sound: 'cashregister',
   })
 
   // Tap the notification to call the lead directly.
@@ -616,7 +620,7 @@ export async function POST(req: NextRequest) {
       sendClickUp(lead, isHealthcheck), // no-op unless CLICKUP_LEADS_ENABLED=true; test-lead task is deleted after it proves delivery
       forwardToJoshua(lead, isHealthcheck), // test mode skips Resend; real leads still email
       pushToSheet(lead, undefined, isHealthcheck), // tagged → sheet's "System" tab, not the CRM tab
-      sendPushover(lead, isHealthcheck), // silent — a test lead must not buzz the phone
+      sendPushover(lead), // real alert even for the SYSTEM TEST — only email is skipped
       sendAutoReply(lead), // no-ops when no email; courtesy to the lead, not a Joshua channel
     ])
 
