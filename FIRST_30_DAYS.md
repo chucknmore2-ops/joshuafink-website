@@ -22,7 +22,7 @@ gh workflow run morning_healthcheck.yml -f always_email=true
 | GA4 `generate_lead` | GA4 → Reports → Engagement → Events, last 7 days | count |
 | CRM rows | the lead sheet's **CRM** tab | count of rows with `received_at` in the last 7 days |
 | Blocked | the sheet's **Blocked** tab | any row that looks like a real person |
-| Inbox | Joshua's mail, **including Junk** | new-lead emails |
+| Inbox | Joshua's mail, **including Junk** | real new-lead emails only — the weekday SYSTEM TEST does not send mail |
 
 They should roughly agree. What a mismatch means:
 
@@ -32,7 +32,8 @@ They should roughly agree. What a mismatch means:
 - **A real person in Blocked** → the honeypot misfired. Call them, then say so,
   because the rule may need changing.
 - **Both near zero** → it's a traffic/conversion problem, not a plumbing one.
-  The plumbing is proven daily by the System tab's test row.
+  The plumbing is proven daily by the System tab's test row (sheet + silent
+  Pushover). The test lead does not email the inbox.
 
 **3. Check `post_log` on /admin.** https://www.joshuafink.com/admin — "Posted
 (7d)" should show Facebook, Instagram (Wed), LinkedIn (Thu) and GBP (Tue). A

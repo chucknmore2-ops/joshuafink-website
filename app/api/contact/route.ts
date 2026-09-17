@@ -29,9 +29,11 @@ const PUSHOVER_USER = process.env.PUSHOVER_USER || ''
 // Healthcheck test mode — scripts/morning_healthcheck.py POSTs a tagged
 // SYSTEM TEST lead daily carrying this secret (the same CRON_SECRET the
 // /api/cron/* routes use) in an `x-healthcheck-secret` header. In that mode
-// the response includes the per-channel delivery results and the Pushover
-// goes out silently, so a channel dying pages the next morning instead of
-// rotting in a console.warn nobody reads (how SendGrid sat dead from June).
+// the response includes the per-channel delivery results, Pushover goes out
+// silently, and the Joshua email send is skipped (CI/chat is the alert path —
+// no "ignore me" Resend message in the inbox). A channel dying still reds
+// the weekday healthcheck instead of rotting in a console.warn nobody reads
+// (how SendGrid sat dead from June).
 const CRON_SECRET = process.env.CRON_SECRET || ''
 
 // ---------------------------------------------------------------------------
@@ -252,6 +254,19 @@ async function sendAutoReply(lead: Record<string, string>): Promise<ChannelResul
 async function forwardToJoshua(lead: Record<string, string>, testMode = false): Promise<ChannelResult> {
   if (activeEmailProvider() === 'none') return skip('joshua-email')
 
+  // Healthcheck test lead: do not deliver a real "ignore me" email. CI going
+  // red is the alert path. We still report the channel as configured so a
+  // missing RESEND_API_KEY pages, but we do not call Resend — a live send is
+  // reserved for real form submissions.
+  if (testMode) {
+    return {
+      channel: 'joshua-email',
+      configured: true,
+      ok: true,
+      detail: 'send skipped (healthcheck)',
+    }
+  }
+
   const lines = Object.entries(lead)
     .filter(([k]) => !k.startsWith('_') && k !== 'website')
     .map(([k, v]) => `<tr><td style="padding:6px 12px;color:#666;font-size:13px;width:140px;vertical-align:top;">${escapeHtml(k)}</td><td style="padding:6px 12px;font-size:13px;">${escapeHtml(v)}</td></tr>`)
@@ -261,12 +276,7 @@ async function forwardToJoshua(lead: Record<string, string>, testMode = false): 
     to: TO_EMAIL,
     fromName: 'joshuafink.com Lead',
     ...(lead.email ? { replyTo: { email: lead.email, name: lead.name } } : {}),
-    // The daily test email still sends — the provider's 200 is the delivery
-    // proof — but it must never share a subject with real leads, or Joshua
-    // (or an inbox rule) learns to skim past "New Lead".
-    subject: testMode
-      ? '🩺 Daily lead-channel test — ignore'
-      : `🏡 New Lead: ${lead.name || 'Unknown'} — ${lead.suburb || lead.subject || 'joshuafink.com'}`,
+    subject: `🏡 New Lead: ${lead.name || 'Unknown'} — ${lead.suburb || lead.subject || 'joshuafink.com'}`,
     html: `<table style="font-family:sans-serif;border-collapse:collapse;">${lines}</table>`,
   })
   if (!sent.ok) {
@@ -604,7 +614,7 @@ export async function POST(req: NextRequest) {
     // inspect exactly what got through and react when nothing did.
     const [clickupRes, joshuaEmailRes, sheetRes, pushoverRes, autoReplyRes] = await Promise.all([
       sendClickUp(lead, isHealthcheck), // no-op unless CLICKUP_LEADS_ENABLED=true; test-lead task is deleted after it proves delivery
-      forwardToJoshua(lead, isHealthcheck), // still sends, but with an "ignore" subject, never "New Lead"
+      forwardToJoshua(lead, isHealthcheck), // test mode skips Resend; real leads still email
       pushToSheet(lead, undefined, isHealthcheck), // tagged → sheet's "System" tab, not the CRM tab
       sendPushover(lead, isHealthcheck), // silent — a test lead must not buzz the phone
       sendAutoReply(lead), // no-ops when no email; courtesy to the lead, not a Joshua channel
@@ -669,9 +679,9 @@ export async function POST(req: NextRequest) {
         'CRITICAL: lead not delivered to any Joshua channel',
         JSON.stringify({ lead, failedChannels })
       )
-      // A test lead must never fire the priority-2 siren — the healthcheck's
-      // alert email is the paging path for it, and the 502 below still carries
-      // the per-channel results.
+      // A test lead must never fire the priority-2 siren — the healthcheck
+      // going red (CI/chat) is the paging path, and the 502 below still
+      // carries the per-channel results.
       const rescued = isHealthcheck ? false : await sendEmergencyPushover(lead, failedChannels)
 
       if (!rescued) {

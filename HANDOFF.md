@@ -2,7 +2,7 @@
 
 Written for whoever runs this site next (Josh, or a bot that is not Claude).
 Every command here is copy-paste runnable from the repo root. Env vars are named,
-never printed. Last verified **2026-09-16**.
+never printed. Last verified **2026-09-17**.
 
 ---
 
@@ -78,6 +78,9 @@ form (SuburbLeadForm / SellForm / ContactForm / CashOfferForm)
 - **Email** — Resend only (`RESEND_API_KEY`), from `leads@send.joshuafink.com`.
   The `send.` subdomain is deliberate: the root domain's SPF belongs to
   Microsoft 365 and must not be edited. SendGrid was removed 2026-09-15.
+  Real form submissions email Joshua. The weekday SYSTEM TEST lead does **not**
+  send a Resend message (CI/chat is the alert path); the healthcheck still
+  requires `RESEND_API_KEY` to be set or that check fails as unconfigured.
 - **Pushover** — `PUSHOVER_TOKEN` / `PUSHOVER_USER`. This is both the new-lead
   phone alert and the emergency last resort. See landmine #2.
 - **Google Sheet** — Apps Script web app at `GOOGLE_SHEET_WEBHOOK_URL`. Tabs:

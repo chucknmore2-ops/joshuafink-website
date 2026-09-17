@@ -97,10 +97,11 @@ test('a 200 {ok:true} still counts as delivered', async () => {
   assert.equal(status, 200)
 })
 
-test('the healthcheck lead emails an "ignore" subject and tags the sheet row', async () => {
-  // The daily test must not pose as a real lead: the email to Joshua still
-  // sends (delivery proof) but under a test-only subject, and the sheet row
-  // carries the system_test tag that files it into the "System" tab.
+test('the healthcheck lead skips Resend and tags the sheet row', async () => {
+  // The daily test must not pose as a real lead: no Resend call (CI/chat is
+  // the alert path), and the sheet row carries the system_test tag that files
+  // it into the "System" tab. The joshua-email channel still reports as
+  // configured so a missing RESEND_API_KEY pages.
   const captured: { url: string; body: string }[] = []
   globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = String(input)
@@ -123,8 +124,7 @@ test('the healthcheck lead emails an "ignore" subject and tags the sheet row', a
           'Content-Type': 'application/json',
           'x-healthcheck-secret': 'test-cron-secret',
         },
-        // Mirrors scripts/morning_healthcheck.py: no email, so no auto-reply —
-        // the one Resend call below is the lead email to Joshua.
+        // Mirrors scripts/morning_healthcheck.py: no email field, so no auto-reply.
         body: JSON.stringify({
           name: 'SYSTEM TEST — morning healthcheck',
           lead_type: 'system-test',
@@ -134,16 +134,59 @@ test('the healthcheck lead emails an "ignore" subject and tags the sheet row', a
       })
     )
     assert.equal(res.status, 200)
+    const json = await res.json()
+    const joshuaEmail = json.channels.find((c: { channel: string }) => c.channel === 'joshua-email')
+    assert.equal(joshuaEmail.configured, true)
+    assert.equal(joshuaEmail.ok, true)
+    assert.match(joshuaEmail.detail, /skipped/)
 
     const emails = captured.filter((c) => c.url.includes('api.resend.com'))
-    assert.equal(emails.length, 1)
-    const subject = JSON.parse(emails[0].body).subject
-    assert.equal(subject, '🩺 Daily lead-channel test — ignore')
-    assert.doesNotMatch(subject, /New Lead/)
+    assert.equal(emails.length, 0)
 
     const sheetCall = captured.find((c) => c.url.includes('script.google.com'))
     assert.ok(sheetCall)
     assert.equal(JSON.parse(sheetCall.body).system_test, 'true')
+  } finally {
+    delete process.env.RESEND_API_KEY
+  }
+})
+
+test('a real visitor lead still emails Joshua a New Lead subject', async () => {
+  const captured: { url: string; body: string }[] = []
+  globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input)
+    captured.push({ url, body: String(init?.body ?? '') })
+    if (url.includes('script.google.com')) {
+      return new Response('{"ok":true}', { status: 200, headers: { 'Content-Type': 'application/json' } })
+    }
+    if (url.includes('api.resend.com')) {
+      return new Response('{"id":"email-1"}', { status: 200, headers: { 'Content-Type': 'application/json' } })
+    }
+    return new Response('{}', { status: 200 })
+  }) as typeof fetch
+
+  process.env.RESEND_API_KEY = 're_test_key'
+  try {
+    const { POST } = await import('./route.ts')
+    const res = await POST(
+      new NextRequest('http://localhost/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: 'Jane Doe',
+          email: 'jane@example.com',
+          body: 'I would like to sell my home in Franklin.',
+          source: 'contact-form',
+        }),
+      })
+    )
+    assert.equal(res.status, 200)
+
+    const emails = captured.filter((c) => c.url.includes('api.resend.com'))
+    assert.ok(emails.length >= 1, 'expected at least the Joshua lead email')
+    const subjects = emails.map((e) => JSON.parse(e.body).subject as string)
+    assert.ok(subjects.some((s) => /New Lead/.test(s)), `subjects: ${subjects.join(' | ')}`)
+    assert.equal(subjects.some((s) => /lead-channel test/i.test(s)), false)
   } finally {
     delete process.env.RESEND_API_KEY
   }
