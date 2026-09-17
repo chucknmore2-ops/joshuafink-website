@@ -127,7 +127,7 @@ lead comes back without per-channel results.
 |---|---|---|---|
 | Sync Compass listings | daily 08:00 | `.github/workflows/sync-listings.yml` | a merged `chore: daily listing sync` PR |
 | SYNC_PAT expiry guard | with the sync | same workflow, separate job | red run ≤14 days before expiry |
-| Morning healthcheck | Mon–Fri 12:00 | `morning_healthcheck.yml` | email to `ALERT_TO_EMAIL` on failure |
+| Morning healthcheck | Mon–Fri 12:00 | `morning_healthcheck.yml` | CI red on failure; email only if `always_email=true` |
 | Daily tasks push | Mon–Fri 12:00 | `daily-tasks-pushover.yml` | phone push |
 | GBP post | Tue 14:00 | `social-autopost.yml` | `post_log` row, channel `gbp` |
 | Instagram post | Wed 14:00 | `social-autopost.yml` | `post_log` row, channel `instagram` |
@@ -141,7 +141,7 @@ Run any GitHub workflow by hand:
 
 ```bash
 gh workflow run sync-listings.yml
-gh workflow run morning_healthcheck.yml -f always_email=true
+gh workflow run morning_healthcheck.yml   # silent; add -f always_email=true to smoke-test SMTP
 gh run list -L 5            # check results
 ```
 
@@ -182,8 +182,9 @@ Leads are **not** lost (email + Pushover still deliver), but no CRM rows are wri
    **Deploy → New deployment → Web app**, Execute as **Me**, Access **Anyone**.
 3. Copy the `/exec` URL into Vercel as `GOOGLE_SHEET_WEBHOOK_URL`, then redeploy
    (Vercel → Deployments → ⋯ → Redeploy). Env changes need a deploy.
-4. Confirm: `gh workflow run morning_healthcheck.yml -f always_email=true`, then
-   check the email says `test lead delivered on all N configured channel(s)`.
+4. Confirm: `gh workflow run morning_healthcheck.yml` (no email by default),
+   then open the run log and confirm `test lead delivered on all N configured
+   channel(s)`. Use `-f always_email=true` only if you need the SMTP smoke test.
 
 ### Runbook 3 — re-authorise LinkedIn
 

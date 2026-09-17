@@ -2,8 +2,9 @@ name: Morning healthcheck
 
 # External freshness monitor for joshuafink.com automation pipelines.
 # Runs from GitHub Actions (NOT inside the production host) so a Vercel
-# or Railway outage can't suppress the alarm. Pages Chuck via Gmail SMTP
-# when any pipeline is stale or a check errors.
+# or Railway outage can't suppress the alarm. FAIL still exits non-zero
+# (CI goes red). Email is opt-in only (`always_email=true` / --always-email);
+# schedule and default dispatch never send alert mail.
 #
 # Required repository secrets (Settings → Secrets and variables → Actions):
 #
@@ -12,11 +13,13 @@ name: Morning healthcheck
 #                         provision a read-only role and use that — see
 #                         docs/automation.md for the hardening follow-up).
 #   GMAIL_USER            Gmail address that sends the alert email.
+#                         Only used when always_email=true (opt-in smoke test).
 #   GMAIL_APP_PASSWORD    16-char App Password from
 #                         https://myaccount.google.com/apppasswords
 #                         (NOT your real Gmail password — App Passwords
 #                         require 2FA on the Google account).
 #   ALERT_TO_EMAIL        Inbox to receive the alert (typically Chuck).
+#                         Only used when always_email=true.
 #   CRON_SECRET           Same value as the Vercel env's CRON_SECRET (already
 #                         a repo secret — the monthly-market-update and
 #                         indexnow workflows use it). Unlocks the /api/contact
@@ -32,7 +35,8 @@ name: Morning healthcheck
 #
 # Manual verification after secrets are set:
 #   Actions tab → "Morning healthcheck" → "Run workflow" → branch=main.
-#   First run prints a full report to the workflow logs regardless of pass/fail.
+#   Default dispatch is silent (no email). Set always_email=true only to
+#   smoke-test SMTP. The run prints a full report to the workflow logs.
 
 on:
   schedule:
@@ -41,7 +45,7 @@ on:
   workflow_dispatch:
     inputs:
       always_email:
-        description: 'Send the report even when all checks pass (use for first-run verification).'
+        description: 'Send the report email (pass or fail). Off by default — schedule and default dispatch stay silent.'
         required: false
         default: 'false'
         type: choice
@@ -103,5 +107,5 @@ jobs:
           if [ "${{ github.event.inputs.always_email }}" = "true" ]; then
             python scripts/morning_healthcheck.py --always-email --repo-dir "$GITHUB_WORKSPACE"
           else
-            python scripts/morning_healthcheck.py --repo-dir "$GITHUB_WORKSPACE"
+            python scripts/morning_healthcheck.py --no-email --repo-dir "$GITHUB_WORKSPACE"
           fi

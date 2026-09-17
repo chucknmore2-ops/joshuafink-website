@@ -1,8 +1,10 @@
 # Morning healthcheck — setup notes
 
 External freshness monitor for joshuafink.com automation pipelines. Runs
-from GitHub Actions on weekday mornings (7am CDT / 8am CST). Pages Chuck
-via Gmail SMTP when any pipeline is stale or a check errors.
+from GitHub Actions on weekday mornings (7am CDT / 8am CST). FAIL still
+exits non-zero so the Action goes red. Alert email is opt-in only
+(`always_email=true` / `--always-email`); schedule and default dispatch
+stay silent.
 
 - Script: [`scripts/morning_healthcheck.py`](../scripts/morning_healthcheck.py)
 - Tests: [`scripts/test_morning_healthcheck.py`](../scripts/test_morning_healthcheck.py)
@@ -25,14 +27,14 @@ via Gmail SMTP when any pipeline is stale or a check errors.
 
 Result states:
 - `PASS` — fresh signal within threshold
-- `STALE` — signal exists but older than threshold → **alert + exit 1**
-- `ERROR` — check itself failed (timeout, query error) → **alert + exit 1**
-- `GAP` — never-logged channel or skipped check → mentioned in email, **not** a failure
-- `MISCONFIG` — required env missing → **alert + exit 2**
+- `STALE` — signal exists but older than threshold → **exit 1** (CI red; no email unless opted in)
+- `ERROR` — check itself failed (timeout, query error) → **exit 1** (CI red; no email unless opted in)
+- `GAP` — never-logged channel or skipped check → mentioned in the report, **not** a failure
+- `MISCONFIG` — required env missing → **exit 2** (CI red; no email unless opted in)
 
 ## What it does NOT check (documented gaps)
 
-These are listed in every alert email so a green run is never mistaken for full coverage:
+These are listed in every report (workflow log, and the opt-in email) so a green run is never mistaken for full coverage:
 
 - **`/api/cron/indexnow`** — submits URLs to Bing/Yandex, no DB write
 - **`/api/cron/agent-briefing`** — sends email + ClickUp task, no DB write
@@ -47,9 +49,9 @@ Settings → Secrets and variables → Actions → **Secrets** tab → New repos
 | Secret | What it is | Where to get it |
 |---|---|---|
 | `DATABASE_URL` | Railway Postgres connection string | Reuse the same DSN already configured in Vercel for `/admin`. Copy from Railway → Postgres → Variables → `DATABASE_PUBLIC_URL`. |
-| `GMAIL_USER` | Gmail address that sends the alert | Any Gmail account with 2FA enabled |
-| `GMAIL_APP_PASSWORD` | 16-character App Password (NOT the real Gmail password) | See "Generate a Gmail App Password" below |
-| `ALERT_TO_EMAIL` | Inbox to receive alerts | Typically `chucknmore2@gmail.com` |
+| `GMAIL_USER` | Gmail address that sends the opt-in alert | Any Gmail account with 2FA enabled. Only used when `always_email=true`. |
+| `GMAIL_APP_PASSWORD` | 16-character App Password (NOT the real Gmail password) | See "Generate a Gmail App Password" below. Only used when `always_email=true`. |
+| `ALERT_TO_EMAIL` | Inbox for the opt-in alert | Typically `chucknmore2@gmail.com`. Only used when `always_email=true`. |
 
 Optional repository **variable** (Settings → Secrets and variables → Actions → **Variables** tab):
 
@@ -100,23 +102,22 @@ Once all 4 secrets are set:
 
 1. **Actions** tab → **Morning healthcheck** workflow → **Run workflow**
 2. Branch: `main`
-3. **Send the report even when all checks pass**: pick `true` for the
-   first manual run so you receive the email regardless of result.
+3. Leave **Send the report email** at `false` unless you are smoke-testing
+   SMTP. Default dispatch (and the weekday schedule) never send mail.
 4. **Run workflow**.
 
 Within ~90 seconds you should see:
 
 - A green checkmark on the run (exit 0 path), OR
-- A red X with a "FAIL" alert email in `ALERT_TO_EMAIL`, OR
-- An email with subject `[joshuafink healthcheck] OK — all pipelines fresh`
-  containing the full report including the documented-gaps section.
+- A red X on FAIL / MISCONFIG (exit 1 / 2) — **no** alert email unless
+  you set `always_email=true`.
 
-The full report is also written to the workflow log under "Run morning
-healthcheck" — useful even when no email is sent.
+The full report is written to the workflow log under "Run morning
+healthcheck". To force a one-off email (pass or fail):
 
-After the first manual verification, switch back to leaving the input
-blank for normal cron runs (default `always_email: false` → quiet on
-green, alert on fail).
+```bash
+gh workflow run morning_healthcheck.yml -f always_email=true
+```
 
 ## Cron schedule
 
@@ -144,10 +145,12 @@ ALERT_TO_EMAIL='you@example.com' \
 
 ## When a check goes red — triage playbook
 
-1. **Open the alert email** — it lists each failing check with the actual
-   age, threshold, and the specific channel/job_name tuple.
-2. **Open the workflow run logs** — the full report (including the
-   timestamp of the last write) is in the "Run morning healthcheck" step.
+1. **Open the workflow run logs** — the full report lists each failing
+   check with the actual age, threshold, and the specific channel/job_name
+   tuple (under "Run morning healthcheck"). There is no FAIL email unless
+   someone opted in with `always_email=true`.
+2. **Re-run with email only if you need the SMTP smoke test** —
+   `gh workflow run morning_healthcheck.yml -f always_email=true`.
 3. **Cross-check `/admin`** at [`https://joshuafink.com/admin`](https://joshuafink.com/admin)
    to confirm the dashboard shows the same picture.
 4. **If a single Railway autoposter job is stale**: open Railway →

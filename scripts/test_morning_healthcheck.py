@@ -1353,7 +1353,40 @@ def test_main_no_email_prints_report(monkeypatch, capsys):
     assert "OK — all pipelines fresh" in captured.out
 
 
-def test_main_sends_email_on_failure(monkeypatch, capsys):
+def test_main_does_not_email_on_failure_without_always_email(monkeypatch):
+    """Default path (schedule / default dispatch) stays silent on FAIL.
+    Exit code stays 1 so CI still goes red."""
+    latest = {(j.channel, j.job_name): _fake_latest_real(0.5) for j in hc.EXPECTED_JOBS}
+    latest[("facebook", "listing-spotlight")] = _fake_latest_real(99)
+    _patch_dns_helpers(monkeypatch, healthcheck_status="pass", git_status="pass", latest_map=latest)
+    monkeypatch.setenv("DATABASE_URL", "dsn://")
+    monkeypatch.setenv("GMAIL_USER", "bot@example.com")
+    monkeypatch.setenv("GMAIL_APP_PASSWORD", "xxxx")
+    monkeypatch.setenv("ALERT_TO_EMAIL", "to@example.com")
+
+    called = {"n": 0}
+    monkeypatch.setattr(hc, "send_email", lambda **kw: called.__setitem__("n", called["n"] + 1))
+
+    rc = hc.main(["--repo-dir", "/repo"])
+    assert rc == 1
+    assert called["n"] == 0
+
+
+def test_main_fail_without_email_secrets_still_exits_1(monkeypatch):
+    """Missing SMTP secrets must not turn a FAIL into MISCONFIG (exit 2)
+    when we are not sending mail."""
+    latest = {(j.channel, j.job_name): _fake_latest_real(0.5) for j in hc.EXPECTED_JOBS}
+    latest[("facebook", "listing-spotlight")] = _fake_latest_real(99)
+    _patch_dns_helpers(monkeypatch, healthcheck_status="pass", git_status="pass", latest_map=latest)
+    monkeypatch.setenv("DATABASE_URL", "dsn://")
+    monkeypatch.delenv("GMAIL_USER", raising=False)
+    monkeypatch.delenv("GMAIL_APP_PASSWORD", raising=False)
+    monkeypatch.delenv("ALERT_TO_EMAIL", raising=False)
+    rc = hc.main(["--repo-dir", "/repo"])
+    assert rc == 1
+
+
+def test_main_sends_email_on_failure_with_always_email(monkeypatch, capsys):
     latest = {(j.channel, j.job_name): _fake_latest_real(0.5) for j in hc.EXPECTED_JOBS}
     latest[("facebook", "listing-spotlight")] = _fake_latest_real(99)
     _patch_dns_helpers(monkeypatch, healthcheck_status="pass", git_status="pass", latest_map=latest)
@@ -1369,7 +1402,7 @@ def test_main_sends_email_on_failure(monkeypatch, capsys):
         sent["to"] = to_addr
     monkeypatch.setattr(hc, "send_email", fake_send)
 
-    rc = hc.main(["--repo-dir", "/repo"])
+    rc = hc.main(["--repo-dir", "/repo", "--always-email"])
     assert rc == 1
     assert "FAIL" in sent["subject"]
     assert "autoposter-listing" in sent["body"]
@@ -1456,5 +1489,5 @@ def test_main_email_send_failure_keeps_alert_exit_code(monkeypatch):
     def boom(**kwargs):
         raise RuntimeError("smtp down")
     monkeypatch.setattr(hc, "send_email", boom)
-    rc = hc.main(["--repo-dir", "/repo"])
+    rc = hc.main(["--repo-dir", "/repo", "--always-email"])
     assert rc == 1
