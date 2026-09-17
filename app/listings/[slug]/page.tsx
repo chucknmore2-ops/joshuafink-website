@@ -279,46 +279,52 @@ export default async function ListingDetailPage({ params }: Props) {
           <TrustBadges variant="light" />
         </div>
 
-        {/* Header + two-column body */}
+        {/* Price, address and specs — outside the grid so the mobile stack
+            shows what the home is before the lead form asks for contact info.
+            The form still sorts first inside the grid, so it lands directly
+            under this summary rather than under the whole property write-up. */}
+        <div className="mt-8">
+          <p className="text-4xl font-black text-black tracking-tight">
+            {formatPrice(listing.price)}
+          </p>
+          <h1 className="text-2xl sm:text-3xl font-black text-black tracking-tight mt-2">
+            {listing.address}
+          </h1>
+          <p className="text-neutral-500 mt-1">{city}</p>
+
+          {specs && (
+            <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-neutral-600">
+              {listing.beds !== undefined && (
+                <span>
+                  <strong className="text-black font-semibold">{listing.beds}</strong> beds
+                </span>
+              )}
+              {listing.baths !== undefined && (
+                <span>
+                  <strong className="text-black font-semibold">{listing.baths}</strong> baths
+                </span>
+              )}
+              {listing.sqft !== undefined && (
+                <span>
+                  <strong className="text-black font-semibold">
+                    {listing.sqft.toLocaleString()}
+                  </strong>{' '}
+                  sqft
+                </span>
+              )}
+              {listing.acres !== undefined && (
+                <span>
+                  <strong className="text-black font-semibold">{listing.acres}</strong> acres
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Two-column body */}
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-14">
           {/* Left: property info */}
           <div className="lg:col-span-2">
-            <p className="text-4xl font-black text-black tracking-tight">
-              {formatPrice(listing.price)}
-            </p>
-            <h1 className="text-2xl sm:text-3xl font-black text-black tracking-tight mt-2">
-              {listing.address}
-            </h1>
-            <p className="text-neutral-500 mt-1">{city}</p>
-
-            {specs && (
-              <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-neutral-600">
-                {listing.beds !== undefined && (
-                  <span>
-                    <strong className="text-black font-semibold">{listing.beds}</strong> beds
-                  </span>
-                )}
-                {listing.baths !== undefined && (
-                  <span>
-                    <strong className="text-black font-semibold">{listing.baths}</strong> baths
-                  </span>
-                )}
-                {listing.sqft !== undefined && (
-                  <span>
-                    <strong className="text-black font-semibold">
-                      {listing.sqft.toLocaleString()}
-                    </strong>{' '}
-                    sqft
-                  </span>
-                )}
-                {listing.acres !== undefined && (
-                  <span>
-                    <strong className="text-black font-semibold">{listing.acres}</strong> acres
-                  </span>
-                )}
-              </div>
-            )}
-
             {listing.note && (
               <p className="mt-5 text-sm text-neutral-600 leading-relaxed">{listing.note}</p>
             )}
@@ -404,7 +410,8 @@ export default async function ListingDetailPage({ params }: Props) {
             </div>
           </div>
 
-          {/* Right: lead capture — first in the mobile stack so the form is reachable without scrolling the whole page */}
+          {/* Right: lead capture — first in the grid's mobile stack, so it sits
+              right under the price/address summary instead of under the details */}
           <div className="lg:col-span-1 order-first lg:order-last">
             <div id="lead" className="lg:sticky lg:top-24 border border-[#E8E8E8] rounded-2xl p-6 sm:p-8 scroll-mt-24">
               <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-2">
