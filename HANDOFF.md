@@ -141,7 +141,7 @@ Run any GitHub workflow by hand:
 
 ```bash
 gh workflow run sync-listings.yml
-gh workflow run morning_healthcheck.yml -f always_email=true
+gh workflow run morning_healthcheck.yml   # silent; add -f always_email=true to smoke-test SMTP
 gh run list -L 5            # check results
 ```
 
