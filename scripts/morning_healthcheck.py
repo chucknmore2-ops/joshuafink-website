@@ -6,8 +6,8 @@ Verifies every background pipeline that writes to the Railway Postgres
 `post_log` table is still producing fresh rows, plus a git freshness
 probe on the daily listings sync, a run-status probe on the scheduled
 GitHub Actions workflows, and an HTTPS probe on the public healthcheck
-endpoint. Emails a per-check failure report via Gmail SMTP when anything
-is stale or errors.
+endpoint. Does not email by default — FAIL still exits non-zero so CI
+goes red. Pass `--always-email` to send the Gmail SMTP report (smoke tests).
 
 ============================================================================
 WHAT THIS MONITOR DOES AND DOES NOT COVER
@@ -1714,7 +1714,10 @@ def _build_parser() -> argparse.ArgumentParser:
     p.add_argument(
         "--always-email",
         action="store_true",
-        help="Send email even when all checks pass. For first-run verification.",
+        help=(
+            "Send the report email (pass or fail). Off by default so schedule "
+            "and default dispatch stay silent. For rare smoke tests."
+        ),
     )
     p.add_argument(
         "--repo-dir",
@@ -1764,10 +1767,9 @@ def main(argv: Optional[list[str]] = None) -> int:
     # stdout — always — so manual runs and CI logs both have it.
     print(report)
 
-    should_email = (
-        not args.no_email
-        and (exit_code != 0 or args.always_email)
-    )
+    # Email is opt-in only. Schedule + default dispatch stay silent; FAIL
+    # still exits non-zero so CI goes red. --no-email wins if both are set.
+    should_email = not args.no_email and args.always_email
     if should_email:
         smtp_user = os.environ.get("GMAIL_USER")
         smtp_password = os.environ.get("GMAIL_APP_PASSWORD")

@@ -7,9 +7,9 @@ system works; this is the recurring checklist. Nothing here needs Claude.
 
 ## Every Monday (about 20 minutes)
 
-**1. Read the healthcheck email.** It lands Mon–Fri from `GMAIL_USER` to
-`ALERT_TO_EMAIL`, but only when something fails. No email means all checks
-passed. To force one:
+**1. Check the morning healthcheck Action.** It runs Mon–Fri. A red X
+means something failed — open the workflow log, not the inbox. Email is
+opt-in only (no mail on schedule or default dispatch). To force one:
 
 ```bash
 gh workflow run morning_healthcheck.yml -f always_email=true
