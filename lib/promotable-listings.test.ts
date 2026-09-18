@@ -18,6 +18,7 @@ import {
   pickPromotable,
   pickWeeklyPromotable,
   nextPromotable,
+  fallbackPromotables,
 } from './promotable-listings.ts'
 import type { Listing } from './listings.ts'
 
@@ -155,6 +156,32 @@ test('nextPromotable skips homes that are not promotable', () => {
 test('nextPromotable returns null when there is nothing else to fall back to', () => {
   assert.equal(nextPromotable(mk({ address: 'A' }), [mk({ address: 'A' })]), null)
   assert.equal(nextPromotable(mk({ address: 'A' }), []), null)
+})
+
+test('fallbackPromotables returns two distinct homes after the current one', () => {
+  const pool = [
+    mk({ address: 'A' }),
+    mk({ address: 'B' }),
+    mk({ address: 'C' }),
+    mk({ address: 'D' }),
+  ]
+  assert.deepEqual(
+    fallbackPromotables(pool[0], 2, pool).map((l) => l.address),
+    ['B', 'C'],
+  )
+  assert.deepEqual(
+    fallbackPromotables(pool[3], 2, pool).map((l) => l.address),
+    ['A', 'B'],
+  )
+})
+
+test('fallbackPromotables stops when the pool has nothing else', () => {
+  assert.deepEqual(fallbackPromotables(mk({ address: 'A' }), 2, [mk({ address: 'A' })]), [])
+  const two = [mk({ address: 'A' }), mk({ address: 'B' })]
+  assert.deepEqual(
+    fallbackPromotables(two[0], 2, two).map((l) => l.address),
+    ['B'],
+  )
 })
 
 test('weekly rotation still skips unavailable homes and handles an empty pool', () => {
