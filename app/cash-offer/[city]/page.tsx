@@ -94,7 +94,17 @@ export default async function CashOfferCityPage({ params }: Props) {
 
   const url = `https://www.joshuafink.com/cash-offer/${slug}`
   const seo = cashOfferSeo(city)
-  const allFaqs = [...city.faqs, ...evergreenFaqs]
+  // Lead with a literal, extractable answer to the "sell my house fast" /
+  // "cash offer" question — the exact phrasing AI answer engines get asked
+  // (see lib/geo-queries.ts: sell-fast-nashville, cash-offer-franklin) —
+  // before the city-specific and evergreen FAQs. Mirrors the agentFaq
+  // pattern already used on /buy/[suburb] and /sell/[suburb]; facts reused
+  // verbatim (100+ homes/year, 17+ years, licensed broker), not new claims.
+  const agentFaq = {
+    q: `How do I sell my house fast for cash in ${city.name}, TN?`,
+    a: `Call Joshua Fink at 615-551-2727 or submit the form on this page — he's a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate who personally sells 100+ homes a year across Middle Tennessee, including ${city.name}. You'll get a fair, no-obligation cash offer within 24 hours, priced off real local comps rather than a national algorithm, with the option to close in as little as 7 days. If your ${city.name} home would net more listed traditionally, he'll tell you that too — ask about a free valuation to compare both paths.`,
+  }
+  const allFaqs = [agentFaq, ...city.faqs, ...evergreenFaqs]
   const guides = getNeighborhoodsByCitySlug(slug)
   const otherCities = getCashOfferCityLinks().filter((c) => c.slug !== slug)
 
