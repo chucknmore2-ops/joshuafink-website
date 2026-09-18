@@ -114,3 +114,33 @@ export function nextPromotable(
   if (i < 0) return pool[0] ?? null
   return pool[(i + 1) % pool.length] ?? null
 }
+
+function listingKey(l: Listing): string {
+  return `${l.address}\n${l.compassUrl}`
+}
+
+/**
+ * The next `count` promotable homes after `current`, wrapping, never repeating.
+ *
+ * Instagram tries more than one alternate when Meta stalls a container: one
+ * extra home was not enough on 2026-09-17 (both Compass JPEGs stayed
+ * IN_PROGRESS). Two alternates (three homes total) still fit inside the
+ * 300s route budget with an 80s poll each.
+ */
+export function fallbackPromotables(
+  current: Listing,
+  count = 2,
+  source: readonly Listing[] = listings,
+): Listing[] {
+  const out: Listing[] = []
+  let cursor = current
+  const seen = new Set([listingKey(current)])
+  while (out.length < count) {
+    const next = nextPromotable(cursor, source)
+    if (!next || seen.has(listingKey(next))) break
+    seen.add(listingKey(next))
+    out.push(next)
+    cursor = next
+  }
+  return out
+}

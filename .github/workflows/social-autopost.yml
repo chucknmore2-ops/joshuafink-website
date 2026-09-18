@@ -97,6 +97,10 @@ jobs:
             echo "HTTP $status"
             echo "$body"
 
+            if [ "$ENDPOINT" = "instagram-post" ]; then
+              echo "Instagram debug: $(printf '%s' "$body" | jq -c '{error, refKey, kind, creationId, statusCode, status, resume, imageUrl, attempts}' 2>/dev/null || true)"
+            fi
+
             if [ "$status" = "200" ]; then
               echo "✅ $ENDPOINT posted."
               exit 0
@@ -104,9 +108,13 @@ jobs:
 
             # jq, not a column-0 python -c body: that ended the YAML `|` block
             # and GitHub rejected the workflow as invalid (runs #33–#36).
+            # Resume only when the route says so — after in-process listing
+            # fallbacks, creationId is still echoed for logs but Meta has
+            # already abandoned that container (run 35257393601).
             new_id=$(printf '%s' "$body" | jq -r '.creationId // empty' 2>/dev/null || true)
             new_sc=$(printf '%s' "$body" | jq -r '.statusCode // empty' 2>/dev/null || true)
-            if [ "$new_sc" = "IN_PROGRESS" ] && [ -n "$new_id" ]; then
+            resume=$(printf '%s' "$body" | jq -r '.resume // false' 2>/dev/null || true)
+            if [ "$ENDPOINT" = "instagram-post" ] && [ "$resume" = "true" ] && [ "$new_sc" = "IN_PROGRESS" ] && [ -n "$new_id" ]; then
               CREATION_ID="$new_id"
             else
               CREATION_ID=""

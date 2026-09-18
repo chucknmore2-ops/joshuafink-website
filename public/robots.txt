@@ -5,6 +5,9 @@
 
 User-agent: *
 Allow: /
+# Instagram Graph fetches /ig-photo/*.jpg as image_url. Keep it outside /api/
+# so FacebookBot / facebookexternalhit are not blocked by Disallow: /api/.
+Allow: /ig-photo/
 Disallow: /api/
 
 # ── AI search & answer-engine crawlers ──────────────────────────────────
@@ -68,10 +71,12 @@ Disallow: /api/
 
 User-agent: Meta-ExternalAgent
 Allow: /
+Allow: /ig-photo/
 Disallow: /api/
 
 User-agent: FacebookBot
 Allow: /
+Allow: /ig-photo/
 Disallow: /api/
 
 User-agent: YouBot

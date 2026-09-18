@@ -1,16 +1,29 @@
 import { NextResponse } from 'next/server'
 import { blogPosts } from '@/lib/blog'
-import { pickWeeklyPromotable, nextPromotable, promotableListings } from '@/lib/promotable-listings'
+import {
+  pickWeeklyPromotable,
+  fallbackPromotables,
+  promotableListings,
+} from '@/lib/promotable-listings'
 import type { Listing } from '@/lib/listings'
 import { listingSlug } from '@/lib/listing-detail'
 import { logPost } from '@/lib/admin-db'
 import { instagramImageUrl } from '@/lib/compass-photo'
 import { withUtm } from '@/lib/utm'
+import {
+  IG_ALTERNATE_LISTINGS,
+  IG_POLL_INTERVAL_MS,
+  IG_POLL_MS,
+  IG_RESUME_POLL_MS,
+  igFailureBody,
+  preflightPublicJpeg,
+  redactSecrets,
+  type IgAttemptDebug,
+} from '@/lib/instagram-publish'
 
 export const dynamic = 'force-dynamic'
-// Room for two container-readiness polls (see GET): Meta can leave one photo
-// IN_PROGRESS indefinitely, so a stalled container is followed by a fresh one
-// built from the next listing. geo-audit already runs at 300 on this plan.
+// Three listing attempts × 80s poll plus image preflight. geo-audit already
+// runs at 300 on this plan.
 export const maxDuration = 300
 
 // Instagram auto-poster for Joshua Fink Group.
@@ -34,6 +47,10 @@ export const maxDuration = 300
 // Two-step Graph API flow:
 //   1. POST /{ig-user-id}/media with image_url + caption → returns container ID
 //   2. POST /{ig-user-id}/media_publish with creation_id → returns media ID
+//
+// image_url is always a JPEG on https://www.joshuafink.com (see
+// lib/compass-photo.ts + /ig-photo/{id}.jpg). Compass CDN URLs stalled Meta
+// at IN_PROGRESS on 2026-09-16 and 2026-09-17.
 
 const GRAPH_API = 'https://graph.facebook.com/v19.0'
 const SITE = 'https://www.joshuafink.com'
@@ -115,8 +132,8 @@ function buildFromListing(listing?: Listing | null): PostPayload | null {
     `#${cityHashtag} #JustListed #JoshuaFinkGroup #Compass #NashvilleRealEstate #MiddleTennessee #TennesseeRealEstate`
   return {
     caption: caption.slice(0, MAX_CAPTION),
-    // Raw Compass WebP (2048x1536.webp) left the 2026-09-09 container
-    // IN_PROGRESS across three GHA retries. Send the JPEG variant.
+    // Hosted JPEG on joshuafink.com — never the Compass CDN. See
+    // app/ig-photo/[id]/route.ts.
     imageUrl: instagramImageUrl(l.imageUrl!),
     url,
     kind: 'listing',
@@ -162,6 +179,18 @@ function pickPayload(): PostPayload | null {
     : buildFromListing() || buildFromBlog()
 }
 
+function payloadsToTry(first: PostPayload): PostPayload[] {
+  const out: PostPayload[] = [first]
+  if (first.kind !== 'listing') return out
+  const current = promotableListings().find((l) => listingSlug(l) === first.refKey)
+  if (!current) return out
+  for (const alt of fallbackPromotables(current, IG_ALTERNATE_LISTINGS)) {
+    const payload = buildFromListing(alt)
+    if (payload && payload.refKey !== first.refKey) out.push(payload)
+  }
+  return out
+}
+
 export async function GET(request: Request) {
   const expected = process.env.CRON_SECRET
   if (!expected) {
@@ -198,11 +227,12 @@ export async function GET(request: Request) {
     )
   }
 
-  const sanitize = (t: string) => t.slice(0, 100).replace(/[^\w\s.:,\-]/g, '')
+  const sanitize = (t: string) =>
+    redactSecrets(t).replace(/[^\w\s.:,\-;/()#'"=[\]]/g, '')
   // ?creationId= lets Social Autopost resume the container a previous attempt
-  // created, instead of creating a second one that stalls the same way. It is
-  // honoured ONCE: a container Meta has left IN_PROGRESS for minutes is dead,
-  // and on 2026-09-16 all three GHA attempts polled the same stuck id.
+  // created. Honour it only for the first payload: a container Meta has left
+  // IN_PROGRESS for minutes is dead, and on 2026-09-16 all three GHA attempts
+  // polled the same stuck id.
   const resumeRaw = new URL(request.url).searchParams.get('creationId')?.trim() ?? ''
   const resumeId = /^\d+$/.test(resumeRaw) ? resumeRaw : ''
 
@@ -215,13 +245,14 @@ export async function GET(request: Request) {
         errorMessage: string
         creationId?: string
         statusCode?: string
+        statusText?: string
         hint?: string
         /** Meta accepted the container but never finished it — another photo may work. */
         stalled: boolean
       }
 
   // One create → poll → publish cycle. Never throws, so the caller can decide
-  // whether a different listing is worth a second cycle.
+  // whether a different listing is worth another cycle.
   async function attemptPost(p: PostPayload, pollMs: number, resume = ''): Promise<Attempt> {
     try {
       let creationId = resume
@@ -267,32 +298,38 @@ export async function GET(request: Request) {
       // Meta processes the image asynchronously after the container is created.
       // Publishing before status_code=FINISHED is what threw the 400 "Media ID
       // is not available" (OAuthException code 9007) failures, so poll until
-      // it's ready. 2026-08-26 and 2026-09-09 stalled on the raw 2048px WebP;
-      // 2026-09-16 stalled on the JPEG too, which is why a stall now falls
-      // through to a different home rather than being retried forever.
+      // it's ready. Also read `status` — when status_code is ERROR that field
+      // is Meta's human-readable reason (download failure, aspect ratio, …).
       let statusCode = 'IN_PROGRESS'
+      let statusText = ''
       const pollDeadline = Date.now() + pollMs
       while (Date.now() < pollDeadline) {
         const statusRes = await fetch(
-          `${GRAPH_API}/${creationId}?fields=status_code&access_token=${accessToken}`,
+          `${GRAPH_API}/${creationId}?fields=status_code,status&access_token=${accessToken}`,
         )
         if (statusRes.ok) {
-          const statusData = (await statusRes.json()) as { status_code?: string }
+          const statusData = (await statusRes.json()) as {
+            status_code?: string
+            status?: string
+          }
           statusCode = statusData.status_code ?? 'IN_PROGRESS'
+          statusText = typeof statusData.status === 'string' ? statusData.status : ''
         }
         if (statusCode === 'FINISHED' || statusCode === 'ERROR' || statusCode === 'EXPIRED') {
           break
         }
-        await new Promise((resolve) => setTimeout(resolve, 4000))
+        await new Promise((resolve) => setTimeout(resolve, IG_POLL_INTERVAL_MS))
       }
       if (statusCode !== 'FINISHED') {
+        const reason = statusText ? `; ${sanitize(statusText)}` : ''
         return {
           ok: false,
           status: 502,
           error: 'instagram container not ready',
-          errorMessage: `container ${creationId} not ready (status_code ${statusCode}) — publish aborted`,
+          errorMessage: `container ${creationId} not ready (status_code ${statusCode}${reason}) slug=${p.refKey}`,
           creationId,
           statusCode,
+          statusText: statusText ? sanitize(statusText) : undefined,
           stalled: true,
         }
       }
@@ -313,6 +350,7 @@ export async function GET(request: Request) {
           status: 502,
           error: 'instagram publish failed',
           errorMessage: `publish ${publishRes.status} ${snippet}`,
+          creationId,
           stalled: false,
         }
       }
@@ -330,55 +368,127 @@ export async function GET(request: Request) {
     }
   }
 
-  // A resumed container has already had one full poll window, so give it a
-  // shorter one before moving on.
-  let posted = payload
-  let attempt = await attemptPost(payload, resumeId ? 60_000 : 110_000, resumeId)
+  const queue = payloadsToTry(payload)
+  const attempts: IgAttemptDebug[] = []
+  let lastFail: Extract<Attempt, { ok: false }> | null = null
 
-  // Meta can leave one specific photo IN_PROGRESS forever. Build a fresh
-  // container from the next Active home instead of burning the rest of the
-  // week's retries on the same asset.
-  let triedAlternate = false
-  if (!attempt.ok && attempt.stalled && payload.kind === 'listing') {
-    const current = promotableListings().find((l) => listingSlug(l) === payload.refKey)
-    const alternate = current ? nextPromotable(current) : null
-    const alternatePayload = alternate ? buildFromListing(alternate) : null
-    if (alternatePayload && alternatePayload.refKey !== payload.refKey) {
+  for (let i = 0; i < queue.length; i++) {
+    const posted = queue[i]
+    const debugBase: IgAttemptDebug = {
+      refKey: posted.refKey,
+      kind: posted.kind,
+      imageUrl: posted.imageUrl,
+    }
+
+    const preflight = await preflightPublicJpeg(posted.imageUrl)
+    if (!preflight.ok) {
+      console.warn('[instagram-post] image preflight failed', posted.refKey, preflight.reason)
+      attempts.push({ ...debugBase, error: preflight.reason })
+      await logIg('failed', posted, {
+        errorMessage: `preflight ${posted.refKey}: ${preflight.reason}`,
+      })
+      lastFail = {
+        ok: false,
+        status: 502,
+        error: 'instagram image_url not ready',
+        errorMessage: `preflight ${posted.refKey}: ${preflight.reason}`,
+        stalled: true,
+      }
+      continue
+    }
+
+    console.info(
+      '[instagram-post] attempting',
+      JSON.stringify({
+        refKey: posted.refKey,
+        kind: posted.kind,
+        imageUrl: posted.imageUrl,
+        bytes: preflight.bytes,
+        resume: i === 0 && Boolean(resumeId),
+      }),
+    )
+
+    const pollMs = i === 0 && resumeId ? IG_RESUME_POLL_MS : IG_POLL_MS
+    const attempt = await attemptPost(posted, pollMs, i === 0 ? resumeId : '')
+    const attemptLog: IgAttemptDebug = {
+      ...debugBase,
+      creationId: attempt.creationId,
+      statusCode: attempt.ok ? 'FINISHED' : attempt.statusCode,
+      status: attempt.ok ? undefined : attempt.statusText,
+      error: attempt.ok ? undefined : attempt.error,
+    }
+    attempts.push(attemptLog)
+    console.info(
+      '[instagram-post] result',
+      JSON.stringify({
+        refKey: posted.refKey,
+        creationId: attemptLog.creationId ?? null,
+        statusCode: attemptLog.statusCode ?? null,
+        status: attemptLog.status ?? null,
+        ok: attempt.ok,
+      }),
+    )
+
+    if (attempt.ok) {
+      await logIg('posted', posted, { externalPostId: attempt.mediaId ?? null })
+      return NextResponse.json({
+        posted: true,
+        mediaId: attempt.mediaId,
+        creationId: attempt.creationId,
+        refKey: posted.refKey,
+        kind: posted.kind,
+        imageUrl: posted.imageUrl,
+        preview: posted.caption.slice(0, 120),
+        url: posted.url,
+        attempts,
+        at: new Date().toISOString(),
+      })
+    }
+
+    await logIg('failed', posted, { errorMessage: attempt.errorMessage })
+    lastFail = attempt
+    // Token / request rejection is not the photo's fault — don't burn quota
+    // creating more containers.
+    if (!attempt.stalled) {
+      return NextResponse.json(
+        igFailureBody({
+          error: attempt.error,
+          attempts,
+          hint: attempt.hint,
+          resume: false,
+        }),
+        { status: attempt.status },
+      )
+    }
+
+    if (i < queue.length - 1) {
       console.warn(
         '[instagram-post] container stalled on',
-        payload.refKey,
+        posted.refKey,
+        attempt.creationId,
+        attempt.statusCode,
         '— retrying with',
-        alternatePayload.refKey,
+        queue[i + 1].refKey,
       )
-      await logIg('failed', payload, { errorMessage: attempt.errorMessage })
-      triedAlternate = true
-      posted = alternatePayload
-      attempt = await attemptPost(alternatePayload, 110_000)
     }
   }
 
-  if (!attempt.ok) {
-    await logIg('failed', posted, { errorMessage: attempt.errorMessage })
-    // Echo creationId only while resuming it is still worth an attempt. After a
-    // resume or a fallback, omitting it makes Social Autopost start clean.
-    const resumable = attempt.stalled && !resumeId && !triedAlternate
-    return NextResponse.json(
-      {
-        error: attempt.error,
-        ...(resumable ? { creationId: attempt.creationId, statusCode: attempt.statusCode } : {}),
-        ...(attempt.hint ? { hint: attempt.hint } : {}),
-      },
-      { status: attempt.status },
-    )
+  const fail = lastFail ?? {
+    ok: false as const,
+    status: 502,
+    error: 'instagram container not ready',
+    errorMessage: 'no attempt completed',
+    stalled: true,
   }
-
-  await logIg('posted', posted, { externalPostId: attempt.mediaId ?? null })
-  return NextResponse.json({
-    posted: true,
-    mediaId: attempt.mediaId,
-    creationId: attempt.creationId,
-    preview: posted.caption.slice(0, 120),
-    url: posted.url,
-    at: new Date().toISOString(),
-  })
+  return NextResponse.json(
+    igFailureBody({
+      error: fail.error,
+      attempts,
+      hint: fail.hint,
+      // Alternates already tried in-process. Echo creationId for logs, but do
+      // not ask Social Autopost to resume a container Meta has abandoned.
+      resume: false,
+    }),
+    { status: fail.status },
+  )
 }
