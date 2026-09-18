@@ -163,6 +163,7 @@ export default function BuyerGuidePage() {
                           id="bg-name"
                           name="name"
                           required
+                          autoComplete="name"
                           placeholder="Jane Smith"
                           className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors"
                         />
@@ -176,6 +177,7 @@ export default function BuyerGuidePage() {
                           id="bg-email"
                           name="email"
                           required
+                          autoComplete="email"
                           placeholder="you@example.com"
                           className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors"
                         />
@@ -191,6 +193,7 @@ export default function BuyerGuidePage() {
                           type="tel"
                           id="bg-phone"
                           name="phone"
+                          autoComplete="tel"
                           placeholder="615-555-0000"
                           className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors"
                         />

@@ -116,17 +116,17 @@ export default function SellForm() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div>
           <label htmlFor="name" className={labelClass}>Full Name *</label>
-          <input type="text" id="name" name="name" required placeholder="Jane Smith" className={inputClass} />
+          <input type="text" id="name" name="name" required placeholder="Jane Smith" autoComplete="name" className={inputClass} />
         </div>
         <div>
           <label htmlFor="phone" className={labelClass}>Phone *</label>
-          <input type="tel" id="phone" name="phone" required placeholder="615-555-0000" className={inputClass} />
+          <input type="tel" id="phone" name="phone" required placeholder="615-555-0000" autoComplete="tel" className={inputClass} />
         </div>
       </div>
 
       <div>
         <label htmlFor="email" className={labelClass}>Email Address *</label>
-        <input type="email" id="email" name="email" required placeholder="you@example.com" className={inputClass} />
+        <input type="email" id="email" name="email" required placeholder="you@example.com" autoComplete="email" className={inputClass} />
       </div>
 
       <div>
