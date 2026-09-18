@@ -489,6 +489,36 @@ export const schools: Record<string, School> = {
     ],
   },
 
+  'gallatin-high-school-gallatin-tn': {
+    slug: 'gallatin-high-school-gallatin-tn',
+    name: 'Gallatin High School',
+    level: 'High',
+    district: 'Sumner County Schools',
+    suburbSlug: 'gallatin-tn',
+    ratingNote: 'Niche rates it 3.87/5 from 321 reviews and ranks it #122 among Tennessee public high schools (#9 of 10 in Sumner County); SchoolDigger’s 2024–2025 rankings place it 152nd of 389 statewide — solidly above average, a tier below Station Camp’s top-30 ranking.',
+    blurb:
+      'Gallatin High School sits at 700 Dan P. Herron Drive and is Sumner County’s original comprehensive high school, serving the older, established core of town — downtown Gallatin and the Wynbrooke area — as distinct from the newer Station Camp zone that covers the Station Camp, Sanders Ferry, and Lakeside growth corridor. Niche rates it 3.87/5 from 321 reviews and ranks it #122 among Tennessee’s public high schools; SchoolDigger’s 2024–2025 rankings put it 152nd of 389 statewide. Both put it solidly above average, though a notch behind Station Camp’s top-30 ranking — SchoolDigger also flags a 25.3% chronic-absenteeism rate, more than double the district average, which is worth asking about directly if it matters to your family. For buyers, the honest read: Gallatin High serves the more walkable, established part of town, and is worth comparing directly against Station Camp rather than assumed to be the default zone.',
+    neighborhoods: ['Downtown Gallatin', 'Wynbrooke', 'Central/West Gallatin'],
+    faqs: [
+      {
+        q: 'What neighborhoods are zoned to Gallatin High School?',
+        a: 'The Gallatin High zone covers the older, established core of town — downtown Gallatin, Wynbrooke, and the surrounding central and west Gallatin neighborhoods — as opposed to the newer Station Camp zone on the town’s growth corridor. Sumner County has redrawn attendance lines before as the area has grown, so always confirm the current zone assignment with Sumner County Schools for a specific address before writing an offer.',
+      },
+      {
+        q: 'Is Gallatin High School a good school?',
+        a: 'It’s a solid, above-average option. Niche rates it 3.87/5 from 321 reviews and ranks it #122 among Tennessee’s public high schools; SchoolDigger’s 2024–2025 rankings place it 152nd of 389 statewide. Both put it a notch behind Station Camp’s top-30 SchoolDigger ranking. SchoolDigger also reports a 25.3% chronic-absenteeism rate, more than double the district average — a fair question to ask the school directly if attendance culture matters to your decision.',
+      },
+      {
+        q: 'How much do homes near Gallatin High School cost?',
+        a: 'Gallatin High-zoned homes are part of the broader Gallatin market — see the current Gallatin market report for up-to-date medians and price-per-square-foot. Downtown-adjacent and Wynbrooke-area homes tend to be older housing stock than the newer construction common in the Station Camp zone. Joshua can pull exact, current comps for any specific street.',
+      },
+      {
+        q: 'How does Gallatin High School compare to Station Camp High School?',
+        a: 'Both serve Gallatin under Sumner County Schools, but they draw from different parts of town and rank differently: Station Camp is 3rd among Sumner County’s high schools per SchoolDigger (30th of 389 statewide) and covers the newer Station Camp/Sanders Ferry/Lakeside growth corridor, while Gallatin High ranks 152nd of 389 statewide and serves the older, established downtown core. Neither is a wrong choice — the right one comes down to which side of the attendance line a specific address falls on, plus whether newer construction or an established, walkable neighborhood matters more to you.',
+      },
+    ],
+  },
+
   'julia-green-elementary-nashville-tn': {
     slug: 'julia-green-elementary-nashville-tn',
     name: 'Julia Green Elementary School',
