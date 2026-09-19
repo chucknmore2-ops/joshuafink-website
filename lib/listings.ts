@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-09-18T12:49:07.868Z
+// AUTO-GENERATED — Last synced: 2026-09-19T12:22:07.198Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -21,7 +21,7 @@ export interface Listing {
 
 // Mirrors the header timestamp so server components can compute sync staleness
 // without parsing comments. Updated by scripts/fetch-images.mjs each sync.
-export const listingsSyncedAt = "2026-09-18T12:49:07.868Z";
+export const listingsSyncedAt = "2026-09-19T12:22:07.198Z";
 
 export const listings: Listing[] = [
   {
@@ -109,18 +109,6 @@ export const listings: Listing[] = [
     lastVerified: listingsSyncedAt,
   },
   {
-    address: "316 7th Ave",
-    city: "Columbia, TN 38401 | MLS #3527081",
-    price: 329900,
-    beds: 2,
-    baths: 2,
-    sqft: 1053,
-    status: "Active",
-    compassUrl: "https://www.compass.com/homedetails/316-7th-Ave-Columbia-TN-38401/SQ46B_pid/",
-    imageUrl: "https://www.compass.com/m/0a998abaf8f79a2963e243e3e6a95f98a671e75f5a412c8ce50e8e191fbbf27b/2048x1536.webp",
-    lastVerified: listingsSyncedAt,
-  },
-  {
     address: "4874 Sparta Pike",
     city: "Watertown, TN 37184 | MLS #3319962",
     price: 324900,
@@ -130,6 +118,18 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/4874-Sparta-Pike-Watertown-TN-37184/TMU6R_pid/",
     imageUrl: "https://www.compass.com/m/9271db1e1cbdb146eb498cd63a192c09a438f39c3b9627023b0cbda6f044a677/2048x1536.webp",
+    lastVerified: listingsSyncedAt,
+  },
+  {
+    address: "316 7th Ave",
+    city: "Columbia, TN 38401 | MLS #3527081",
+    price: 319900,
+    beds: 2,
+    baths: 2,
+    sqft: 1053,
+    status: "Active",
+    compassUrl: "https://www.compass.com/homedetails/316-7th-Ave-Columbia-TN-38401/SQ46B_pid/",
+    imageUrl: "https://www.compass.com/m/4f489e005c9f2045d6bbcce5471fc3b26542e22acea65390028536c64024397d/2048x1536.webp",
     lastVerified: listingsSyncedAt,
   },
   {
