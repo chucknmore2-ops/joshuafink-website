@@ -21,8 +21,9 @@ stay silent.
 | Railway | autoposter-engagement (FB) | channel=facebook, job_name=content-engagement | 9 days |
 | Vercel | linkedin-post | channel=linkedin (if Railway side ever logs it) | 9 days |
 | Vercel | gbp-post | channel=gbp (if Railway side ever logs it) | 9 days |
+| GitHub Actions | instagram-post | `post_log` channel=instagram, job_name=instagram-post. Buffer Free accepted the queue (`IG_AUTOPOST=buffer`). Graph stays off. | 9 days |
 | GitHub Actions | sync-listings | `git log -1 lib/listings.ts` (daily sync, but only commits on a diff — hence the loose threshold) | 17 days |
-| GitHub Actions | scheduled workflow runs | latest **completed** run of `sync-listings`, `social-autopost`, `geo-audit`, `daily-tasks-pushover` concluded `success` | n/a (red = alert same morning) |
+| GitHub Actions | scheduled workflow runs | latest **completed** run of `sync-listings`, `social-autopost`, `geo-audit`, `daily-tasks-pushover` concluded `success`. Social Autopost ignores Graph Instagram failures before 2026-09-21 18:20 UTC so those old reds do not keep the check red. A failure after that still alerts. | n/a (red = alert same morning) |
 | Vercel | site uptime | `GET /api/healthcheck` returns 200 with status:ok | n/a |
 | Vercel | lead pipeline | POST `/api/contact` SYSTEM TEST lead; sheet + real Pushover live-tested. Joshua email send is skipped (CI/chat is the alert path); `RESEND_API_KEY` must still be set. | n/a (any configured-channel fail = exit 1) |
 
@@ -43,7 +44,6 @@ These are listed in every report (workflow log, and the opt-in email) so a green
 
 - **`/api/cron/indexnow`** — submits URLs to Bing/Yandex, no DB write
 - **`/api/cron/agent-briefing`** — sends email + ClickUp task, no DB write
-- **Instagram autopost** — paused on purpose. Graph containers stay `IN_PROGRESS`; Meta Tech Provider was declined. `social-autopost.yml` soft-skips (`IG_AUTOPOST=paused`). Not a freshness failure.
 - **US federal holidays** — a holiday on a scheduled day will surface as STALE until the next firing
 - **DST drift** — v1 anchors thresholds in days, not local clock time; +/-1h drift acceptable
 
@@ -57,6 +57,19 @@ Settings → Secrets and variables → Actions → **Secrets** tab → New repos
 | `GMAIL_USER` | Gmail address that sends the opt-in alert | Any Gmail account with 2FA enabled. Only used when `always_email=true`. |
 | `GMAIL_APP_PASSWORD` | 16-character App Password (NOT the real Gmail password) | See "Generate a Gmail App Password" below. Only used when `always_email=true`. |
 | `ALERT_TO_EMAIL` | Inbox for the opt-in alert | Typically `chucknmore2@gmail.com`. Only used when `always_email=true`. |
+
+Instagram posting uses two more Actions secrets. The healthcheck does not
+read them; Social Autopost forwards them into `/api/cron/instagram-post`.
+
+| Secret | What it is |
+|---|---|
+| `BUFFER_API_KEY` | Buffer Free API key (`Authorization: Bearer` on `https://api.buffer.com`) |
+| `BUFFER_IG_CHANNEL_ID` | Buffer channel id for @joshuafinkgroup (`6ab16f9dea19ca0bdea8681d`) |
+
+Graph publish stays off. `IG_AUTOPOST=buffer` is the live path. A successful
+queue writes `post_log` (`channel=instagram`, `status=posted`). That row is
+the freshness signal above. Failures of Social Autopost before 2026-09-21
+18:20 UTC are old Graph reds and do not, by themselves, fail this check.
 
 Optional repository **variable** (Settings → Secrets and variables → Actions → **Variables** tab):
 

@@ -72,8 +72,8 @@ def _schedule_pairs(ts: str) -> tuple[set[tuple[str, str]], set[tuple[str, str]]
 def test_expected_jobs_match_admin_schedule_ts():
     """Catch silent drift: every live (channel, jobName) pair in
     admin-schedule.ts must have a matching ExpectedJob. Paused jobs must
-    not alert — a paused Instagram row that is also in EXPECTED_JOBS would
-    turn the weekday healthcheck red again."""
+    not alert. Instagram is live via Buffer, so it is freshness-monitored
+    from post_log again."""
     ts = ADMIN_SCHEDULE_TS.read_text()
     live, paused = _schedule_pairs(ts)
     assert live, "Failed to parse live channel/jobName pairs from admin-schedule.ts"
@@ -82,7 +82,9 @@ def test_expected_jobs_match_admin_schedule_ts():
     assert not missing, f"EXPECTED_JOBS is missing entries from admin-schedule.ts: {missing}"
     alerting = paused & expected_pairs
     assert not alerting, f"paused admin-schedule jobs must not alert in EXPECTED_JOBS: {alerting}"
-    assert ("instagram", "instagram-post") in paused
+    assert ("instagram", "instagram-post") in live
+    assert ("instagram", "instagram-post") in expected_pairs
+    assert ("instagram", "instagram-post") not in paused
     # `extra` (expected - live) is allowed for jobs monitored here but not
     # surfaced in /admin.
 
@@ -914,6 +916,75 @@ def test_workflow_run_error_on_api_failure():
     assert "HTTP 401" in r.detail
 
 
+def test_social_autopost_ignores_old_graph_failures():
+    """A Graph-era Instagram red must not keep Social Autopost in ERROR
+    once a later non-Graph run succeeded. Instagram freshness is post_log."""
+    payload = {"workflow_runs": [
+        {
+            "conclusion": "failure",
+            "created_at": "2026-09-21T16:56:19Z",
+            "updated_at": "2026-09-21T17:10:00Z",
+            "html_url": "https://github.com/o/r/actions/runs/old-graph",
+        },
+        {
+            "conclusion": "success",
+            "created_at": "2026-09-17T17:54:13Z",
+            "updated_at": "2026-09-17T18:00:00Z",
+            "html_url": "https://github.com/o/r/actions/runs/linkedin-ok",
+        },
+    ]}
+    r = hc.check_workflow_last_run(
+        "social-autopost.yml", "Social Autopost",
+        repo="o/r", token="t", opener=_runs_opener(payload),
+    )
+    assert r.status == hc.STATUS_PASS
+    assert not r.is_alert
+    assert "runs/linkedin-ok" in r.detail
+    assert "old-graph" not in r.detail
+    assert "Graph Instagram" in r.detail
+
+
+def test_social_autopost_still_alerts_on_a_buffer_era_failure():
+    payload = {"workflow_runs": [
+        {
+            "conclusion": "failure",
+            "created_at": "2026-09-23T14:00:00Z",
+            "updated_at": "2026-09-23T14:10:00Z",
+            "html_url": "https://github.com/o/r/actions/runs/buffer-fail",
+        },
+        {
+            "conclusion": "success",
+            "created_at": "2026-09-17T17:54:13Z",
+            "updated_at": "2026-09-17T18:00:00Z",
+            "html_url": "https://github.com/o/r/actions/runs/older-ok",
+        },
+    ]}
+    r = hc.check_workflow_last_run(
+        "social-autopost.yml", "Social Autopost",
+        repo="o/r", token="t", opener=_runs_opener(payload),
+    )
+    assert r.status == hc.STATUS_ERROR
+    assert r.is_alert
+    assert "runs/buffer-fail" in r.detail
+
+
+def test_social_autopost_graph_only_history_is_not_an_alert():
+    payload = {"workflow_runs": [
+        {
+            "conclusion": "failure",
+            "created_at": "2026-09-16T18:05:37Z",
+            "updated_at": "2026-09-16T18:20:00Z",
+            "html_url": "https://github.com/o/r/actions/runs/graph-only",
+        },
+    ]}
+    r = hc.check_workflow_last_run(
+        "social-autopost.yml", "Social Autopost",
+        repo="o/r", token="t", opener=_runs_opener(payload),
+    )
+    assert r.status == hc.STATUS_GAP
+    assert not r.is_alert
+
+
 def test_monitored_workflows_exist_on_disk():
     """Guard against a rename silently turning a check into a permanent GAP."""
     workflows_dir = Path(__file__).resolve().parent.parent / ".github" / "workflows"
@@ -1273,8 +1344,7 @@ def test_report_includes_gaps_section_on_pass():
     text = hc.format_text_report(results, now=NOW, hostname="ci-runner")
     assert "DOCUMENTED GAPS" in text
     assert "/api/cron/indexnow" in text
-    assert "Instagram autopost" in text
-    assert "IG_AUTOPOST" in text
+    assert "Instagram autopost" not in text
     assert "OK — all pipelines fresh" in text
 
 

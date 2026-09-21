@@ -95,7 +95,7 @@ routes — but the following features require them:
 | Cron routes (IndexNow, GBP, LinkedIn, Instagram) | `CRON_SECRET` |
 | Google Business Profile auto-poster | `GBP_CLIENT_ID`, `GBP_CLIENT_SECRET`, `GBP_REFRESH_TOKEN`, `GBP_ACCOUNT_ID`, `GBP_LOCATION_ID` |
 | LinkedIn auto-poster | `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET`, `LINKEDIN_REDIRECT_URI`, `LINKEDIN_ACCESS_TOKEN`, `LINKEDIN_AUTHOR_URN`, `LINKEDIN_TOKEN_EXPIRES_AT_MS` (all three token values are printed by `/api/linkedin/callback`) |
-| Instagram auto-poster | `IG_BUSINESS_ACCOUNT_ID`, `IG_ACCESS_TOKEN` |
+| Instagram auto-poster | Buffer Free via GitHub secrets `BUFFER_API_KEY`, `BUFFER_IG_CHANNEL_ID` (`IG_AUTOPOST=buffer`). Graph tokens are not the live path. |
 | Morning healthcheck (`scripts/morning_healthcheck.py`) | `DATABASE_URL` |
 | Content engine (Phase 2A+) | `ANTHROPIC_API_KEY` |
 

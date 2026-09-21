@@ -44,7 +44,6 @@ function linkedinStatus(): Pick<ChannelStatus, "configured" | "detail" | "warnin
 export default function ChannelHealth() {
   const li = linkedinStatus();
   const gbpReady = Boolean(process.env.GBP_REFRESH_TOKEN && process.env.GBP_LOCATION_ID);
-  const igReady = Boolean(process.env.IG_ACCESS_TOKEN && process.env.IG_BUSINESS_ACCOUNT_ID);
 
   const channels: ChannelStatus[] = [
     {
@@ -67,13 +66,9 @@ export default function ChannelHealth() {
     {
       channel: "Instagram",
       emoji: "📷",
-      configured: igReady,
-      // Paused even when the token is set. Resume via IG_AUTOPOST=live in
-      // .github/workflows/social-autopost.yml — do not delete the token env vars.
-      detail: igReady
-        ? "Paused — Graph publish stuck; Tech Provider declined. Autopost skips until IG_AUTOPOST=live."
-        : "Paused. IG_BUSINESS_ACCOUNT_ID / IG_ACCESS_TOKEN not set",
-      warningDays: igReady ? 0 : undefined,
+      configured: true,
+      detail:
+        "Posts Wednesdays via Buffer (IG_AUTOPOST=buffer). Graph publish stays off.",
     },
     {
       channel: "YouTube",

@@ -36,9 +36,9 @@ They should roughly agree. What a mismatch means:
   Pushover). The test lead does not email the inbox.
 
 **3. Check `post_log` on /admin.** https://www.joshuafink.com/admin — "Posted
-(7d)" should show Facebook, LinkedIn (Thu) and GBP (Tue). Instagram autopost
-is paused (`IG_AUTOPOST` in `social-autopost.yml`); a missing Wednesday IG
-row is expected. A live channel at zero for two weeks is dead, not quiet.
+(7d)" should show Facebook, Instagram (Wed, via Buffer), LinkedIn (Thu) and
+GBP (Tue). A live channel at zero for two weeks is dead, not quiet. Graph
+publish for Instagram stays off.
 
 **4. Skim the GEO card** on /admin. The score moves slowly; what matters is the
 list of competitors cited instead of Joshua (HomeLight, FastExpert, Redfin,
@@ -51,8 +51,9 @@ Yelp). Free profiles on those sites are the lever.
 - **5th:** confirm the monthly market update posted (`post_log`, job
   `monthly-market-update`).
 - **Token check** on /admin → Channel health. LinkedIn expires ~every 60 days.
-  GBP tokens are long-lived but not permanent. Instagram is paused; leave its
-  token env vars alone.
+  GBP tokens are long-lived but not permanent. Instagram uses Buffer
+  (`BUFFER_API_KEY`, `BUFFER_IG_CHANNEL_ID` on GitHub). Leave the old Graph
+  token env vars unused; do not turn `IG_AUTOPOST` back to `live`.
 - **Listings spot-check:** open https://www.joshuafink.com/listings and compare
   with Compass. They should match within a day.
 - **Ask Joshua for 2–3 reviews.** Reviews beat links for local ranking, and the

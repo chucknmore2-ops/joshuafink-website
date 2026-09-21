@@ -50,19 +50,15 @@ export const scheduledJobs: ScheduledJob[] = [
     source: "vercel",
   },
   {
-    // Paused 2026-09-21. Graph containers stay IN_PROGRESS; Meta App Review
-    // for instagram_content_publish requires Tech Provider (declined).
-    // social-autopost.yml soft-skips while IG_AUTOPOST=paused. To resume:
-    // set that flag to live, set paused to false, and restore the
-    // EXPECTED_JOBS row in scripts/morning_healthcheck.py.
+    // Live via Buffer Free (IG_AUTOPOST=buffer). Graph publish stays off.
+    // Freshness is a post_log row (channel instagram, job instagram-post).
     service: "github-actions-instagram",
     channel: "instagram",
     jobName: "instagram-post",
     cronUtc: "0 14 * * 3",
     humanCt: "Wed 9:00am CT",
-    description: "Instagram alternating blog/listing — paused",
+    description: "Instagram feed photo via Buffer (Graph off)",
     source: "github-actions",
-    paused: true,
   },
   {
     service: "vercel-cron-gbp",

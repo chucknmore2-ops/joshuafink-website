@@ -151,9 +151,16 @@ EXPECTED_JOBS: tuple[ExpectedJob, ...] = (
         cadence_ct="Tue 9:00am CT",
         max_age_days=9,
     ),
-    # Instagram is paused (IG_AUTOPOST in social-autopost.yml). It stays out
-    # of EXPECTED_JOBS so a missing Wednesday post is not STALE. See
-    # DOCUMENTED_GAPS. The matching admin-schedule entry is paused: true.
+    # Fired weekly by .github/workflows/social-autopost.yml. The route queues
+    # through Buffer Free (IG_AUTOPOST=buffer) and writes post_log on
+    # acceptance. Graph publish stays off. Freshness is the latest posted row.
+    ExpectedJob(
+        label="github-actions-instagram",
+        channel="instagram",
+        job_name="instagram-post",
+        cadence_ct="Wed 9:00am CT",
+        max_age_days=9,
+    ),
 )
 
 # Daily Compass scrape (.github/workflows/sync-listings.yml, 08:00 UTC).
@@ -218,6 +225,18 @@ MONITORED_WORKFLOWS: tuple[tuple[str, str], ...] = (
     ("social-autopost.yml", "Social Autopost"),
     ("geo-audit.yml", "GEO Audit"),
     ("daily-tasks-pushover.yml", "Daily tasks Pushover"),
+)
+
+# Social Autopost failures before this instant are Meta Graph Instagram
+# container stalls (and the manual re-runs of them). Buffer Free is the
+# live path after it. Those old reds must not keep the weekday check in
+# ERROR. A failure at or after the cutoff still alerts. 18:20 UTC is after
+# the IG_AUTOPOST=paused soft-skip success (run 35636868490) and before any
+# Buffer queue.
+SOCIAL_AUTOPOST_WORKFLOW = "social-autopost.yml"
+SOCIAL_AUTOPOST_GRAPH_IGNORE_BEFORE = datetime(2026, 9, 21, 18, 20, tzinfo=timezone.utc)
+_WORKFLOW_FAILURES = frozenset(
+    {"failure", "timed_out", "startup_failure", "action_required"}
 )
 
 # Open PRs from the nightly listings sync (branch sync-listings/<timestamp>,
@@ -307,14 +326,6 @@ DOCUMENTED_GAPS: tuple[tuple[str, str], ...] = (
         "v1 is holiday-naive and tolerates +/- ~1h DST drift. A US federal "
         "holiday on a scheduled day will surface as STALE until the next "
         "firing.",
-    ),
-    (
-        "Instagram autopost (Wed)",
-        "Paused. Graph containers stay IN_PROGRESS; Meta App Review for "
-        "instagram_content_publish requires Tech Provider (declined). "
-        "social-autopost.yml soft-skips while IG_AUTOPOST=paused and does "
-        "not call Graph. Posting code remains. Set IG_AUTOPOST=live and "
-        "restore the EXPECTED_JOBS row to resume.",
     ),
 )
 
@@ -807,6 +818,34 @@ def check_market_stats_freshness(
     )
 
 
+def _parse_github_timestamp(value: object) -> Optional[datetime]:
+    if not isinstance(value, str) or not value:
+        return None
+    try:
+        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+
+
+def _is_old_graph_social_failure(workflow_file: str, run: dict) -> bool:
+    """A Social Autopost failure from the Graph Instagram era.
+
+    Those runs stay in Actions history. Buffer is the live path; a red Graph
+    run must not keep the weekday check in ERROR. Failures with no timestamp
+    are not ignored.
+    """
+    if workflow_file != SOCIAL_AUTOPOST_WORKFLOW:
+        return False
+    if run.get("conclusion") not in _WORKFLOW_FAILURES:
+        return False
+    when = _parse_github_timestamp(run.get("created_at")) or _parse_github_timestamp(
+        run.get("updated_at")
+    )
+    if when is None:
+        return False
+    return when < SOCIAL_AUTOPOST_GRAPH_IGNORE_BEFORE
+
+
 def check_workflow_last_run(
     workflow_file: str,
     label: str,
@@ -820,6 +859,10 @@ def check_workflow_last_run(
     Freshness checks are deliberately slow to fire; this is the same-morning
     signal. Without a GITHUB_TOKEN we report a GAP rather than an alert — a
     local run shouldn't page anyone just for lacking credentials.
+
+    Social Autopost looks past Graph-era Instagram failures (before
+    SOCIAL_AUTOPOST_GRAPH_IGNORE_BEFORE). Instagram freshness after Buffer
+    went live is the post_log row, not those old reds.
     """
     name = f"github-actions — {label}"
     t0 = time.monotonic()
@@ -830,9 +873,10 @@ def check_workflow_last_run(
             detail="GITHUB_TOKEN not set — workflow run status not checked",
         )
 
+    per_page = 30 if workflow_file == SOCIAL_AUTOPOST_WORKFLOW else 1
     url = (
         f"{GITHUB_API_ROOT}/repos/{repo}/actions/workflows/{workflow_file}"
-        f"/runs?status=completed&per_page=1"
+        f"/runs?status=completed&per_page={per_page}"
     )
     try:
         req = urllib.request.Request(
@@ -881,13 +925,44 @@ def check_workflow_last_run(
             duration_ms=int((time.monotonic() - t0) * 1000),
         )
 
-    run = runs[0]
+    ignored = 0
+    run = None
+    for candidate in runs:
+        if not isinstance(candidate, dict):
+            continue
+        if _is_old_graph_social_failure(workflow_file, candidate):
+            ignored += 1
+            continue
+        run = candidate
+        break
+
+    if run is None:
+        detail = f"no completed runs yet for {workflow_file}"
+        if ignored:
+            detail = (
+                f"ignored {ignored} Social Autopost Graph Instagram "
+                f"failure(s) before "
+                f"{SOCIAL_AUTOPOST_GRAPH_IGNORE_BEFORE.strftime('%Y-%m-%dT%H:%MZ')}; "
+                "Buffer is the live path and Instagram freshness is post_log"
+            )
+        return CheckResult(
+            name=name,
+            status=STATUS_GAP,
+            detail=detail,
+            duration_ms=int((time.monotonic() - t0) * 1000),
+        )
+
     conclusion = run.get("conclusion")
     detail = (
         f"latest completed run concluded {conclusion!r} at "
         f"{run.get('updated_at') or run.get('created_at')} "
         f"({run.get('html_url')})"
     )
+    if ignored:
+        detail += (
+            f"; ignored {ignored} Graph Instagram failure(s) before "
+            f"{SOCIAL_AUTOPOST_GRAPH_IGNORE_BEFORE.strftime('%Y-%m-%dT%H:%MZ')}"
+        )
     if conclusion == "success":
         status = STATUS_PASS
     elif conclusion in ("failure", "timed_out", "startup_failure", "action_required"):
@@ -1588,11 +1663,13 @@ def _remediation_for(result: CheckResult) -> Optional[str]:
         )
     if "instagram" in name:
         return (
-            "Instagram autopost is paused on purpose (IG_AUTOPOST in "
-            "social-autopost.yml). Graph containers stay IN_PROGRESS and "
-            "Meta Tech Provider was declined. If this check is alerting, "
-            "drop it from EXPECTED_JOBS, or set IG_AUTOPOST=live before "
-            "running Social Autopost → instagram-post."
+            "Instagram queues through Buffer Free (IG_AUTOPOST=buffer in "
+            "social-autopost.yml). Graph publish stays off. Confirm "
+            "BUFFER_API_KEY and BUFFER_IG_CHANNEL_ID in GitHub Actions "
+            "secrets, then Actions → Social Autopost → Run workflow → "
+            "instagram-post. A posted post_log row (channel instagram) is "
+            "the freshness signal. Old Graph workflow failures before "
+            "2026-09-21 18:20 UTC do not keep Social Autopost red."
         )
     return None  # No tip — generic alert, hand-investigate
 
