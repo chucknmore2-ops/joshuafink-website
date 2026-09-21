@@ -17,12 +17,14 @@ import {
   IG_POLL_INTERVAL_MS,
   IG_POLL_MS,
   IG_RESUME_POLL_MS,
+  IgPageResolutionError,
   igFailureBody,
   igTokenLogFields,
   preflightPublicJpeg,
   redactSecrets,
   resolveIgPublishToken,
   type IgAttemptDebug,
+  type IgPublishToken,
 } from '@/lib/instagram-publish'
 
 export const dynamic = 'force-dynamic'
@@ -43,11 +45,13 @@ export const maxDuration = 300
 //                             Meta Business Suite → Business settings → Accounts
 //                             → Instagram accounts. Requires the IG account to
 //                             be Business/Creator and linked to the FB Page.
+//                             IG_USER_ID is accepted as an alias.
 //   IG_ACCESS_TOKEN         — long-lived Page token, or a User token with
 //                             instagram_content_publish (+ pages_show_list /
 //                             pages_read_engagement so we can read /me/accounts).
 //                             User tokens are swapped at runtime for the Page
-//                             token of the Page linked to IG_BUSINESS_ACCOUNT_ID.
+//                             token of the Page linked to IG_BUSINESS_ACCOUNT_ID
+//                             (never the first Page on the User).
 //
 // Two-step Graph API flow:
 //   1. POST /{ig-user-id}/media with image_url + caption → returns container ID
@@ -208,7 +212,8 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 
-  const igUserId = process.env.IG_BUSINESS_ACCOUNT_ID
+  const igUserId =
+    process.env.IG_BUSINESS_ACCOUNT_ID || process.env.IG_USER_ID
   const envToken = process.env.IG_ACCESS_TOKEN
   if (!igUserId || !envToken) {
     await logIg('failed', null, {
@@ -222,12 +227,24 @@ export async function GET(request: Request) {
 
   // graph.facebook.com content publishing wants a Page token. A User token
   // can create containers that sit at status_code IN_PROGRESS until timeout
-  // (GHA 35604056983). Swap when /me/accounts yields the linked Page.
-  const resolved = await resolveIgPublishToken({
-    envToken,
-    igBusinessAccountId: igUserId,
-    preferredPageId: process.env.FB_PAGE_ID,
-  })
+  // (GHA 35604056983). Swap when /me/accounts yields the linked Page — never
+  // the first brand on the User (GHA 35606977924 picked Water Filter Lab).
+  let resolved: IgPublishToken
+  try {
+    resolved = await resolveIgPublishToken({
+      envToken,
+      igBusinessAccountId: igUserId,
+      preferredPageId: process.env.FB_PAGE_ID,
+    })
+  } catch (err) {
+    const message =
+      err instanceof IgPageResolutionError
+        ? err.message
+        : `instagram page resolution failed: ${(err as Error).message}`
+    console.error('[instagram-post] page resolution', redactSecrets(message))
+    await logIg('failed', null, { errorMessage: message })
+    return NextResponse.json({ error: message }, { status: 500 })
+  }
   const accessToken = resolved.accessToken
   const tokenLog = igTokenLogFields(resolved)
   console.info('[instagram-post] token', JSON.stringify(tokenLog))
