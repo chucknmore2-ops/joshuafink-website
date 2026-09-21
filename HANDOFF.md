@@ -12,7 +12,13 @@ never printed. Last verified **2026-09-18**.
 |---|---|---|
 | **Open** | **Instagram cannot publish.** Every attempt since 09-16 ends `instagram container not ready`: Meta accepts the container and never finishes it. The 09-17 runs prove it is not one bad photo — the code already retried with a second home and Meta stalled on that too. Nothing else is broken. | [Runbook 4](#runbook-4--instagram-didnt-post) |
 | Housekeeping | Retired keys still in Vercel: `SLACK_BOT_TOKEN`, `MONDAY_BOARD_ID`, `SENDGRID_API_KEY`, `CLICKUP_API_TOKEN`. Nothing reads them. | Vercel → Settings → Environment Variables → delete |
-| Housekeeping | ~30 open PRs from the bot account are queued up. | `gh pr list`, then merge or close |
+| Housekeeping | Open `growth/*` and `content/*` PRs (~40). Standing policy below. | `gh pr list` |
+
+### Open growth and content PRs (standing policy)
+
+Open `growth/*` and `content/*` PRs (~40). These are opened by Claude Code on account `chucknmore2-ops` (branch prefixes `growth/YYYY-MM-DD-…` and `content/YYYY-MM-DD-…`), not by a GitHub Actions workflow. Cancelling Claude Code stops *new* ones; it does not close existing PRs or stop Actions (sync, healthcheck, social-autopost, geo-audit). Standing policy: merge selectively when the preview is good; auto-close growth/content PRs idle >14–21 days; do not re-enable a Claude daily growth/content cron without an explicit owner. `research/*` PRs are separate — Session 16 auto-merge policy still applies; do not bulk-close them with growth/content.
+
+`geo-audit.yml` (Monday) uses `ANTHROPIC_API_KEY` via Actions API billing and should **KEEP** after Claude Code cancel (distinct from Claude Code).
 
 **Recently closed — do not redo** (verified 2026-09-18):
 
