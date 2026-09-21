@@ -48,6 +48,13 @@ export const maxDuration = 300
 //                             pages_read_engagement so we can read /me/accounts).
 //                             User tokens are swapped at runtime for the Page
 //                             token of the Page linked to IG_BUSINESS_ACCOUNT_ID.
+//                             If /me/accounts has other brands first (Water
+//                             Filter Lab, etc.), we fail closed — we never
+//                             publish with the wrong Page token.
+//   FB_PAGE_ID              — optional. Joshua Fink Group Facebook Page id.
+//                             Used only when that Page’s IG account matches
+//                             IG_BUSINESS_ACCOUNT_ID (or the Page has no
+//                             conflicting IG id).
 //
 // Two-step Graph API flow:
 //   1. POST /{ig-user-id}/media with image_url + caption → returns container ID
@@ -222,15 +229,27 @@ export async function GET(request: Request) {
 
   // graph.facebook.com content publishing wants a Page token. A User token
   // can create containers that sit at status_code IN_PROGRESS until timeout
-  // (GHA 35604056983). Swap when /me/accounts yields the linked Page.
+  // (GHA 35604056983). Swap when /me/accounts yields the Page linked to
+  // IG_BUSINESS_ACCOUNT_ID. GHA 35606977924 swapped to The Water Filter Lab
+  // (pages[0]); fail closed instead of creating containers with the wrong Page.
   const resolved = await resolveIgPublishToken({
     envToken,
     igBusinessAccountId: igUserId,
     preferredPageId: process.env.FB_PAGE_ID,
   })
-  const accessToken = resolved.accessToken
   const tokenLog = igTokenLogFields(resolved)
   console.info('[instagram-post] token', JSON.stringify(tokenLog))
+  if (!resolved.ok) {
+    await logIg('failed', null, { errorMessage: resolved.reason })
+    return NextResponse.json(
+      {
+        error: 'instagram page token resolve failed',
+        ...tokenLog,
+      },
+      { status: 502 },
+    )
+  }
+  const accessToken = resolved.accessToken
 
   const payload = pickPayload()
   if (!payload) {

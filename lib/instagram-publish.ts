@@ -116,9 +116,11 @@ export async function preflightPublicJpeg(
 
 export type IgTokenKind = 'user' | 'page' | 'unknown'
 
-export type IgPublishToken = {
-  /** Token for container create / poll / publish. Never log this. */
-  accessToken: string
+/** Ops hint when /me/accounts has no Joshua Fink Group Page we can safely use. */
+export const IG_WRONG_PAGE_HINT =
+  'Set FB_PAGE_ID to the Joshua Fink Group Facebook Page id and confirm this User token\'s GET /me/accounts includes that Page with instagram_business_account matching IG_BUSINESS_ACCOUNT_ID (requires pages_show_list and pages_read_engagement). Do not publish with another brand Page such as The Water Filter Lab, CardsWorthTrading, or Paw Pulses.'
+
+type IgPublishTokenBase = {
   tokenKind: IgTokenKind
   swapped: boolean
   pageId: string | null
@@ -126,15 +128,39 @@ export type IgPublishToken = {
   reason: string
 }
 
-type GraphPage = {
+export type IgPublishToken =
+  | (IgPublishTokenBase & {
+      ok: true
+      /** Token for container create / poll / publish. Never log this. */
+      accessToken: string
+    })
+  | (IgPublishTokenBase & {
+      ok: false
+      hint: string
+    })
+
+export type GraphPage = {
   id?: string
   name?: string
   access_token?: string
   instagram_business_account?: { id?: string } | null
 }
 
-function graphGet(path: string, token: string, fields: string): string {
-  const params = new URLSearchParams({ access_token: token, fields })
+export type IgPagePick =
+  | { page: GraphPage; reason: string }
+  | { page: undefined; reason: string }
+
+const ACCOUNTS_PAGE_LIMIT = 100
+const ACCOUNTS_MAX_PAGES = 20
+
+function graphGet(
+  path: string,
+  token: string,
+  fields: string,
+  extra: Record<string, string> = {},
+): string {
+  const params = new URLSearchParams({ fields, ...extra })
+  params.set('access_token', token)
   return `${GRAPH_API}/${path}?${params.toString()}`
 }
 
@@ -143,67 +169,236 @@ function isPageNodeAccountsError(err: unknown): boolean {
   return /node type \(Page\)/i.test(text) || /nonexisting field \(accounts\)/i.test(text)
 }
 
+function pageIgAccountId(page: GraphPage): string | undefined {
+  const id = page.instagram_business_account?.id?.trim()
+  return id || undefined
+}
+
+function igMatches(page: GraphPage, igBusinessAccountId: string): boolean {
+  const wanted = igBusinessAccountId.trim()
+  return Boolean(wanted) && pageIgAccountId(page) === wanted
+}
+
+/** True when the Page is linked to a *different* IG business account. */
+function igConflicts(page: GraphPage, igBusinessAccountId: string): boolean {
+  const wanted = igBusinessAccountId.trim()
+  const got = pageIgAccountId(page)
+  return Boolean(wanted && got && got !== wanted)
+}
+
+function pageNameMatches(
+  page: GraphPage,
+  preferredPageName: string,
+  fuzzy = false,
+): boolean {
+  const name = (page.name ?? '').trim().toLowerCase()
+  if (!name) return false
+  if (fuzzy) return name.includes('joshua fink')
+  return name === preferredPageName.trim().toLowerCase()
+}
+
 function pageReason(
   page: GraphPage,
   igBusinessAccountId: string,
   preferredPageName: string,
   preferredPageId?: string,
 ): string {
-  if (page.instagram_business_account?.id === igBusinessAccountId) {
+  if (igMatches(page, igBusinessAccountId)) {
     return 'matched instagram_business_account'
   }
   if (preferredPageId && page.id === preferredPageId) {
     return 'matched preferred page id'
   }
-  const name = (page.name ?? '').trim().toLowerCase()
-  if (name === preferredPageName.trim().toLowerCase()) {
+  if (pageNameMatches(page, preferredPageName)) {
     return 'matched Joshua Fink Group page name'
   }
-  if (name.includes('joshua fink')) {
+  if (pageNameMatches(page, preferredPageName, true)) {
     return 'matched Joshua Fink page name'
   }
-  if (page.instagram_business_account?.id) {
-    return 'first page with instagram_business_account'
-  }
-  return 'first available page'
+  return 'matched Facebook Page'
 }
 
+function summarizePages(pages: GraphPage[]): string {
+  const bits = pages.slice(0, 8).map((p) => {
+    const name = (p.name ?? '').trim() || p.id || 'unnamed'
+    const ig = pageIgAccountId(p)
+    return ig ? `${name} (ig ${ig})` : name
+  })
+  const extra = pages.length > 8 ? ` +${pages.length - 8} more` : ''
+  return `${pages.length} page(s) [${bits.join('; ')}${extra}]`
+}
+
+/**
+ * Choose the Facebook Page whose token we may swap in for IG publishing.
+ *
+ * Fail closed: never return a Page whose instagram_business_account.id is a
+ * different brand than IG_BUSINESS_ACCOUNT_ID, and never fall through to
+ * pages[0] / "first available page" (that picked The Water Filter Lab on
+ * GHA 35606977924).
+ */
 export function pickIgPage(
   pages: GraphPage[],
   igBusinessAccountId: string,
   preferredPageName: string = IG_PREFERRED_PAGE_NAME,
   preferredPageId?: string,
-): GraphPage | undefined {
-  const igMatch = pages.find(
-    (p) => p.instagram_business_account?.id === igBusinessAccountId,
-  )
-  if (igMatch) return igMatch
+): IgPagePick {
+  const igId = igBusinessAccountId.trim()
+  const refuse = (): IgPagePick => ({
+    page: undefined,
+    reason: igId
+      ? `no Facebook Page linked to IG_BUSINESS_ACCOUNT_ID among ${summarizePages(pages)}; refused wrong-brand fallback`
+      : `no matching Facebook Page among ${summarizePages(pages)}; refused first-available fallback`,
+  })
+
+  const igMatch = pages.find((p) => igMatches(p, igId))
+  if (igMatch) {
+    return {
+      page: igMatch,
+      reason: pageReason(igMatch, igId, preferredPageName, preferredPageId),
+    }
+  }
+
   if (preferredPageId) {
     const idMatch = pages.find((p) => p.id === preferredPageId)
-    if (idMatch) return idMatch
+    // Preferred id is allowed only when it matches the IG account, or the
+    // Page has no IG id to conflict (Meta omitted instagram_business_account).
+    if (idMatch && !igConflicts(idMatch, igId)) {
+      return {
+        page: idMatch,
+        reason: pageReason(idMatch, igId, preferredPageName, preferredPageId),
+      }
+    }
   }
-  const wanted = preferredPageName.trim().toLowerCase()
-  const exact = pages.find((p) => (p.name ?? '').trim().toLowerCase() === wanted)
-  if (exact) return exact
-  const fuzzy = pages.find((p) => (p.name ?? '').toLowerCase().includes('joshua fink'))
-  if (fuzzy) return fuzzy
-  return pages.find((p) => Boolean(p.instagram_business_account?.id)) ?? pages[0]
+
+  // Name match is a last resort for "Joshua Fink Group" / "joshua fink".
+  // When IG_BUSINESS_ACCOUNT_ID is set, skip any Page with a conflicting IG
+  // id. A Page with no IG field is allowed (no conflict) so we can still
+  // select Joshua Fink Group if Graph omitted the linked account.
+  const exact = pages.find((p) => pageNameMatches(p, preferredPageName))
+  if (exact && !igConflicts(exact, igId)) {
+    return {
+      page: exact,
+      reason: pageReason(exact, igId, preferredPageName, preferredPageId),
+    }
+  }
+  const fuzzy = pages.find((p) => pageNameMatches(p, preferredPageName, true))
+  if (fuzzy && !igConflicts(fuzzy, igId)) {
+    return {
+      page: fuzzy,
+      reason: pageReason(fuzzy, igId, preferredPageName, preferredPageId),
+    }
+  }
+
+  return refuse()
 }
 
 /** Safe subset for logs / JSON responses — never includes accessToken. */
 export function igTokenLogFields(resolved: IgPublishToken): {
+  ok: boolean
   tokenKind: IgTokenKind
   pageId: string | null
   pageName: string | null
   swapped: boolean
   reason: string
+  hint?: string
 } {
   return {
+    ok: resolved.ok,
     tokenKind: resolved.tokenKind,
     pageId: resolved.pageId,
     pageName: resolved.pageName,
     swapped: resolved.swapped,
     reason: resolved.reason,
+    ...(!resolved.ok && resolved.hint ? { hint: resolved.hint } : {}),
+  }
+}
+
+type AccountsPageJson = {
+  data?: GraphPage[]
+  error?: unknown
+  paging?: { next?: string; cursors?: { after?: string } }
+}
+
+/**
+ * Walk GET /me/accounts following paging.cursors.after (or paging.next) so a
+ * later Joshua Fink Group Page is not missed because another brand is first.
+ * Never logs the request URL — paging.next embeds the access token.
+ */
+async function fetchManagedPages(
+  token: string,
+  fetchImpl: typeof fetch,
+): Promise<{ pages: GraphPage[] | null; error: unknown }> {
+  const pages: GraphPage[] = []
+  let after: string | undefined
+  let nextUrl: string | undefined
+
+  for (let i = 0; i < ACCOUNTS_MAX_PAGES; i++) {
+    const url =
+      nextUrl ??
+      graphGet(
+        'me/accounts',
+        token,
+        'id,name,access_token,instagram_business_account',
+        {
+          limit: String(ACCOUNTS_PAGE_LIMIT),
+          ...(after ? { after } : {}),
+        },
+      )
+
+    let accRes: Response
+    try {
+      accRes = await fetchImpl(url, { signal: AbortSignal.timeout(15_000) })
+    } catch (err) {
+      if (pages.length > 0) return { pages, error: null }
+      return { pages: null, error: err }
+    }
+
+    let accJson: AccountsPageJson
+    try {
+      accJson = (await accRes.json()) as AccountsPageJson
+    } catch (err) {
+      if (pages.length > 0) return { pages, error: null }
+      return { pages: null, error: err }
+    }
+
+    if (!accRes.ok || !Array.isArray(accJson.data)) {
+      if (pages.length > 0) return { pages, error: null }
+      return { pages: null, error: accJson.error ?? accJson }
+    }
+
+    pages.push(...accJson.data)
+
+    const cursorAfter = accJson.paging?.cursors?.after
+    const pagingNext = typeof accJson.paging?.next === 'string' ? accJson.paging.next : ''
+    if (accJson.data.length > 0 && cursorAfter) {
+      after = cursorAfter
+      nextUrl = undefined
+      continue
+    }
+    if (accJson.data.length > 0 && pagingNext) {
+      nextUrl = pagingNext
+      after = undefined
+      continue
+    }
+    break
+  }
+
+  return { pages, error: null }
+}
+
+function failResolve(
+  tokenKind: IgTokenKind,
+  reason: string,
+  me?: { id?: string; name?: string } | null,
+): Extract<IgPublishToken, { ok: false }> {
+  return {
+    ok: false,
+    tokenKind,
+    swapped: false,
+    pageId: me?.id ?? null,
+    pageName: me?.name ?? null,
+    reason,
+    hint: IG_WRONG_PAGE_HINT,
   }
 }
 
@@ -214,6 +409,10 @@ export function igTokenLogFields(resolved: IgPublishToken): {
  * in the matching Page `access_token` from GET /me/accounts.
  *
  * A token that is already a Page token is used as-is.
+ *
+ * Fail closed when /me/accounts is a User token but none of the Pages are
+ * Joshua Fink Group / IG_BUSINESS_ACCOUNT_ID — do not swap to another brand
+ * (The Water Filter Lab, etc.) and do not keep posting with the User token.
  */
 export async function resolveIgPublishToken(opts: {
   envToken: string
@@ -228,7 +427,8 @@ export async function resolveIgPublishToken(opts: {
     tokenKind: IgTokenKind,
     reason: string,
     me?: { id?: string; name?: string } | null,
-  ): IgPublishToken => ({
+  ): Extract<IgPublishToken, { ok: true }> => ({
+    ok: true,
     accessToken: opts.envToken,
     tokenKind,
     swapped: false,
@@ -249,59 +449,44 @@ export async function resolveIgPublishToken(opts: {
     }
     if (meRes.ok && meJson.id) me = meJson
   } catch {
-    // Classify from /me/accounts below; posting can still use the env token.
+    // Classify from /me/accounts below; posting can still use the env token
+    // only when we cannot tell this is a User token with the wrong Pages.
   }
 
-  let pages: GraphPage[] | null = null
-  let accountsError: unknown = null
-  try {
-    const accRes = await fetchImpl(
-      graphGet(
-        'me/accounts',
-        opts.envToken,
-        'id,name,access_token,instagram_business_account',
-      ),
-      { signal: AbortSignal.timeout(15_000) },
-    )
-    const accJson = (await accRes.json()) as {
-      data?: GraphPage[]
-      error?: unknown
-    }
-    if (accRes.ok && Array.isArray(accJson.data)) {
-      pages = accJson.data
-    } else {
-      accountsError = accJson.error ?? accJson
-    }
-  } catch (err) {
-    accountsError = err
-  }
+  const { pages, error: accountsError } = await fetchManagedPages(
+    opts.envToken,
+    fetchImpl,
+  )
 
   if (pages && pages.length > 0) {
-    const page = pickIgPage(
+    const picked = pickIgPage(
       pages,
       opts.igBusinessAccountId,
       preferredPageName,
       opts.preferredPageId,
     )
-    if (page?.id && page.access_token) {
+    if (!picked.page) {
+      // Do not report another brand as pageId/pageName — that is what the
+      // Water Filter Lab 502 looked like (GHA 35606977924).
+      return failResolve('user', picked.reason)
+    }
+    const page = picked.page
+    if (page.id && page.access_token) {
       return {
+        ok: true,
         accessToken: page.access_token,
         tokenKind: 'user',
         swapped: page.access_token !== opts.envToken,
         pageId: page.id,
         pageName: page.name ?? null,
-        reason: pageReason(
-          page,
-          opts.igBusinessAccountId,
-          preferredPageName,
-          opts.preferredPageId,
-        ),
+        reason: picked.reason,
       }
     }
-    return keepEnv('user', 'user token but no page access_token to swap', {
-      id: page?.id ?? me?.id,
-      name: page?.name ?? me?.name,
-    })
+    return failResolve(
+      'user',
+      `matched Facebook Page ${page.name ?? page.id ?? ''} but Graph returned no page access_token`,
+      { id: page.id ?? me?.id, name: page.name ?? me?.name },
+    )
   }
 
   if (accountsError && isPageNodeAccountsError(accountsError)) {
@@ -309,7 +494,7 @@ export async function resolveIgPublishToken(opts: {
   }
 
   if (pages && pages.length === 0) {
-    return keepEnv('user', 'user token with no pages on /me/accounts', me)
+    return failResolve('user', 'user token with no pages on /me/accounts', me)
   }
 
   return keepEnv('unknown', 'could not classify token; using env token as-is', me)
