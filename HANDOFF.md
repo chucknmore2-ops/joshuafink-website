@@ -2,7 +2,7 @@
 
 Written for whoever runs this site next (Josh, or a bot that is not Claude).
 Every command here is copy-paste runnable from the repo root. Env vars are named,
-never printed. Last verified **2026-09-18**.
+never printed. Last verified **2026-09-21**.
 
 ---
 
@@ -10,7 +10,7 @@ never printed. Last verified **2026-09-18**.
 
 | When | What | How |
 |---|---|---|
-| **Open** | **Instagram cannot publish.** Every attempt since 09-16 ends `instagram container not ready`: Meta accepts the container and never finishes it. The 09-17 runs prove it is not one bad photo — the code already retried with a second home and Meta stalled on that too. Nothing else is broken. | [Runbook 4](#runbook-4--instagram-didnt-post) |
+| **Open** | **Instagram cannot publish.** Run 35628788322 (2026-09-21) created containers on the Joshua Fink Group Page and every one stayed `IN_PROGRESS` with Meta's generic "still being processed" status. Hosting and the Page swap are not the cause. The cron now reports token type, scopes, and a status probe. If that still says generic `IN_PROGRESS`, the next step is App Review — [Runbook 4](#runbook-4--instagram-didnt-post). | [Runbook 4](#runbook-4--instagram-didnt-post) |
 | Housekeeping | Retired keys still in Vercel: `SLACK_BOT_TOKEN`, `MONDAY_BOARD_ID`, `SENDGRID_API_KEY`, `CLICKUP_API_TOKEN`. Nothing reads them. | Vercel → Settings → Environment Variables → delete |
 | Housekeeping | ~30 open PRs from the bot account are queued up. | `gh pr list`, then merge or close |
 
@@ -216,56 +216,47 @@ The expiry var is what arms the 7-day early warning; without it /admin shows
 
 ### Runbook 4 — Instagram didn't post
 
-**Current state (2026-09-18): this is the one thing that is actually broken.**
-Every run since 09-16 fails with `instagram container not ready`. Meta accepts
-the container (so the token works and the URL is reachable) and then never
-finishes processing it.
+**Current state (2026-09-21): publishing is blocked in Meta, not in the image host.**
+GitHub Actions run [35628788322](https://github.com/chucknmore2-ops/joshuafink-website/actions/runs/35628788322)
+returned HTTP 502. Meta created three containers
+(`18093626942390586`, `18093627071390586`, `18093627155390586`) and every one
+stayed `status_code=IN_PROGRESS` with status
+`In Progress: Media is still being processed.` That sentence is Meta's generic
+processing line. A download failure, bad aspect ratio, or expired container
+comes back as `ERROR` with a different `status` (and sometimes `status_code_ex`).
 
-What has already been ruled out — don't redo this work:
+Hypotheses, checked against that run and the public image URL:
 
-- **Not the image format.** Compass WebP is converted to JPEG
-  (`lib/compass-photo.ts`). The URL returns HTTP 200, `image/jpeg`, ~250KB.
-- **Not Compass blocking Meta.** That CDN serves the JPEG to the
-  `facebookexternalhit` and `facebookcatalog` user-agents.
-- **Not one bad photo.** On 09-17 the route retried with a *second* home's
-  photo in a fresh container, and Meta stalled on that one too.
-- **Not the poll window.** Each attempt polls 110s, and three attempts spread
-  over ~5 minutes all saw `IN_PROGRESS`.
+| Hypothesis | Result |
+|---|---|
+| Wrong Facebook Page | **Rejected.** `pageName` Joshua Fink Group, `pageId` 111457913523107, `swapped` true, `reason` matched `instagram_business_account`. |
+| Publish calls used the User token | **Rejected for the calls themselves.** `swapped: true` means Graph was called with the Page `access_token` from `/me/accounts`. The log said `tokenKind: user` because that field named the env token, not the token that was sent. The cron now logs `tokenKind: page` after a swap, and `envTokenKind` for `IG_ACCESS_TOKEN` (`user`, `page`, or `system_user` from `debug_token`). |
+| `image_url` not fetchable, or wrong Content-Type | **Rejected.** `https://www.joshuafink.com/ig-photo/{hash}.jpg` returns HTTP 200, `Content-Type: image/jpeg`, no redirect. The 2026-09-21 walnut photo is a baseline JPEG, 1200×800 (aspect 1.5, inside 4:5–1.91:1), 197766 bytes, including for `facebookexternalhit`. |
+| Resumable / file upload instead of `image_url` | **Not an image API.** Meta's content publishing docs (checked 2026-09-21) limit `upload_type=resumable` and `rupload.facebook.com` to video (`REELS`, `VIDEO`, `STORIES`). Image containers require `image_url`. There is no alternate upload path to ship. |
+| `IG_BUSINESS_ACCOUNT_ID` mismatch | **Rejected for this run.** The Page was chosen because its `instagram_business_account` id matched the env id, and the container was created on that id. |
+| App missing publish capability (Advanced Access), showing up only as eternal `IN_PROGRESS` | **Open, and the one that matches the evidence.** Container create succeeds (the token can call `POST /{ig-id}/media`) and processing never leaves the generic status, on three different JPEGs, with the right Page. That is what Standard Access looks like for a System User: the async publisher does not run for a caller who is not an app admin/developer/tester. |
 
-Diagnose with Meta directly before changing any code. Run these from a shell
-where `IG_ACCESS_TOKEN` and `IG_BUSINESS_ACCOUNT_ID` are exported (take both
-from Vercel; never paste them into a file):
+What the cron does now (so the next 502 is the diagnosis, not another guess):
 
-```bash
-# 1. Is the account allowed to publish right now? quota_usage is posts in 24h,
-#    config.quota_total is the cap (25). At the cap, publishing stalls.
-curl -s "https://graph.facebook.com/v19.0/${IG_BUSINESS_ACCOUNT_ID}/content_publishing_limit?fields=config,quota_usage&access_token=${IG_ACCESS_TOKEN}"
+- Polls `status_code` and `status`, then one probe for `status_code_ex`. If Graph says that field does not exist, the `(#100)` message is stored as `probeError` and does not wipe `status_code`.
+- `cache: 'no-store'` / `fetchCache = 'force-no-store'` on Graph reads, and `Cache-Control: no-store` on the cron response. Next 14 can otherwise cache the first `IN_PROGRESS` GET.
+- Calls `debug_token` and logs scope **names**, expiry (`0` = never), and `envTokenKind`. The token value is never logged.
+- If the Page-token container stays on the generic processing status, it creates **one** comparison container with the unswapped env token (20s). If that reaches `FINISHED`, it publishes. If both stay generic, the JSON `hint` points here.
 
-# 2. Ask a stuck container WHY. Our route only reads status_code; the `status`
-#    field carries Meta's human-readable reason, which is the missing clue.
-#    Take <creation-id> from the failing run's log.
-curl -s "https://graph.facebook.com/v19.0/<creation-id>?fields=status,status_code&access_token=${IG_ACCESS_TOKEN}"
+`IG_ACCESS_TOKEN` in Vercel is a sensitive secret, so it cannot be read back to debug from a laptop. Read the cron JSON instead. Do not paste the token into a file, a log, or a PR.
 
-# 3. Is the token still what we think it is (scopes, expiry, the right IG user)?
-curl -s "https://graph.facebook.com/v19.0/me/accounts?access_token=${IG_ACCESS_TOKEN}"
-```
+**If the next run's `hint` still says both tokens stayed IN_PROGRESS, this is the Meta UI step. Do this as Josh (app admin), in order:**
 
-Then act on what you find:
+1. Open [developers.facebook.com/apps](https://developers.facebook.com/apps) and select the app whose token is in `IG_ACCESS_TOKEN` (the cron JSON's scopes tell you which permissions that token carries).
+2. Left nav → **App Review** → **Permissions and Features**. Find `instagram_content_publish`. If Access level is **Standard**, click **Request Advanced Access** (the permission may be listed as `instagram_content_publishing` in the review form). Also confirm `instagram_basic` and `pages_read_engagement` are on the same request. Use case to describe: this website's server publishes the Joshua Fink Group listing photo to the Instagram professional account linked to the Facebook Page, on a schedule. No other people's accounts.
+3. Because this token is a **System User** granted in Business Manager, the same screen must show Advanced Access for **one of** `ads_read` or `ads_management`. Meta's content-publishing docs require that when the Page role comes from Business Manager. If the cron JSON has `missingBusinessManagerAdsScope: true`, this step is required, not optional.
+4. [business.facebook.com/settings](https://business.facebook.com/settings) → **Users** → **System users** → the user that owns the token → **Assign assets** → Page **Joshua Fink Group** → enable **Create content** (or full **Manage**). Save.
+5. Still on that system user, **Generate token**. Select this app. Check `instagram_basic`, `instagram_content_publish`, `pages_show_list`, `pages_read_engagement`, and `ads_read` (or `ads_management`). Set expiration to **Never**. Copy the token once into Vercel → `IG_ACCESS_TOKEN` (Production). **Redeploy** — env edits do not apply to the running deployment.
+6. App mode: if the app is still in **Development**, system users cannot publish even with the right boxes checked. Either finish App Review and switch the app to **Live**, or (only for a one-off test) add the Facebook user who owns the Page as an app **Administrator** under App roles → Roles and generate a User token for that person instead of the system user.
 
-- `quota_usage` at the cap → wait for the 24h window and stop dispatching the
-  workflow by hand; each run creates containers.
-- A real reason in `status` (media download failure, aspect ratio, unsupported
-  image) → fix that specifically. **Worth a code change:** log `status`
-  alongside `status_code` in `app/api/cron/instagram-post/route.ts`, so the
-  reason lands in `post_log` instead of being invisible.
-- Token or permission drift → re-issue `IG_ACCESS_TOKEN` in Meta Business Suite
-  with `instagram_basic` + `instagram_content_publish` and update Vercel.
-- Everything looks fine and it still stalls → serve the photo from
-  joshuafink.com instead of Compass's CDN (Meta fetches `image_url` itself), or
-  post that week by hand from the Instagram app.
+After the redeploy, `gh workflow run social-autopost.yml -f channel=instagram-post`. Success is HTTP 200 with `posted: true`. Another generic `IN_PROGRESS` with `missingScopes: []` and `missingBusinessManagerAdsScope: false` means App Review has not granted Advanced Access yet — wait for the review email, do not keep dispatching (each run creates containers; the cap is 400 containers / 24h).
 
-Token problems at *container creation* look different: HTTP 401/400 with a hint
-in the response body.
+A real media error looks different: `status_code` `ERROR` and a `status` that names the download, the aspect ratio, or the file type. Fix that specific thing. Token rejection at *create* time is HTTP 400/401 in `errorMessage`, not `IN_PROGRESS`.
 
 ### Runbook 5 — listings are stale on the site
 

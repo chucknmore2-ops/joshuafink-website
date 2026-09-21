@@ -10,12 +10,19 @@ import {
   describeIgPages,
   igFailureBody,
   igPublicHostOk,
+  igStallHint,
   igTokenLogFields,
+  inspectIgAccessToken,
+  isGenericInProgress,
   isJoshuaFinkPageName,
+  parseContainerStatusBody,
   pickIgPage,
+  pollIgContainer,
   preflightPublicJpeg,
   redactSecrets,
   resolveIgPublishToken,
+  shouldCompareEnvToken,
+  summarizeGraphError,
 } from './instagram-publish.ts'
 
 test('igPublicHostOk only allows joshuafink.com over https', () => {
@@ -267,7 +274,8 @@ test('resolveIgPublishToken swaps a User token for the linked Page token', async
       return Response.json({ error: 'unexpected' }, { status: 500 })
     }),
   })
-  assert.equal(resolved.tokenKind, 'user')
+  assert.equal(resolved.tokenKind, 'page')
+  assert.equal(resolved.envTokenKind, 'unknown')
   assert.equal(resolved.swapped, true)
   assert.equal(resolved.pageId, 'page-jfg')
   assert.equal(resolved.pageName, 'Joshua Fink Group')
@@ -387,6 +395,240 @@ test('resolveIgPublishToken keeps a Page token as-is', async () => {
   assert.equal(resolved.pageId, 'page-jfg')
   assert.equal(resolved.accessToken, PAGE_TOKEN_JFG)
   assert.match(resolved.reason, /already a Page token/)
+})
+
+test('parseContainerStatusBody keeps status_code, status, and status_code_ex', () => {
+  const parsed = parseContainerStatusBody(
+    {
+      id: '18093627155390586',
+      status_code: 'IN_PROGRESS',
+      status: 'In Progress: Media is still being processed.',
+      status_code_ex: 'PROCESSING',
+    },
+    200,
+  )
+  assert.equal(parsed.statusCode, 'IN_PROGRESS')
+  assert.match(parsed.status, /still being processed/)
+  assert.equal(parsed.statusCodeEx, 'PROCESSING')
+  assert.equal(parsed.graphError, null)
+  assert.equal(isGenericInProgress(parsed.statusCode, parsed.status), true)
+})
+
+test('parseContainerStatusBody records a Graph error without dropping the message', () => {
+  const parsed = parseContainerStatusBody(
+    {
+      error: {
+        message: '(#100) Tried accessing nonexisting field (status_code_ex) access_token=EAA_SECRET',
+        type: 'OAuthException',
+        code: 100,
+        error_subcode: 33,
+      },
+    },
+    400,
+  )
+  assert.equal(parsed.statusCode, '')
+  assert.match(parsed.graphError ?? '', /status_code_ex/)
+  assert.match(parsed.graphError ?? '', /code 100/)
+  assert.match(parsed.graphError ?? '', /subcode 33/)
+  assert.equal((parsed.graphError ?? '').includes('EAA_SECRET'), false)
+})
+
+test('summarizeGraphError redacts tokens', () => {
+  const text = summarizeGraphError({
+    message: 'bad access_token=EAA_SECRET Bearer EAA_OTHER',
+    code: 190,
+  })
+  assert.equal(text?.includes('EAA_SECRET'), false)
+  assert.equal(text?.includes('EAA_OTHER'), false)
+  assert.match(text ?? '', /access_token=\[redacted\]/)
+})
+
+test('pollIgContainer reads status then probes status_code_ex', async () => {
+  const seen: string[] = []
+  const status = await pollIgContainer({
+    creationId: '1809',
+    accessToken: 'EAA_POLL_SECRET',
+    pollMs: 0,
+    fetchImpl: (async (input: RequestInfo | URL) => {
+      const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url)
+      const fields = url.searchParams.get('fields') ?? ''
+      seen.push(fields)
+      assert.equal(url.searchParams.get('access_token'), 'EAA_POLL_SECRET')
+      if (fields.includes('status_code_ex')) {
+        return Response.json({
+          status_code: 'ERROR',
+          status: 'Error: Media download has failed',
+          status_code_ex: 'DOWNLOAD_FAILED',
+        })
+      }
+      return Response.json({
+        status_code: 'IN_PROGRESS',
+        status: 'In Progress: Media is still being processed.',
+      })
+    }) as typeof fetch,
+  })
+  assert.deepEqual(seen, ['status_code,status', 'status_code,status,status_code_ex'])
+  assert.equal(status.statusCode, 'ERROR')
+  assert.equal(status.statusCodeEx, 'DOWNLOAD_FAILED')
+  assert.match(status.status, /download has failed/i)
+  assert.equal(status.probeError, null)
+})
+
+test('pollIgContainer keeps IN_PROGRESS when status_code_ex is not a field', async () => {
+  const status = await pollIgContainer({
+    creationId: '1809',
+    accessToken: 'EAA_POLL_SECRET',
+    pollMs: 0,
+    fetchImpl: (async (input: RequestInfo | URL) => {
+      const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url)
+      const fields = url.searchParams.get('fields') ?? ''
+      if (fields.includes('status_code_ex')) {
+        return Response.json(
+          {
+            error: {
+              message: '(#100) Tried accessing nonexisting field (status_code_ex)',
+              code: 100,
+            },
+          },
+          { status: 400 },
+        )
+      }
+      return Response.json({
+        status_code: 'IN_PROGRESS',
+        status: 'In Progress: Media is still being processed.',
+      })
+    }) as typeof fetch,
+  })
+  assert.equal(status.statusCode, 'IN_PROGRESS')
+  assert.match(status.status, /still being processed/)
+  assert.equal(status.statusCodeEx, null)
+  assert.match(status.probeError ?? '', /status_code_ex/)
+  assert.match(status.probeError ?? '', /code 100/)
+})
+
+test('shouldCompareEnvToken only after a swapped generic stall', () => {
+  assert.equal(
+    shouldCompareEnvToken({
+      swapped: true,
+      alreadyCompared: false,
+      resuming: false,
+      statusCode: 'IN_PROGRESS',
+      status: 'In Progress: Media is still being processed.',
+    }),
+    true,
+  )
+  assert.equal(
+    shouldCompareEnvToken({
+      swapped: true,
+      alreadyCompared: false,
+      resuming: false,
+      statusCode: 'ERROR',
+      status: 'Error: Media download has failed',
+    }),
+    false,
+  )
+  assert.equal(
+    shouldCompareEnvToken({
+      swapped: false,
+      alreadyCompared: false,
+      resuming: false,
+      statusCode: 'IN_PROGRESS',
+      status: 'In Progress: Media is still being processed.',
+    }),
+    false,
+  )
+})
+
+test('igStallHint names Advanced Access only after both tokens stay generic', () => {
+  const hint = igStallHint({
+    generic: true,
+    comparedEnvToken: true,
+    missingScopes: [],
+    missingBusinessManagerAdsScope: false,
+  })
+  assert.match(hint ?? '', /Advanced Access/)
+  assert.match(hint ?? '', /instagram_content_publish/)
+  assert.match(hint ?? '', /resumable upload is video-only/)
+  const missing = igStallHint({
+    generic: true,
+    comparedEnvToken: true,
+    missingScopes: ['instagram_content_publish'],
+    missingBusinessManagerAdsScope: false,
+  })
+  assert.match(missing ?? '', /instagram_content_publish/)
+  assert.equal((missing ?? '').includes('Advanced Access'), false)
+})
+
+test('inspectIgAccessToken reports a system user and missing ads scope, never the token', async () => {
+  const inspected = await inspectIgAccessToken('EAA_SYS_SECRET', async (input) => {
+    const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url)
+    assert.equal(url.pathname.endsWith('/debug_token'), true)
+    assert.equal(url.searchParams.get('input_token'), 'EAA_SYS_SECRET')
+    return Response.json({
+      data: {
+        type: 'SYSTEM_USER',
+        is_valid: true,
+        expires_at: 0,
+        scopes: ['instagram_basic', 'instagram_content_publish', 'pages_read_engagement', 'pages_show_list'],
+      },
+    })
+  })
+  assert.equal(inspected.envTokenKind, 'system_user')
+  assert.equal(inspected.expiresAt, 0)
+  assert.equal(inspected.missingScopes.length, 0)
+  assert.equal(inspected.missingBusinessManagerAdsScope, true)
+  assert.equal(JSON.stringify(inspected).includes('EAA_SYS_SECRET'), false)
+})
+
+test('resolveIgPublishToken records system_user on the env token and page on the swapped token', async () => {
+  const resolved = await resolveIgPublishToken({
+    envToken: USER_TOKEN,
+    igBusinessAccountId: IG_ID,
+    fetchImpl: graphFetch((path) => {
+      if (path.endsWith('/debug_token')) {
+        return Response.json({
+          data: {
+            type: 'SYSTEM_USER',
+            is_valid: true,
+            expires_at: 0,
+            scopes: [
+              'instagram_basic',
+              'instagram_content_publish',
+              'pages_read_engagement',
+              'pages_show_list',
+            ],
+          },
+        })
+      }
+      if (path.endsWith('/me/accounts')) {
+        return Response.json({
+          data: [
+            {
+              id: 'page-jfg',
+              name: 'Joshua Fink Group',
+              access_token: PAGE_TOKEN_JFG,
+              instagram_business_account: { id: IG_ID },
+            },
+          ],
+        })
+      }
+      if (path.endsWith('/me')) {
+        return Response.json({ id: 'sys-1', name: 'Joshua Fink Group System User' })
+      }
+      return Response.json({ error: 'unexpected' }, { status: 500 })
+    }),
+  })
+  assert.equal(resolved.tokenKind, 'page')
+  assert.equal(resolved.envTokenKind, 'system_user')
+  assert.equal(resolved.swapped, true)
+  assert.equal(resolved.accessToken, PAGE_TOKEN_JFG)
+  assert.equal(resolved.tokenExpiresAt, 0)
+  assert.equal(resolved.missingBusinessManagerAdsScope, true)
+  const log = JSON.stringify(igTokenLogFields(resolved))
+  assert.equal(log.includes(USER_TOKEN), false)
+  assert.equal(log.includes(PAGE_TOKEN_JFG), false)
+  assert.match(log, /"tokenKind":"page"/)
+  assert.match(log, /"envTokenKind":"system_user"/)
 })
 
 test('resolveIgPublishToken falls back to env token when Graph is unreachable', async () => {
