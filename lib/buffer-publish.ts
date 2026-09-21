@@ -48,6 +48,9 @@ type BufferGraphqlBody = {
 export function bufferImagePostVariables(
   input: Pick<BufferImagePostInput, 'channelId' | 'text' | 'imageUrl'>,
 ): { input: Record<string, unknown> } {
+  // InstagramPostMetadataInput.type (PostType!) is required. Feed photo is
+  // `post`, not story or reel. shouldShareToFeed is Boolean! on that input.
+  // https://developers.buffer.com/types/InstagramPostMetadataInput.html
   return {
     input: {
       text: input.text,
@@ -55,6 +58,12 @@ export function bufferImagePostVariables(
       schedulingType: 'automatic',
       mode: 'addToQueue',
       assets: [{ image: { url: input.imageUrl } }],
+      metadata: {
+        instagram: {
+          type: 'post',
+          shouldShareToFeed: true,
+        },
+      },
     },
   }
 }

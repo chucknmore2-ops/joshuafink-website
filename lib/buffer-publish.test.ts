@@ -28,9 +28,14 @@ test('bufferImagePostVariables queues an automatic image post', () => {
   assert.equal(input.channelId, CHANNEL_ID)
   assert.equal(input.text, 'Caption with "quotes" and #Nashville')
   assert.deepEqual(input.assets, [{ image: { url: IMAGE } }])
+  assert.deepEqual(input.metadata, {
+    instagram: { type: 'post', shouldShareToFeed: true },
+  })
   assert.equal('dueAt' in input, false)
   assert.equal(JSON.stringify(input).includes('shareNow'), false)
   assert.equal(JSON.stringify(input).includes('notification'), false)
+  assert.equal(JSON.stringify(input).includes('"story"'), false)
+  assert.equal(JSON.stringify(input).includes('"reel"'), false)
 })
 
 test('interpretBufferCreatePost accepts PostActionSuccess', () => {
@@ -128,13 +133,24 @@ test('queueInstagramImagePost posts to Buffer and does not call Graph', async ()
   assert.equal(seenUrl.includes('graph.facebook.com'), false)
   const parsed = JSON.parse(seenBody) as {
     query: string
-    variables: { input: { schedulingType: string; mode: string; assets: unknown } }
+    variables: {
+      input: {
+        schedulingType: string
+        mode: string
+        assets: unknown
+        metadata: { instagram: { type: string; shouldShareToFeed: boolean } }
+      }
+    }
   }
   assert.match(parsed.query, /createPost/)
   assert.equal(parsed.variables.input.schedulingType, 'automatic')
   assert.equal(parsed.variables.input.mode, 'addToQueue')
   assert.deepEqual(parsed.variables.input.assets, [{ image: { url: IMAGE } }])
+  assert.deepEqual(parsed.variables.input.metadata, {
+    instagram: { type: 'post', shouldShareToFeed: true },
+  })
   assert.equal(seenBody.includes(API_KEY), false)
+  assert.equal(seenBody.includes('graph.facebook.com'), false)
 })
 
 test('queueInstagramImagePost refuses to run without credentials', async () => {
