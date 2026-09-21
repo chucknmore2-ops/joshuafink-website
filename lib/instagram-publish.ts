@@ -126,7 +126,7 @@ export type IgPublishToken = {
   reason: string
 }
 
-type GraphPage = {
+export type GraphPage = {
   id?: string
   name?: string
   access_token?: string
@@ -143,51 +143,119 @@ function isPageNodeAccountsError(err: unknown): boolean {
   return /node type \(Page\)/i.test(text) || /nonexisting field \(accounts\)/i.test(text)
 }
 
-function pageReason(
-  page: GraphPage,
-  igBusinessAccountId: string,
-  preferredPageName: string,
-  preferredPageId?: string,
-): string {
-  if (page.instagram_business_account?.id === igBusinessAccountId) {
-    return 'matched instagram_business_account'
-  }
-  if (preferredPageId && page.id === preferredPageId) {
-    return 'matched preferred page id'
-  }
-  const name = (page.name ?? '').trim().toLowerCase()
-  if (name === preferredPageName.trim().toLowerCase()) {
-    return 'matched Joshua Fink Group page name'
-  }
-  if (name.includes('joshua fink')) {
-    return 'matched Joshua Fink page name'
-  }
-  if (page.instagram_business_account?.id) {
-    return 'first page with instagram_business_account'
-  }
-  return 'first available page'
+/** Page names that belong to the realtor brand — not Water Filter Lab / Paw Pulses. */
+const JOSHUA_FINK_NAME = /Joshua\s*Fink/i
+const JOSHUAFINK_NAME = /joshuafink/i
+
+export function isJoshuaFinkPageName(name: string | undefined | null): boolean {
+  if (!name) return false
+  return JOSHUA_FINK_NAME.test(name) || JOSHUAFINK_NAME.test(name)
 }
 
+/** Log-safe page list: names + ids only, never access_token. */
+export function describeIgPages(pages: GraphPage[]): string {
+  if (pages.length === 0) return '(none)'
+  return pages
+    .map((p) => {
+      const ig = p.instagram_business_account?.id
+      return `${p.name ?? '(unnamed)'} (id=${p.id ?? '?'}${ig ? `, ig=${ig}` : ''})`
+    })
+    .join('; ')
+}
+
+export class IgPageResolutionError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'IgPageResolutionError'
+  }
+}
+
+export type PickIgPageResult =
+  | { ok: true; page: GraphPage; reason: string }
+  | { ok: false; error: string }
+
+/**
+ * Resolve which Page to swap a User token onto.
+ *
+ * Order: linked IG business account → Joshua Fink name → explicit FB_PAGE_ID.
+ * Never silently returns "the first page on /me/accounts" when several brands
+ * share the User (GHA 35606977924 posted as The Water Filter Lab).
+ */
 export function pickIgPage(
   pages: GraphPage[],
   igBusinessAccountId: string,
   preferredPageName: string = IG_PREFERRED_PAGE_NAME,
   preferredPageId?: string,
-): GraphPage | undefined {
-  const igMatch = pages.find(
-    (p) => p.instagram_business_account?.id === igBusinessAccountId,
-  )
-  if (igMatch) return igMatch
+): PickIgPageResult {
+  const wantedIg = igBusinessAccountId.trim()
+  if (wantedIg) {
+    const igMatches = pages.filter(
+      (p) => p.instagram_business_account?.id === wantedIg,
+    )
+    if (igMatches.length === 1) {
+      return {
+        ok: true,
+        page: igMatches[0],
+        reason: 'matched instagram_business_account',
+      }
+    }
+    if (igMatches.length > 1) {
+      return {
+        ok: false,
+        error: `multiple Pages linked to Instagram account ${wantedIg}: ${describeIgPages(igMatches)}`,
+      }
+    }
+  }
+
+  const nameMatches = pages.filter((p) => isJoshuaFinkPageName(p.name))
+  if (nameMatches.length === 1) {
+    const page = nameMatches[0]
+    const name = (page.name ?? '').trim().toLowerCase()
+    const wanted = preferredPageName.trim().toLowerCase()
+    return {
+      ok: true,
+      page,
+      reason:
+        name === wanted
+          ? 'matched Joshua Fink Group page name'
+          : 'matched Joshua Fink page name',
+    }
+  }
+  if (nameMatches.length > 1) {
+    const wanted = preferredPageName.trim().toLowerCase()
+    const exact = nameMatches.filter(
+      (p) => (p.name ?? '').trim().toLowerCase() === wanted,
+    )
+    if (exact.length === 1) {
+      return {
+        ok: true,
+        page: exact[0],
+        reason: 'matched Joshua Fink Group page name',
+      }
+    }
+    return {
+      ok: false,
+      error: `multiple Joshua Fink Pages on /me/accounts: ${describeIgPages(nameMatches)}`,
+    }
+  }
+
   if (preferredPageId) {
     const idMatch = pages.find((p) => p.id === preferredPageId)
-    if (idMatch) return idMatch
+    if (idMatch) {
+      return { ok: true, page: idMatch, reason: 'matched preferred page id' }
+    }
   }
-  const wanted = preferredPageName.trim().toLowerCase()
-  const exact = pages.find((p) => (p.name ?? '').trim().toLowerCase() === wanted)
-  if (exact) return exact
-  const fuzzy = pages.find((p) => (p.name ?? '').toLowerCase().includes('joshua fink'))
-  if (fuzzy) return fuzzy
-  return pages.find((p) => Boolean(p.instagram_business_account?.id)) ?? pages[0]
+
+  return {
+    ok: false,
+    error:
+      `could not resolve Joshua Fink Group Page from /me/accounts ` +
+      `(no instagram_business_account matching ${wantedIg || '(empty)'}; ` +
+      `no page name matching /Joshua\\s*Fink/i or /joshuafink/i). ` +
+      `Pages: ${describeIgPages(pages)}. ` +
+      `Set IG_BUSINESS_ACCOUNT_ID (or IG_USER_ID) to the linked IG account, ` +
+      `or FB_PAGE_ID to the Joshua Fink Group Page.`,
+  }
 }
 
 /** Safe subset for logs / JSON responses — never includes accessToken. */
@@ -277,30 +345,29 @@ export async function resolveIgPublishToken(opts: {
   }
 
   if (pages && pages.length > 0) {
-    const page = pickIgPage(
+    const picked = pickIgPage(
       pages,
       opts.igBusinessAccountId,
       preferredPageName,
       opts.preferredPageId,
     )
-    if (page?.id && page.access_token) {
+    if (!picked.ok) {
+      throw new IgPageResolutionError(picked.error)
+    }
+    const page = picked.page
+    if (page.id && page.access_token) {
       return {
         accessToken: page.access_token,
         tokenKind: 'user',
         swapped: page.access_token !== opts.envToken,
         pageId: page.id,
         pageName: page.name ?? null,
-        reason: pageReason(
-          page,
-          opts.igBusinessAccountId,
-          preferredPageName,
-          opts.preferredPageId,
-        ),
+        reason: picked.reason,
       }
     }
     return keepEnv('user', 'user token but no page access_token to swap', {
-      id: page?.id ?? me?.id,
-      name: page?.name ?? me?.name,
+      id: page.id ?? me?.id,
+      name: page.name ?? me?.name,
     })
   }
 

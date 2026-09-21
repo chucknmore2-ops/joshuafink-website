@@ -6,9 +6,12 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import {
+  IgPageResolutionError,
+  describeIgPages,
   igFailureBody,
   igPublicHostOk,
   igTokenLogFields,
+  isJoshuaFinkPageName,
   pickIgPage,
   preflightPublicJpeg,
   redactSecrets,
@@ -115,6 +118,7 @@ const USER_TOKEN = 'EAA_USER_TOKEN_SECRET'
 const PAGE_TOKEN_JFG = 'EAA_PAGE_TOKEN_JFG_SECRET'
 const PAGE_TOKEN_OTHER = 'EAA_PAGE_TOKEN_OTHER_SECRET'
 const IG_ID = '17841400000000000'
+const WATER_FILTER_PAGE_ID = '1083053098221721'
 
 function graphFetch(handler: (path: string) => Response): typeof fetch {
   return (async (input: RequestInfo | URL) => {
@@ -124,50 +128,114 @@ function graphFetch(handler: (path: string) => Response): typeof fetch {
   }) as typeof fetch
 }
 
-test('pickIgPage prefers the page linked to IG_BUSINESS_ACCOUNT_ID', () => {
+const WATER_FILTER_LAB = {
+  id: WATER_FILTER_PAGE_ID,
+  name: 'The Water Filter Lab',
+  access_token: PAGE_TOKEN_OTHER,
+  instagram_business_account: { id: '999' },
+}
+const PAW_PULSES = {
+  id: 'paw-pulses',
+  name: 'Paw Pulses',
+  access_token: PAGE_TOKEN_OTHER,
+}
+const JOSHUA_FINK_GROUP = {
+  id: 'page-jfg',
+  name: 'Joshua Fink Group',
+  access_token: PAGE_TOKEN_JFG,
+}
+
+test('isJoshuaFinkPageName accepts realtor variants and rejects other brands', () => {
+  assert.equal(isJoshuaFinkPageName('Joshua Fink Group'), true)
+  assert.equal(isJoshuaFinkPageName('Joshua  Fink'), true)
+  assert.equal(isJoshuaFinkPageName('JoshuaFink Group'), true)
+  assert.equal(isJoshuaFinkPageName('joshuafink.com'), true)
+  assert.equal(isJoshuaFinkPageName('The Water Filter Lab'), false)
+  assert.equal(isJoshuaFinkPageName('Paw Pulses'), false)
+})
+
+test('pickIgPage prefers the page linked to IG_BUSINESS_ACCOUNT_ID even when Water Filter Lab is first', () => {
   const picked = pickIgPage(
     [
+      WATER_FILTER_LAB,
       {
-        id: '1',
-        name: 'Other',
-        access_token: PAGE_TOKEN_OTHER,
-        instagram_business_account: { id: '999' },
-      },
-      {
-        id: '2',
-        name: 'Not Joshua',
+        id: 'page-jfg',
+        name: 'Some Other Label',
         access_token: PAGE_TOKEN_JFG,
         instagram_business_account: { id: IG_ID },
       },
     ],
     IG_ID,
   )
-  assert.equal(picked?.id, '2')
+  assert.equal(picked.ok, true)
+  if (picked.ok) {
+    assert.equal(picked.page.id, 'page-jfg')
+    assert.equal(picked.reason, 'matched instagram_business_account')
+  }
 })
 
-test('pickIgPage falls back to Joshua Fink Group, then first IG-linked page', () => {
-  const byName = pickIgPage(
-    [
-      { id: '1', name: 'Random', access_token: PAGE_TOKEN_OTHER },
-      { id: '2', name: 'Joshua Fink Group', access_token: PAGE_TOKEN_JFG },
-    ],
-    IG_ID,
-  )
-  assert.equal(byName?.id, '2')
+test('pickIgPage prefers Joshua Fink Group by name over Water Filter Lab', () => {
+  const picked = pickIgPage([WATER_FILTER_LAB, JOSHUA_FINK_GROUP], IG_ID)
+  assert.equal(picked.ok, true)
+  if (picked.ok) {
+    assert.equal(picked.page.id, 'page-jfg')
+    assert.equal(picked.page.name, 'Joshua Fink Group')
+    assert.match(picked.reason, /Joshua Fink Group page name/)
+  }
+})
 
-  const byIg = pickIgPage(
+test('pickIgPage matches Joshua Fink name variants, not Water Filter Lab', () => {
+  for (const name of [
+    'Joshua Fink',
+    'Joshua  Fink Group',
+    'joshuafink.com',
+    'JoshuaFink Group',
+  ]) {
+    const picked = pickIgPage(
+      [WATER_FILTER_LAB, { id: 'page-jfg', name, access_token: PAGE_TOKEN_JFG }],
+      IG_ID,
+    )
+    assert.equal(picked.ok, true, name)
+    if (picked.ok) assert.equal(picked.page.id, 'page-jfg')
+  }
+})
+
+test('pickIgPage refuses silent first-page fallback when only other brands exist', () => {
+  const picked = pickIgPage([WATER_FILTER_LAB, PAW_PULSES], IG_ID)
+  assert.equal(picked.ok, false)
+  if (!picked.ok) {
+    assert.match(picked.error, /The Water Filter Lab/)
+    assert.match(picked.error, new RegExp(WATER_FILTER_PAGE_ID))
+    assert.match(picked.error, /Paw Pulses/)
+    assert.equal(picked.error.includes(PAGE_TOKEN_OTHER), false)
+    assert.equal(picked.error.includes(USER_TOKEN), false)
+  }
+})
+
+test('pickIgPage uses FB_PAGE_ID when name and IG account do not match', () => {
+  const picked = pickIgPage(
     [
-      { id: '1', name: 'No IG', access_token: PAGE_TOKEN_OTHER },
-      {
-        id: '3',
-        name: 'Some Page',
-        access_token: PAGE_TOKEN_JFG,
-        instagram_business_account: { id: '111' },
-      },
+      WATER_FILTER_LAB,
+      { id: 'page-jfg', name: 'Compass Brentwood', access_token: PAGE_TOKEN_JFG },
     ],
     IG_ID,
+    'Joshua Fink Group',
+    'page-jfg',
   )
-  assert.equal(byIg?.id, '3')
+  assert.equal(picked.ok, true)
+  if (picked.ok) {
+    assert.equal(picked.page.id, 'page-jfg')
+    assert.equal(picked.reason, 'matched preferred page id')
+  }
+})
+
+test('describeIgPages never includes access tokens', () => {
+  const listed = describeIgPages([WATER_FILTER_LAB, JOSHUA_FINK_GROUP])
+  assert.match(listed, /The Water Filter Lab/)
+  assert.match(listed, /Joshua Fink Group/)
+  assert.equal(listed.includes(PAGE_TOKEN_OTHER), false)
+  assert.equal(listed.includes(PAGE_TOKEN_JFG), false)
+  assert.equal(listed.toLowerCase().includes('access_token'), false)
 })
 
 test('resolveIgPublishToken swaps a User token for the linked Page token', async () => {
@@ -220,8 +288,8 @@ test('resolveIgPublishToken falls back to the Joshua Fink Group page by name', a
         return Response.json({
           data: [
             {
-              id: 'page-other',
-              name: 'Other Biz',
+              id: WATER_FILTER_PAGE_ID,
+              name: 'The Water Filter Lab',
               access_token: PAGE_TOKEN_OTHER,
               instagram_business_account: { id: '000' },
             },
@@ -241,9 +309,54 @@ test('resolveIgPublishToken falls back to the Joshua Fink Group page by name', a
   })
   assert.equal(resolved.swapped, true)
   assert.equal(resolved.pageId, 'page-jfg')
+  assert.equal(resolved.pageName, 'Joshua Fink Group')
   assert.equal(resolved.accessToken, PAGE_TOKEN_JFG)
   assert.match(resolved.reason, /page name/)
 })
+
+test('resolveIgPublishToken refuses Water Filter Lab as first-available-page', async () => {
+  await assert.rejects(
+    () =>
+      resolveIgPublishToken({
+        envToken: USER_TOKEN,
+        igBusinessAccountId: IG_ID,
+        fetchImpl: graphFetch((path) => {
+          if (path.endsWith('/me/accounts')) {
+            return Response.json({
+              data: [
+                {
+                  id: WATER_FILTER_PAGE_ID,
+                  name: 'The Water Filter Lab',
+                  access_token: PAGE_TOKEN_OTHER,
+                },
+                {
+                  id: 'paw-pulses',
+                  name: 'Paw Pulses',
+                  access_token: PAGE_TOKEN_JFG,
+                },
+              ],
+            })
+          }
+          if (path.endsWith('/me')) {
+            return Response.json({ id: 'user-1', name: 'Josh Fink' })
+          }
+          return Response.json({ error: 'unexpected' }, { status: 500 })
+        }),
+      }),
+    (err: unknown) => {
+      assert.equal(err instanceof IgPageResolutionError, true)
+      const message = (err as Error).message
+      assert.match(message, /The Water Filter Lab/)
+      assert.match(message, new RegExp(WATER_FILTER_PAGE_ID))
+      assert.match(message, /Paw Pulses/)
+      assert.equal(message.includes(USER_TOKEN), false)
+      assert.equal(message.includes(PAGE_TOKEN_OTHER), false)
+      assert.equal(message.includes(PAGE_TOKEN_JFG), false)
+      return true
+    },
+  )
+})
+
 
 test('resolveIgPublishToken keeps a Page token as-is', async () => {
   const resolved = await resolveIgPublishToken({
