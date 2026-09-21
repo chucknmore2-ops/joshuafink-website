@@ -97,8 +97,7 @@ Real improvements, none urgent. Roughly by value.
 
 **Housekeeping**
 
-- ~30 open bot PRs sit in the queue. Merge the good ones, close the rest:
-  `gh pr list`, then `gh pr view <n>` / `gh pr merge <n> --squash`.
+- Open `growth/*` and `content/*` PRs: standing policy in `HANDOFF.md` §0 (merge good previews; auto-close idle >14–21 days; leave `research/*` alone).
 - Prune the old remote branches (`git branch -a`) once those PRs are resolved.
 - Test the GA4 endpoints before switching the CSP from report-only to enforced
   (`next.config.mjs`).
