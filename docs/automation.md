@@ -9,7 +9,7 @@ Three Vercel Cron jobs + one GitHub Actions job run on a schedule for joshuafink
 | IndexNow submission | Vercel Cron | `0 2 * * *` (daily) | 9pm daily | `CRON_SECRET` |
 | Google Business Profile post | Vercel Cron | `0 14 * * 2` (Tue) | 9am Tuesdays | `CRON_SECRET`, `GBP_*` (5 vars) |
 | LinkedIn post | Vercel Cron | `0 14 * * 4` (Thu) | 9am Thursdays | `CRON_SECRET`, `LINKEDIN_*` (2 vars) |
-| Instagram post | Vercel Cron | `0 14 * * 3` (Wed) | 9am Wednesdays | `CRON_SECRET`, `IG_BUSINESS_ACCOUNT_ID`, `IG_ACCESS_TOKEN` |
+| Instagram post | GitHub Actions `social-autopost.yml` | `0 14 * * 3` (Wed) | **Paused** (`IG_AUTOPOST=paused`; does not call Graph) | token env vars stay; do not delete them |
 | **Monthly market update** (FB + LinkedIn + GBP) | GitHub Actions | `0 14 5 * *` (5th) | 9am on the 5th | `CRON_SECRET`, `FB_PAGE_ID`, `FB_PAGE_TOKEN`, plus the `LINKEDIN_*` / `GBP_*` vars above |
 | Compass listings sync | GitHub Actions | `0 8 * * 1` (Mon) | 3am Mondays | None (uses Playwright against public page) |
 

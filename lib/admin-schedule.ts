@@ -6,6 +6,8 @@ export interface ScheduledJob {
   humanCt: string;
   description: string;
   source: "railway" | "vercel" | "github-actions";
+  /** Documented but not upcoming, and not freshness-monitored. */
+  paused?: boolean;
 }
 
 export const scheduledJobs: ScheduledJob[] = [
@@ -48,14 +50,19 @@ export const scheduledJobs: ScheduledJob[] = [
     source: "vercel",
   },
   {
-    // Fired by .github/workflows/social-autopost.yml, not Vercel Cron.
+    // Paused 2026-09-21. Graph containers stay IN_PROGRESS; Meta App Review
+    // for instagram_content_publish requires Tech Provider (declined).
+    // social-autopost.yml soft-skips while IG_AUTOPOST=paused. To resume:
+    // set that flag to live, set paused to false, and restore the
+    // EXPECTED_JOBS row in scripts/morning_healthcheck.py.
     service: "github-actions-instagram",
     channel: "instagram",
     jobName: "instagram-post",
     cronUtc: "0 14 * * 3",
     humanCt: "Wed 9:00am CT",
-    description: "Instagram alternating blog/listing",
+    description: "Instagram alternating blog/listing — paused",
     source: "github-actions",
+    paused: true,
   },
   {
     service: "vercel-cron-gbp",
@@ -110,6 +117,7 @@ export interface UpcomingPost extends ScheduledJob {
 
 export function upcomingSchedule(now = new Date()): UpcomingPost[] {
   return scheduledJobs
+    .filter((job) => !job.paused)
     .map((job) => {
       const nextRun = nextOccurrence(job.cronUtc, now);
       return {
