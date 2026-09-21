@@ -267,7 +267,7 @@ test('resolveIgPublishToken swaps a User token for the linked Page token', async
       return Response.json({ error: 'unexpected' }, { status: 500 })
     }),
   })
-  assert.equal(resolved.tokenKind, 'user')
+  assert.equal(resolved.tokenKind, 'page')
   assert.equal(resolved.swapped, true)
   assert.equal(resolved.pageId, 'page-jfg')
   assert.equal(resolved.pageName, 'Joshua Fink Group')
@@ -307,6 +307,7 @@ test('resolveIgPublishToken falls back to the Joshua Fink Group page by name', a
       return Response.json({ error: 'unexpected' }, { status: 500 })
     }),
   })
+  assert.equal(resolved.tokenKind, 'page')
   assert.equal(resolved.swapped, true)
   assert.equal(resolved.pageId, 'page-jfg')
   assert.equal(resolved.pageName, 'Joshua Fink Group')

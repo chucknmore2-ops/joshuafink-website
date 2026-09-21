@@ -225,10 +225,10 @@ export async function GET(request: Request) {
     )
   }
 
-  // graph.facebook.com content publishing wants a Page token. A User token
-  // can create containers that sit at status_code IN_PROGRESS until timeout
-  // (GHA 35604056983). Swap when /me/accounts yields the linked Page — never
-  // the first brand on the User (GHA 35606977924 picked Water Filter Lab).
+  // graph.facebook.com content publishing wants a Page token. Swap when
+  // /me/accounts yields the linked Page — never the first brand on the User
+  // (GHA 35606977924 picked Water Filter Lab). `tokenKind` in the log is the
+  // token Graph calls use after that swap (`page`), not the env token type.
   let resolved: IgPublishToken
   try {
     resolved = await resolveIgPublishToken({

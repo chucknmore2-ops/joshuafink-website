@@ -119,6 +119,10 @@ export type IgTokenKind = 'user' | 'page' | 'unknown'
 export type IgPublishToken = {
   /** Token for container create / poll / publish. Never log this. */
   accessToken: string
+  /**
+   * Kind of `accessToken` — the token Graph calls actually use.
+   * After a User/System User swap this is `page`, not the env token's kind.
+   */
   tokenKind: IgTokenKind
   swapped: boolean
   pageId: string | null
@@ -282,6 +286,10 @@ export function igTokenLogFields(resolved: IgPublishToken): {
  * in the matching Page `access_token` from GET /me/accounts.
  *
  * A token that is already a Page token is used as-is.
+ *
+ * `tokenKind` describes the token returned in `accessToken`. A successful
+ * swap therefore reports `page` even though `IG_ACCESS_TOKEN` was a User
+ * or System User token (`swapped: true` records that the env value changed).
  */
 export async function resolveIgPublishToken(opts: {
   envToken: string
@@ -358,7 +366,10 @@ export async function resolveIgPublishToken(opts: {
     if (page.id && page.access_token) {
       return {
         accessToken: page.access_token,
-        tokenKind: 'user',
+        // /me/accounts `access_token` is a Page token. Do not label it
+        // `user` just because the env value that discovered it was a User
+        // or System User token — cron logs this field as the publish token.
+        tokenKind: 'page',
         swapped: page.access_token !== opts.envToken,
         pageId: page.id,
         pageName: page.name ?? null,
