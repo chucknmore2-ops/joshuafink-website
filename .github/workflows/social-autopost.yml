@@ -6,30 +6,32 @@ name: Social Autopost
 # Instagram / GBP crons defined in vercel.json don't reliably fire. GitHub
 # Actions cron is free and uncapped, so we drive the posts from here instead.
 #
-# REQUIRED GitHub repo secret:
+# REQUIRED GitHub repo secrets:
 #   CRON_SECRET — must match the value in the Vercel project env. Already set
-#   (used by indexnow-on-content-change.yml). Manage at:
+#   (used by indexnow-on-content-change.yml).
+#   BUFFER_API_KEY, BUFFER_IG_CHANNEL_ID — Buffer Free. Forwarded only on the
+#   instagram-post fire. Manage at:
 #   github.com/chucknmore2-ops/joshuafink-website/settings/secrets/actions
 #
 # Cadence (9am Central = 14:00 UTC):
 #   Thu — LinkedIn   (LIVE)
-#   Wed — Instagram  PAUSED. The Wednesday cron still fires so the schedule
-#                    stays in one place, but IG_AUTOPOST=paused soft-skips
-#                    and does not call Graph. Containers stay IN_PROGRESS;
-#                    Meta App Review for instagram_content_publish now
-#                    requires Tech Provider (declined). Set IG_AUTOPOST=live
-#                    to resume. Do not delete the instagram-post route.
+#   Wed — Instagram  LIVE via Buffer Free (IG_AUTOPOST=buffer). Queues one
+#                    feed photo with schedulingType automatic. Graph publish
+#                    stays off — do not set IG_AUTOPOST=live (that value used
+#                    to call Meta and is now a soft-skip).
 #   Tue — GBP        (LIVE)
 # NOTE: these social posts run ONLY here, not on Vercel Cron (see vercel.json)
-# — don't add duplicate cron entries there or a resumed Instagram will double-post.
+# — don't add duplicate cron entries there or Instagram will double-queue.
 #
-# IG_AUTOPOST: paused | live. Anything other than live soft-skips
-# instagram-post (scheduled and manual) with success.
+# IG_AUTOPOST: buffer | paused.
+#   buffer — live path. Calls /api/cron/instagram-post, which queues via Buffer.
+#   paused — soft-skip (scheduled and manual). Does not call Graph.
+#   Anything else, including live, soft-skips. Graph stays off.
 
 on:
   schedule:
     - cron: '0 14 * * 4'   # LinkedIn — Thursdays 14:00 UTC
-    - cron: '0 14 * * 3'   # Instagram — Wednesdays 14:00 UTC (soft-skip while IG_AUTOPOST=paused)
+    - cron: '0 14 * * 3'   # Instagram — Wednesdays 14:00 UTC (Buffer queue; Graph stays off)
     - cron: '0 14 * * 2'   # GBP — Tuesdays 14:00 UTC
   workflow_dispatch:
     inputs:
@@ -43,10 +45,10 @@ on:
           - instagram-post
           - gbp-post
 
-# paused | live. Anything other than live soft-skips instagram-post
-# (scheduled and manual) and does not call Graph.
+# buffer = live Buffer queue. paused (or live, or anything else) soft-skips.
+# Graph publish stays off.
 env:
-  IG_AUTOPOST: paused
+  IG_AUTOPOST: buffer
 
 jobs:
   autopost:
@@ -70,10 +72,10 @@ jobs:
             esac
           fi
           SKIP=false
-          if [ "$ENDPOINT" = "instagram-post" ] && [ "${IG_AUTOPOST}" != "live" ]; then
-            echo "IG paused"
-            echo "Instagram Graph publish is paused (IG_AUTOPOST=${IG_AUTOPOST:-unset}). Not calling /api/cron/instagram-post."
-            echo "Resume by setting IG_AUTOPOST=live in .github/workflows/social-autopost.yml."
+          if [ "$ENDPOINT" = "instagram-post" ] && [ "${IG_AUTOPOST}" != "buffer" ]; then
+            echo "IG not on Buffer"
+            echo "Instagram Graph publish stays off (IG_AUTOPOST=${IG_AUTOPOST:-unset}). Not calling Graph and not queuing."
+            echo "The live path is IG_AUTOPOST=buffer in .github/workflows/social-autopost.yml."
             SKIP=true
           fi
           echo "endpoint=$ENDPOINT" >> "$GITHUB_OUTPUT"
@@ -84,6 +86,8 @@ jobs:
         if: steps.target.outputs.skip != 'true'
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+          BUFFER_IG_CHANNEL_ID: ${{ secrets.BUFFER_IG_CHANNEL_ID }}
           ENDPOINT: ${{ steps.target.outputs.endpoint }}
         run: |
           if [ -z "$CRON_SECRET" ]; then
@@ -91,34 +95,42 @@ jobs:
             echo "github.com/chucknmore2-ops/joshuafink-website/settings/secrets/actions"
             exit 1
           fi
+          if [ "$ENDPOINT" = "instagram-post" ]; then
+            if [ -z "$BUFFER_API_KEY" ] || [ -z "$BUFFER_IG_CHANNEL_ID" ]; then
+              echo "::error::BUFFER_API_KEY and BUFFER_IG_CHANNEL_ID are required for instagram-post."
+              echo "Add them at github.com/chucknmore2-ops/joshuafink-website/settings/secrets/actions"
+              exit 1
+            fi
+          fi
 
           # Hit the www host directly: an apex->www 307 redirect drops the
           # Authorization header. -L is belt-and-suspenders.
           URL="https://www.joshuafink.com/api/cron/$ENDPOINT"
           echo "Posting via $URL"
 
-          # Retry a few times in case a deploy is mid-flight — or, for
-          # Instagram, to resume the same Meta container that was still
-          # IN_PROGRESS (2026-08-26 and 2026-09-09: same creationId, three
-          # 502s). Passing ?creationId= avoids creating a second container.
-          CREATION_ID=""
+          # Retry a few times in case a deploy is mid-flight. Instagram does
+          # not resume a Graph container — that path stays off. A non-200
+          # after Buffer already accepted the item can queue a second post.
           for attempt in 1 2 3; do
             echo "Attempt $attempt…"
-            FIRE_URL="$URL"
-            if [ "$ENDPOINT" = "instagram-post" ] && [ -n "$CREATION_ID" ]; then
-              FIRE_URL="${URL}?creationId=${CREATION_ID}"
-              echo "Resuming Instagram container $CREATION_ID"
+            if [ "$ENDPOINT" = "instagram-post" ]; then
+              response=$(curl -sSL -w "\n%{http_code}" \
+                -H "Authorization: Bearer $CRON_SECRET" \
+                -H "X-Buffer-Api-Key: $BUFFER_API_KEY" \
+                -H "X-Buffer-Ig-Channel-Id: $BUFFER_IG_CHANNEL_ID" \
+                "$URL")
+            else
+              response=$(curl -sSL -w "\n%{http_code}" \
+                -H "Authorization: Bearer $CRON_SECRET" \
+                "$URL")
             fi
-            response=$(curl -sSL -w "\n%{http_code}" \
-              -H "Authorization: Bearer $CRON_SECRET" \
-              "$FIRE_URL")
             status=$(echo "$response" | tail -n1)
             body=$(echo "$response" | sed '$d')
             echo "HTTP $status"
             echo "$body"
 
             if [ "$ENDPOINT" = "instagram-post" ]; then
-              echo "Instagram debug: $(printf '%s' "$body" | jq -c '{error, refKey, kind, creationId, statusCode, status, resume, imageUrl, attempts}' 2>/dev/null || true)"
+              echo "Instagram debug: $(printf '%s' "$body" | jq -c '{error, via, refKey, kind, bufferPostId, schedulingType, mode, imageUrl, message}' 2>/dev/null || true)"
             fi
 
             if [ "$status" = "200" ]; then
@@ -126,27 +138,10 @@ jobs:
               exit 0
             fi
 
-            # jq, not a column-0 python -c body: that ended the YAML `|` block
-            # and GitHub rejected the workflow as invalid (runs #33–#36).
-            # Resume only when the route says so — after in-process listing
-            # fallbacks, creationId is still echoed for logs but Meta has
-            # already abandoned that container (run 35257393601).
-            new_id=$(printf '%s' "$body" | jq -r '.creationId // empty' 2>/dev/null || true)
-            new_sc=$(printf '%s' "$body" | jq -r '.statusCode // empty' 2>/dev/null || true)
-            resume=$(printf '%s' "$body" | jq -r '.resume // false' 2>/dev/null || true)
-            if [ "$ENDPOINT" = "instagram-post" ] && [ "$resume" = "true" ] && [ "$new_sc" = "IN_PROGRESS" ] && [ -n "$new_id" ]; then
-              CREATION_ID="$new_id"
-            else
-              CREATION_ID=""
-            fi
-
             if [ "$attempt" -eq 3 ]; then
               break
             fi
             wait_s=$((attempt * 10))
-            if [ "$ENDPOINT" = "instagram-post" ]; then
-              wait_s=$((attempt * 20))
-            fi
             echo "Non-200 (attempt $attempt); retrying in ${wait_s}s…"
             sleep "$wait_s"
           done

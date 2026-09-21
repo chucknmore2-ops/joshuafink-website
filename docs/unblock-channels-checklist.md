@@ -40,8 +40,8 @@ LinkedIn auto-posts Thursdays and is **working**, but the access token is short-
 - 📌 Recurring: set a calendar reminder every ~55 days. (Candidate for a `/schedule` reminder.)
 - Feed it the **two LinkedIn B2B posts** in [`marketing/content-calendar-30day.md`](../marketing/content-calendar-30day.md) aimed at mortgage brokers / builders / relocation managers — LinkedIn is the most underused referral channel.
 
-### 5. Instagram Graph autopost — paused
-The Wednesday pipeline (`/api/cron/instagram-post`) is coded but **not running**. Graph containers stay `IN_PROGRESS`, and Meta App Review for `instagram_content_publish` now requires Tech Provider, which was declined. `social-autopost.yml` soft-skips while `IG_AUTOPOST=paused`. Leave the route and the token env vars in place. Resume with `IG_AUTOPOST=live` (and un-pause the admin schedule + healthcheck job). A Business Suite alternative is not built here.
+### 5. Instagram autopost — Buffer Free (Graph stays off)
+The Wednesday pipeline (`/api/cron/instagram-post`) queues a feed photo through Buffer (`IG_AUTOPOST=buffer`, secrets `BUFFER_API_KEY` and `BUFFER_IG_CHANNEL_ID`). Graph media create/poll/publish stays off. Do not set `IG_AUTOPOST=live`.
 
 ### 6. 🔑 Stand up a Google review-generation flow ⏱️ 1 hr setup, then per-close
 The site surfaces static Zillow reviews (`lib/reviews.ts`), but **Google reviews drive the map pack** and we have a thin Google presence.

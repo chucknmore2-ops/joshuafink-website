@@ -10,56 +10,33 @@ import { listingSlug } from '@/lib/listing-detail'
 import { logPost } from '@/lib/admin-db'
 import { instagramImageUrl } from '@/lib/compass-photo'
 import { withUtm } from '@/lib/utm'
+import { queueInstagramImagePost } from '@/lib/buffer-publish'
 import {
-  GRAPH_API,
   IG_ALTERNATE_LISTINGS,
-  IG_ALTERNATE_POLL_MS,
-  IG_POLL_INTERVAL_MS,
-  IG_POLL_MS,
-  IG_RESUME_POLL_MS,
-  IgPageResolutionError,
-  igFailureBody,
-  igTokenLogFields,
   preflightPublicJpeg,
-  redactSecrets,
-  resolveIgPublishToken,
-  type IgAttemptDebug,
-  type IgPublishToken,
 } from '@/lib/instagram-publish'
 
 export const dynamic = 'force-dynamic'
-// First listing 90s + two 80s alternates plus image preflight. geo-audit
-// already runs at 300 on this plan; do not raise this.
-export const maxDuration = 300
+// One public JPEG preflight plus a Buffer createPost. No Graph poll.
+export const maxDuration = 60
 
 // Instagram auto-poster for Joshua Fink Group.
 //
-// Runs on Vercel Cron; posts to the linked IG Business account via the Meta
-// Graph API. IG requires media on every post (no text-only), so the rotator
-// favors listings (always have imageUrl). Blog posts only post if they have a
-// coverImage — otherwise we fall through to a listing.
+// Social Autopost (IG_AUTOPOST=buffer) calls this route. The live path queues
+// one feed photo through Buffer Free — caption + a public image URL — with
+// schedulingType automatic and mode addToQueue. Meta Graph media create /
+// poll / publish stays off (containers sat IN_PROGRESS; Tech Provider was
+// declined). Do not reintroduce a Meta media call here.
 //
-// Required env vars:
-//   CRON_SECRET             — shared across /api/cron/* routes
-//   IG_BUSINESS_ACCOUNT_ID  — 17-digit Instagram Business account ID, found in
-//                             Meta Business Suite → Business settings → Accounts
-//                             → Instagram accounts. Requires the IG account to
-//                             be Business/Creator and linked to the FB Page.
-//                             IG_USER_ID is accepted as an alias.
-//   IG_ACCESS_TOKEN         — long-lived Page token, or a User token with
-//                             instagram_content_publish (+ pages_show_list /
-//                             pages_read_engagement so we can read /me/accounts).
-//                             User tokens are swapped at runtime for the Page
-//                             token of the Page linked to IG_BUSINESS_ACCOUNT_ID
-//                             (never the first Page on the User).
+// Required:
+//   CRON_SECRET              — shared across /api/cron/* routes
+//   BUFFER_API_KEY           — Buffer Free API key. GitHub Actions secret,
+//                              forwarded on X-Buffer-Api-Key. Env is a fallback.
+//   BUFFER_IG_CHANNEL_ID     — Buffer channel id for @joshuafinkgroup.
+//                              Forwarded on X-Buffer-Ig-Channel-Id.
 //
-// Two-step Graph API flow:
-//   1. POST /{ig-user-id}/media with image_url + caption → returns container ID
-//   2. POST /{ig-user-id}/media_publish with creation_id → returns media ID
-//
-// image_url is always a JPEG on https://www.joshuafink.com (see
-// lib/compass-photo.ts + /ig-photo/{id}.jpg). Compass CDN URLs stalled Meta
-// at IN_PROGRESS on 2026-09-16 and 2026-09-17.
+// A Buffer PostActionSuccess is a successful queue, not a Graph publish.
+// post_log status `posted` means Buffer accepted the item.
 
 const SITE = 'https://www.joshuafink.com'
 const MAX_CAPTION = 2200 // IG hard limit
@@ -96,6 +73,12 @@ function logIg(
   })
 }
 
+function headerOrEnv(request: Request, header: string, envName: string): string {
+  const fromHeader = request.headers.get(header)?.trim() ?? ''
+  if (fromHeader) return fromHeader
+  return process.env[envName]?.trim() ?? ''
+}
+
 function isoWeekNumber(d: Date = new Date()): number {
   const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()))
   date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay() || 7))
@@ -108,7 +91,7 @@ function buildFromListing(listing?: Listing | null): PostPayload | null {
   // positively Active — the old `.find()` returned the array head every run,
   // and the head was "Active Under Contract", so this caption announced an
   // unavailable home. See lib/promotable-listings.ts. An explicit `listing` is
-  // the stalled-container fallback in GET, which needs a different photo.
+  // the preflight fallback in GET, which needs a different photo.
   const l = listing ?? pickWeeklyPromotable(1)
   if (!l) return null
   // Locality only ("Brentwood"), not "Brentwood, TN 37027", so the caption
@@ -212,42 +195,26 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 
-  const igUserId =
-    process.env.IG_BUSINESS_ACCOUNT_ID || process.env.IG_USER_ID
-  const envToken = process.env.IG_ACCESS_TOKEN
-  if (!igUserId || !envToken) {
+  // Graph stays off even when these are missing. Social Autopost forwards
+  // the GitHub secrets; process.env covers a Vercel env if one is added later.
+  const apiKey = headerOrEnv(request, 'x-buffer-api-key', 'BUFFER_API_KEY')
+  const channelId = headerOrEnv(
+    request,
+    'x-buffer-ig-channel-id',
+    'BUFFER_IG_CHANNEL_ID',
+  )
+  if (!apiKey || !channelId) {
     await logIg('failed', null, {
-      errorMessage: 'IG_BUSINESS_ACCOUNT_ID or IG_ACCESS_TOKEN not set',
+      errorMessage: 'BUFFER_API_KEY or BUFFER_IG_CHANNEL_ID not set',
     })
     return NextResponse.json(
-      { error: 'IG_BUSINESS_ACCOUNT_ID or IG_ACCESS_TOKEN not set' },
+      {
+        error: 'BUFFER_API_KEY or BUFFER_IG_CHANNEL_ID not set',
+        via: 'buffer',
+      },
       { status: 500 },
     )
   }
-
-  // graph.facebook.com content publishing wants a Page token. Swap when
-  // /me/accounts yields the linked Page — never the first brand on the User
-  // (GHA 35606977924 picked Water Filter Lab). `tokenKind` in the log is the
-  // token Graph calls use after that swap (`page`), not the env token type.
-  let resolved: IgPublishToken
-  try {
-    resolved = await resolveIgPublishToken({
-      envToken,
-      igBusinessAccountId: igUserId,
-      preferredPageId: process.env.FB_PAGE_ID,
-    })
-  } catch (err) {
-    const message =
-      err instanceof IgPageResolutionError
-        ? err.message
-        : `instagram page resolution failed: ${(err as Error).message}`
-    console.error('[instagram-post] page resolution', redactSecrets(message))
-    await logIg('failed', null, { errorMessage: message })
-    return NextResponse.json({ error: message }, { status: 500 })
-  }
-  const accessToken = resolved.accessToken
-  const tokenLog = igTokenLogFields(resolved)
-  console.info('[instagram-post] token', JSON.stringify(tokenLog))
 
   const payload = pickPayload()
   if (!payload) {
@@ -255,285 +222,86 @@ export async function GET(request: Request) {
       errorMessage: 'no content available to post (no listings or blog covers)',
     })
     return NextResponse.json(
-      { error: 'no content available to post (no listings or blog covers)' },
+      { error: 'no content available to post (no listings or blog covers)', via: 'buffer' },
       { status: 422 },
     )
   }
 
-  const sanitize = (t: string) =>
-    redactSecrets(t).replace(/[^\w\s.:,\-;/()#'"=[\]]/g, '')
-  // ?creationId= lets Social Autopost resume the container a previous attempt
-  // created. Honour it only for the first payload: a container Meta has left
-  // IN_PROGRESS for minutes is dead, and on 2026-09-16 all three GHA attempts
-  // polled the same stuck id.
-  const resumeRaw = new URL(request.url).searchParams.get('creationId')?.trim() ?? ''
-  const resumeId = /^\d+$/.test(resumeRaw) ? resumeRaw : ''
-
-  type Attempt =
-    | { ok: true; mediaId?: string; creationId: string }
-    | {
-        ok: false
-        status: number
-        error: string
-        errorMessage: string
-        creationId?: string
-        statusCode?: string
-        statusText?: string
-        hint?: string
-        /** Meta accepted the container but never finished it — another photo may work. */
-        stalled: boolean
-      }
-
-  // One create → poll → publish cycle. Never throws, so the caller can decide
-  // whether a different listing is worth another cycle.
-  async function attemptPost(p: PostPayload, pollMs: number, resume = ''): Promise<Attempt> {
-    try {
-      let creationId = resume
-      if (!creationId) {
-        const containerParams = new URLSearchParams({
-          image_url: p.imageUrl,
-          caption: p.caption,
-          access_token: accessToken!,
-        })
-        const containerRes = await fetch(
-          `${GRAPH_API}/${igUserId}/media?${containerParams.toString()}`,
-          { method: 'POST' },
-        )
-        if (!containerRes.ok) {
-          const snippet = await containerRes.text().then(sanitize).catch(() => '')
-          console.error('[instagram-post] container error', containerRes.status, snippet)
-          return {
-            ok: false,
-            status: 502,
-            error: 'instagram container creation failed',
-            errorMessage: `container ${containerRes.status} ${snippet}`,
-            hint:
-              containerRes.status === 401 || containerRes.status === 400
-                ? 'IG_ACCESS_TOKEN may have expired or lacks instagram_content_publish scope.'
-                : undefined,
-            // A rejected token or request is not the photo's fault.
-            stalled: false,
-          }
-        }
-        const containerData = (await containerRes.json()) as { id?: string }
-        creationId = containerData.id ?? ''
-        if (!creationId) {
-          return {
-            ok: false,
-            status: 502,
-            error: 'instagram container returned no id',
-            errorMessage: 'instagram container returned no id',
-            stalled: false,
-          }
-        }
-      }
-
-      // Meta processes the image asynchronously after the container is created.
-      // Publishing before status_code=FINISHED is what threw the 400 "Media ID
-      // is not available" (OAuthException code 9007) failures, so poll until
-      // it's ready. Also read `status` — when status_code is ERROR that field
-      // is Meta's human-readable reason (download failure, aspect ratio, …).
-      let statusCode = 'IN_PROGRESS'
-      let statusText = ''
-      const pollDeadline = Date.now() + pollMs
-      while (Date.now() < pollDeadline) {
-        const statusRes = await fetch(
-          `${GRAPH_API}/${creationId}?fields=status_code,status&access_token=${accessToken}`,
-        )
-        if (statusRes.ok) {
-          const statusData = (await statusRes.json()) as {
-            status_code?: string
-            status?: string
-          }
-          statusCode = statusData.status_code ?? 'IN_PROGRESS'
-          statusText = typeof statusData.status === 'string' ? statusData.status : ''
-        }
-        if (statusCode === 'FINISHED' || statusCode === 'ERROR' || statusCode === 'EXPIRED') {
-          break
-        }
-        await new Promise((resolve) => setTimeout(resolve, IG_POLL_INTERVAL_MS))
-      }
-      if (statusCode !== 'FINISHED') {
-        const reason = statusText ? `; ${sanitize(statusText)}` : ''
-        return {
-          ok: false,
-          status: 502,
-          error: 'instagram container not ready',
-          errorMessage: `container ${creationId} not ready (status_code ${statusCode}${reason}) slug=${p.refKey}`,
-          creationId,
-          statusCode,
-          statusText: statusText ? sanitize(statusText) : undefined,
-          stalled: true,
-        }
-      }
-
-      const publishParams = new URLSearchParams({
-        creation_id: creationId,
-        access_token: accessToken!,
-      })
-      const publishRes = await fetch(
-        `${GRAPH_API}/${igUserId}/media_publish?${publishParams.toString()}`,
-        { method: 'POST' },
-      )
-      if (!publishRes.ok) {
-        const snippet = await publishRes.text().then(sanitize).catch(() => '')
-        console.error('[instagram-post] publish error', publishRes.status, snippet)
-        return {
-          ok: false,
-          status: 502,
-          error: 'instagram publish failed',
-          errorMessage: `publish ${publishRes.status} ${snippet}`,
-          creationId,
-          stalled: false,
-        }
-      }
-      const publishData = (await publishRes.json()) as { id?: string }
-      return { ok: true, mediaId: publishData.id, creationId }
-    } catch (err) {
-      console.error('[instagram-post] network error', err)
-      return {
-        ok: false,
-        status: 502,
-        error: 'instagram post failed',
-        errorMessage: `network: ${(err as Error).message}`,
-        stalled: false,
-      }
-    }
-  }
-
   const queue = payloadsToTry(payload)
-  const attempts: IgAttemptDebug[] = []
-  let lastFail: Extract<Attempt, { ok: false }> | null = null
-
-  for (let i = 0; i < queue.length; i++) {
-    const posted = queue[i]
-    const debugBase: IgAttemptDebug = {
-      refKey: posted.refKey,
-      kind: posted.kind,
-      imageUrl: posted.imageUrl,
-    }
-
-    const preflight = await preflightPublicJpeg(posted.imageUrl)
+  const preflightErrors: string[] = []
+  let posted: PostPayload | null = null
+  for (const candidate of queue) {
+    const preflight = await preflightPublicJpeg(candidate.imageUrl)
     if (!preflight.ok) {
-      console.warn('[instagram-post] image preflight failed', posted.refKey, preflight.reason)
-      attempts.push({ ...debugBase, error: preflight.reason })
-      await logIg('failed', posted, {
-        errorMessage: `preflight ${posted.refKey}: ${preflight.reason}`,
-      })
-      lastFail = {
-        ok: false,
-        status: 502,
-        error: 'instagram image_url not ready',
-        errorMessage: `preflight ${posted.refKey}: ${preflight.reason}`,
-        stalled: true,
-      }
+      console.warn('[instagram-post] image preflight failed', candidate.refKey, preflight.reason)
+      preflightErrors.push(`${candidate.refKey}: ${preflight.reason}`)
       continue
     }
-
+    posted = candidate
     console.info(
-      '[instagram-post] attempting',
+      '[instagram-post] queuing via buffer',
       JSON.stringify({
-        refKey: posted.refKey,
-        kind: posted.kind,
-        imageUrl: posted.imageUrl,
+        refKey: candidate.refKey,
+        kind: candidate.kind,
+        imageUrl: candidate.imageUrl,
         bytes: preflight.bytes,
-        resume: i === 0 && Boolean(resumeId),
+        schedulingType: 'automatic',
+        mode: 'addToQueue',
       }),
     )
+    break
+  }
 
-    const pollMs =
-      i === 0
-        ? resumeId
-          ? IG_RESUME_POLL_MS
-          : IG_POLL_MS
-        : IG_ALTERNATE_POLL_MS
-    const attempt = await attemptPost(posted, pollMs, i === 0 ? resumeId : '')
-    const attemptLog: IgAttemptDebug = {
-      ...debugBase,
-      creationId: attempt.creationId,
-      statusCode: attempt.ok ? 'FINISHED' : attempt.statusCode,
-      status: attempt.ok ? undefined : attempt.statusText,
-      error: attempt.ok ? undefined : attempt.error,
-    }
-    attempts.push(attemptLog)
-    console.info(
-      '[instagram-post] result',
-      JSON.stringify({
-        refKey: posted.refKey,
-        creationId: attemptLog.creationId ?? null,
-        statusCode: attemptLog.statusCode ?? null,
-        status: attemptLog.status ?? null,
-        ok: attempt.ok,
-      }),
+  if (!posted) {
+    const errorMessage = `preflight failed: ${preflightErrors.join('; ') || 'no image'}`
+    await logIg('failed', queue[0] ?? null, { errorMessage })
+    return NextResponse.json(
+      {
+        error: 'instagram image_url not ready',
+        via: 'buffer',
+        refKey: queue[0]?.refKey ?? null,
+        kind: queue[0]?.kind ?? null,
+        imageUrl: queue[0]?.imageUrl ?? null,
+        preflight: preflightErrors,
+      },
+      { status: 502 },
     )
+  }
 
-    if (attempt.ok) {
-      await logIg('posted', posted, { externalPostId: attempt.mediaId ?? null })
-      return NextResponse.json({
-        posted: true,
-        mediaId: attempt.mediaId,
-        creationId: attempt.creationId,
+  const queued = await queueInstagramImagePost({
+    apiKey,
+    channelId,
+    text: posted.caption,
+    imageUrl: posted.imageUrl,
+  })
+  if (!queued.ok) {
+    console.error('[instagram-post] buffer error', queued.error)
+    await logIg('failed', posted, { errorMessage: queued.error })
+    return NextResponse.json(
+      {
+        error: 'buffer queue failed',
+        via: 'buffer',
         refKey: posted.refKey,
         kind: posted.kind,
         imageUrl: posted.imageUrl,
-        preview: posted.caption.slice(0, 120),
-        url: posted.url,
-        attempts,
-        ...tokenLog,
-        at: new Date().toISOString(),
-      })
-    }
-
-    await logIg('failed', posted, { errorMessage: attempt.errorMessage })
-    lastFail = attempt
-    // Token / request rejection is not the photo's fault — don't burn quota
-    // creating more containers.
-    if (!attempt.stalled) {
-      return NextResponse.json(
-        {
-          ...igFailureBody({
-            error: attempt.error,
-            attempts,
-            hint: attempt.hint,
-            resume: false,
-          }),
-          ...tokenLog,
-        },
-        { status: attempt.status },
-      )
-    }
-
-    if (i < queue.length - 1) {
-      console.warn(
-        '[instagram-post] container stalled on',
-        posted.refKey,
-        attempt.creationId,
-        attempt.statusCode,
-        '— retrying with',
-        queue[i + 1].refKey,
-      )
-    }
+        message: queued.error,
+      },
+      { status: 502 },
+    )
   }
 
-  const fail = lastFail ?? {
-    ok: false as const,
-    status: 502,
-    error: 'instagram container not ready',
-    errorMessage: 'no attempt completed',
-    stalled: true,
-  }
-  return NextResponse.json(
-    {
-      ...igFailureBody({
-        error: fail.error,
-        attempts,
-        hint: fail.hint,
-        // Alternates already tried in-process. Echo creationId for logs, but do
-        // not ask Social Autopost to resume a container Meta has abandoned.
-        resume: false,
-      }),
-      ...tokenLog,
-    },
-    { status: fail.status },
-  )
+  await logIg('posted', posted, { externalPostId: queued.postId })
+  return NextResponse.json({
+    posted: true,
+    via: 'buffer',
+    bufferPostId: queued.postId,
+    schedulingType: 'automatic',
+    mode: 'addToQueue',
+    refKey: posted.refKey,
+    kind: posted.kind,
+    imageUrl: posted.imageUrl,
+    preview: posted.caption.slice(0, 120),
+    url: posted.url,
+    at: new Date().toISOString(),
+  })
 }

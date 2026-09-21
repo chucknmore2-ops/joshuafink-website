@@ -9,7 +9,7 @@ Three Vercel Cron jobs + one GitHub Actions job run on a schedule for joshuafink
 | IndexNow submission | Vercel Cron | `0 2 * * *` (daily) | 9pm daily | `CRON_SECRET` |
 | Google Business Profile post | Vercel Cron | `0 14 * * 2` (Tue) | 9am Tuesdays | `CRON_SECRET`, `GBP_*` (5 vars) |
 | LinkedIn post | Vercel Cron | `0 14 * * 4` (Thu) | 9am Thursdays | `CRON_SECRET`, `LINKEDIN_*` (2 vars) |
-| Instagram post | GitHub Actions `social-autopost.yml` | `0 14 * * 3` (Wed) | **Paused** (`IG_AUTOPOST=paused`; does not call Graph) | token env vars stay; do not delete them |
+| Instagram post | GitHub Actions `social-autopost.yml` | `0 14 * * 3` (Wed) | 9am Wednesdays | `CRON_SECRET`, `BUFFER_API_KEY`, `BUFFER_IG_CHANNEL_ID` (GitHub secrets). Graph stays off (`IG_AUTOPOST=buffer`). |
 | **Monthly market update** (FB + LinkedIn + GBP) | GitHub Actions | `0 14 5 * *` (5th) | 9am on the 5th | `CRON_SECRET`, `FB_PAGE_ID`, `FB_PAGE_TOKEN`, plus the `LINKEDIN_*` / `GBP_*` vars above |
 | Compass listings sync | GitHub Actions | `0 8 * * 1` (Mon) | 3am Mondays | None (uses Playwright against public page) |
 
@@ -30,11 +30,16 @@ LINKEDIN_CLIENT_SECRET   = <from LinkedIn Developer app>
 LINKEDIN_REDIRECT_URI    = https://joshuafink.com/api/linkedin/callback
 LINKEDIN_ACCESS_TOKEN    = <from /api/linkedin/callback response>
 LINKEDIN_AUTHOR_URN      = urn:li:person:XXXXXXXX (from /api/linkedin/callback response)
-IG_BUSINESS_ACCOUNT_ID   = <17-digit IG Business account ID, from Meta Business Suite>
-IG_ACCESS_TOKEN          = <Page access token w/ instagram_basic + instagram_content_publish scopes>
+IG_BUSINESS_ACCOUNT_ID   = unused by the live path (Graph leftovers; do not point autopost back at Graph)
+IG_ACCESS_TOKEN          = unused by the live path (Graph leftovers)
 FB_PAGE_ID               = <numeric Facebook Page ID — same value Railway's autoposter uses>
 FB_PAGE_TOKEN            = <Page access token w/ pages_manage_posts — same value as Railway>
 ```
+
+Instagram does not use the Graph vars above. Social Autopost reads GitHub
+secrets `BUFFER_API_KEY` and `BUFFER_IG_CHANNEL_ID` and forwards them to
+`/api/cron/instagram-post`. `IG_AUTOPOST=buffer` queues with
+`schedulingType: automatic`. `IG_AUTOPOST=live` is retired and soft-skips.
 
 ---
 

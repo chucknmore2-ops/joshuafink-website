@@ -2,7 +2,7 @@
 
 Written for whoever runs this site next (Josh, or a bot that is not Claude).
 Every command here is copy-paste runnable from the repo root. Env vars are named,
-never printed. Last verified **2026-09-18**.
+never printed. Last verified **2026-09-21**.
 
 ---
 
@@ -10,7 +10,7 @@ never printed. Last verified **2026-09-18**.
 
 | When | What | How |
 |---|---|---|
-| **Paused** | **Instagram autopost is off.** Graph containers stay `IN_PROGRESS`. Meta App Review for `instagram_content_publish` now requires Tech Provider, which Josh declined. Scheduled Social Autopost soft-skips IG (`IG_AUTOPOST=paused`) and does not call Graph. Facebook, LinkedIn, and GBP still post. The posting code is still in the repo. | Set `IG_AUTOPOST=live` in `.github/workflows/social-autopost.yml` to resume. [Runbook 4](#runbook-4--instagram-didnt-post) |
+| **Live** | **Instagram autopost queues via Buffer Free.** `IG_AUTOPOST=buffer` sends a caption plus a public image URL (`schedulingType: automatic`, `mode: addToQueue`) for @joshuafinkgroup. Graph publish stays off — do not set `IG_AUTOPOST=live`. | [Runbook 4](#runbook-4--instagram-didnt-post) |
 | Housekeeping | Retired keys still in Vercel: `SLACK_BOT_TOKEN`, `MONDAY_BOARD_ID`, `SENDGRID_API_KEY`, `CLICKUP_API_TOKEN`. Nothing reads them. | Vercel → Settings → Environment Variables → delete |
 | Housekeeping | Open `growth/*` and `content/*` PRs (~40). Standing policy below. | `gh pr list` |
 
@@ -129,12 +129,21 @@ GBP_CLIENT_ID  GBP_CLIENT_SECRET  GBP_REFRESH_TOKEN  GBP_ACCOUNT_ID  GBP_LOCATIO
 ANTHROPIC_API_KEY  OPENAI_API_KEY  PERPLEXITY_API_KEY
 ```
 
+`IG_BUSINESS_ACCOUNT_ID` and `IG_ACCESS_TOKEN` are Graph leftovers. The live
+Instagram path does not read them.
+
 **GitHub Actions secrets** (`gh secret list`):
 
 ```
 SYNC_PAT  CRON_SECRET  DATABASE_URL  ALERT_TO_EMAIL  GMAIL_USER  GMAIL_APP_PASSWORD
 PUSHOVER_TOKEN  PUSHOVER_USER  ANTHROPIC_API_KEY  OPENAI_API_KEY  PERPLEXITY_API_KEY
+BUFFER_API_KEY  BUFFER_IG_CHANNEL_ID
 ```
+
+`BUFFER_API_KEY` and `BUFFER_IG_CHANNEL_ID` are the Instagram live path (Buffer
+Free, channel @joshuafinkgroup). Social Autopost forwards them on the
+instagram-post fire. They are not Vercel env vars. Graph tokens above stay
+unused.
 
 `CRON_SECRET` exists in **both** and they must match, or the healthcheck's test
 lead comes back without per-channel results.
@@ -150,7 +159,7 @@ lead comes back without per-channel results.
 | Morning healthcheck | Mon–Fri 12:00 | `morning_healthcheck.yml` | CI red on failure; email only if `always_email=true` |
 | Daily tasks push | Mon–Fri 12:00 | `daily-tasks-pushover.yml` | phone push |
 | GBP post | Tue 14:00 | `social-autopost.yml` | `post_log` row, channel `gbp` |
-| Instagram post | Wed 14:00 | `social-autopost.yml` | **Paused** (`IG_AUTOPOST`). Soft-skips; does not call Graph. |
+| Instagram post | Wed 14:00 | `social-autopost.yml` | `post_log` row, channel `instagram` (Buffer accepted the queue). Graph stays off. |
 | LinkedIn post | Thu 14:00 | `social-autopost.yml` | `post_log` row, channel `linkedin` |
 | GEO audit | Mon 13:00 | `geo-audit.yml` | `geo_visibility` rows, /admin GEO card |
 | Monthly market update | 5th, 14:00 | `monthly-market-update.yml` | `post_log`, job `monthly-market-update` |
@@ -222,62 +231,46 @@ The expiry var is what arms the 7-day early warning; without it /admin shows
 
 ### Runbook 4 — Instagram didn't post
 
-**Paused 2026-09-21.** Social Autopost does not call Instagram. A missing
-Wednesday post is expected, not an incident. The notes below are for when
-posting is turned back on (`IG_AUTOPOST=live` in
-`.github/workflows/social-autopost.yml`). Do not change the Meta token env vars
-to "fix" the pause.
+Instagram queues through **Buffer Free**. Graph publish stays off. Do not set
+`IG_AUTOPOST=live` and do not call `graph.facebook.com` media create / poll /
+publish. Meta containers stay `IN_PROGRESS`, and Tech Provider was declined.
 
-**Prior state (2026-09-18): publish was broken.**
-Every run since 09-16 fails with `instagram container not ready`. Meta accepts
-the container (so the token works and the URL is reachable) and then never
-finishes processing it.
+`IG_AUTOPOST=buffer` in `.github/workflows/social-autopost.yml` is the live
+path. Wednesday 14:00 UTC, and a manual run, hit `/api/cron/instagram-post`.
+The workflow passes GitHub secrets `BUFFER_API_KEY` and `BUFFER_IG_CHANNEL_ID`
+on that request. The route queues one feed photo (`schedulingType: automatic`,
+`mode: addToQueue`) for @joshuafinkgroup. The image URL is already public at
+`https://www.joshuafink.com/ig-photo/…`. When Buffer returns
+`PostActionSuccess`, the route writes `post_log` (`channel=instagram`,
+`status=posted`, `external_post_id` = the Buffer post id). That row means
+Buffer accepted the queue item.
 
-What has already been ruled out — don't redo this work:
+Check, in order:
 
-- **Not the image format.** Compass WebP is converted to JPEG
-  (`lib/compass-photo.ts`). The URL returns HTTP 200, `image/jpeg`, ~250KB.
-- **Not Compass blocking Meta.** That CDN serves the JPEG to the
-  `facebookexternalhit` and `facebookcatalog` user-agents.
-- **Not one bad photo.** On 09-17 the route retried with a *second* home's
-  photo in a fresh container, and Meta stalled on that one too.
-- **Not the poll window.** Each attempt polls 110s, and three attempts spread
-  over ~5 minutes all saw `IN_PROGRESS`.
+1. `gh run list --workflow social-autopost.yml -L 5`
+2. `/admin` → `post_log` for channel `instagram`
+3. The Buffer queue for @joshuafinkgroup
 
-Diagnose with Meta directly before changing any code. Run these from a shell
-where `IG_ACCESS_TOKEN` and `IG_BUSINESS_ACCOUNT_ID` are exported (take both
-from Vercel; never paste them into a file):
+What the failure means:
+
+- The log says Graph stays off and the job succeeded without posting →
+  `IG_AUTOPOST` is not `buffer` (paused, or the retired `live` value).
+- HTTP 500 `BUFFER_API_KEY or BUFFER_IG_CHANNEL_ID not set` → those two
+  secrets are missing on the repo.
+- HTTP 502 `buffer …` → the message is Buffer's `MutationError`. It is also
+  in `post_log.error_message`. The photo URL has to stay a public JPEG.
+- A missing Wednesday row older than 9 days → the morning healthcheck marks
+  Instagram stale from `post_log`. Old Graph Action failures from before
+  2026-09-21 18:20 UTC do not, by themselves, keep Social Autopost red.
+
+Queue one post by hand (this is a real Buffer queue item):
 
 ```bash
-# 1. Is the account allowed to publish right now? quota_usage is posts in 24h,
-#    config.quota_total is the cap (25). At the cap, publishing stalls.
-curl -s "https://graph.facebook.com/v19.0/${IG_BUSINESS_ACCOUNT_ID}/content_publishing_limit?fields=config,quota_usage&access_token=${IG_ACCESS_TOKEN}"
-
-# 2. Ask a stuck container WHY. Our route only reads status_code; the `status`
-#    field carries Meta's human-readable reason, which is the missing clue.
-#    Take <creation-id> from the failing run's log.
-curl -s "https://graph.facebook.com/v19.0/<creation-id>?fields=status,status_code&access_token=${IG_ACCESS_TOKEN}"
-
-# 3. Is the token still what we think it is (scopes, expiry, the right IG user)?
-curl -s "https://graph.facebook.com/v19.0/me/accounts?access_token=${IG_ACCESS_TOKEN}"
+gh workflow run social-autopost.yml -f channel=instagram-post
 ```
 
-Then act on what you find:
-
-- `quota_usage` at the cap → wait for the 24h window and stop dispatching the
-  workflow by hand; each run creates containers.
-- A real reason in `status` (media download failure, aspect ratio, unsupported
-  image) → fix that specifically. **Worth a code change:** log `status`
-  alongside `status_code` in `app/api/cron/instagram-post/route.ts`, so the
-  reason lands in `post_log` instead of being invisible.
-- Token or permission drift → re-issue `IG_ACCESS_TOKEN` in Meta Business Suite
-  with `instagram_basic` + `instagram_content_publish` and update Vercel.
-- Everything looks fine and it still stalls → serve the photo from
-  joshuafink.com instead of Compass's CDN (Meta fetches `image_url` itself), or
-  post that week by hand from the Instagram app.
-
-Token problems at *container creation* look different: HTTP 401/400 with a hint
-in the response body.
+To stop posting without touching Graph, set `IG_AUTOPOST: paused` in
+`social-autopost.yml`.
 
 ### Runbook 5 — listings are stale on the site
 
