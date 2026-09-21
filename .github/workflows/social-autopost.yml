@@ -12,20 +12,25 @@ name: Social Autopost
 #   github.com/chucknmore2-ops/joshuafink-website/settings/secrets/actions
 #
 # Cadence (9am Central = 14:00 UTC):
-#   Thu — LinkedIn   (token verified 2026-06-26, LIVE)
-#   Wed — Instagram  (token verified 2026-06-26, LIVE — posts real listings;
-#                     confirmed HTTP 200 with a published mediaId on 2026-07-08)
-#   Tue — GBP        (commented out until the GBP token is refreshed)
-# To enable GBP once its token is confirmed, uncomment the matching schedule
-# line below — the routing + manual trigger already support it. NOTE: these
-# social posts run ONLY here, not on Vercel Cron (see vercel.json) — don't add
-# duplicate cron entries there or Instagram will double-post.
+#   Thu — LinkedIn   (LIVE)
+#   Wed — Instagram  PAUSED. The Wednesday cron still fires so the schedule
+#                    stays in one place, but IG_AUTOPOST=paused soft-skips
+#                    and does not call Graph. Containers stay IN_PROGRESS;
+#                    Meta App Review for instagram_content_publish now
+#                    requires Tech Provider (declined). Set IG_AUTOPOST=live
+#                    to resume. Do not delete the instagram-post route.
+#   Tue — GBP        (LIVE)
+# NOTE: these social posts run ONLY here, not on Vercel Cron (see vercel.json)
+# — don't add duplicate cron entries there or a resumed Instagram will double-post.
+#
+# IG_AUTOPOST: paused | live. Anything other than live soft-skips
+# instagram-post (scheduled and manual) with success.
 
 on:
   schedule:
-    - cron: '0 14 * * 4'   # LinkedIn — Thursdays 14:00 UTC  (token verified 2026-06-26)
-    - cron: '0 14 * * 3'   # Instagram — Wednesdays 14:00 UTC (token verified 2026-06-26)
-    - cron: '0 14 * * 2'   # GBP — Tuesdays 14:00 UTC        (token + API verified 2026-08-04)
+    - cron: '0 14 * * 4'   # LinkedIn — Thursdays 14:00 UTC
+    - cron: '0 14 * * 3'   # Instagram — Wednesdays 14:00 UTC (soft-skip while IG_AUTOPOST=paused)
+    - cron: '0 14 * * 2'   # GBP — Tuesdays 14:00 UTC
   workflow_dispatch:
     inputs:
       channel:
@@ -38,6 +43,11 @@ on:
           - instagram-post
           - gbp-post
 
+# paused | live. Anything other than live soft-skips instagram-post
+# (scheduled and manual) and does not call Graph.
+env:
+  IG_AUTOPOST: paused
+
 jobs:
   autopost:
     runs-on: ubuntu-latest
@@ -47,6 +57,7 @@ jobs:
         env:
           SCHEDULE: ${{ github.event.schedule }}
           MANUAL: ${{ github.event.inputs.channel }}
+          IG_AUTOPOST: ${{ env.IG_AUTOPOST }}
         run: |
           if [ -n "$MANUAL" ]; then
             ENDPOINT="$MANUAL"
@@ -58,10 +69,19 @@ jobs:
               *) echo "::error::Unrecognized schedule '$SCHEDULE'"; exit 1 ;;
             esac
           fi
+          SKIP=false
+          if [ "$ENDPOINT" = "instagram-post" ] && [ "${IG_AUTOPOST}" != "live" ]; then
+            echo "IG paused"
+            echo "Instagram Graph publish is paused (IG_AUTOPOST=${IG_AUTOPOST:-unset}). Not calling /api/cron/instagram-post."
+            echo "Resume by setting IG_AUTOPOST=live in .github/workflows/social-autopost.yml."
+            SKIP=true
+          fi
           echo "endpoint=$ENDPOINT" >> "$GITHUB_OUTPUT"
-          echo "Target endpoint: /api/cron/$ENDPOINT"
+          echo "skip=$SKIP" >> "$GITHUB_OUTPUT"
+          echo "Target endpoint: /api/cron/$ENDPOINT (skip=$SKIP)"
 
       - name: Fire the post
+        if: steps.target.outputs.skip != 'true'
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
           ENDPOINT: ${{ steps.target.outputs.endpoint }}

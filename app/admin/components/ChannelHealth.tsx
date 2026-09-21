@@ -68,7 +68,12 @@ export default function ChannelHealth() {
       channel: "Instagram",
       emoji: "📷",
       configured: igReady,
-      detail: igReady ? "Posts Wednesdays" : "IG_BUSINESS_ACCOUNT_ID / IG_ACCESS_TOKEN not set",
+      // Paused even when the token is set. Resume via IG_AUTOPOST=live in
+      // .github/workflows/social-autopost.yml — do not delete the token env vars.
+      detail: igReady
+        ? "Paused — Graph publish stuck; Tech Provider declined. Autopost skips until IG_AUTOPOST=live."
+        : "Paused. IG_BUSINESS_ACCOUNT_ID / IG_ACCESS_TOKEN not set",
+      warningDays: igReady ? 0 : undefined,
     },
     {
       channel: "YouTube",

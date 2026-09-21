@@ -40,11 +40,8 @@ LinkedIn auto-posts Thursdays and is **working**, but the access token is short-
 - 📌 Recurring: set a calendar reminder every ~55 days. (Candidate for a `/schedule` reminder.)
 - Feed it the **two LinkedIn B2B posts** in [`marketing/content-calendar-30day.md`](../marketing/content-calendar-30day.md) aimed at mortgage brokers / builders / relocation managers — LinkedIn is the most underused referral channel.
 
-### 5. 🔑 Re-link Instagram Business account ⏱️ 30 min (after item 1)
-The IG Graph API pipeline (`/api/cron/instagram-post`, Wednesdays) is coded but blocked on Meta Business Suite linkage. **Do this after the Facebook Page is restored (item 1).**
-- 🔑 In Meta Business Suite: link the IG Business/Creator account to the restored Page.
-- 🔑 Generate a Page access token with `instagram_basic`, `instagram_content_publish`, `pages_read_engagement`; set `IG_BUSINESS_ACCOUNT_ID` + `IG_ACCESS_TOKEN` in Vercel.
-- Content queue: the IG/Reels-ready posts in the 30-day calendar + repurposed YouTube clips (item 8).
+### 5. Instagram Graph autopost — paused
+The Wednesday pipeline (`/api/cron/instagram-post`) is coded but **not running**. Graph containers stay `IN_PROGRESS`, and Meta App Review for `instagram_content_publish` now requires Tech Provider, which was declined. `social-autopost.yml` soft-skips while `IG_AUTOPOST=paused`. Leave the route and the token env vars in place. Resume with `IG_AUTOPOST=live` (and un-pause the admin schedule + healthcheck job). A Business Suite alternative is not built here.
 
 ### 6. 🔑 Stand up a Google review-generation flow ⏱️ 1 hr setup, then per-close
 The site surfaces static Zillow reviews (`lib/reviews.ts`), but **Google reviews drive the map pack** and we have a thin Google presence.

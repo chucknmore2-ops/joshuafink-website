@@ -49,24 +49,42 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 ADMIN_SCHEDULE_TS = REPO_ROOT / "lib" / "admin-schedule.ts"
 
 
+def _schedule_pairs(ts: str) -> tuple[set[tuple[str, str]], set[tuple[str, str]]]:
+    """Split admin-schedule.ts objects into live vs paused (channel, jobName)."""
+    live: set[tuple[str, str]] = set()
+    paused: set[tuple[str, str]] = set()
+    for chunk in ts.split("{"):
+        match = re.search(
+            r'channel:\s*"([^"]+)",\s*jobName:\s*"([^"]+)"',
+            chunk,
+            re.S,
+        )
+        if not match:
+            continue
+        pair = (match.group(1), match.group(2))
+        if re.search(r"paused:\s*true", chunk):
+            paused.add(pair)
+        else:
+            live.add(pair)
+    return live, paused
+
+
 def test_expected_jobs_match_admin_schedule_ts():
-    """Catch silent drift: every (channel, jobName) pair in admin-schedule.ts
-    must have a matching ExpectedJob entry in EXPECTED_JOBS."""
+    """Catch silent drift: every live (channel, jobName) pair in
+    admin-schedule.ts must have a matching ExpectedJob. Paused jobs must
+    not alert — a paused Instagram row that is also in EXPECTED_JOBS would
+    turn the weekday healthcheck red again."""
     ts = ADMIN_SCHEDULE_TS.read_text()
-    # Parse the channel + jobName fields out of the TS literal. The shape is
-    # stable enough for a regex; if the source format changes meaningfully,
-    # this test will fail loudly and we update both sides together.
-    pairs = set(
-        re.findall(r'channel:\s*"([^"]+)",\s*jobName:\s*"([^"]+)"', ts)
-    )
-    assert pairs, "Failed to parse channel/jobName pairs from admin-schedule.ts"
+    live, paused = _schedule_pairs(ts)
+    assert live, "Failed to parse live channel/jobName pairs from admin-schedule.ts"
     expected_pairs = {(j.channel, j.job_name) for j in hc.EXPECTED_JOBS}
-    missing = pairs - expected_pairs
-    extra = expected_pairs - pairs
+    missing = live - expected_pairs
     assert not missing, f"EXPECTED_JOBS is missing entries from admin-schedule.ts: {missing}"
-    # `extra` is allowed for jobs monitored here but not surfaced in /admin.
-    # If you intend to add a job here without changing admin-schedule.ts,
-    # update this assertion with the rationale.
+    alerting = paused & expected_pairs
+    assert not alerting, f"paused admin-schedule jobs must not alert in EXPECTED_JOBS: {alerting}"
+    assert ("instagram", "instagram-post") in paused
+    # `extra` (expected - live) is allowed for jobs monitored here but not
+    # surfaced in /admin.
 
 
 # ---------------------------------------------------------------------------
@@ -1255,6 +1273,8 @@ def test_report_includes_gaps_section_on_pass():
     text = hc.format_text_report(results, now=NOW, hostname="ci-runner")
     assert "DOCUMENTED GAPS" in text
     assert "/api/cron/indexnow" in text
+    assert "Instagram autopost" in text
+    assert "IG_AUTOPOST" in text
     assert "OK — all pipelines fresh" in text
 
 

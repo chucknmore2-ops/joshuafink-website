@@ -43,7 +43,7 @@ These are listed in every report (workflow log, and the opt-in email) so a green
 
 - **`/api/cron/indexnow`** — submits URLs to Bing/Yandex, no DB write
 - **`/api/cron/agent-briefing`** — sends email + ClickUp task, no DB write
-- **`/api/cron/instagram-post`** — currently blocked at Meta Business Suite linkage (see [`IG-SETUP-PLAYBOOK.md`](./IG-SETUP-PLAYBOOK.md))
+- **Instagram autopost** — paused on purpose. Graph containers stay `IN_PROGRESS`; Meta Tech Provider was declined. `social-autopost.yml` soft-skips (`IG_AUTOPOST=paused`). Not a freshness failure.
 - **US federal holidays** — a holiday on a scheduled day will surface as STALE until the next firing
 - **DST drift** — v1 anchors thresholds in days, not local clock time; +/-1h drift acceptable
 

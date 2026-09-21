@@ -151,14 +151,9 @@ EXPECTED_JOBS: tuple[ExpectedJob, ...] = (
         cadence_ct="Tue 9:00am CT",
         max_age_days=9,
     ),
-    # Fired weekly by .github/workflows/social-autopost.yml (not Vercel Cron).
-    ExpectedJob(
-        label="github-actions-instagram",
-        channel="instagram",
-        job_name="instagram-post",
-        cadence_ct="Wed 9:00am CT",
-        max_age_days=9,
-    ),
+    # Instagram is paused (IG_AUTOPOST in social-autopost.yml). It stays out
+    # of EXPECTED_JOBS so a missing Wednesday post is not STALE. See
+    # DOCUMENTED_GAPS. The matching admin-schedule entry is paused: true.
 )
 
 # Daily Compass scrape (.github/workflows/sync-listings.yml, 08:00 UTC).
@@ -312,6 +307,14 @@ DOCUMENTED_GAPS: tuple[tuple[str, str], ...] = (
         "v1 is holiday-naive and tolerates +/- ~1h DST drift. A US federal "
         "holiday on a scheduled day will surface as STALE until the next "
         "firing.",
+    ),
+    (
+        "Instagram autopost (Wed)",
+        "Paused. Graph containers stay IN_PROGRESS; Meta App Review for "
+        "instagram_content_publish requires Tech Provider (declined). "
+        "social-autopost.yml soft-skips while IG_AUTOPOST=paused and does "
+        "not call Graph. Posting code remains. Set IG_AUTOPOST=live and "
+        "restore the EXPECTED_JOBS row to resume.",
     ),
 )
 
@@ -1585,10 +1588,11 @@ def _remediation_for(result: CheckResult) -> Optional[str]:
         )
     if "instagram" in name:
         return (
-            "Actions tab → Social Autopost → Run workflow → instagram-post. "
-            "A 400/401 from the Graph API means IG_ACCESS_TOKEN expired or "
-            "lost instagram_content_publish scope — refresh it in Vercel env "
-            "(see docs/IG-SETUP-PLAYBOOK.md)."
+            "Instagram autopost is paused on purpose (IG_AUTOPOST in "
+            "social-autopost.yml). Graph containers stay IN_PROGRESS and "
+            "Meta Tech Provider was declined. If this check is alerting, "
+            "drop it from EXPECTED_JOBS, or set IG_AUTOPOST=live before "
+            "running Social Autopost → instagram-post."
         )
     return None  # No tip — generic alert, hand-investigate
 

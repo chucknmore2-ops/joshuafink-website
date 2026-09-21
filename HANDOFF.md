@@ -10,7 +10,7 @@ never printed. Last verified **2026-09-18**.
 
 | When | What | How |
 |---|---|---|
-| **Open** | **Instagram cannot publish.** Every attempt since 09-16 ends `instagram container not ready`: Meta accepts the container and never finishes it. The 09-17 runs prove it is not one bad photo — the code already retried with a second home and Meta stalled on that too. Nothing else is broken. | [Runbook 4](#runbook-4--instagram-didnt-post) |
+| **Paused** | **Instagram autopost is off.** Graph containers stay `IN_PROGRESS`. Meta App Review for `instagram_content_publish` now requires Tech Provider, which Josh declined. Scheduled Social Autopost soft-skips IG (`IG_AUTOPOST=paused`) and does not call Graph. Facebook, LinkedIn, and GBP still post. The posting code is still in the repo. | Set `IG_AUTOPOST=live` in `.github/workflows/social-autopost.yml` to resume. [Runbook 4](#runbook-4--instagram-didnt-post) |
 | Housekeeping | Retired keys still in Vercel: `SLACK_BOT_TOKEN`, `MONDAY_BOARD_ID`, `SENDGRID_API_KEY`, `CLICKUP_API_TOKEN`. Nothing reads them. | Vercel → Settings → Environment Variables → delete |
 | Housekeeping | Open `growth/*` and `content/*` PRs (~40). Standing policy below. | `gh pr list` |
 
@@ -150,7 +150,7 @@ lead comes back without per-channel results.
 | Morning healthcheck | Mon–Fri 12:00 | `morning_healthcheck.yml` | CI red on failure; email only if `always_email=true` |
 | Daily tasks push | Mon–Fri 12:00 | `daily-tasks-pushover.yml` | phone push |
 | GBP post | Tue 14:00 | `social-autopost.yml` | `post_log` row, channel `gbp` |
-| Instagram post | Wed 14:00 | `social-autopost.yml` | `post_log` row, channel `instagram` |
+| Instagram post | Wed 14:00 | `social-autopost.yml` | **Paused** (`IG_AUTOPOST`). Soft-skips; does not call Graph. |
 | LinkedIn post | Thu 14:00 | `social-autopost.yml` | `post_log` row, channel `linkedin` |
 | GEO audit | Mon 13:00 | `geo-audit.yml` | `geo_visibility` rows, /admin GEO card |
 | Monthly market update | 5th, 14:00 | `monthly-market-update.yml` | `post_log`, job `monthly-market-update` |
@@ -222,7 +222,13 @@ The expiry var is what arms the 7-day early warning; without it /admin shows
 
 ### Runbook 4 — Instagram didn't post
 
-**Current state (2026-09-18): this is the one thing that is actually broken.**
+**Paused 2026-09-21.** Social Autopost does not call Instagram. A missing
+Wednesday post is expected, not an incident. The notes below are for when
+posting is turned back on (`IG_AUTOPOST=live` in
+`.github/workflows/social-autopost.yml`). Do not change the Meta token env vars
+to "fix" the pause.
+
+**Prior state (2026-09-18): publish was broken.**
 Every run since 09-16 fails with `instagram container not ready`. Meta accepts
 the container (so the token works and the URL is reachable) and then never
 finishes processing it.
