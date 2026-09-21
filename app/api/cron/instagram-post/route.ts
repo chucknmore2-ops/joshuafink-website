@@ -11,19 +11,23 @@ import { logPost } from '@/lib/admin-db'
 import { instagramImageUrl } from '@/lib/compass-photo'
 import { withUtm } from '@/lib/utm'
 import {
+  GRAPH_API,
   IG_ALTERNATE_LISTINGS,
+  IG_ALTERNATE_POLL_MS,
   IG_POLL_INTERVAL_MS,
   IG_POLL_MS,
   IG_RESUME_POLL_MS,
   igFailureBody,
+  igTokenLogFields,
   preflightPublicJpeg,
   redactSecrets,
+  resolveIgPublishToken,
   type IgAttemptDebug,
 } from '@/lib/instagram-publish'
 
 export const dynamic = 'force-dynamic'
-// Three listing attempts × 80s poll plus image preflight. geo-audit already
-// runs at 300 on this plan.
+// First listing 90s + two 80s alternates plus image preflight. geo-audit
+// already runs at 300 on this plan; do not raise this.
 export const maxDuration = 300
 
 // Instagram auto-poster for Joshua Fink Group.
@@ -39,10 +43,11 @@ export const maxDuration = 300
 //                             Meta Business Suite → Business settings → Accounts
 //                             → Instagram accounts. Requires the IG account to
 //                             be Business/Creator and linked to the FB Page.
-//   IG_ACCESS_TOKEN         — Page access token with instagram_basic +
-//                             instagram_content_publish + pages_read_engagement
-//                             scopes. Often the same token used for FB Page
-//                             posting if linked.
+//   IG_ACCESS_TOKEN         — long-lived Page token, or a User token with
+//                             instagram_content_publish (+ pages_show_list /
+//                             pages_read_engagement so we can read /me/accounts).
+//                             User tokens are swapped at runtime for the Page
+//                             token of the Page linked to IG_BUSINESS_ACCOUNT_ID.
 //
 // Two-step Graph API flow:
 //   1. POST /{ig-user-id}/media with image_url + caption → returns container ID
@@ -52,7 +57,6 @@ export const maxDuration = 300
 // lib/compass-photo.ts + /ig-photo/{id}.jpg). Compass CDN URLs stalled Meta
 // at IN_PROGRESS on 2026-09-16 and 2026-09-17.
 
-const GRAPH_API = 'https://graph.facebook.com/v19.0'
 const SITE = 'https://www.joshuafink.com'
 const MAX_CAPTION = 2200 // IG hard limit
 
@@ -205,8 +209,8 @@ export async function GET(request: Request) {
   }
 
   const igUserId = process.env.IG_BUSINESS_ACCOUNT_ID
-  const accessToken = process.env.IG_ACCESS_TOKEN
-  if (!igUserId || !accessToken) {
+  const envToken = process.env.IG_ACCESS_TOKEN
+  if (!igUserId || !envToken) {
     await logIg('failed', null, {
       errorMessage: 'IG_BUSINESS_ACCOUNT_ID or IG_ACCESS_TOKEN not set',
     })
@@ -215,6 +219,18 @@ export async function GET(request: Request) {
       { status: 500 },
     )
   }
+
+  // graph.facebook.com content publishing wants a Page token. A User token
+  // can create containers that sit at status_code IN_PROGRESS until timeout
+  // (GHA 35604056983). Swap when /me/accounts yields the linked Page.
+  const resolved = await resolveIgPublishToken({
+    envToken,
+    igBusinessAccountId: igUserId,
+    preferredPageId: process.env.FB_PAGE_ID,
+  })
+  const accessToken = resolved.accessToken
+  const tokenLog = igTokenLogFields(resolved)
+  console.info('[instagram-post] token', JSON.stringify(tokenLog))
 
   const payload = pickPayload()
   if (!payload) {
@@ -408,7 +424,12 @@ export async function GET(request: Request) {
       }),
     )
 
-    const pollMs = i === 0 && resumeId ? IG_RESUME_POLL_MS : IG_POLL_MS
+    const pollMs =
+      i === 0
+        ? resumeId
+          ? IG_RESUME_POLL_MS
+          : IG_POLL_MS
+        : IG_ALTERNATE_POLL_MS
     const attempt = await attemptPost(posted, pollMs, i === 0 ? resumeId : '')
     const attemptLog: IgAttemptDebug = {
       ...debugBase,
@@ -441,6 +462,7 @@ export async function GET(request: Request) {
         preview: posted.caption.slice(0, 120),
         url: posted.url,
         attempts,
+        ...tokenLog,
         at: new Date().toISOString(),
       })
     }
@@ -451,12 +473,15 @@ export async function GET(request: Request) {
     // creating more containers.
     if (!attempt.stalled) {
       return NextResponse.json(
-        igFailureBody({
-          error: attempt.error,
-          attempts,
-          hint: attempt.hint,
-          resume: false,
-        }),
+        {
+          ...igFailureBody({
+            error: attempt.error,
+            attempts,
+            hint: attempt.hint,
+            resume: false,
+          }),
+          ...tokenLog,
+        },
         { status: attempt.status },
       )
     }
@@ -481,14 +506,17 @@ export async function GET(request: Request) {
     stalled: true,
   }
   return NextResponse.json(
-    igFailureBody({
-      error: fail.error,
-      attempts,
-      hint: fail.hint,
-      // Alternates already tried in-process. Echo creationId for logs, but do
-      // not ask Social Autopost to resume a container Meta has abandoned.
-      resume: false,
-    }),
+    {
+      ...igFailureBody({
+        error: fail.error,
+        attempts,
+        hint: fail.hint,
+        // Alternates already tried in-process. Echo creationId for logs, but do
+        // not ask Social Autopost to resume a container Meta has abandoned.
+        resume: false,
+      }),
+      ...tokenLog,
+    },
     { status: fail.status },
   )
 }

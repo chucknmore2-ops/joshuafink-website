@@ -8,8 +8,11 @@ import assert from 'node:assert/strict'
 import {
   igFailureBody,
   igPublicHostOk,
+  igTokenLogFields,
+  pickIgPage,
   preflightPublicJpeg,
   redactSecrets,
+  resolveIgPublishToken,
 } from './instagram-publish.ts'
 
 test('igPublicHostOk only allows joshuafink.com over https', () => {
@@ -107,3 +110,182 @@ test('preflightPublicJpeg fails closed on a non-jpeg content-type', async () => 
   assert.equal(result.ok, false)
   if (!result.ok) assert.match(result.reason, /content-type/)
 })
+
+const USER_TOKEN = 'EAA_USER_TOKEN_SECRET'
+const PAGE_TOKEN_JFG = 'EAA_PAGE_TOKEN_JFG_SECRET'
+const PAGE_TOKEN_OTHER = 'EAA_PAGE_TOKEN_OTHER_SECRET'
+const IG_ID = '17841400000000000'
+
+function graphFetch(handler: (path: string) => Response): typeof fetch {
+  return (async (input: RequestInfo | URL) => {
+    const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url
+    const path = new URL(url).pathname
+    return handler(path)
+  }) as typeof fetch
+}
+
+test('pickIgPage prefers the page linked to IG_BUSINESS_ACCOUNT_ID', () => {
+  const picked = pickIgPage(
+    [
+      {
+        id: '1',
+        name: 'Other',
+        access_token: PAGE_TOKEN_OTHER,
+        instagram_business_account: { id: '999' },
+      },
+      {
+        id: '2',
+        name: 'Not Joshua',
+        access_token: PAGE_TOKEN_JFG,
+        instagram_business_account: { id: IG_ID },
+      },
+    ],
+    IG_ID,
+  )
+  assert.equal(picked?.id, '2')
+})
+
+test('pickIgPage falls back to Joshua Fink Group, then first IG-linked page', () => {
+  const byName = pickIgPage(
+    [
+      { id: '1', name: 'Random', access_token: PAGE_TOKEN_OTHER },
+      { id: '2', name: 'Joshua Fink Group', access_token: PAGE_TOKEN_JFG },
+    ],
+    IG_ID,
+  )
+  assert.equal(byName?.id, '2')
+
+  const byIg = pickIgPage(
+    [
+      { id: '1', name: 'No IG', access_token: PAGE_TOKEN_OTHER },
+      {
+        id: '3',
+        name: 'Some Page',
+        access_token: PAGE_TOKEN_JFG,
+        instagram_business_account: { id: '111' },
+      },
+    ],
+    IG_ID,
+  )
+  assert.equal(byIg?.id, '3')
+})
+
+test('resolveIgPublishToken swaps a User token for the linked Page token', async () => {
+  const resolved = await resolveIgPublishToken({
+    envToken: USER_TOKEN,
+    igBusinessAccountId: IG_ID,
+    fetchImpl: graphFetch((path) => {
+      if (path.endsWith('/me/accounts')) {
+        return Response.json({
+          data: [
+            {
+              id: 'page-other',
+              name: 'Other Biz',
+              access_token: PAGE_TOKEN_OTHER,
+              instagram_business_account: { id: '000' },
+            },
+            {
+              id: 'page-jfg',
+              name: 'Joshua Fink Group',
+              access_token: PAGE_TOKEN_JFG,
+              instagram_business_account: { id: IG_ID },
+            },
+          ],
+        })
+      }
+      if (path.endsWith('/me')) {
+        return Response.json({ id: 'user-1', name: 'Josh Fink' })
+      }
+      return Response.json({ error: 'unexpected' }, { status: 500 })
+    }),
+  })
+  assert.equal(resolved.tokenKind, 'user')
+  assert.equal(resolved.swapped, true)
+  assert.equal(resolved.pageId, 'page-jfg')
+  assert.equal(resolved.pageName, 'Joshua Fink Group')
+  assert.equal(resolved.accessToken, PAGE_TOKEN_JFG)
+  assert.match(resolved.reason, /instagram_business_account/)
+  const log = JSON.stringify(igTokenLogFields(resolved))
+  assert.equal(log.includes(USER_TOKEN), false)
+  assert.equal(log.includes(PAGE_TOKEN_JFG), false)
+  assert.equal(log.includes('accessToken'), false)
+})
+
+test('resolveIgPublishToken falls back to the Joshua Fink Group page by name', async () => {
+  const resolved = await resolveIgPublishToken({
+    envToken: USER_TOKEN,
+    igBusinessAccountId: IG_ID,
+    fetchImpl: graphFetch((path) => {
+      if (path.endsWith('/me/accounts')) {
+        return Response.json({
+          data: [
+            {
+              id: 'page-other',
+              name: 'Other Biz',
+              access_token: PAGE_TOKEN_OTHER,
+              instagram_business_account: { id: '000' },
+            },
+            {
+              id: 'page-jfg',
+              name: 'Joshua Fink Group',
+              access_token: PAGE_TOKEN_JFG,
+            },
+          ],
+        })
+      }
+      if (path.endsWith('/me')) {
+        return Response.json({ id: 'user-1', name: 'Josh Fink' })
+      }
+      return Response.json({ error: 'unexpected' }, { status: 500 })
+    }),
+  })
+  assert.equal(resolved.swapped, true)
+  assert.equal(resolved.pageId, 'page-jfg')
+  assert.equal(resolved.accessToken, PAGE_TOKEN_JFG)
+  assert.match(resolved.reason, /page name/)
+})
+
+test('resolveIgPublishToken keeps a Page token as-is', async () => {
+  const resolved = await resolveIgPublishToken({
+    envToken: PAGE_TOKEN_JFG,
+    igBusinessAccountId: IG_ID,
+    fetchImpl: graphFetch((path) => {
+      if (path.endsWith('/me/accounts')) {
+        return Response.json(
+          {
+            error: {
+              message:
+                '(#100) Tried accessing nonexisting field (accounts) on node type (Page)',
+              type: 'OAuthException',
+              code: 100,
+            },
+          },
+          { status: 400 },
+        )
+      }
+      if (path.endsWith('/me')) {
+        return Response.json({ id: 'page-jfg', name: 'Joshua Fink Group' })
+      }
+      return Response.json({ error: 'unexpected' }, { status: 500 })
+    }),
+  })
+  assert.equal(resolved.tokenKind, 'page')
+  assert.equal(resolved.swapped, false)
+  assert.equal(resolved.pageId, 'page-jfg')
+  assert.equal(resolved.accessToken, PAGE_TOKEN_JFG)
+  assert.match(resolved.reason, /already a Page token/)
+})
+
+test('resolveIgPublishToken falls back to env token when Graph is unreachable', async () => {
+  const resolved = await resolveIgPublishToken({
+    envToken: USER_TOKEN,
+    igBusinessAccountId: IG_ID,
+    fetchImpl: (async () => {
+      throw new Error('network down')
+    }) as typeof fetch,
+  })
+  assert.equal(resolved.tokenKind, 'unknown')
+  assert.equal(resolved.swapped, false)
+  assert.equal(resolved.accessToken, USER_TOKEN)
+})
+
