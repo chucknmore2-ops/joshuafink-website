@@ -890,7 +890,11 @@ def check_workflow_last_run(
         )
         with opener(req, timeout=GITHUB_API_TIMEOUT_S) as resp:
             http_status = getattr(resp, "status", None) or resp.getcode()
-            body = resp.read(200_000).decode("utf-8", errors="replace")
+            # No read cap: Social Autopost uses per_page=30 to skip Graph-era
+            # Instagram failures, and that payload can exceed 200 KB. A capped
+            # read truncated the JSON mid-string on 2026-09-22 (run 108) and
+            # turned a successful run into a false [ERR].
+            body = resp.read().decode("utf-8", errors="replace")
     except Exception as exc:  # noqa: BLE001 — network/HTTP error is the signal
         return CheckResult(
             name=name,
