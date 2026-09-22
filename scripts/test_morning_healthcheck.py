@@ -968,6 +968,38 @@ def test_social_autopost_still_alerts_on_a_buffer_era_failure():
     assert "runs/buffer-fail" in r.detail
 
 
+def test_social_autopost_parses_response_larger_than_200kb():
+    """Regression (2026-09-22): Social Autopost requests per_page=30, which
+    pushed the Actions payload past a 200 KB read cap and truncated the JSON
+    mid-string. The check reported [ERR] unparsable while the latest
+    non-Graph run had concluded success."""
+    payload = {"workflow_runs": [
+        {
+            "conclusion": "failure",
+            "created_at": "2026-09-21T16:56:19Z",
+            "updated_at": "2026-09-21T17:10:00Z",
+            "html_url": "https://github.com/o/r/actions/runs/old-graph",
+            "display_title": "x" * 250_000,
+        },
+        {
+            "conclusion": "success",
+            "created_at": "2026-09-22T14:00:00Z",
+            "updated_at": "2026-09-22T14:10:00Z",
+            "html_url": "https://github.com/o/r/actions/runs/buffer-ok",
+        },
+    ]}
+    assert len(json.dumps(payload).encode()) > 200_000
+    r = hc.check_workflow_last_run(
+        "social-autopost.yml", "Social Autopost",
+        repo="o/r", token="t", opener=_runs_opener(payload),
+    )
+    assert r.status == hc.STATUS_PASS
+    assert not r.is_alert
+    assert "runs/buffer-ok" in r.detail
+    assert "old-graph" not in r.detail
+    assert "unparsable" not in r.detail
+
+
 def test_social_autopost_graph_only_history_is_not_an_alert():
     payload = {"workflow_runs": [
         {
