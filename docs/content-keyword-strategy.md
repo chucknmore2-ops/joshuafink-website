@@ -35,7 +35,7 @@ Money-page link targets (real slugs):
 | down payment assistance Tennessee / THDA Great Choice | trans | med | **Open.** Big first-time-buyer intent. |
 | new construction vs. resale home Middle TN | info→trans | low | **Open.** |
 | best Nashville suburbs for commuters / commute times | relo-buyer | low–med | **Open.** |
-| rent vs. buy in Nashville 2026 | info | med | **Open.** |
+| rent vs. buy in Nashville 2026 / going into 2027 | info | med | **Shipped** 2026-09-22 (`rent-vs-buy-nashville-2027`). |
 | how to write a competitive offer in a balanced market | info | low | **Open.** Buyers now have leverage. |
 | closing costs for buyers in Tennessee | info | med | **Open** (seller net-sheet exists; no buyer-cost piece). |
 | what credit score / income to buy a house in TN | info/GEO | med | **Open.** |
@@ -132,7 +132,7 @@ Refreshed keyword set for the next window. Same one-post-per-week cadence, same 
 |---|---|---|---|---|---|
 | 13 | ✅ shipped 2026-08-26 (pulled forward from early Oct — next writeable slot when the weekly cadence check paged; Wk 1 still blocked on human data). Slug: `buying-a-house-before-the-end-of-the-year-middle-tennessee` | **Buying a House in Middle Tennessee Before the End of the Year: What It Takes to Close by December 31** | close on a house before end of year | Buyer | /buy/franklin-tn, /buy/murfreesboro-tn, /buy/mount-juliet-tn |
 | 14 | ✅ shipped 2026-09-07 (pulled forward from mid Oct — next writeable slot; Wk 1 still blocked on human data). Slug: `closing-costs-for-buyers-tennessee-2026` | **Closing Costs for Buyers in Tennessee: What You Actually Pay at the Table** | closing costs for buyers in tennessee | Buyer/GEO | /buy/nashville-tn, /buy/smyrna-tn, /buy/murfreesboro-tn, blog: net sheet, afford, THDA |
-| 15 | late Oct | **Rent vs. Buy in Nashville Going Into 2027** | rent vs buy nashville | Buyer/GEO | /buy/nashville-tn, /market/nashville-tn |
+| 15 | ✅ shipped 2026-09-22 (pulled forward from late Oct — next writeable slot; Wk 1 still blocked on human data). Slug: `rent-vs-buy-nashville-2027` | **Rent vs. Buy in Nashville Going Into 2027** | rent vs buy nashville | Buyer/GEO | /buy/nashville-tn, /market/nashville-tn, blog: closing costs, afford, is-now |
 | 16 | early Nov | **Selling a House Over the Holidays in Middle Tennessee: Fewer Lookers, Better Buyers** | selling a house during the holidays | Seller | /sell/brentwood-tn, /sell/franklin-tn, blog: fall pricing |
 | 17 | mid Nov | **What Credit Score Do You Need to Buy a House in Tennessee?** | what credit score to buy a house in tennessee | Buyer/GEO | /buy/la-vergne-tn, /buy/columbia-tn, blog: THDA |
 | 18 | late Nov | **Winter Home Prep in Middle Tennessee: The Maintenance an Inspector Will Flag** | winter home maintenance tennessee | Seller/Owner | /sell/spring-hill-tn, blog: inspection guide |
