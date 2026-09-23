@@ -1,3 +1,5 @@
+import { legacyRedirects } from './lib/legacy-redirects.mjs'
+
 /** @type {import('next').NextConfig} */
 
 // Content-Security-Policy in Report-Only mode. Allows what the site
@@ -26,6 +28,10 @@ const csp = [
 ].join('; ')
 
 const nextConfig = {
+  async redirects() {
+    // 308s for measured 404s (missing -tn slugs, delisted listing, legacy WP).
+    return legacyRedirects()
+  },
   images: {
     remotePatterns: [
       {
