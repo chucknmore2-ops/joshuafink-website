@@ -359,8 +359,8 @@ const cityContent: Record<string, CashOfferCityContent> = {
     areas:
       'Historic Downtown Columbia, the Downtown Columbia Historic District, North Columbia / Carters Creek (Spring Hill-Adjacent), Sunnyside, The Crossings, and Bear Creek',
     headline: {
-      lead: 'Cash Offer in Columbia, TN',
-      accent: 'Sell My House Fast.',
+      lead: 'Cash Offer',
+      accent: 'in Columbia, TN.',
     },
     intro:
       'A Columbia, TN cash offer is for the seller who needs a date more than a perfect retail price. That includes a divorce, an inherited house, a relocation, a home you want to sell as-is, or any timeline that cannot wait on showings. Use the form on this page — the same cash-offer request Joshua reviews himself — and you will have a fair, no-obligation number within 24 hours.',
@@ -369,7 +369,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     seo: {
       title: 'Cash Offer in Columbia, TN | Sell My House Fast',
       description:
-        'Cash offer in Columbia, TN for inherited homes, divorce, relocation, or as-is sales. Fair offer in 24 hours, close in as little as 7 days. Licensed Compass broker. No repairs or commissions.',
+        'Cash offer in Columbia, TN — inherited, divorce, relocation, or as-is. Fair offer in 24 hours, close in as little as 7 days. No repairs or commissions.',
       ogTitle: 'Cash Offer in Columbia, TN — Sell My House Fast',
       ogDescription:
         'Fair cash offer on your Columbia, TN home in 24 hours. Close in as little as 7 days. As-is, no showings, no commissions. Call or text 615-551-2727.',

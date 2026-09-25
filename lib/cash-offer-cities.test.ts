@@ -165,8 +165,8 @@ test('Columbia cash-offer SEO targets cash-offer and sell-fast queries without s
   assert.ok(seo.keywords.includes('cash offer Columbia TN'))
   assert.ok(seo.keywords.includes('sell my house fast Columbia TN'))
 
-  assert.equal(city.headline?.lead, 'Cash Offer in Columbia, TN')
-  assert.match(city.headline?.accent ?? '', /Sell My House Fast/)
+  assert.equal(city.headline?.lead, 'Cash Offer')
+  assert.equal(city.headline?.accent, 'in Columbia, TN.')
 
   assert.match(city.intro, /divorce/i)
   assert.match(city.intro, /inherited/i)
