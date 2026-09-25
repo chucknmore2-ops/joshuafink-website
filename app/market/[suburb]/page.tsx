@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated, suburbs } from '@/lib/suburbs'
+import { cashOfferPath } from '@/lib/cash-offer-cities'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import ReviewStrip from '@/components/ReviewStrip'
@@ -405,6 +406,15 @@ export default async function MarketSuburbPage({ params }: Props) {
                 </Link>{' '}
                 before you commit to a number.
               </p>
+              {s.slug === 'columbia-tn' ? (
+                <p className="text-[#444] text-base leading-relaxed mb-4">
+                  Homes in Columbia are averaging about {s.avgDaysOnMarket} days on market. If you need a firmer date than that — repairs, an estate, a divorce, or a move you cannot put off —{' '}
+                  <Link href={cashOfferPath(s.slug)} className="text-black underline hover:no-underline">
+                    get a cash offer on your Columbia home
+                  </Link>
+                  . As-is, no showings, close in as little as 7 days.
+                </p>
+              ) : null}
 
               <h3 className="text-xl font-black text-black mt-10 mb-4">For Buyers in {s.name}</h3>
               <p className="text-[#444] text-base leading-relaxed mb-4">

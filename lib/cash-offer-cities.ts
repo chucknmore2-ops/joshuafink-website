@@ -40,7 +40,12 @@ export type CashOfferCityContent = {
   faqs: { q: string; a: string }[]
   /** Optional on-page SEO overrides. Omit to use the shared city-template strings. */
   seo?: CashOfferSeo
-  /** Licensed-broker vs cash-buyer-site callout. Nashville-only for now. */
+  /**
+   * Optional hero H1. Omit to keep "Sell My House Fast / in {City}."
+   * Use when title, meta, and H1 need to share one query (e.g. a cash-offer landing).
+   */
+  headline?: { lead: string; accent: string }
+  /** Licensed-broker vs cash-buyer-site callout. Set per city when the page needs it. */
   differentiator?: string
   /** Extra compare-table closer. Rendered under the shared traditional-vs-cash grid. */
   compareNote?: string
@@ -351,23 +356,114 @@ const cityContent: Record<string, CashOfferCityContent> = {
   },
   'columbia-tn': {
     slug: 'columbia-tn',
-    areas: 'Downtown Columbia, Sunnyside, North Columbia, The Crossings, and Bear Creek',
+    areas:
+      'Historic Downtown Columbia, the Downtown Columbia Historic District, North Columbia / Carters Creek (Spring Hill-Adjacent), Sunnyside, The Crossings, and Bear Creek',
+    headline: {
+      lead: 'Cash Offer in Columbia, TN',
+      accent: 'Sell My House Fast.',
+    },
     intro:
-      "Columbia is Maury County's hub — historic, affordable, and growing with the Spring Hill spillover. If your home needs work, is tied to an estate, or you're behind on payments, a cash offer lets you sell as-is and close fast.",
+      'A Columbia, TN cash offer is for the seller who needs a date more than a perfect retail price. That includes a divorce, an inherited house, a relocation, a home you want to sell as-is, or any timeline that cannot wait on showings. Use the form on this page — the same cash-offer request Joshua reviews himself — and you will have a fair, no-obligation number within 24 hours.',
     localAngle:
-      "At a ~$385,000 median (Redfin, as of August 20, 2026), Columbia is among the most affordable Middle TN markets, with many older and historic homes that need updating. A cash sale lets owners avoid the repair spend a traditional listing would demand — Joshua buys as-is across Maury County.",
+      "Columbia's median sits around $385,000 (Redfin, as of August 20, 2026), and homes are averaging about 77 days on market. That wait is why cash is a real option here: historic houses near the Square often need systems work a retail buyer will not take on, and repair bills eat more of a listing in an attainable Maury County price band than they do in Williamson County. Maury County was Tennessee's #2 fastest-growing county by percentage from 2024 to 2025 (Maury Alliance), so the equity is real — Joshua prices it off current Maury County comps, buys as-is, and will also show you a traditional listing net if the house is ready and you can wait.",
+    seo: {
+      title: 'Cash Offer in Columbia, TN | Sell My House Fast',
+      description:
+        'Cash offer in Columbia, TN for inherited homes, divorce, relocation, or as-is sales. Fair offer in 24 hours, close in as little as 7 days. Licensed Compass broker. No repairs or commissions.',
+      ogTitle: 'Cash Offer in Columbia, TN — Sell My House Fast',
+      ogDescription:
+        'Fair cash offer on your Columbia, TN home in 24 hours. Close in as little as 7 days. As-is, no showings, no commissions. Call or text 615-551-2727.',
+      keywords: [
+        'cash offer Columbia TN',
+        'Columbia TN cash offer',
+        'sell my house fast Columbia TN',
+        'sell my house fast Columbia',
+        'we buy houses Columbia TN',
+        'cash home buyer Columbia',
+        'sell house as-is Columbia TN',
+        'Joshua Fink',
+      ],
+      eyebrow: 'Columbia, TN · Cash Offer',
+    },
+    differentiator:
+      'Search results for a Columbia cash offer are full of out-of-town "we buy houses" sites. Joshua is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate — 218+ five-star reviews and 17+ years in Middle Tennessee. He can buy your Columbia home for cash or list it, and he shows you both numbers in writing before you choose.',
+    compareNote:
+      'Columbia homes are averaging about 77 days on market, with a citywide median around $385,000 (Redfin, as of August 20, 2026). Listing can still net more on a move-in-ready house if you can wait. If you need to sell your house fast in Columbia — as-is, or on a date you can plan around — cash is the certain close. Same licensed broker either way.',
+    situationDetails: [
+      {
+        id: 'inherited',
+        heading: 'Selling an inherited house in Columbia',
+        body: 'Many of the Columbia houses that fit a cash sale are family homes held for decades, especially around Historic Downtown Columbia and the Downtown Columbia Historic District. Heirs are often out of state, the house needs work, and nobody wants to run a renovation or a cleanout from another city. Joshua buys inherited homes as-is — leftover belongings included — and the closing attorney coordinates title around probate. You can sign remotely.',
+      },
+      {
+        id: 'divorce',
+        heading: 'Selling a Columbia house during a divorce',
+        body: 'When the house is the last asset two people share, a long listing means more showings, more disagreement, and more months of carrying costs. A Columbia cash close is one written offer and one closing date. Joshua coordinates with both parties and the closing attorney so proceeds split per your agreement, often within a couple of weeks.',
+      },
+      {
+        id: 'relocation',
+        heading: 'Relocating out of Columbia',
+        body: "Job moves land here from both directions. Maury Regional Health is headquartered in Columbia (3,000+ employees), GM and Ultium Cells are still growing in neighboring Spring Hill, and a Nashville commute on I-65 is about 45 minutes depending on traffic — until a transfer means you cannot keep the house. Joshua can close in as little as 7 days, including if you have already left town. Newer pockets such as North Columbia / Carters Creek (Spring Hill-Adjacent) are in range the same as older in-town houses.",
+      },
+      {
+        id: 'as-is',
+        heading: 'As-is, historic, or major repairs',
+        body: 'Antebellum and Victorian houses near the Square, and plenty of mid-century homes farther out, need roof, electrical, foundation, or systems work that a retail buyer will walk past. Some downtown parcels also sit in a historic overlay, which can slow exterior work even when you are willing to spend. You do not have to restore the house to sell it. Joshua buys completely as-is and prices condition into the offer up front. Selling as-is still means disclosing known material defects; it means you are not paying to fix them.',
+        href: '/blog/sell-house-as-is-middle-tennessee',
+        linkLabel: 'What selling as-is actually means',
+      },
+      {
+        id: 'speed',
+        heading: 'You need a closing date, not another month of showings',
+        body: 'Columbia homes are averaging about 77 days on market (Redfin, as of August 20, 2026). A cash sale skips the lender, the appraisal, and the showing calendar. You get a no-obligation offer within 24 hours and can close in as little as 7 days — or later, if you still need time to move. Start with the form on this page.',
+        href: '#cash-offer-form',
+        linkLabel: 'Get your Columbia cash offer',
+      },
+    ],
+    relatedReading: [
+      { href: '/sell/columbia-tn', label: 'Free Columbia home valuation' },
+      { href: '/buy/columbia-tn', label: 'Homes for sale in Columbia' },
+      { href: '/market/columbia-tn', label: 'Columbia housing market' },
+      { href: '/cash-offer', label: 'Middle Tennessee cash-offer hub' },
+      { href: '/cash-offer/nashville-tn', label: 'Nashville cash offer' },
+      { href: '/blog/cash-offer-vs-ibuyer-vs-listing-middle-tennessee', label: 'Cash offer vs. iBuyer vs. listing' },
+    ],
     faqs: [
       {
+        q: 'How fast can I sell my house for cash in Columbia, TN?',
+        a: 'You will have a no-obligation cash offer within 24 hours, and you can close in as little as 7 days. There is no lender, appraisal, or inspection-repair loop — a Tennessee title attorney clears title and schedules closing, usually within the same week you accept. If you need more time to move, Joshua closes on your date instead.',
+      },
+      {
+        q: 'Can I sell my Columbia house as-is without repairs or showings?',
+        a: 'Yes. Zero repairs, zero cleaning, zero showings. Joshua buys Columbia houses completely as-is, including roof, HVAC, foundation, water damage, and dated historic homes near the Square. Condition is priced into the offer. You still disclose known material defects; you just do not pay to fix them.',
+      },
+      {
         q: 'Do you buy historic or older homes in downtown Columbia?',
-        a: "Yes. Columbia has a deep stock of historic and older homes that often need significant updating. Joshua buys them as-is — including properties with foundation, electrical, or roof issues — so you don't have to navigate costly restoration before selling.",
+        a: 'Yes. Columbia has a deep stock of older and historic houses, including around Historic Downtown Columbia, that often need significant updating. Joshua buys them as-is — foundation, electrical, or roof issues included — so you do not have to restore the house, or clear historic-overlay design review, before you can sell.',
       },
       {
-        q: 'I’m behind on my mortgage in Columbia — can a cash sale help?',
-        a: "Often, yes. If you're behind or facing foreclosure, a fast cash close can pay off the lender and protect your remaining equity and credit. The earlier you reach out, the more options exist — including a short sale if you owe more than the home is worth. Joshua has negotiated these with most major Tennessee lenders.",
+        q: 'I inherited a Columbia home and I live out of state — can I still sell?',
+        a: 'Yes. Out-of-state heirs can sell a Columbia home this way without being in town. Joshua and the closing attorney coordinate probate and title; you sign remotely. You do not have to fly in, empty the house, or make repairs. If the estate is still in probate, the contract can wait on the court.',
       },
       {
-        q: 'How does Columbia’s growth affect my cash offer?',
-        a: "Columbia's Spring Hill spillover is lifting values, which is good news for your equity. The offer is priced off current Maury County comps, so you benefit from recent appreciation — while still skipping the repairs, showings, and wait of a traditional sale.",
+        q: 'I am going through a divorce — can you close on our Columbia house?',
+        a: 'Yes. A cash close avoids months of showings while a marriage is ending. Joshua coordinates with both parties and the closing attorney so proceeds split per your agreement, often within a couple of weeks.',
+      },
+      {
+        q: 'I got relocated — can you close fast on my Columbia home?',
+        a: 'Yes. Relocation is a common reason Columbia owners sell for cash, whether the job is at Maury Regional Health in town, at the plants in Spring Hill, or back toward Nashville. Joshua can close in as little as 7 days so you are not carrying the house from out of state or rushing a traditional listing you cannot attend.',
+      },
+      {
+        q: 'I am behind on my mortgage in Columbia — can a cash sale help?',
+        a: 'Often, yes. If you are behind or facing foreclosure, a fast cash close can pay off the lender and protect remaining equity and credit. The earlier you reach out, the more options exist — including a short sale if you owe more than the home is worth. Joshua has negotiated these with most major Tennessee lenders.',
+      },
+      {
+        q: 'How does a cash offer compare with listing my Columbia home?',
+        a: "A cash offer typically runs 70–85% of after-repair value. You trade some retail price for speed and certainty. In Columbia's ~$385K market (Redfin, as of August 20, 2026), homes average about 77 days on market, and repair costs on an older house often consume the gap between cash and a list price. For a move-in-ready home you can wait on, listing usually nets more. Joshua will lay out both numbers before you choose.",
+      },
+      {
+        q: 'What if my Columbia house is already listed with an agent?',
+        a: 'If you are under a listing agreement, you may still owe your agent a commission on a private sale — check the contract first. Joshua is a licensed broker, so he can talk with your listing agent directly or wait until the listing expires. He will not ask you to break an agreement.',
       },
     ],
   },
@@ -498,7 +594,7 @@ export function getAllCashOfferCitySlugs(): string[] {
 // FAQs) was last reviewed. Mirrors `marketStatsLastUpdated` in lib/suburbs.ts —
 // update when refreshing this file's content. Feeds the WebPage `dateModified`
 // on /cash-offer/[city], a freshness signal these pages previously lacked.
-export const cashOfferContentLastUpdated = '2026-09-10'
+export const cashOfferContentLastUpdated = '2026-09-25'
 
 /** Lightweight list for nav/grid linking (slug + display name), in declared order. */
 export function getCashOfferCityLinks(): Array<{ slug: string; name: string }> {

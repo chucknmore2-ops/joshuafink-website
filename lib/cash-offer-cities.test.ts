@@ -95,8 +95,8 @@ test('Franklin cash-offer copy stays pinned to the live Redfin $869,565 (~$870K)
   assert.doesNotMatch(repairFaq.a, /\$650K/)
 })
 
-test('cash-offer freshness stamp is current after the Nashville SEO pass', () => {
-  assert.equal(cashOfferContentLastUpdated, '2026-09-10')
+test('cash-offer freshness stamp is current after the Columbia SEO pass', () => {
+  assert.equal(cashOfferContentLastUpdated, '2026-09-25')
 })
 
 test('Nashville cash-offer SEO targets both house and home sell-fast queries', () => {
@@ -146,6 +146,77 @@ test('Franklin cash-offer still uses the shared template strings (no mass city S
   const seo = cashOfferSeo(city)
   assert.equal(seo.title, 'Sell My House Fast Franklin, TN | Cash Offer in 24 Hours')
   assert.equal(city.seo, undefined)
+  assert.equal(city.headline, undefined)
   assert.equal(city.situationDetails, undefined)
   assert.equal(city.differentiator, undefined)
+})
+
+test('Columbia cash-offer SEO targets cash-offer and sell-fast queries without stale prices', () => {
+  const city = getCashOfferCity('columbia-tn')
+  assert.ok(city)
+  const seo = cashOfferSeo(city)
+
+  assert.match(seo.title, /Cash Offer in Columbia, TN/)
+  assert.match(seo.title, /Sell My House Fast/)
+  assert.match(seo.description, /Cash offer in Columbia, TN/)
+  assert.match(seo.description, /24 hours/)
+  assert.match(seo.ogTitle, /Cash Offer in Columbia, TN/)
+  assert.match(seo.eyebrow, /Columbia, TN · Cash Offer/)
+  assert.ok(seo.keywords.includes('cash offer Columbia TN'))
+  assert.ok(seo.keywords.includes('sell my house fast Columbia TN'))
+
+  assert.equal(city.headline?.lead, 'Cash Offer in Columbia, TN')
+  assert.match(city.headline?.accent ?? '', /Sell My House Fast/)
+
+  assert.match(city.intro, /divorce/i)
+  assert.match(city.intro, /inherited/i)
+  assert.match(city.intro, /relocation/i)
+  assert.match(city.intro, /as-is/i)
+  assert.match(city.intro, /form on this page/)
+
+  assert.match(city.localAngle, /\$385,000/)
+  assert.match(city.localAngle, /Redfin/)
+  assert.match(city.localAngle, /August 20, 2026/)
+  assert.match(city.localAngle, /77 days/)
+  assert.doesNotMatch(
+    [city.intro, city.localAngle, city.compareNote ?? '', ...city.faqs.map((f) => `${f.q} ${f.a}`)].join('\n'),
+    /\$340,000/,
+  )
+
+  assert.ok(city.differentiator)
+  assert.match(city.differentiator, /TREC #351484/)
+  assert.match(city.differentiator, /Compass/)
+
+  assert.ok(city.compareNote)
+  assert.match(city.compareNote, /77 days/)
+  assert.match(city.compareNote, /\$385,000/)
+  assert.match(city.compareNote, /Redfin/)
+
+  const situationIds = (city.situationDetails ?? []).map((s) => s.id)
+  for (const id of ['inherited', 'divorce', 'relocation', 'as-is', 'speed']) {
+    assert.ok(situationIds.includes(id), `missing situation ${id}`)
+  }
+
+  const hrefs = [
+    ...(city.relatedReading ?? []).map((l) => l.href),
+    ...(city.situationDetails ?? []).flatMap((s) => (s.href ? [s.href] : [])),
+  ]
+  for (const href of [
+    '/buy/columbia-tn',
+    '/sell/columbia-tn',
+    '/market/columbia-tn',
+    '/cash-offer',
+    '/cash-offer/nashville-tn',
+    '#cash-offer-form',
+  ]) {
+    assert.ok(hrefs.includes(href), `missing link ${href}`)
+  }
+
+  const questions = city.faqs.map((f) => f.q)
+  assert.ok(questions.some((q) => /how fast can I sell my house for cash in Columbia, TN/i.test(q)))
+  assert.ok(questions.some((q) => /as-is/i.test(q)))
+  assert.ok(questions.some((q) => /divorce/i.test(q)))
+  assert.ok(questions.some((q) => /inherited/i.test(q)))
+  assert.ok(questions.some((q) => /relocated/i.test(q)))
+  assert.equal(cashOfferPath('columbia-tn'), '/cash-offer/columbia-tn')
 })
