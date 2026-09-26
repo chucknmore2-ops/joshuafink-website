@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-09-25T13:24:39.303Z
+// AUTO-GENERATED — Last synced: 2026-09-26T12:47:40.602Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -21,7 +21,7 @@ export interface Listing {
 
 // Mirrors the header timestamp so server components can compute sync staleness
 // without parsing comments. Updated by scripts/fetch-images.mjs each sync.
-export const listingsSyncedAt = "2026-09-25T13:24:39.303Z";
+export const listingsSyncedAt = "2026-09-26T12:47:40.602Z";
 
 export const listings: Listing[] = [
   {
@@ -85,18 +85,6 @@ export const listings: Listing[] = [
     lastVerified: listingsSyncedAt,
   },
   {
-    address: "870 Reeves Rd",
-    city: "Antioch, TN 37013",
-    price: 349900,
-    beds: 3,
-    baths: 2,
-    sqft: 1134,
-    status: "Active Under Contract",
-    compassUrl: "https://www.compass.com/homedetails/870-Reeves-Rd-Antioch-TN-37013/SW1BU_pid/",
-    imageUrl: "https://www.compass.com/m/ce49d43899de5afcb9e0c75704d5e6a63a12a2c584826f54faf7ebb96ef704be/2048x1536.webp",
-    lastVerified: listingsSyncedAt,
-  },
-  {
     address: "107 Overlook Trail",
     city: "Goodlettsville, TN 37072",
     price: 339900,
@@ -106,18 +94,6 @@ export const listings: Listing[] = [
     status: "Active Under Contract",
     compassUrl: "https://www.compass.com/homedetails/107-Overlook-Trail-Goodlettsville-TN-37072/S1YDH_pid/",
     imageUrl: "https://www.compass.com/m/8985df27c4ffe884adc4d99e9b53e58edb750887ca26b1f7b5e7df7c1f58a106/2048x1536.webp",
-    lastVerified: listingsSyncedAt,
-  },
-  {
-    address: "4874 Sparta Pike",
-    city: "Watertown, TN 37184 | MLS #3319962",
-    price: 324900,
-    beds: 3,
-    baths: 1,
-    sqft: 1248,
-    status: "Active",
-    compassUrl: "https://www.compass.com/homedetails/4874-Sparta-Pike-Watertown-TN-37184/TMU6R_pid/",
-    imageUrl: "https://www.compass.com/m/9271db1e1cbdb146eb498cd63a192c09a438f39c3b9627023b0cbda6f044a677/2048x1536.webp",
     lastVerified: listingsSyncedAt,
   },
   {
@@ -142,6 +118,18 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/2037-Walnut-Ln-Gallatin-TN-37066/SFFDI_pid/",
     imageUrl: "https://www.compass.com/m/cfb0b5c09b81c0659c2b0baa6b3bc9332777f4a2bd4d6d647b185638b946738f/2048x1536.webp",
+    lastVerified: listingsSyncedAt,
+  },
+  {
+    address: "4874 Sparta Pike",
+    city: "Watertown, TN 37184 | MLS #3319962",
+    price: 299900,
+    beds: 3,
+    baths: 1,
+    sqft: 1248,
+    status: "Active",
+    compassUrl: "https://www.compass.com/homedetails/4874-Sparta-Pike-Watertown-TN-37184/TMU6R_pid/",
+    imageUrl: "https://www.compass.com/m/9271db1e1cbdb146eb498cd63a192c09a438f39c3b9627023b0cbda6f044a677/2048x1536.webp",
     lastVerified: listingsSyncedAt,
   }
 ];
