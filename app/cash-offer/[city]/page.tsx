@@ -226,8 +226,9 @@ export default async function CashOfferCityPage({ params }: Props) {
                 {seo.eyebrow}
               </p>
               <h1 className="text-5xl sm:text-6xl font-black tracking-tight leading-[1.05] mb-6 font-display">
-                Sell My House Fast<br />
-                <span className="italic text-neutral-400">in {city.name}.</span>
+                {city.headline?.lead ?? 'Sell My House Fast'}
+                <br />
+                <span className="italic text-neutral-400">{city.headline?.accent ?? `in ${city.name}.`}</span>
               </h1>
               <p className="text-neutral-300 text-lg leading-relaxed mb-6">
                 {city.intro}
@@ -310,7 +311,7 @@ export default async function CashOfferCityPage({ params }: Props) {
               {city.situationDetails.map((item) => (
                 <article key={item.id} id={item.id}>
                   <h3 className="text-lg font-black text-black mb-2">{item.heading}</h3>
-                  <p className="text-sm text-neutral-600 leading-relaxed">{item.body}</p>
+                  <p className="text-sm text-neutral-600 leading-relaxed">{linkifyNeighborhoods(item.body, slug)}</p>
                   {item.href && item.linkLabel ? (
                     <p className="mt-2">
                       <Link href={item.href} className="text-sm font-semibold text-black hover:underline">
