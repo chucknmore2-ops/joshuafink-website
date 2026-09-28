@@ -35,7 +35,7 @@ CREATE INDEX IF NOT EXISTS idx_post_log_recent
 CREATE TABLE IF NOT EXISTS geo_visibility (
   id              BIGSERIAL PRIMARY KEY,
   run_id          TEXT NOT NULL,           -- ISO timestamp of the run
-  engine          TEXT NOT NULL,           -- 'perplexity' | 'openai' | 'claude'
+  engine          TEXT NOT NULL,           -- 'perplexity' | 'openai' | 'grok' | 'claude' (historical)
   model           TEXT,
   query_id        TEXT NOT NULL,           -- stable id from lib/geo-queries.ts
   query           TEXT NOT NULL,

@@ -23,7 +23,7 @@ stay silent.
 | Vercel | gbp-post | channel=gbp (if Railway side ever logs it) | 9 days |
 | GitHub Actions | instagram-post | `post_log` channel=instagram, job_name=instagram-post. Buffer Free accepted the queue (`IG_AUTOPOST=buffer`). Graph stays off. | 9 days |
 | GitHub Actions | sync-listings | `git log -1 lib/listings.ts` (daily sync, but only commits on a diff — hence the loose threshold) | 17 days |
-| GitHub Actions | scheduled workflow runs | latest **completed** run of `sync-listings`, `social-autopost`, `geo-audit`, `daily-tasks-pushover` concluded `success`. Social Autopost ignores Graph Instagram failures before 2026-09-21 18:20 UTC so those old reds do not keep the check red. A failure after that still alerts. | n/a (red = alert same morning) |
+| GitHub Actions | scheduled workflow runs | latest **completed** run of `sync-listings`, `social-autopost`, `geo-audit`, `daily-tasks-pushover` concluded `success`. Social Autopost ignores Graph Instagram failures before 2026-09-21 18:20 UTC so those old reds do not keep the check red. A failure after that still alerts. `geo-audit` asks Perplexity, OpenAI, and Grok (`PERPLEXITY_API_KEY`, `OPENAI_API_KEY`, `XAI_API_KEY`). A missing `XAI_API_KEY` skips Grok with a warning and does not, by itself, fail that workflow. | n/a (red = alert same morning) |
 | Vercel | site uptime | `GET /api/healthcheck` returns 200 with status:ok | n/a |
 | Vercel | lead pipeline | POST `/api/contact` SYSTEM TEST lead; sheet + real Pushover live-tested. Joshua email send is skipped (CI/chat is the alert path); `RESEND_API_KEY` must still be set. | n/a (any configured-channel fail = exit 1) |
 
