@@ -27,7 +27,7 @@ Two things had been silently failing that whole time:
 
 - the **auto-reply to every lead** — someone fills in a form, sees a success
   screen, and never gets the "thanks, I'll be in touch" email
-- the **new-lead email to Joshua**, and the weekly agent briefing
+- the **new-lead email to Joshua**, and the weekly agent briefing (that cron was retired 2026-09-28)
 
 No lead was ever lost: `/api/contact` treats email as one channel of several, and
 Pushover plus the Google Sheet carried every one. But the person who filled in
@@ -35,8 +35,9 @@ the form heard nothing, which is a conversion problem rather than a delivery one
 
 ## What shipped
 
-`lib/send-email.ts` — one `sendEmail()` used by both the contact route and the
-agent briefing. It picks whichever provider is configured, **Resend first**:
+`lib/send-email.ts` — one `sendEmail()` used by the contact route. The weekly
+agent-briefing cron also called it until that cron was retired on 2026-09-28.
+It picks whichever provider is configured, **Resend first**:
 
 | Env var | Effect |
 |---|---|

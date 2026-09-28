@@ -97,7 +97,6 @@ routes — but the following features require them:
 | LinkedIn auto-poster | `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET`, `LINKEDIN_REDIRECT_URI`, `LINKEDIN_ACCESS_TOKEN`, `LINKEDIN_AUTHOR_URN`, `LINKEDIN_TOKEN_EXPIRES_AT_MS` (all three token values are printed by `/api/linkedin/callback`) |
 | Instagram auto-poster | Buffer Free via GitHub secrets `BUFFER_API_KEY`, `BUFFER_IG_CHANNEL_ID` (`IG_AUTOPOST=buffer`). Graph tokens are not the live path. |
 | Morning healthcheck (`scripts/morning_healthcheck.py`) | `DATABASE_URL` |
-| Content engine (Phase 2A+) | `ANTHROPIC_API_KEY` |
 
 See [docs/automation.md](docs/automation.md) for the full env var list and the
 one-time OAuth setup for each social channel.

@@ -18,7 +18,7 @@ never printed. Last verified **2026-09-21**.
 
 Open `growth/*` and `content/*` PRs (~40). These are opened by Claude Code on account `chucknmore2-ops` (branch prefixes `growth/YYYY-MM-DD-…` and `content/YYYY-MM-DD-…`), not by a GitHub Actions workflow. Cancelling Claude Code stops *new* ones; it does not close existing PRs or stop Actions (sync, healthcheck, social-autopost, geo-audit). Standing policy: merge selectively when the preview is good; auto-close growth/content PRs idle >14–21 days; do not re-enable a Claude daily growth/content cron without an explicit owner. `research/*` PRs are separate — Session 16 auto-merge policy still applies; do not bulk-close them with growth/content.
 
-`geo-audit.yml` (Monday) uses `ANTHROPIC_API_KEY` via Actions API billing and should **KEEP** after Claude Code cancel (distinct from Claude Code).
+`geo-audit.yml` (Monday) **stays** after the Claude cancel. It no longer calls Anthropic: the Claude GEO engine and the Monday `/api/cron/agent-briefing` job were removed 2026-09-28. `ANTHROPIC_API_KEY` is unused — delete it from Vercel, GitHub Actions secrets, and Railway.
 
 **Recently closed — do not redo** (verified 2026-09-18):
 
@@ -126,8 +126,11 @@ IG_BUSINESS_ACCOUNT_ID  IG_ACCESS_TOKEN
 LINKEDIN_CLIENT_ID  LINKEDIN_CLIENT_SECRET  LINKEDIN_REDIRECT_URI
 LINKEDIN_ACCESS_TOKEN  LINKEDIN_AUTHOR_URN  LINKEDIN_TOKEN_EXPIRES_AT_MS
 GBP_CLIENT_ID  GBP_CLIENT_SECRET  GBP_REFRESH_TOKEN  GBP_ACCOUNT_ID  GBP_LOCATION_ID
-ANTHROPIC_API_KEY  OPENAI_API_KEY  PERPLEXITY_API_KEY
+OPENAI_API_KEY  PERPLEXITY_API_KEY
 ```
+
+`ANTHROPIC_API_KEY` was removed from the code on 2026-09-28. Nothing in this
+repo reads it. Safe to delete from Vercel.
 
 `IG_BUSINESS_ACCOUNT_ID` and `IG_ACCESS_TOKEN` are Graph leftovers. The live
 Instagram path does not read them.
@@ -136,14 +139,15 @@ Instagram path does not read them.
 
 ```
 SYNC_PAT  CRON_SECRET  DATABASE_URL  ALERT_TO_EMAIL  GMAIL_USER  GMAIL_APP_PASSWORD
-PUSHOVER_TOKEN  PUSHOVER_USER  ANTHROPIC_API_KEY  OPENAI_API_KEY  PERPLEXITY_API_KEY
+PUSHOVER_TOKEN  PUSHOVER_USER  OPENAI_API_KEY  PERPLEXITY_API_KEY
 BUFFER_API_KEY  BUFFER_IG_CHANNEL_ID
 ```
 
 `BUFFER_API_KEY` and `BUFFER_IG_CHANNEL_ID` are the Instagram live path (Buffer
 Free, channel @joshuafinkgroup). Social Autopost forwards them on the
 instagram-post fire. They are not Vercel env vars. Graph tokens above stay
-unused.
+unused. `ANTHROPIC_API_KEY` is unused here too — safe to delete from Actions
+secrets. Railway `services/autoposter` never read it.
 
 `CRON_SECRET` exists in **both** and they must match, or the healthcheck's test
 lead comes back without per-channel results.
@@ -164,7 +168,9 @@ lead comes back without per-channel results.
 | GEO audit | Mon 13:00 | `geo-audit.yml` | `geo_visibility` rows, /admin GEO card |
 | Monthly market update | 5th, 14:00 | `monthly-market-update.yml` | `post_log`, job `monthly-market-update` |
 | IndexNow | daily 02:00 | Vercel cron → `/api/cron/indexnow` | Vercel function logs only |
-| Agent briefing | Mon 12:00 | Vercel cron → `/api/cron/agent-briefing` | email to `chucknmore2@gmail.com` |
+
+The Monday 12:00 UTC agent-briefing cron was removed 2026-09-28. The weekly
+report is produced outside this repo.
 
 Run any GitHub workflow by hand:
 
