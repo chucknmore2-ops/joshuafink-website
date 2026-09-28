@@ -1,14 +1,15 @@
 name: GEO Audit
 
 # Free replacement for the Vercel `geo-audit` cron. Vercel's Hobby plan caps
-# cron jobs at 2 and can't run this ~5-minute 3-engine job, so the Vercel cron
+# cron jobs at 2 and can't run this ~5-minute 2-engine job, so the Vercel cron
 # never actually ran. GitHub Actions has no cron-count or duration limit and is
 # free — same pattern as sync-listings / social-autopost.
 #
 # One-time setup: add these repo Secrets (Settings → Secrets and variables →
 # Actions). CRON_SECRET + DATABASE_URL + PUSHOVER_* already exist; add the
 # answer-engine keys (engines run only when their key is present):
-#   PERPLEXITY_API_KEY   OPENAI_API_KEY   ANTHROPIC_API_KEY
+#   PERPLEXITY_API_KEY   OPENAI_API_KEY
+# Claude was removed 2026-09-28. Do not pass ANTHROPIC_API_KEY.
 
 # Cadence: WEEKLY, not daily. The score moves on a scale of weeks (Perplexity
 # went 20% → 38% over three weeks), so a daily sample mostly measured noise —
@@ -44,7 +45,6 @@ jobs:
         env:
           PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           PUSHOVER_TOKEN: ${{ secrets.PUSHOVER_TOKEN }}
           PUSHOVER_USER: ${{ secrets.PUSHOVER_USER }}

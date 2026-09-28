@@ -52,31 +52,6 @@ These prompts will need updates as the business changes. Common edits:
 If the prompt structure itself proves unhelpful in practice, edit
 freely — these are tools, not contracts.
 
-## Autopilot status (Phase 2 active)
+## Autopilot status (retired 2026-09-28)
 
-A weekly cron (`/api/cron/agent-briefing`, Mon 7am CT) delivers a
-briefing every Monday covering all 5 JFG agents.
-
-**Phase 2 active** when `ANTHROPIC_API_KEY` is set in Vercel:
-- Agent 02 (AI Operations Lead) auto-runs on Anthropic with last
-  week's autoposter activity as input. The AI report replaces the
-  checklist body in the email.
-- Other 4 agents stay in reminder mode until their data sources are
-  also auto-pullable (the agents need inputs that live outside our
-  systems — competitor news, strategic context, customer feedback).
-
-**Phase 1 (reminder-only)** is the fallback: when `ANTHROPIC_API_KEY`
-is absent, all 5 agents stay in checklist mode and Chuck runs them
-manually via Claude Project / custom GPT.
-
-## Delivery destinations
-
-The weekly cron emails the briefing; it skips delivery if the credential is
-missing:
-
-| Channel | Env var | What lands there |
-|---|---|---|
-| Email | `RESEND_API_KEY` | Full markdown briefing to `chucknmore2@gmail.com` |
-
-ClickUp task delivery was removed on 2026-09-15 (ClickUp is retired), as was
-the SendGrid email fallback.
+The Monday `/api/cron/agent-briefing` autopilot was retired. This repo no longer calls Anthropic or emails a weekly briefing. A different assistant produces the weekly report outside this repo. These prompt files stay as reference only.

@@ -50,7 +50,6 @@ COVERED (per `lib/admin-schedule.ts`):
 
 NOT COVERED (documented gaps — listed in every alert email):
   /api/cron/indexnow            no DB write; signal lives in Vercel logs
-  /api/cron/agent-briefing      sends email (Resend), no DB write
   Local content engine          runs on Joshua's Mac via Ollama; out of
                                 GitHub Actions reach
   Holidays                      v1 is holiday-naive — a US federal
@@ -315,11 +314,6 @@ DOCUMENTED_GAPS: tuple[tuple[str, str], ...] = (
         "/api/cron/indexnow (daily)",
         "Submits URLs to Bing/Yandex. No DB write — only signal is Vercel "
         "function logs. Not externally checkable from GitHub Actions.",
-    ),
-    (
-        "/api/cron/agent-briefing (Mon)",
-        "Emails the briefing via Resend. No DB write. Signal "
-        "is the email landing in Chuck's inbox.",
     ),
     (
         "Holidays / DST",

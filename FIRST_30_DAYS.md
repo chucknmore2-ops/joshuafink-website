@@ -78,7 +78,8 @@ Real improvements, none urgent. Roughly by value.
 **Lead capture and follow-up**
 
 - Use the sheet's `status` column: alert when a lead is still `New` after 30–60
-  minutes, and put weekly lead counts in the agent briefing. Only worth building
+  minutes, and include weekly lead counts in the weekly report (produced outside
+  this repo; the in-repo agent briefing was retired 2026-09-28). Only worth building
   if the status column actually gets updated.
 - Build the written 6-email seller drip (`docs/seller-email-sequence.md`) on
   Resend + Railway Postgres + a scheduled GitHub Action. The n8n hooks it was

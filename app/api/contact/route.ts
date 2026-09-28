@@ -11,7 +11,8 @@ export const maxDuration = 30
 // cash-offer / sell leads in ClickUp (that board is for agent briefings).
 // Opt in only with an explicit CLICKUP_LEADS_ENABLED=true plus token and
 // CLICKUP_LEADS_LIST_ID — never fall back to the research/briefing list
-// 901415978281. The weekly agent-briefing cron has its own ClickUp helper.
+// 901415978281. The weekly agent-briefing cron was retired 2026-09-28; this
+// route is the only ClickUp caller left, and it stays off unless enabled.
 const TO_EMAIL = 'joshua@joshuafink.com'
 const N8N_BASE = process.env.N8N_WEBHOOK_BASE || 'http://localhost:5678/webhook'
 const CASH_OFFER_BASE = process.env.CASH_OFFER_WEBHOOK_BASE || 'http://localhost:5679/webhook'
@@ -125,8 +126,8 @@ async function sendClickUp(lead: Record<string, string>, testMode = false): Prom
   ].filter(Boolean).join('\n')
 
   try {
-    // Like the agent-briefing route: markdown_content renders in the ClickUp
-    // UI, plain description is the API-side fallback.
+    // markdown_content renders in the ClickUp UI; plain description is the
+    // API-side fallback.
     const res = await fetchWithTimeout(`https://api.clickup.com/api/v2/list/${listId}/task`, {
       method: 'POST',
       headers: { Authorization: token, 'Content-Type': 'application/json' },

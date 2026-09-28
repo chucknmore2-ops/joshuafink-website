@@ -1,7 +1,7 @@
 # GEO visibility tracker
 
 Measures **Generative Engine Optimization** — whether AI answer engines
-(ChatGPT/Perplexity/Claude) surface Joshua when Middle TN buyers and sellers ask
+(ChatGPT/Perplexity) surface Joshua when Middle TN buyers and sellers ask
 them for an agent, a home value, a cash offer, etc. It's the GEO equivalent of
 rank tracking: a number you can trend, plus a punch list of which pages to
 strengthen.
@@ -27,10 +27,11 @@ Set **at least one** answer-engine key in Vercel env, plus the shared cron secre
 |---|---|---|
 | `PERPLEXITY_API_KEY` | Perplexity (Sonar) | **Cheapest** — best starting point for a daily run |
 | `OPENAI_API_KEY` | ChatGPT (Responses + web_search) | |
-| `ANTHROPIC_API_KEY` | Claude (Messages + web_search) | |
 | `CRON_SECRET` | — | already set for the other `/api/cron/*` routes |
 
-Optional model overrides: `GEO_PERPLEXITY_MODEL` (default `sonar`), `GEO_OPENAI_MODEL` (default `gpt-4o`), `GEO_CLAUDE_MODEL` (default `claude-opus-4-8` — set to `claude-haiku-4-5` to cut cost).
+Claude (Anthropic) was removed 2026-09-28. `ANTHROPIC_API_KEY` and `GEO_CLAUDE_MODEL` are ignored. Historical `geo_visibility` rows with `engine = claude` stay in the database; new runs do not write them.
+
+Optional model overrides: `GEO_PERPLEXITY_MODEL` (default `sonar`), `GEO_OPENAI_MODEL` (default `gpt-4o`).
 
 **Cost:** ~15 queries × N engines web-search calls per run, daily (`0 13 * * *` UTC = 8am CT). To trim: start with **Perplexity only** (cheapest), or change the schedule in `vercel.json` to weekly (`0 13 * * 1`).
 
@@ -40,7 +41,7 @@ Optional model overrides: `GEO_PERPLEXITY_MODEL` (default `sonar`), `GEO_OPENAI_
 ```json
 { "geoScore": 40, "byEngine": { "perplexity": { "score": 53, ... } },
   "checks": 15, "surfaced": 6,
-  "notScored": 2, "failures": [ { "engine": "claude", "queryId": "agent-franklin", "error": "timeout after 90s" } ],
+  "notScored": 2, "failures": [ { "engine": "perplexity", "queryId": "agent-franklin", "error": "timeout after 90s" } ],
   "gaps": [ { "page": "/buy/franklin-tn", "losses": 4 } ],
   "citedInstead": [ { "host": "zillow.com", "hits": 28 } ] }
 ```

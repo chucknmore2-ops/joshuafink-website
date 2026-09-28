@@ -2,7 +2,7 @@
  * GEO visibility audit runner — GitHub Actions edition.
  *
  * Free replacement for the Vercel `geo-audit` cron. Vercel's Hobby plan caps
- * cron jobs at 2 and can't run this job's ~5-minute, 3-engine web-search batch,
+ * cron jobs at 2 and can't run this job's ~5-minute, 2-engine web-search batch,
  * so the Vercel cron never actually ran. This script does the identical work as
  * app/api/cron/geo-audit/route.ts but standalone on a GitHub Actions runner
  * (free, no cron count / duration limits).
@@ -16,8 +16,9 @@
  * kept in sync with lib/geo-db.ts.
  *
  * Env (all via GitHub Secrets in .github/workflows/geo-audit.yml):
- *   >=1 of PERPLEXITY_API_KEY | OPENAI_API_KEY | ANTHROPIC_API_KEY  (engines
- *        run only when their key is present, so this degrades gracefully)
+ *   >=1 of PERPLEXITY_API_KEY | OPENAI_API_KEY  (engines run only when their
+ *        key is present, so this degrades gracefully). ANTHROPIC_API_KEY is
+ *        unused — Claude was removed 2026-09-28.
  *   DATABASE_URL     optional — persistence is skipped if absent
  *   PUSHOVER_TOKEN + PUSHOVER_USER  optional — the alert is skipped if absent
  *   GEO_CONCURRENCY  optional — queries in flight (default 1; was 3, which 429'd Perplexity)
@@ -128,11 +129,11 @@ async function pushover(title: string, message: string, priority = 0): Promise<v
 async function main(): Promise<number> {
   const engines = configuredEngines()
   if (engines.length === 0) {
-    // Non-zero on purpose: in production all three keys are set, so "no engines"
+    // Non-zero on purpose: in production both keys are set, so "no engines"
     // means the Secrets went missing. A silent no-op must not read as success —
     // that is the same failure mode this run's engine-down check exists to catch.
     console.error(
-      '[geo] No answer-engine API keys configured (set PERPLEXITY_API_KEY, OPENAI_API_KEY, or ANTHROPIC_API_KEY). Nothing to run.',
+      '[geo] No answer-engine API keys configured (set PERPLEXITY_API_KEY or OPENAI_API_KEY). Nothing to run.',
     )
     return 1
   }
