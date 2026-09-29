@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-09-28T16:35:43.305Z
+// AUTO-GENERATED — Last synced: 2026-09-29T14:43:36.373Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -21,33 +21,9 @@ export interface Listing {
 
 // Mirrors the header timestamp so server components can compute sync staleness
 // without parsing comments. Updated by scripts/fetch-images.mjs each sync.
-export const listingsSyncedAt = "2026-09-28T16:35:43.305Z";
+export const listingsSyncedAt = "2026-09-29T14:43:36.373Z";
 
 export const listings: Listing[] = [
-  {
-    address: "1113 Linn Cv Ct",
-    city: "Gallatin, TN 37066",
-    price: 499900,
-    beds: 4,
-    baths: 4,
-    sqft: 2869,
-    status: "Active Under Contract",
-    compassUrl: "https://www.compass.com/homedetails/1113-Linn-Cv-Ct-Gallatin-TN-37066/SPCI8_pid/",
-    imageUrl: "https://www.compass.com/m/60a6fdc8112389a3764c5cfd1daf97bdf574197abd273eaf774a732b627db89d/2048x1536.webp",
-    lastVerified: listingsSyncedAt,
-  },
-  {
-    address: "511 Wanda Dr",
-    city: "Nashville, TN 37210 | MLS #3524691",
-    price: 414500,
-    beds: 4,
-    baths: 2,
-    sqft: 1400,
-    status: "Active",
-    compassUrl: "https://www.compass.com/homedetails/511-Wanda-Dr-Nashville-TN-37210/SDYP1_pid/",
-    imageUrl: "https://www.compass.com/m/f0024ff837d3adc039ba8c6d1dc635742a6efeecc314e741179475524cec3185/2048x1536.webp",
-    lastVerified: listingsSyncedAt,
-  },
   {
     address: "4127 Edwards Ave",
     city: "Nashville, TN 37216 | MLS #3319964",
