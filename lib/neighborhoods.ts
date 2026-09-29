@@ -475,6 +475,67 @@ export const neighborhoods: Record<string, Neighborhood> = {
     longitude: -86.7855,
   },
 
+  'green-hills-nashville-tn': {
+    slug: 'green-hills-nashville-tn',
+    name: 'Green Hills',
+    city: 'Nashville',
+    citySlug: 'nashville-tn',
+    county: 'Davidson County',
+    metaTitle: 'Green Hills Neighborhood Guide — Nashville, TN',
+    metaDescription:
+      'Green Hills in Nashville, TN explained: home prices, the Julia Green Elementary zone, amenities, and honest buyer context from Compass agent Joshua Fink.',
+    intro:
+      'Green Hills is one of Nashville’s most established, highest-demand submarkets — a walkable retail-and-residential pocket a few miles southwest of downtown, built around Hillsboro Pike, the Mall at Green Hills, and Hill Center. Buyers search “Green Hills” for two reasons above all others: the location (minutes to downtown, Belle Meade, and 12 South) and the Julia Green Elementary zone, which is one of the most sought-after school assignments in Metro Nashville.',
+    about:
+      'Green Hills built out decades ago and has almost no vacant land left, which is the single biggest fact to understand about the market here: new supply is essentially limited to teardown-rebuilds and occasional infill, so demand shows up in price rather than in more inventory. Housing is a real mix — mid-century and updated single-family homes on the residential streets east and west of Hillsboro Pike, plus condo and townhome product closer to the retail core near the Mall at Green Hills and Hill Center. Daily life centers on that walkable core: high-end retail, restaurants, a movie theater, and a Whole Foods, all a short drive or, for some streets, a walk from home. The neighborhood borders Belle Meade, Forest Hills, and the Hillsboro-West End area, and its appeal is less about a single architectural style than about the combination of an in-town location, mature tree canopy, and the school zone.',
+    vibe: 'Established, walkable, high-demand — Nashville’s classic close-in luxury pocket.',
+    priceBand: '$700K – $2.5M+ (core single-family; condos and townhomes run lower)',
+    buildYears: 'Largely 1940s–1980s, with ongoing teardown-rebuilds and infill',
+    hoa: 'Mostly no HOA on older single-family streets; condo and townhome buildings near the retail core carry their own dues — verify per building.',
+    schoolNotes:
+      'Green Hills sits primarily in the Metro Nashville Public Schools Hillsboro Cluster: Julia Green Elementary (a U.S. Department of Education National Blue Ribbon School) feeding into John Trotwood Moore Middle School and Hillsboro High School. MNPS redrew several nearby elementary zones in 2024, and cluster lines do not follow neighborhood boundaries exactly, so confirm the exact address against the current MNPS zone finder before writing an offer.',
+    amenities: [
+      'The Mall at Green Hills and Hill Center — high-end retail, dining, and a movie theater',
+      'Whole Foods and walkable everyday errands for some streets',
+      'Julia Green Elementary — National Blue Ribbon School',
+      'Mature tree canopy and established residential streets',
+      'Minutes to downtown, Belle Meade, 12 South, and Vanderbilt/West End',
+    ],
+    homeStyles: [
+      'Mid-century single-family homes, many updated or expanded',
+      'Newer teardown-rebuilds on original lots',
+      'Condos and townhomes near the retail core',
+      'A smaller number of larger custom homes on premium lots',
+    ],
+    whyBullets: [
+      'Built-out scarcity: Green Hills has essentially no vacant land left, so buyers are competing for a fixed, rarely-growing supply — a dynamic that has historically supported resale value even when the broader market cools.',
+      'School zone premium: the Julia Green Elementary assignment functions almost like a price floor for zoned streets. Joshua verifies current MNPS zoning for any specific address before you tour, not after you fall in love with the house.',
+      'Location math: Green Hills buyers are paying for minutes-to-downtown convenience without giving up an in-town feel — Joshua helps you weigh that against comparable-priced options in Belle Meade, 12 South, or Forest Hills.',
+    ],
+    faqs: [
+      {
+        q: 'How much do homes in Green Hills, Nashville cost in 2026?',
+        a: 'Core single-family homes generally run roughly $700K to $2.5M or more depending on lot, size, and how recently the home was updated or rebuilt; condos and townhomes near the retail core typically price lower. Green Hills has no separate published median of its own the way a suburb-wide market does — Joshua can pull exact, current comps for any specific street.',
+      },
+      {
+        q: 'What school does Green Hills feed into?',
+        a: 'Most of Green Hills is zoned to Julia Green Elementary, a National Blue Ribbon School, feeding into John Trotwood Moore Middle School and Hillsboro High School (the MNPS Hillsboro Cluster). Zoning is address-specific and was redrawn for some nearby areas in 2024, so always confirm with MNPS before writing an offer.',
+      },
+      {
+        q: 'Is there new construction available in Green Hills?',
+        a: 'Very little vacant land remains, so "new construction" here almost always means a teardown-rebuild on an existing lot rather than a new subdivision. That scarcity is part of why the neighborhood holds value.',
+      },
+      {
+        q: 'How does Green Hills compare to Belle Meade or 12 South?',
+        a: 'Belle Meade, which borders Green Hills, generally commands a higher price point with larger estate lots. 12 South is more walkable-urban with smaller, denser housing stock. Green Hills sits between the two — an established, in-town feel with its own walkable retail core. Joshua can walk you through the tradeoffs for your specific priorities.',
+      },
+    ],
+    schemaCity: 'Nashville',
+    schemaState: 'TN',
+    latitude: 36.1027,
+    longitude: -86.8153,
+  },
+
   'governors-club-brentwood-tn': {
     slug: 'governors-club-brentwood-tn',
     name: 'Governors Club',
