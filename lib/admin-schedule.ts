@@ -5,6 +5,11 @@ export interface ScheduledJob {
   cronUtc: string;
   humanCt: string;
   description: string;
+  /**
+   * Fires when something else lands (not on a clock). `upcomingSchedule`
+   * shows `humanCt` instead of computing a next run from `cronUtc`.
+   */
+  eventDriven?: boolean;
   source: "railway" | "vercel" | "github-actions";
   /** Documented but not upcoming, and not freshness-monitored. */
   paused?: boolean;
@@ -21,12 +26,12 @@ export const scheduledJobs: ScheduledJob[] = [
     source: "railway",
   },
   {
-    // Fired by .github/workflows/monthly-market-update.yml, which hits
-    // /api/cron/facebook-post, /api/cron/linkedin-post?kind=market and
-    // /api/cron/gbp-post?kind=market together. All three read the month's
-    // figures from lib/market-snapshot.ts — the same numbers as the blog post.
-    // Facebook is the one listed here: it's the freshness canary for the whole
-    // monthly job in scripts/morning_healthcheck.py.
+    // Fired by .github/workflows/monthly-market-update.yml after
+    // fetch-gnar-snapshot.yml merges a new month into lib/market-snapshot.ts.
+    // Hits /api/cron/facebook-post, /api/cron/linkedin-post?kind=market and
+    // /api/cron/gbp-post?kind=market together. All three read that file — the
+    // same numbers as the blog post. Facebook is the freshness canary for the
+    // whole monthly job in scripts/morning_healthcheck.py.
     //
     // Replaces the four Railway `autoposter-*` content services (market-stats,
     // testimonial, tips, engagement) that were listed here for months but were
@@ -35,8 +40,9 @@ export const scheduledJobs: ScheduledJob[] = [
     service: "github-actions-monthly-market",
     channel: "facebook",
     jobName: "monthly-market-update",
-    cronUtc: "0 14 5 * *",
-    humanCt: "5th of each month, 9:00am CT",
+    cronUtc: "on-snapshot",
+    eventDriven: true,
+    humanCt: "When the GNAR month lands (typically the 6th–8th)",
     description: "Monthly Middle TN market update (FB + LinkedIn + GBP)",
     source: "github-actions",
   },
@@ -115,6 +121,13 @@ export function upcomingSchedule(now = new Date()): UpcomingPost[] {
   return scheduledJobs
     .filter((job) => !job.paused)
     .map((job) => {
+      if (job.eventDriven) {
+        return {
+          ...job,
+          nextRun: new Date("2099-01-01T00:00:00Z"),
+          nextRunLabel: job.humanCt,
+        };
+      }
       const nextRun = nextOccurrence(job.cronUtc, now);
       return {
         ...job,

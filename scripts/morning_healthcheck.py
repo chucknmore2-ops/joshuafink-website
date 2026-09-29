@@ -15,10 +15,11 @@ WHAT THIS MONITOR DOES AND DOES NOT COVER
 
 COVERED (per `lib/admin-schedule.ts`):
   Railway autoposter (FB channel) — listing-spotlight (M/W/F)
-  Monthly market update (FB channel) — monthly-market-update, fired on the
-    5th by .github/workflows/monthly-market-update.yml, which posts the same
-    lib/market-snapshot.ts figures to Facebook, LinkedIn and GBP. Facebook is
-    the canary for all three. 35-day threshold, so one missed month pages.
+  Monthly market update (FB channel) — monthly-market-update. Fires after
+    fetch-gnar-snapshot.yml merges a new lib/market-snapshot.ts month, which
+    posts the same figures to Facebook, LinkedIn and GBP. Facebook is the
+    canary for all three. 42-day threshold: data can land anywhere from the
+    3rd to the 12th, and one fully missed month still pages.
   LinkedIn + GBP + Instagram — all three routes write to post_log on
     every fire (success and failure) since the lib/admin-db logPost
     wiring. A channel can still show as NEVER_LOGGED if the route has
@@ -117,10 +118,11 @@ EXPECTED_JOBS: tuple[ExpectedJob, ...] = (
         cadence_ct="Mon/Wed/Fri 9:00am CT",
         max_age_days=4,
     ),
-    # Monthly market update — .github/workflows/monthly-market-update.yml fires
-    # FB + LinkedIn + GBP together on the 5th; Facebook is the canary for all
-    # three. 31d nominal + 4d buffer = 35d, so a single missed month pages but a
-    # report landing a few days late does not.
+    # Monthly market update — fetch-gnar-snapshot.yml merges the month, then
+    # monthly-market-update.yml posts FB + LinkedIn + GBP. Facebook is the
+    # canary. The post can land any day from the 3rd through the 12th, so the
+    # gap from an early month (the 3rd) to a late one (the 12th) is about 40
+    # days. 42d still pages when a whole month is missed.
     #
     # This REPLACES the four Railway `autoposter-*` content jobs (market-stats,
     # testimonial, tips, engagement) that were monitored here for months. Those
@@ -131,8 +133,8 @@ EXPECTED_JOBS: tuple[ExpectedJob, ...] = (
         label="monthly-market-update (FB) — market snapshot",
         channel="facebook",
         job_name="monthly-market-update",
-        cadence_ct="5th of each month, 9:00am CT",
-        max_age_days=35,
+        cadence_ct="when the GNAR month lands (typically the 6th–8th)",
+        max_age_days=42,
     ),
     # Weekly Vercel-side crons. 7d nominal + 2d weekend buffer = 9d. If a
     # channel never appears we surface a gap instead of a failure.
@@ -224,6 +226,7 @@ MONITORED_WORKFLOWS: tuple[tuple[str, str], ...] = (
     ("social-autopost.yml", "Social Autopost"),
     ("geo-audit.yml", "GEO Audit"),
     ("daily-tasks-pushover.yml", "Daily tasks Pushover"),
+    ("fetch-gnar-snapshot.yml", "Fetch GNAR market snapshot"),
 )
 
 # Social Autopost failures before this instant are Meta Graph Instagram
@@ -1639,11 +1642,12 @@ def _remediation_for(result: CheckResult) -> Optional[str]:
         )
     if "monthly-market-update" in name:
         return (
-            "This month's figures are probably not in lib/market-snapshot.ts — "
-            "paste them from the Greater Nashville REALTORS report (the file "
-            "has a template at the top, ~2 min), commit, then Actions tab → "
-            "Monthly Market Update → Run workflow. A skip is deliberate, not a "
-            "bug: no numbers means no post on any channel."
+            "The monthly Facebook post is stale. Fetch GNAR market snapshot "
+            "should have written lib/market-snapshot.ts (daily on the 3rd–12th) "
+            "and then posted it. Open the latest Fetch GNAR market snapshot run. "
+            "A failure on or after the 10th means the numbers were missing or "
+            "failed validation, so nothing was written. Re-run that workflow, "
+            "then Actions → Monthly Market Update."
         )
     if "vercel-cron-linkedin" in name:
         return (

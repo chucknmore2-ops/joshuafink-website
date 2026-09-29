@@ -3,13 +3,15 @@ import { listings } from '@/lib/listings'
 import { soldListings } from '@/lib/sold-listings'
 import { blogPosts } from '@/lib/blog'
 import { reviews } from '@/lib/reviews'
-import { logPost } from '@/lib/admin-db'
+import { hasPostedRef, logPost } from '@/lib/admin-db'
 import { withUtm } from '@/lib/utm'
 import { suburbs, marketStatsLastUpdated, marketStatsSource } from '@/lib/suburbs'
 import {
   currentSnapshot,
   marketUpdateSlug,
   monthLabel,
+  snapshotExpectFromSearchParams,
+  snapshotMatchesExpect,
   snapshotSkipReason,
   snapshotStatLines,
 } from '@/lib/market-snapshot'
@@ -483,6 +485,18 @@ export async function GET(request: Request) {
     })
   }
 
+  if (isMonthly) {
+    const expect = snapshotExpectFromSearchParams(params)
+    if (expect.expectMonth && !snapshotMatchesExpect(currentSnapshot(), expect)) {
+      return NextResponse.json({
+        posted: false,
+        skipped: 'deploy_pending',
+        expectMonth: expect.expectMonth,
+        at: new Date().toISOString(),
+      })
+    }
+  }
+
   if (!post) {
     const reason = isMonthly
       ? `skipped: ${snapshotSkipReason()}`
@@ -511,6 +525,19 @@ export async function GET(request: Request) {
       skipped: isOnDemand ? 'no_match' : isMonthly ? 'no_snapshot' : 'stats_stale',
       week,
       statsAsOf: isMonthly || isOnDemand ? undefined : statsAsOf(BRENTWOOD_SLUG),
+      at: new Date().toISOString(),
+    })
+  }
+
+  if (isMonthly && post && await hasPostedRef({
+    channel: 'gbp',
+    jobName,
+    refKey: post.refKey,
+  })) {
+    return NextResponse.json({
+      posted: false,
+      skipped: 'already_posted',
+      month: post.refKey,
       at: new Date().toISOString(),
     })
   }

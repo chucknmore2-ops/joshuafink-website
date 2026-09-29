@@ -166,7 +166,8 @@ lead comes back without per-channel results.
 | Instagram post | Wed 14:00 | `social-autopost.yml` | `post_log` row, channel `instagram` (Buffer accepted the queue). Graph stays off. |
 | LinkedIn post | Thu 14:00 | `social-autopost.yml` | `post_log` row, channel `linkedin` |
 | GEO audit | Mon 13:00 | `geo-audit.yml` | `geo_visibility` rows, /admin GEO card |
-| Monthly market update | 5th, 14:00 | `monthly-market-update.yml` | `post_log`, job `monthly-market-update` |
+| GNAR market snapshot | 3rd–12th, 15:00 | `fetch-gnar-snapshot.yml` | auto-merged PR adding `lib/market-snapshot.ts` |
+| Monthly market update | when that PR merges | `monthly-market-update.yml` | `post_log`, job `monthly-market-update` |
 | IndexNow | daily 02:00 | Vercel cron → `/api/cron/indexnow` | Vercel function logs only |
 
 The Monday 12:00 UTC agent-briefing cron was removed 2026-09-28. The weekly

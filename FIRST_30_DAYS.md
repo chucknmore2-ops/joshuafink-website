@@ -48,8 +48,9 @@ Yelp). Free profiles on those sites are the lever.
 
 ## Every month
 
-- **5th:** confirm the monthly market update posted (`post_log`, job
-  `monthly-market-update`).
+- **After the 6th:** confirm the GNAR snapshot PR merged and the monthly
+  market update posted (`post_log`, job `monthly-market-update`). A Pushover
+  alert on the 10th means the numbers were not published or failed validation.
 - **Token check** on /admin → Channel health. LinkedIn expires ~every 60 days.
   GBP tokens are long-lived but not permanent. Instagram uses Buffer
   (`BUFFER_API_KEY`, `BUFFER_IG_CHANNEL_ID` on GitHub). Leave the old Graph
