@@ -16,7 +16,7 @@ on:
   # protection reads. (sync-listings.yml also dispatches this workflow, because
   # a push made with GITHUB_TOKEN does not itself trigger workflows.)
   push:
-    branches: ['sync-listings/**']
+    branches: ['sync-listings/**', 'gnar-snapshot/**']
   workflow_dispatch:
 
 permissions:

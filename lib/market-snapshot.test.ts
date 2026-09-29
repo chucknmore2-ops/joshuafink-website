@@ -10,6 +10,8 @@ import {
   marketUpdateSlug,
   monthLabel,
   showsGnarRegionalSnapshot,
+  snapshotDaysStat,
+  snapshotMatchesExpect,
   snapshotMedianLine,
   snapshotStatLines,
 } from './market-snapshot.ts'
@@ -44,11 +46,13 @@ describe('August 2026 GNAR snapshot', () => {
     assert.equal(august.activeListings, 15637)
     assert.equal(august.condoMedianPrice, '$339,995')
     assert.equal(august.pendingSales, 2409)
-    assert.equal(august.medianYoyChange, undefined)
-    assert.equal(august.monthsOfInventory, undefined)
+    assert.equal(august.medianYoyChange, '+2.1%')
+    assert.equal(august.monthsOfInventory, 5.8)
+    assert.equal(august.daysMetric, 'list-to-contract')
+    assert.equal(august.reportDate, '2026-09-08')
     assert.equal(
       august.sourceUrl,
-      'https://www.greaternashvillerealtors.org/monthly-home-sales-report',
+      'https://www.greaternashvillerealtors.org/news/august-housing-market-shows-strength-in-wilson-county-as-downtown-condo-sales-slow',
     )
   })
 
@@ -58,18 +62,37 @@ describe('August 2026 GNAR snapshot', () => {
     assert.equal(s.month, '2026-08')
   })
 
-  it('omits unsourced YoY and months of supply from copy helpers', () => {
+  it('quotes the release YoY, months of supply, and list-to-contract label', () => {
     assert.ok(august)
-    assert.equal(snapshotMedianLine(august), '$515,725')
-    assert.equal(marketReadFromSupply(august.monthsOfInventory), null)
+    assert.equal(snapshotMedianLine(august), '$515,725 (+2.1% year over year)')
+    assert.equal(marketReadFromSupply(august.monthsOfInventory), 'a market tilting from sellers toward balanced')
+    assert.deepEqual(snapshotDaysStat(august), { label: 'List to contract', value: '55 days' })
     const lines = snapshotStatLines(august)
     assert.ok(lines.some((l) => l.includes('2,928')))
     assert.ok(lines.some((l) => l.includes('$339,995')))
     assert.ok(lines.some((l) => l.includes('2,409')))
+    assert.ok(lines.some((l) => l.includes('List to contract: 55 days')))
+    assert.ok(lines.some((l) => l.includes('+2.1% year over year')))
+    assert.ok(lines.some((l) => l.includes('Months of supply: 5.8')))
+  })
+
+  it('treats a deploy as pending until production matches the committed snapshot', () => {
+    assert.ok(august)
     assert.equal(
-      lines.some((l) => /year over year|Months of supply/i.test(l)),
+      snapshotMatchesExpect(august, {
+        expectMonth: '2026-08',
+        expectMedian: '515725',
+        expectClosings: '2928',
+        expectSupply: '5.8',
+        expectYoy: '+2.1%',
+      }),
+      true,
+    )
+    assert.equal(
+      snapshotMatchesExpect(august, { expectMonth: '2026-09', expectMedian: '1' }),
       false,
     )
+    assert.equal(snapshotMatchesExpect(null, { expectMonth: '2026-08' }), false)
   })
 
   it('leads the blog with the generated August post', () => {
@@ -82,10 +105,10 @@ describe('August 2026 GNAR snapshot', () => {
     assert.ok(post.content.includes('15,637'))
     assert.ok(post.content.includes('2,409'))
     assert.ok(post.content.includes('nine-county'))
-    assert.match(
-      post.content,
-      /did not publish year-over-year or months-of-supply/,
-    )
+    assert.ok(post.content.includes('+2.1%'))
+    assert.ok(post.content.includes('5.8'))
+    assert.ok(post.content.includes('List to contract'))
+    assert.doesNotMatch(post.content, /did not publish year-over-year or months-of-supply/)
     const julyGenerated = blogPosts.find(
       (p) => p.slug === 'middle-tennessee-market-update-july-2026',
     )

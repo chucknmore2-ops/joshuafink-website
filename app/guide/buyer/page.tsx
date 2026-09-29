@@ -4,7 +4,7 @@ import TrackedTelLink from '@/components/TrackedTelLink'
 import TrustBadges from '@/components/TrustBadges'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import { reviews } from '@/lib/reviews'
-import { currentSnapshot, monthLabel, type MarketSnapshot } from '@/lib/market-snapshot'
+import { currentSnapshot, monthLabel, snapshotDaysStat, type MarketSnapshot } from '@/lib/market-snapshot'
 
 const SITE = 'https://www.joshuafink.com'
 
@@ -183,9 +183,10 @@ function formatReportDate(iso: string): string {
 }
 
 function RegionalSnapshot({ snapshot }: { snapshot: MarketSnapshot }) {
+  const days = snapshotDaysStat(snapshot)
   const stats: { label: string; value: string }[] = [
     { label: 'Median sale price', value: snapshot.medianSalePrice },
-    { label: 'Avg. days on market', value: String(snapshot.avgDaysOnMarket) },
+    { label: days.label, value: days.value },
     { label: 'Closed sales', value: snapshot.closedSales.toLocaleString('en-US') },
     { label: 'Active listings', value: snapshot.activeListings.toLocaleString('en-US') },
   ]

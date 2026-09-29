@@ -3,6 +3,7 @@ import {
   marketSnapshots,
   marketUpdateSlug,
   monthLabel,
+  snapshotDaysStat,
   snapshotMedianLine,
   type MarketSnapshot,
 } from '@/lib/market-snapshot'
@@ -53,12 +54,32 @@ function buildMarketUpdatePost(s: MarketSnapshot): BlogPost {
   const sourceCitation = s.sourceUrl
     ? `[${s.source}](${s.sourceUrl})`
     : s.source
+  const days = snapshotDaysStat(s)
+  const daysPhrase =
+    s.daysMetric === 'list-to-contract'
+      ? `an average list-to-contract time of ${s.avgDaysOnMarket} days`
+      : `homes averaging ${s.avgDaysOnMarket} days on market`
+  const daysFaq =
+    s.daysMetric === 'list-to-contract'
+      ? `The average list-to-contract time for a single-family home in ${label} was ${s.avgDaysOnMarket} days (${s.source}).`
+      : `Closed sales in ${label} averaged ${s.avgDaysOnMarket} days on market (${s.source}).`
+  const daysBuyer =
+    s.daysMetric === 'list-to-contract'
+      ? `Homes sitting past the ${s.avgDaysOnMarket}-day list-to-contract average are where the negotiating room lives.`
+      : `Homes sitting past the ${s.avgDaysOnMarket}-day average are where the negotiating room lives.`
+  const omitted: string[] = []
+  if (!s.medianYoyChange) omitted.push('a year-over-year residential median')
+  if (s.monthsOfInventory == null) omitted.push('months of supply')
+  const omittedSentence =
+    omitted.length === 0
+      ? ''
+      : ` ${s.source} did not publish ${omitted.join(' or ')} for ${label}, so ${omitted.length === 1 ? 'that figure is' : 'those figures are'} omitted rather than estimated.`
   const glanceLines = [
     `- **Median sale price:** ${snapshotMedianLine(s)}`,
     ...(s.condoMedianPrice
       ? [`- **Condo median:** ${s.condoMedianPrice}`]
       : []),
-    `- **Average days on market:** ${s.avgDaysOnMarket}`,
+    `- **${days.label}:** ${days.value}`,
     `- **Closed sales:** ${n(s.closedSales)}`,
     `- **Active listings:** ${n(s.activeListings)}`,
     ...(s.pendingSales != null
@@ -76,7 +97,7 @@ function buildMarketUpdatePost(s: MarketSnapshot): BlogPost {
     : `There were ${n(s.activeListings)} active listings and ${n(s.closedSales)} closed sales in ${label}${s.pendingSales != null ? `, with ${n(s.pendingSales)} pendings` : ''} (${s.source}, nine-county). ${s.source} did not publish a months-of-supply figure for ${label}. Your specific neighborhood and price point can read very differently from those regional totals.`
   const supplyParagraph = marketRead
     ? `At roughly ${s.monthsOfInventory} months of supply, the metro as a whole reads as ${marketRead} — six months is the line economists conventionally use to separate a seller's market from a balanced one. That is a **regional** average, though, and no single street trades at the regional average.`
-    : `These are **nine-county** Greater Nashville totals (Davidson, Cheatham, Dickson, Maury, Robertson, Rutherford, Sumner, Williamson, and Wilson) — not a city-only or street-level read. ${s.source} did not publish year-over-year or months-of-supply figures for ${label} on the monthly chart, so those are omitted rather than estimated.`
+    : `These are **nine-county** Greater Nashville totals (Davidson, Cheatham, Dickson, Maury, Robertson, Rutherford, Sumner, Williamson, and Wilson) — not a city-only or street-level read.${omittedSentence}`
 
   return {
     slug: marketUpdateSlug(s.month),
@@ -85,8 +106,7 @@ function buildMarketUpdatePost(s: MarketSnapshot): BlogPost {
     dateModified: published,
     excerpt:
       `The ${label} numbers for Middle Tennessee: a median sale price of ` +
-      `${snapshotMedianLine(s)}, homes averaging ` +
-      `${s.avgDaysOnMarket} days on market, and ${n(s.activeListings)} active listings. ` +
+      `${snapshotMedianLine(s)}, ${daysPhrase}, and ${n(s.activeListings)} active listings. ` +
       `Here's what that actually means if you're buying or selling right now.`,
     category: 'Market Updates',
     faq: [
@@ -96,7 +116,7 @@ function buildMarketUpdatePost(s: MarketSnapshot): BlogPost {
       },
       {
         q: 'How long does it take to sell a home in Middle Tennessee right now?',
-        a: `Closed sales in ${label} averaged ${s.avgDaysOnMarket} days on market (${s.source}). Correctly priced, well-presented homes routinely beat that average; homes anchored to an out-of-date comp routinely fall well behind it.`,
+        a: `${daysFaq} Correctly priced, well-presented homes routinely beat that average; homes anchored to an out-of-date comp routinely fall well behind it.`,
       },
       {
         q: `Is Middle Tennessee a buyer's or seller's market in ${label}?`,
@@ -121,7 +141,7 @@ ${supplyParagraph}
 ## What This Means If You're Buying
 
 - **Get pre-approved before you tour.** Even in a market with more inventory, sellers won't seriously entertain an offer without one.
-- **Homes sitting past the ${s.avgDaysOnMarket}-day average are where the negotiating room lives.** A listing that's been out for months is a conversation, not a bidding war.
+- **${daysBuyer}** A listing that's been out for months is a conversation, not a bidding war.
 - **Move decisively on the right home.** More choice metro-wide doesn't mean no competition — a well-priced home in a strong school zone can still draw multiple offers in a weekend.
 - **Look one ring out if the premium suburbs stretch your budget.** [Spring Hill](/buy/spring-hill-tn) and [Nolensville](/buy/nolensville-tn) consistently offer more value per square foot without giving up much on commute or schools.
 

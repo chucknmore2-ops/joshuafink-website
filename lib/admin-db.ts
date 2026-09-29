@@ -113,6 +113,31 @@ export interface LastSuccessfulPost {
 // weekly rotator so the next slot is "the other type" rather than
 // `isoWeekNumber() % 2` (which re-fired the same blog twice in one week).
 // Failures, dry_runs, and other jobs (monthly-market-update) are ignored.
+/** True when this channel/job already has a successful row for `refKey`. */
+export async function hasPostedRef(opts: {
+  channel: string;
+  jobName: string;
+  refKey: string;
+}): Promise<boolean> {
+  const pool = getPool();
+  if (!pool) return false;
+  try {
+    const r = await pool.query(
+      `SELECT 1
+         FROM post_log
+        WHERE channel = $1
+          AND job_name = $2
+          AND ref_key = $3
+          AND status = 'posted'
+        LIMIT 1`,
+      [opts.channel, opts.jobName, opts.refKey]
+    );
+    return (r.rowCount ?? 0) > 0;
+  } catch {
+    return false;
+  }
+}
+
 export async function lastSuccessfulPost(opts: {
   channel: string;
   jobName: string;

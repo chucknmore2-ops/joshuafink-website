@@ -1,36 +1,23 @@
 name: Monthly Market Update
 
-# Publishes the month's Middle Tennessee market numbers to every channel at
-# once: Facebook, LinkedIn and Google Business Profile. The matching blog post
-# is already on the site — lib/blog.ts renders one post per entry in
-# lib/market-snapshot.ts, so it goes live with the commit that adds the numbers.
+# Posts the month's Middle Tennessee market numbers to Facebook, LinkedIn,
+# and Google Business once lib/market-snapshot.ts changes on main. The blog
+# post is already rendered from that file by lib/blog.ts; it goes live with
+# the deploy that carries the commit.
 #
-# Fires on the 5th, after the Greater Nashville REALTORS® report lands in the
-# first few days of the following month.
+# Triggered by the merge from fetch-gnar-snapshot.yml (and by that workflow's
+# explicit dispatch, because a GITHUB_TOKEN merge does not start push
+# workflows). workflow_dispatch still runs it by hand.
 #
-# THE APPROVAL GATE IS THE DATA. Each month someone pastes the report's figures
-# into lib/market-snapshot.ts (about two minutes — the file has a template at
-# the top). If that month's numbers aren't in, every endpoint below returns
-# `{"posted": false, "skipped": "no_snapshot"}` and NOTHING is published —
-# deliberately, rather than recycling last month's figures under Joshua's name.
-# This job stays green on a skip; the morning healthcheck is what pages if a
-# month gets missed entirely (35-day threshold on facebook/monthly-market-update).
-#
-# If the report lands late and the 5th has already passed, add the numbers and
-# then run this workflow manually from the Actions tab.
-#
-# REQUIRED GitHub repo secret:
-#   CRON_SECRET — must match the value in the Vercel project env (same secret
-#   social-autopost.yml and indexnow-on-content-change.yml already use).
-#
-# REQUIRED Vercel env vars (see docs/automation.md):
-#   FB_PAGE_ID, FB_PAGE_TOKEN   — for /api/cron/facebook-post
-#   LINKEDIN_*                  — already set, used by the weekly LinkedIn post
-#   GBP_*                       — already set, used by the weekly GBP post
+# Waits until www.joshuafink.com is serving this commit's figures, then
+# posts. Each channel skips with already_posted if that month went out
+# before, so a second run does not double-post. A stale deploy is not posted.
 
 on:
-  schedule:
-    - cron: '0 14 5 * *'   # 5th of each month, 14:00 UTC = 9am CT
+  push:
+    branches: [main]
+    paths:
+      - 'lib/market-snapshot.ts'
   workflow_dispatch: {}
 
 permissions:
@@ -40,43 +27,94 @@ concurrency:
   group: monthly-market-update
   cancel-in-progress: false
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   publish:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
-      - name: Post the month's market update to FB, LinkedIn and GBP
-        shell: bash
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Post once production is serving this snapshot
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          PUSHOVER_TOKEN: ${{ secrets.PUSHOVER_TOKEN }}
+          PUSHOVER_USER: ${{ secrets.PUSHOVER_USER }}
         run: |
+          alert() {
+            echo "::error::$1"
+            if [ -n "${PUSHOVER_TOKEN:-}" ] && [ -n "${PUSHOVER_USER:-}" ]; then
+              curl -sS --fail -m 20 \
+                --form-string "token=$PUSHOVER_TOKEN" \
+                --form-string "user=$PUSHOVER_USER" \
+                --form-string "title=Monthly market post failed" \
+                --form-string "message=$1" \
+                --form-string "priority=1" \
+                https://api.pushover.net/1/messages.json || echo "::warning::Pushover alert failed"
+            fi
+          }
+
           if [ -z "$CRON_SECRET" ]; then
-            echo "::error::CRON_SECRET is not set in repo secrets. Add it at"
-            echo "github.com/chucknmore2-ops/joshuafink-website/settings/secrets/actions"
+            alert "CRON_SECRET is not set in repo secrets."
             exit 1
           fi
 
-          # Hit the www host directly: an apex->www 307 redirect drops the
-          # Authorization header. -L is belt-and-suspenders.
+          meta=$(node scripts/snapshot-expect.mjs)
+          query=$(printf '%s\n' "$meta" | head -n1)
+          slug=$(printf '%s\n' "$meta" | sed -n '2p')
+          median=$(printf '%s\n' "$query" | tr '&' '\n' | sed -n 's/^expectMedian=//p')
+          supply=$(printf '%s\n' "$query" | tr '&' '\n' | sed -n 's/^expectSupply=//p')
+          yoy_raw=$(printf '%s\n' "$query" | tr '&' '\n' | sed -n 's/^expectYoy=//p')
+          yoy=$(python3 -c 'import sys, urllib.parse; print(urllib.parse.unquote(sys.argv[1]))' "$yoy_raw")
+          median_text=$(python3 -c 'import sys; print(f"{int(sys.argv[1]):,}")' "$median")
+          page="https://www.joshuafink.com/blog/${slug}"
+          echo "Waiting until $page contains $median_text"
+
+          ready=0
+          for attempt in $(seq 1 16); do
+            html=$(curl -fsSL --max-time 25 "$page" || true)
+            if printf '%s' "$html" | MEDIAN="$median_text" SUPPLY="$supply" YOY="$yoy" python3 -c '
+import os, sys
+html = sys.stdin.read()
+ok = ("$" + os.environ["MEDIAN"]) in html
+supply = os.environ["SUPPLY"]
+yoy = os.environ["YOY"]
+if supply != "none":
+    i = html.find("Months of supply")
+    ok = ok and i >= 0 and supply in html[i:i+80]
+if yoy != "none":
+    ok = ok and yoy in html
+sys.exit(0 if ok else 1)
+'; then
+              ready=1
+              echo "Production is serving this snapshot (attempt $attempt)."
+              break
+            fi
+            echo "Not live yet (attempt $attempt); sleeping 30s."
+            sleep 30
+          done
+          if [ "$ready" != "1" ]; then
+            alert "Production never served ${slug} with median ${median_text}. Social posts were not sent."
+            exit 1
+          fi
+
           ENDPOINTS=(
-            "facebook-post"
-            "linkedin-post?kind=market"
-            "gbp-post?kind=market"
+            "facebook-post?${query}"
+            "linkedin-post?kind=market&${query}"
+            "gbp-post?kind=market&${query}"
           )
 
           failed=0
-          skipped=0
           for endpoint in "${ENDPOINTS[@]}"; do
-            URL="https://www.joshuafink.com/api/cron/$endpoint"
+            URL="https://www.joshuafink.com/api/cron/${endpoint}"
             echo "──────────────────────────────────────────────"
             echo "Posting via $URL"
-
             posted=0
-            # Retry a few times in case a deploy is mid-flight.
             for attempt in 1 2 3; do
               echo "Attempt $attempt…"
-              # `|| true` so a network-level curl failure retries instead of
-              # aborting the step under `bash -e`.
               response=$(curl -sSL -w "\n%{http_code}" \
                 -H "Authorization: Bearer $CRON_SECRET" \
                 "$URL" || true)
@@ -84,36 +122,31 @@ jobs:
               body=$(echo "$response" | sed '$d')
               echo "HTTP $status"
               echo "$body"
-
               if [ "$status" = "200" ]; then
-                posted=1
-                if echo "$body" | grep -q '"skipped"'; then
-                  skipped=$((skipped + 1))
-                  echo "⏭️  $endpoint skipped (no numbers entered for this month)."
+                if echo "$body" | grep -q '"deploy_pending"'; then
+                  echo "Deploy flag still pending; retrying."
+                elif echo "$body" | grep -q '"already_posted"'; then
+                  posted=1
+                  echo "Already posted for this month."
+                  break
+                elif echo "$body" | grep -q '"posted":true\|"posted": true'; then
+                  posted=1
+                  echo "Posted."
+                  break
                 else
-                  echo "✅ $endpoint posted."
+                  echo "200 but not a confirmed post. Body left unposted."
                 fi
-                break
               fi
-              echo "Non-200 (attempt $attempt); retrying in $((attempt * 10))s…"
-              sleep $((attempt * 10))
+              sleep $((attempt * 15))
             done
-
             if [ "$posted" != "1" ]; then
-              echo "::error::$endpoint failed after 3 attempts (last HTTP $status)."
+              echo "::error::$endpoint was not posted."
               failed=$((failed + 1))
             fi
           done
 
-          echo "──────────────────────────────────────────────"
-          if [ "$skipped" -gt 0 ]; then
-            echo "::warning::$skipped channel(s) skipped — this month's figures are"
-            echo "::warning::not in lib/market-snapshot.ts yet. Paste them from the"
-            echo "::warning::Greater Nashville REALTORS report and re-run this workflow."
-          fi
-
           if [ "$failed" -gt 0 ]; then
-            echo "::error::$failed of ${#ENDPOINTS[@]} channels failed."
+            alert "${failed} market channel(s) did not post. See run ${{ github.run_id }}."
             exit 1
           fi
-          echo "Done — $((${#ENDPOINTS[@]} - skipped)) channel(s) published, $skipped skipped."
+          echo "Done."

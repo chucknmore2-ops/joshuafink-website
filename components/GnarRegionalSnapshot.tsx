@@ -3,6 +3,7 @@ import {
   latestSnapshot,
   marketUpdateSlug,
   monthLabel,
+  snapshotDaysStat,
   type MarketSnapshot,
 } from '@/lib/market-snapshot'
 
@@ -36,6 +37,7 @@ export default function GnarRegionalSnapshot({ cityName }: { cityName: string })
 
   const label = monthLabel(s.month)
   const blogHref = `/blog/${marketUpdateSlug(s.month)}`
+  const days = snapshotDaysStat(s)
 
   return (
     <div className="border-b border-[#E8E8E8] bg-white">
@@ -77,7 +79,7 @@ export default function GnarRegionalSnapshot({ cityName }: { cityName: string })
           {s.pendingSales != null && (
             <GnarStat value={formatCount(s.pendingSales)} label="Pendings" />
           )}
-          <GnarStat value={String(s.avgDaysOnMarket)} label="Days on market" />
+          <GnarStat value={days.value} label={days.label} />
         </div>
         <p className="mt-6 text-sm text-[#6B6B6B]">
           Full {label} write-up:{' '}

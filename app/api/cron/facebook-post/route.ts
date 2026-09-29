@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server'
-import { logPost } from '@/lib/admin-db'
+import { hasPostedRef, logPost } from '@/lib/admin-db'
 import { withUtm } from '@/lib/utm'
 import {
   currentSnapshot,
   marketUpdateSlug,
   monthLabel,
+  snapshotExpectFromSearchParams,
+  snapshotMatchesExpect,
   snapshotSkipReason,
   snapshotStatLines,
 } from '@/lib/market-snapshot'
@@ -13,8 +15,9 @@ export const dynamic = 'force-dynamic'
 
 // Facebook Page auto-poster — monthly Middle TN market update.
 //
-// Fired by .github/workflows/monthly-market-update.yml on the 5th of each
-// month, alongside the LinkedIn and Google Business posts. All three read the
+// Fired by .github/workflows/monthly-market-update.yml after a new month lands
+// in lib/market-snapshot.ts, alongside the LinkedIn and Google Business posts.
+// All three read the
 // same figures from lib/market-snapshot.ts as the monthly blog post, so the
 // site and every channel quote identical numbers.
 //
@@ -77,11 +80,24 @@ export async function GET(request: Request) {
 
   const params = new URL(request.url).searchParams
   const post = buildMonthlyMarketPost()
+  const expect = snapshotExpectFromSearchParams(params)
 
   // ?preview=1 composes the copy and hands it back without touching Facebook,
   // so a draft can be read and approved before anything is published.
   if (params.get('preview') === '1') {
     return NextResponse.json({ posted: false, preview: true, post })
+  }
+
+  // The workflow passes expect* from the commit it just merged. Until Vercel
+  // is serving that commit, production still has the previous snapshot — do
+  // not log that as a skipped month, and do not post the old one.
+  if (expect.expectMonth && !snapshotMatchesExpect(currentSnapshot(), expect)) {
+    return NextResponse.json({
+      posted: false,
+      skipped: 'deploy_pending',
+      expectMonth: expect.expectMonth,
+      at: new Date().toISOString(),
+    })
   }
 
   // No numbers entered for the month → post nothing at all rather than
@@ -103,6 +119,15 @@ export async function GET(request: Request) {
       posted: false,
       skipped: 'no_snapshot',
       reason,
+      at: new Date().toISOString(),
+    })
+  }
+
+  if (await hasPostedRef({ channel: 'facebook', jobName: JOB_NAME, refKey: post.refKey })) {
+    return NextResponse.json({
+      posted: false,
+      skipped: 'already_posted',
+      month: post.refKey,
       at: new Date().toISOString(),
     })
   }

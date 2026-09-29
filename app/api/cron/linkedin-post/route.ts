@@ -4,13 +4,16 @@ import { pickWeeklyPromotable } from '@/lib/promotable-listings'
 import { soldListings } from '@/lib/sold-listings'
 import { listingSlug } from '@/lib/listing-detail'
 import { reviews, reviewStats } from '@/lib/reviews'
-import { lastSuccessfulPost, logPost } from '@/lib/admin-db'
+import { hasPostedRef, lastSuccessfulPost, logPost } from '@/lib/admin-db'
 import { pickWeeklyLinkedIn } from './rotate'
 import { withUtm } from '@/lib/utm'
 import {
   currentSnapshot,
   marketUpdateSlug,
   monthLabel,
+  snapshotDaysStat,
+  snapshotExpectFromSearchParams,
+  snapshotMatchesExpect,
   snapshotSkipReason,
   snapshotStatLines,
 } from '@/lib/market-snapshot'
@@ -244,6 +247,7 @@ function buildFromMarketSnapshot(): PostPayload | null {
   const s = currentSnapshot()
   if (!s) return null
   const label = monthLabel(s.month)
+  const days = snapshotDaysStat(s)
   const slug = marketUpdateSlug(s.month)
   const url = withUtm(`${SITE}/blog/${slug}`, {
     source: 'linkedin',
@@ -265,7 +269,7 @@ function buildFromMarketSnapshot(): PostPayload | null {
     text,
     url,
     title: `Middle Tennessee Real Estate Market Update — ${label}`,
-    description: `Median ${s.medianSalePrice} · ${s.avgDaysOnMarket} days on market · ${n(s.activeListings)} active listings`,
+    description: `Median ${s.medianSalePrice} · ${days.label}: ${days.value} · ${n(s.activeListings)} active listings`,
     kind: 'market',
     refKey: s.month,
   }
@@ -318,6 +322,18 @@ export async function GET(request: Request) {
     return NextResponse.json({ posted: false, preview: true, payload })
   }
 
+  if (isMonthly) {
+    const expect = snapshotExpectFromSearchParams(params)
+    if (expect.expectMonth && !snapshotMatchesExpect(currentSnapshot(), expect)) {
+      return NextResponse.json({
+        posted: false,
+        skipped: 'deploy_pending',
+        expectMonth: expect.expectMonth,
+        at: new Date().toISOString(),
+      })
+    }
+  }
+
   // Monthly run with no numbers entered for the month → post nothing at all
   // rather than recycling last month's figures. 200 so the monthly workflow
   // doesn't retry-then-fail on a deliberate skip; the post_log row is what
@@ -337,6 +353,19 @@ export async function GET(request: Request) {
       posted: false,
       skipped: 'no_snapshot',
       reason,
+      at: new Date().toISOString(),
+    })
+  }
+
+  if (isMonthly && payload && await hasPostedRef({
+    channel: 'linkedin',
+    jobName,
+    refKey: payload.refKey,
+  })) {
+    return NextResponse.json({
+      posted: false,
+      skipped: 'already_posted',
+      month: payload.refKey,
       at: new Date().toISOString(),
     })
   }
