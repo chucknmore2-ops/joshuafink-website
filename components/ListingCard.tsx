@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import TrackedTelLink from '@/components/TrackedTelLink'
 import type { Listing } from '@/lib/listings'
 import { getSuburb, getSuburbSlugForListing } from '@/lib/suburbs'
 import { listingDetailPath } from '@/lib/listing-detail'
