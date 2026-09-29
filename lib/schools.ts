@@ -578,6 +578,36 @@ export const schools: Record<string, School> = {
       },
     ],
   },
+
+  'la-vergne-high-school-la-vergne-tn': {
+    slug: 'la-vergne-high-school-la-vergne-tn',
+    name: 'La Vergne High School',
+    level: 'High',
+    district: 'Rutherford County Schools',
+    suburbSlug: 'la-vergne-tn',
+    ratingNote: 'Rated B- on Niche with an 88% graduation rate, serving as La Vergne\'s public high school in Rutherford County Schools.',
+    blurb:
+      'La Vergne High School is the city\'s public high school, drawing from most of La Vergne — a fast-growing Rutherford County market at the I-24/I-40/I-65 interchange with a 2026 median home price around $373,000. Niche gives the school a B- overall grade, with 2,116 students, a 16:1 student-teacher ratio, an 88% graduation rate, and average SAT/ACT scores of 780 and 22 (Niche.com, 2026 data). For buyers prioritizing La Vergne\'s affordability and commute access over a top-tier school rating, it\'s the trade-off worth understanding up front — Joshua can walk through how it compares to Smyrna and Murfreesboro zones at similar price points.',
+    neighborhoods: ['Lake Forest', 'Woodland Hills', 'Amsterdam', 'Central La Vergne'],
+    faqs: [
+      {
+        q: 'What neighborhoods are zoned to La Vergne High School?',
+        a: 'La Vergne High serves most of the city, including established areas like Lake Forest, Woodland Hills, Amsterdam, and central La Vergne. Rutherford County sets attendance zones by address, not subdivision, so always confirm the current zone with Rutherford County Schools before writing an offer.',
+      },
+      {
+        q: 'Is La Vergne High School a good school?',
+        a: 'It carries a B- overall grade on Niche, with an 88% graduation rate, a 3.48 average GPA, and average SAT/ACT scores of 780 and 22 (Niche.com). That puts it below top-tier Williamson County schools, which is part of why La Vergne trades at a meaningfully lower price point — buyers should weigh the school rating against the affordability and commute access La Vergne offers.',
+      },
+      {
+        q: 'How much do homes cost in the La Vergne High School zone?',
+        a: 'Pricing generally tracks La Vergne\'s citywide market — a 2026 median of approximately $373,000 — rather than commanding a standalone school-zone premium. Joshua can pull recent closed comps for any specific street in Lake Forest, Woodland Hills, Amsterdam, or central La Vergne.',
+      },
+      {
+        q: 'How does La Vergne High School compare to schools in Smyrna or Murfreesboro?',
+        a: 'Neighboring Rutherford County high schools like Stewarts Creek (Smyrna) and Blackman (Murfreesboro) currently carry higher GreatSchools and Niche ratings than La Vergne High. Buyers focused primarily on school ratings often shortlist those zones instead, while buyers prioritizing La Vergne\'s lower price point and I-24/I-40/I-65 access weigh that trade-off against the school rating. Joshua can walk through comps and school data across all three to help match the decision to what matters most for the family.',
+      },
+    ],
+  },
 }
 
 export function getSchool(slug: string): School | undefined {
