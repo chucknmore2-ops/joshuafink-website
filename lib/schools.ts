@@ -80,9 +80,9 @@ export const schools: Record<string, School> = {
     level: 'High',
     district: 'Williamson County Schools',
     suburbSlug: 'franklin-tn',
-    ratingNote: 'A well-regarded Williamson County public high school.',
+    ratingNote: 'Ranked 19th of 389 Tennessee high schools by SchoolDigger, plus a Niche A- grade (#30 statewide, 3.89/5 from 328 reviews) for 2026.',
     blurb:
-      "Page High School serves a large family-residential portion of east Franklin and Thompson's Station, including some of the most popular family subdivisions in Williamson County — McKay's Mill, Brixworth, and Berry Farms among them. Strong academics, established athletics, and consistent college placement make the Page zone a high-demand pocket for relocating families targeting Williamson County schools at a more accessible Franklin price point.",
+      "Page High School serves a large family-residential portion of east Franklin and Thompson's Station, including some of the most popular family subdivisions in Williamson County — McKay's Mill, Brixworth, and Berry Farms among them. SchoolDigger ranks it 19th out of 389 Tennessee high schools, inside the Williamson County Schools district it separately rates 5 stars; Niche grades Page an A- and ranks it #30 among Tennessee public high schools for 2026 (3.89/5 from 328 reviews). Strong academics, established athletics, and consistent college placement make the Page zone a high-demand pocket for relocating families targeting Williamson County schools at a more accessible Franklin price point.",
     neighborhoods: ["McKay's Mill", 'Brixworth', 'Berry Farms', 'Cottonwood'],
     faqs: [
       {
@@ -99,12 +99,16 @@ export const schools: Record<string, School> = {
         a: "Page draws from a broad eastern-Franklin and Thompson's Station footprint including McKay's Mill, Brixworth, Berry Farms, and Cottonwood among others. Zoning varies by section within larger subdivisions — confirm with Williamson County Schools for any specific address.",
       },
       {
+        q: 'Is Page High School a good school?',
+        a: "Yes. SchoolDigger ranks Page 19th out of 389 Tennessee high schools, and it sits inside a Williamson County Schools district SchoolDigger separately rates 5 stars. Niche independently grades Page an A- and ranks it #30 among Tennessee public high schools for 2026, with an overall rating of 3.89/5 from 328 reviews (source: Niche.com, SchoolDigger.com). Rankings shift year to year, so confirm current figures directly with those sites before citing them to a client.",
+      },
+      {
         q: 'How do Page-zoned home prices compare to Independence-zoned?',
-        a: 'Page-zoned homes generally enter at a slightly more accessible price point than the Westhaven/Independence corridor on the west side of Franklin. The school is well-regarded, the inventory is family-functional, and buyers focused on value within Williamson County often shortlist Page-zoned subdivisions first.',
+        a: 'Page-zoned homes generally enter at a slightly more accessible price point than the Westhaven/Independence corridor on the west side of Franklin. The school ranks well on both SchoolDigger and Niche, the inventory is family-functional, and buyers focused on value within Williamson County often shortlist Page-zoned subdivisions first.',
       },
       {
         q: 'Is the Page zone a good long-term family bet?',
-        a: 'Yes. Williamson County school zoning consistently drives resale demand, and Page is a stable, well-rated school in a built-out part of east Franklin and Thompson&apos;s Station with limited future inventory growth — supportive of long-term value.',
+        a: 'Yes. Williamson County school zoning consistently drives resale demand, and Page is a stable, top-30-in-Tennessee school in a built-out part of east Franklin and Thompson&apos;s Station with limited future inventory growth — supportive of long-term value.',
       },
     ],
   },
