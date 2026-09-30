@@ -17,6 +17,11 @@ This replaced the retired Monday.com integration. Leads arrive via email,
 Pushover, and this Sheet — ClickUp is not a lead destination unless
 `CLICKUP_LEADS_ENABLED=true` is set. The Sheet is the durable, trackable record.
 
+Columns **A–L** are the original lead fields and never move. Attribution and
+the other fields collected since then are appended to the right. The script
+below adds any missing header automatically, so a tab that already has rows
+does not need those names typed in by hand.
+
 ## One-time setup (~5 min)
 
 1. **Make the sheet.** Create (or open) a Google Sheet. Add a tab named exactly
@@ -32,21 +37,21 @@ Pushover, and this Sheet — ClickUp is not a lead destination unless
 4. **Copy the Web app URL** (ends in `/exec`) and set it in Vercel as
    `GOOGLE_SHEET_WEBHOOK_URL`, then redeploy. That's it — new leads flow in.
 
-## One-time re-paste (Blocked + System tab update)
+## Re-paste when the script changes
 
-If the script was already deployed before the Blocked or System tab existed,
-re-paste it once. The old script ignores the `blocked_reason` and `system_test`
-tags, so until it's updated, blocked bot junk and the daily SYSTEM TEST row
-keep landing in the main CRM tab looking like real leads — annoying, but
-nothing is lost, so there's no ordering constraint.
+If the script was already deployed, paste the current one over it. An older
+script only writes columns A–L (`received_at` through `body`) and drops
+everything else in the POST, including traffic source. Nothing already in the
+sheet is lost.
 
 1. Open the sheet → **Extensions → Apps Script**, select everything, and paste
    the script below over it. Save (💾).
 2. **Deploy → Manage deployments → ✏️ (edit) → Version: New version → Deploy.**
    This keeps the same `/exec` URL, so nothing in Vercel changes.
 
-The `Blocked` and `System` tabs are auto-created on the first submission that
-needs them — no need to make them yourself.
+The first lead after that deploy appends any missing headers to the right of
+the current header row. Columns A–L stay where they are. The `Blocked` and
+`System` tabs are auto-created on the first submission that needs them.
 
 ## Optional: shared secret (extra spam protection)
 
@@ -55,7 +60,9 @@ lead is logged, so this is optional. For belt-and-suspenders: set the same
 random string as `SHEET_WEBHOOK_SECRET` in Vercel **and** in the `SECRET` var at
 the top of the script — the script then rejects any POST without it.
 
-## The Apps Script
+## Final Apps Script
+
+Paste this whole script over the Apps Script project. It is the script to deploy.
 
 ```javascript
 // Appends each website lead as a row in the "CRM" tab. Honeypot-blocked
@@ -63,27 +70,83 @@ the top of the script — the script then rejects any POST without it.
 // instead (auto-created) — skim it weekly for real people the trap caught.
 // The daily healthcheck's test lead arrives tagged `system_test` and goes to
 // a "System" tab (auto-created), keeping the CRM tab real-leads-only.
+//
+// Columns A–L are the original header and are never reordered or inserted
+// into. On a tab that already has a header row, any name in the lists below
+// that is not already present is appended to the right. An empty tab gets
+// the full header row.
+//
 // If you set SHEET_WEBHOOK_SECRET in Vercel, put the SAME value here; else ''.
 var SECRET = '';
 
-// /api/contact POSTs EVERY field the lead carried, so adding a name to this
-// list is all it takes to start recording it — no site deploy needed. The
-// extras below were being collected and thrown away: traffic_source /
-// landing_page / referrer come from lib/attribution.ts, suspected_spam is set
-// when a heuristic fires (delivered anyway, see lib/classify-lead.ts), and
-// budget / bedrooms / bathrooms come from the buy and sell forms.
-var HEADERS = [
+// Original CRM columns A–L. Do not insert anything in front of or between these.
+var CRM_HEADERS = [
   'received_at', 'status', 'name', 'phone', 'email', 'lead_type',
   'suburb', 'source', 'property_address', 'situation', 'timeline', 'body',
   'traffic_source', 'landing_page', 'referrer', 'suspected_spam',
-  'budget', 'bedrooms', 'bathrooms'
+  'budget', 'bedrooms', 'bathrooms',
+  'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
+  'gclid', 'gbraid', 'wbraid', 'fbclid',
+  'last_utm_source', 'last_utm_medium', 'last_utm_campaign', 'last_utm_term', 'last_utm_content',
+  'last_gclid', 'last_gbraid', 'last_wbraid', 'last_fbclid',
+  'last_referrer', 'last_landing_page',
+  'page_url'
 ];
 
+// Blocked tab: column B is blocked_reason instead of status. Every other
+// column matches CRM, including the attribution fields.
 var BLOCKED_HEADERS = [
   'received_at', 'blocked_reason', 'name', 'phone', 'email', 'lead_type',
   'suburb', 'source', 'property_address', 'situation', 'timeline', 'body',
-  'traffic_source', 'landing_page', 'referrer'
+  'traffic_source', 'landing_page', 'referrer', 'suspected_spam',
+  'budget', 'bedrooms', 'bathrooms',
+  'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
+  'gclid', 'gbraid', 'wbraid', 'fbclid',
+  'last_utm_source', 'last_utm_medium', 'last_utm_campaign', 'last_utm_term', 'last_utm_content',
+  'last_gclid', 'last_gbraid', 'last_wbraid', 'last_fbclid',
+  'last_referrer', 'last_landing_page',
+  'page_url'
 ];
+
+function ensureHeaders(sheet, desired) {
+  // Empty tab: write the full header row. Existing tab: keep every current
+  // header where it is (columns A–L stay A–L) and append any desired header
+  // that is not already present.
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(desired);
+    sheet.getRange(1, 1, 1, desired.length).setFontWeight('bold');
+    sheet.setFrozenRows(1);
+    return desired;
+  }
+
+  var width = Math.max(sheet.getLastColumn(), 1);
+  var existing = sheet.getRange(1, 1, 1, width).getValues()[0].map(function (cell) {
+    return String(cell || '').trim();
+  });
+  while (existing.length && existing[existing.length - 1] === '') existing.pop();
+
+  // A tab that already has rows but no received_at header is not relabeled
+  // in place — that would shift real data. Leave it alone.
+  if (existing.indexOf('received_at') === -1) return existing;
+
+  var have = {};
+  existing.forEach(function (name) {
+    if (name) have[name] = true;
+  });
+  var missing = [];
+  desired.forEach(function (name) {
+    if (!have[name]) missing.push(name);
+  });
+  if (missing.length) {
+    var startCol = existing.length + 1;
+    var range = sheet.getRange(1, startCol, 1, missing.length);
+    range.setValues([missing]);
+    range.setFontWeight('bold');
+    existing = existing.concat(missing);
+  }
+  if (sheet.getFrozenRows() < 1) sheet.setFrozenRows(1);
+  return existing;
+}
 
 function doPost(e) {
   try {
@@ -94,20 +157,16 @@ function doPost(e) {
 
     var blocked = data.blocked_reason != null && data.blocked_reason !== '';
     var systemTest = data.system_test != null && data.system_test !== '';
-    var headers = blocked ? BLOCKED_HEADERS : HEADERS;
+    var desired = blocked ? BLOCKED_HEADERS : CRM_HEADERS;
 
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var name = blocked ? 'Blocked' : (systemTest ? 'System' : 'CRM');
     var sheet = ss.getSheetByName(name) || ss.insertSheet(name);
-
-    if (sheet.getLastRow() === 0) {
-      sheet.appendRow(headers);
-      sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold');
-      sheet.setFrozenRows(1);
-    }
+    var headers = ensureHeaders(sheet, desired);
 
     var row = headers.map(function (h) {
-      if (h === 'status') return 'New';
+      if (!h) return '';
+      if (h === 'status' && (data.status == null || data.status === '')) return 'New';
       return data[h] != null ? String(data[h]) : '';
     });
     sheet.appendRow(row);
@@ -127,37 +186,48 @@ function json(obj) {
 
 ## Columns
 
+Columns A–L, unchanged:
+
 `received_at · status · name · phone · email · lead_type · suburb · source ·
-property_address · situation · timeline · body · traffic_source · landing_page ·
-referrer · suspected_spam · budget · bedrooms · bathrooms`
+property_address · situation · timeline · body`
+
+Appended after column L, in this order:
+
+`traffic_source · landing_page · referrer · suspected_spam · budget · bedrooms ·
+bathrooms · utm_source · utm_medium · utm_campaign · utm_term · utm_content ·
+gclid · gbraid · wbraid · fbclid · last_utm_source · last_utm_medium ·
+last_utm_campaign · last_utm_term · last_utm_content · last_gclid · last_gbraid ·
+last_wbraid · last_fbclid · last_referrer · last_landing_page · page_url`
 
 - **status** defaults to `New`. This is your tracking column — change it to
   `Called`, `Showing`, `Under Contract`, `Closed`, `Dead`, etc.
 - **source** tells you which page produced the lead (e.g. `buy-hub`,
   `cash-offer`, `listings`) — useful for seeing what's actually converting.
-- **traffic_source / landing_page / referrer** say which channel brought the
-  visitor (`utm_source`, else the referring host, else `direct`) and the first
-  page they landed on. This is what makes "which marketing actually produced a
-  lead" answerable.
+- **traffic_source / landing_page / referrer** are the first touch:
+  `utm_source`, else `google` / `facebook` when a click id is present, else
+  the referring host, else `direct`, plus the first page URL and the inbound
+  referrer. `landing_page` still contains the original query string.
+- **utm_source / utm_medium / utm_campaign / utm_term / utm_content** and
+  **gclid / gbraid / wbraid / fbclid** are that same first touch, split into
+  their own columns so a campaign can be filtered without parsing the URL.
+- **last_utm_***, **last_gclid / last_gbraid / last_wbraid / last_fbclid**,
+  **last_referrer / last_landing_page** are the most recent campaign touch
+  inside the 90-day window. They match the first-touch columns until the
+  visitor comes back through a different link.
+- **page_url** is the page the form was submitted from, which is often not
+  the landing page.
 - **suspected_spam** holds a heuristic's reason (e.g. `url_in_field`) when one
   fired. The lead was still delivered on every channel — judge it yourself.
   Empty for normal leads.
 - **budget / bedrooms / bathrooms** come from the buy and sell forms when the
   visitor filled them in.
 
-### Adding the new columns to a sheet that already has rows
+### Headers on a sheet that already has rows
 
-Appending names to `HEADERS` only writes a header row on an EMPTY tab, so on a
-sheet with existing rows:
-
-1. Paste the updated script (Extensions → Apps Script), then **Deploy → Manage
-   deployments → edit the existing deployment → Version: New version → Deploy**.
-   Keep the same deployment so the URL in `GOOGLE_SHEET_WEBHOOK_URL` still works.
-2. In the CRM tab, type the seven new header names into the empty cells to the
-   right of `body` (row 1), spelled exactly as above.
-3. Do the same on the Blocked tab for the three it gains.
-
-New rows then fill the new columns; older rows stay blank there.
+The script appends missing headers itself the next time a lead arrives. You
+do not type them in. A tab that already has `traffic_source` through
+`bathrooms` keeps those columns and gains the utm, click-id, last-touch, and
+`page_url` columns after them. Older rows stay blank in the new columns.
 
 The **Blocked** tab has the same columns except `status` is replaced by
 `blocked_reason` (e.g. `honeypot`). Nothing else fires for these rows — no
@@ -176,3 +246,9 @@ Honeypot-blocked submissions call `pushToSheet(lead, reason)` — the extra
 `blocked_reason` field is what routes the row to the Blocked tab. The daily
 healthcheck lead calls `pushToSheet(lead, undefined, true)` — the resulting
 `system_test` field routes its row to the System tab the same way.
+
+The browser (`lib/attribution.ts`) stores first-touch and last-touch for 90
+days and every lead form sends those fields, plus `page_url`, on submit. The
+route forwards them on the lead email, this sheet payload, ClickUp (when
+enabled), Pushover, and the buyer-lead webhook. `secret` and `system_test`
+are routing metadata, not columns.

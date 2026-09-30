@@ -1,9 +1,12 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import { Inter, Playfair_Display } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import MobileCallCTA from '@/components/MobileCallCTA'
+import AttributionCapture from '@/components/AttributionCapture'
 import { reviews, reviewStats, reviewDateToIso } from '@/lib/reviews'
 
 // Self-host Google Fonts via next/font — eliminates the render-blocking
@@ -336,6 +339,10 @@ export default function RootLayout({
         </main>
         <Footer />
         <MobileCallCTA />
+        <Suspense fallback={null}>
+          <AttributionCapture />
+        </Suspense>
+        <Analytics />
       </body>
     </html>
   )

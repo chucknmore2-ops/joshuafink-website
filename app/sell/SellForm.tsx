@@ -23,8 +23,10 @@ export default function SellForm() {
     el.scrollIntoView({ block: 'center' })
   }, [state])
 
-  // Stash landing URL / utm params / referrer before the visitor can navigate
-  // away, so the submitted lead can say which channel brought them.
+  // 90-day first-touch (and last-touch) attribution, including this page's
+  // URL. AttributionCapture in the root layout records the landing page
+  // before the visitor reaches this form; this call covers a form that is
+  // itself the landing page.
   useEffect(() => {
     captureAttribution()
   }, [])

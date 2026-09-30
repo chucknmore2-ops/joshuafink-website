@@ -4,7 +4,8 @@ import { legacyRedirects } from './lib/legacy-redirects.mjs'
 
 // Content-Security-Policy in Report-Only mode. Allows what the site
 // actually loads today: self, Google Tag Manager / Analytics (only
-// active when NEXT_PUBLIC_GA_ID is set), Compass image CDN. Inline
+// active when NEXT_PUBLIC_GA_ID is set), Vercel Web Analytics, Compass
+// image CDN. Inline
 // scripts/styles permitted because GA bootstraps inline and the
 // schema JSON-LD blocks are inlined via dangerouslySetInnerHTML
 // (those are application/ld+json, not script execution, but kept
@@ -15,11 +16,11 @@ import { legacyRedirects } from './lib/legacy-redirects.mjs'
 // to enforce.
 const csp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com",
+  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https://*.compass.com https://compass.com https://www.googletagmanager.com https://www.google-analytics.com",
   "font-src 'self' data:",
-  "connect-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com",
+  "connect-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://va.vercel-scripts.com",
   "frame-ancestors 'none'",
   "form-action 'self'",
   "base-uri 'self'",

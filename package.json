@@ -13,6 +13,7 @@
     "setup": "bash scripts/setup-machine.sh"
   },
   "dependencies": {
+    "@vercel/analytics": "^2.0.1",
     "next": "^14.2.35",
     "pg": "^8.20.0",
     "react": "^18.3.1",

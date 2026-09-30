@@ -363,3 +363,238 @@ test('CLICKUP_LEADS_ENABLED=true with token and list ID does create a task', asy
     delete process.env.CLICKUP_LEADS_ENABLED
   }
 })
+
+test('attribution fields reach the sheet, the lead email, and ClickUp without dropping existing fields', async () => {
+  const captured: { url: string; body: string }[] = []
+  globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input)
+    captured.push({ url, body: String(init?.body ?? '') })
+    if (url.includes('script.google.com')) {
+      return new Response('{"ok":true}', { status: 200, headers: { 'Content-Type': 'application/json' } })
+    }
+    if (url.includes('api.resend.com')) {
+      return new Response('{"id":"email-1"}', { status: 200, headers: { 'Content-Type': 'application/json' } })
+    }
+    if (url.includes('api.clickup.com')) {
+      return new Response('{"id":"task-attr"}', { status: 200, headers: { 'Content-Type': 'application/json' } })
+    }
+    return new Response('{}', { status: 200 })
+  }) as typeof fetch
+
+  process.env.RESEND_API_KEY = 're_test_key'
+  process.env.CLICKUP_LEADS_ENABLED = 'true'
+  process.env.CLICKUP_API_TOKEN = 'pk_test_token'
+  process.env.CLICKUP_LEADS_LIST_ID = 'dedicated-leads-list'
+  try {
+    const { POST } = await import('./route.ts')
+    const res = await POST(
+      new NextRequest('http://localhost/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-forwarded-for': '203.0.113.10' },
+        body: JSON.stringify({
+          name: 'Ada Lovelace',
+          email: 'ada@example.com',
+          phone: '615-555-0100',
+          body: 'We want to sell in Franklin.',
+          source: 'contact-page',
+          subject: 'sell',
+          website: '',
+          traffic_source: 'newsletter',
+          landing_page: 'https://www.joshuafink.com/blog/post?utm_source=newsletter',
+          referrer: 'https://news.example/',
+          utm_source: 'newsletter',
+          utm_medium: 'email',
+          utm_campaign: 'spring',
+          utm_term: '',
+          utm_content: 'hero',
+          gclid: '',
+          gbraid: '',
+          wbraid: '',
+          fbclid: '',
+          last_utm_source: 'google',
+          last_utm_medium: 'cpc',
+          last_utm_campaign: 'brand',
+          last_utm_term: '',
+          last_utm_content: '',
+          last_gclid: 'click-9',
+          last_gbraid: '',
+          last_wbraid: '',
+          last_fbclid: '',
+          last_referrer: 'https://www.google.com/',
+          last_landing_page: 'https://www.joshuafink.com/?utm_source=google&gclid=click-9',
+          page_url: 'https://www.joshuafink.com/contact',
+        }),
+      })
+    )
+    assert.equal(res.status, 200)
+
+    const sheetCall = captured.find((c) => c.url.includes('script.google.com'))
+    assert.ok(sheetCall)
+    const sheet = JSON.parse(sheetCall.body)
+    assert.equal(sheet.name, 'Ada Lovelace')
+    assert.equal(sheet.email, 'ada@example.com')
+    assert.equal(sheet.phone, '615-555-0100')
+    assert.equal(sheet.source, 'contact-page')
+    assert.equal(sheet.body, 'We want to sell in Franklin.')
+    assert.equal(sheet.lead_type, 'sell')
+    assert.equal(typeof sheet.received_at, 'string')
+    assert.equal(sheet.utm_source, 'newsletter')
+    assert.equal(sheet.utm_medium, 'email')
+    assert.equal(sheet.utm_campaign, 'spring')
+    assert.equal(sheet.utm_content, 'hero')
+    assert.equal(sheet.utm_term, '')
+    assert.equal(sheet.gclid, '')
+    assert.equal(sheet.last_utm_source, 'google')
+    assert.equal(sheet.last_gclid, 'click-9')
+    assert.equal(sheet.last_landing_page, 'https://www.joshuafink.com/?utm_source=google&gclid=click-9')
+    assert.equal(sheet.page_url, 'https://www.joshuafink.com/contact')
+    assert.equal(sheet.traffic_source, 'newsletter')
+    assert.equal(sheet.landing_page, 'https://www.joshuafink.com/blog/post?utm_source=newsletter')
+    assert.equal(sheet.referrer, 'https://news.example/')
+    assert.equal('website' in sheet, false)
+    assert.equal('secret' in sheet, false)
+
+    const emails = captured.filter((c) => c.url.includes('api.resend.com'))
+    const leadEmail = emails.map((e) => JSON.parse(e.body)).find((e) => /New Lead/.test(e.subject))
+    assert.ok(leadEmail)
+    assert.match(leadEmail.html, /utm_source/)
+    assert.match(leadEmail.html, /newsletter/)
+    assert.match(leadEmail.html, /page_url/)
+    assert.match(leadEmail.html, /https:\/\/www\.joshuafink\.com\/contact/)
+    assert.match(leadEmail.html, /last_gclid/)
+    assert.match(leadEmail.html, /click-9/)
+    assert.equal(leadEmail.html.includes('>last_utm_term<'), false)
+    assert.match(leadEmail.html, />name</)
+    assert.match(leadEmail.html, /Ada Lovelace/)
+
+    const clickup = captured.find((c) => c.url.includes('api.clickup.com'))
+    assert.ok(clickup)
+    const task = JSON.parse(clickup.body)
+    assert.match(task.markdown_content, /Traffic source/)
+    assert.match(task.markdown_content, /newsletter/)
+    assert.match(task.markdown_content, /Last UTM/)
+    assert.match(task.markdown_content, /Submitted from/)
+    assert.match(task.markdown_content, /Ada Lovelace/)
+  } finally {
+    delete process.env.RESEND_API_KEY
+    delete process.env.CLICKUP_API_TOKEN
+    delete process.env.CLICKUP_LEADS_LIST_ID
+    delete process.env.CLICKUP_LEADS_ENABLED
+  }
+})
+
+test('a no-JS submit picks campaign parameters off the Referer without overwriting a captured source', async () => {
+  const captured: { body: string }[] = []
+  globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    if (String(input).includes('script.google.com')) {
+      captured.push({ body: String(init?.body ?? '') })
+      return new Response('{"ok":true}', { status: 200, headers: { 'Content-Type': 'application/json' } })
+    }
+    return new Response('{}', { status: 200 })
+  }) as typeof fetch
+
+  const { POST } = await import('./route.ts')
+  const first = await POST(
+    new NextRequest('https://www.joshuafink.com/api/contact', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        referer: 'https://www.joshuafink.com/cash-offer?utm_source=google&utm_medium=cpc&gclid=CLICK123',
+        'x-forwarded-for': '203.0.113.11',
+      },
+      body: 'name=Jane+Doe&email=jane%40example.com&phone=6155550100&source=cash-offer&property_address=123+Main+St',
+    })
+  )
+  assert.equal(first.status, 200)
+  const filled = JSON.parse(captured[0].body)
+  assert.equal(filled.name, 'Jane Doe')
+  assert.equal(filled.source, 'cash-offer')
+  assert.equal(filled.utm_source, 'google')
+  assert.equal(filled.utm_medium, 'cpc')
+  assert.equal(filled.gclid, 'CLICK123')
+  assert.equal(filled.traffic_source, 'google')
+  assert.equal(filled.page_url, 'https://www.joshuafink.com/cash-offer?utm_source=google&utm_medium=cpc&gclid=CLICK123')
+  assert.equal(filled.landing_page, filled.page_url)
+  assert.equal(filled.last_gclid, 'CLICK123')
+
+  const second = await POST(
+    new NextRequest('https://www.joshuafink.com/api/contact', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        referer: 'https://www.joshuafink.com/contact?utm_source=google&gclid=nope',
+        'x-forwarded-for': '203.0.113.11',
+      },
+      body: JSON.stringify({
+        name: 'Jane Doe',
+        email: 'jane@example.com',
+        source: 'contact-page',
+        utm_source: 'newsletter',
+        traffic_source: 'newsletter',
+        landing_page: 'https://www.joshuafink.com/blog?utm_source=newsletter',
+        page_url: 'https://www.joshuafink.com/contact',
+        last_landing_page: 'https://www.joshuafink.com/blog?utm_source=newsletter',
+      }),
+    })
+  )
+  assert.equal(second.status, 200)
+  const kept = JSON.parse(captured[1].body)
+  assert.equal(kept.utm_source, 'newsletter')
+  assert.equal(kept.traffic_source, 'newsletter')
+  assert.equal(kept.page_url, 'https://www.joshuafink.com/contact')
+  assert.equal(kept.gclid || '', '')
+})
+
+test('the buyer-lead webhook keeps its original fields and gains attribution', async () => {
+  const captured: { url: string; body: string }[] = []
+  globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input)
+    captured.push({ url, body: String(init?.body ?? '') })
+    if (url.includes('script.google.com')) {
+      return new Response('{"ok":true}', { status: 200, headers: { 'Content-Type': 'application/json' } })
+    }
+    return new Response('{}', { status: 200 })
+  }) as typeof fetch
+
+  process.env.BUYER_LEAD_WEBHOOK_BASE = 'https://buyer.example.test'
+  try {
+    const { POST } = await import('./route.ts')
+    const res = await POST(
+      new NextRequest('http://localhost/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-forwarded-for': '203.0.113.12' },
+        body: JSON.stringify({
+          name: 'Buyer Pat',
+          email: 'pat@example.com',
+          phone: '615-555-0199',
+          subject: 'buy',
+          body: 'Looking in Brentwood.',
+          source: 'buy-hub',
+          utm_source: 'facebook',
+          utm_medium: 'paid',
+          fbclid: 'fb-1',
+          page_url: 'https://www.joshuafink.com/buy',
+          landing_page: 'https://www.joshuafink.com/?fbclid=fb-1',
+          traffic_source: 'facebook',
+        }),
+      })
+    )
+    assert.equal(res.status, 200)
+    const hook = captured.find((c) => c.url === 'https://buyer.example.test/buyer-lead')
+    assert.ok(hook)
+    const payload = JSON.parse(hook.body)
+    assert.equal(payload.name, 'Buyer Pat')
+    assert.equal(payload.phone, '615-555-0199')
+    assert.equal(payload.email, 'pat@example.com')
+    assert.equal(payload.subject, 'buy')
+    assert.equal(payload.body, 'Looking in Brentwood.')
+    assert.equal(payload.source, 'buy-hub')
+    assert.equal(payload.utm_source, 'facebook')
+    assert.equal(payload.utm_medium, 'paid')
+    assert.equal(payload.fbclid, 'fb-1')
+    assert.equal(payload.page_url, 'https://www.joshuafink.com/buy')
+    assert.equal(payload.traffic_source, 'facebook')
+  } finally {
+    delete process.env.BUYER_LEAD_WEBHOOK_BASE
+  }
+})
