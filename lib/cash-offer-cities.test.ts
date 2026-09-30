@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { getAllCashOfferCitySlugs, getCashOfferCity, cashOfferContentLastUpdated, cashOfferSeo, cashOfferPath } from './cash-offer-cities.ts'
 import { suburbs, citywideStatsCitation, formatStatsDate, suburbStatsAsOf } from './suburbs.ts'
 import { compactMedian } from './moving-faqs.ts'
+import { blogPosts } from './blog.ts'
 
 /** Expand compactMedian ($870K / $1.40M) the way Franklin body copy writes it ($870,000 / $1,400,000). */
 function expandedMedian(compact: string): string {
@@ -95,8 +96,52 @@ test('Franklin cash-offer copy stays pinned to the live Redfin $869,565 (~$870K)
   assert.doesNotMatch(repairFaq.a, /\$650K/)
 })
 
-test('cash-offer freshness stamp is current after the Columbia SEO pass', () => {
-  assert.equal(cashOfferContentLastUpdated, '2026-09-25')
+test('cash-offer freshness stamp is current after the Nashville fair-offer FAQ', () => {
+  assert.equal(cashOfferContentLastUpdated, '2026-09-29')
+})
+
+test('Nashville fair-cash-offer FAQ reuses only figures already on the site', () => {
+  const city = getCashOfferCity('nashville-tn')
+  assert.ok(city)
+  const faqs = city.fairOfferFaqs ?? []
+  assert.ok(faqs.length >= 3, 'expected the Nashville fair-offer FAQ block')
+
+  const nashville = suburbs['nashville-tn']
+  const compact = compactMedian(nashville.medianPriceNum)
+  assert.equal(compact, '$480K')
+  const asOf = formatStatsDate(suburbStatsAsOf(nashville))
+
+  const copy = faqs.map((f) => `${f.q} ${f.a}`).join('\n')
+  // Median is quoted in compact form with its Redfin as-of citation.
+  assert.match(copy, new RegExp(compact.replace(/[$.]/g, (ch) => `\\${ch}`)))
+  assert.match(copy, /Redfin/)
+  assert.match(copy, new RegExp(asOf))
+  // The shared 70–85% of after-repair value framing, no new percentages.
+  assert.match(copy, /70–85% of after-repair value/)
+  const percents = copy.match(/\d+(?:–\d+)?%/g) ?? []
+  assert.deepEqual(Array.from(new Set(percents)), ['70–85%'])
+  // Only the Redfin median — no other dollar figures.
+  const dollars = copy.match(/\$[0-9][0-9,.]*[KM]?/g) ?? []
+  assert.deepEqual(Array.from(new Set(dollars)), [compact])
+
+  // Links to the August 2026 GNAR market update, which must exist.
+  const links = faqs.flatMap((f) => (f.link ? [f.link.href] : []))
+  assert.ok(links.includes('/blog/middle-tennessee-market-update-august-2026'))
+  assert.ok(blogPosts.some((p) => p.slug === 'middle-tennessee-market-update-august-2026'))
+
+  // Does not duplicate the shared "agent who buys houses for cash" answer or existing city FAQs.
+  const existing = new Set(city.faqs.map((f) => f.q))
+  for (const f of faqs) {
+    assert.ok(!existing.has(f.q), `duplicate question ${f.q}`)
+    assert.doesNotMatch(f.q, /real estate agent who buys houses for cash/i)
+  }
+})
+
+test('only Nashville ships the fair-cash-offer FAQ block for now', () => {
+  for (const slug of getAllCashOfferCitySlugs()) {
+    if (slug === 'nashville-tn') continue
+    assert.equal(getCashOfferCity(slug)?.fairOfferFaqs, undefined, slug)
+  }
 })
 
 test('Nashville cash-offer SEO targets both house and home sell-fast queries', () => {

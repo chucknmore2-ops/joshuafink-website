@@ -108,6 +108,11 @@ export default async function CashOfferCityPage({ params }: Props) {
     a: `Yes. Joshua Fink is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate who personally buys houses for cash in ${cityName}, in addition to representing traditional buyers and sellers. With 17+ years of experience and ${reviewStats.total}+ five-star reviews, he gives you a written cash offer and a traditional-listing estimate side by side, so you choose the path that fits — not a call-center algorithm. Call 615-551-2727 to get started.`,
   }
   const allFaqs = [agentFaq, ...city.faqs, ...evergreenFaqs]
+  // Optional "fair cash offer" block (Nashville today). Rendered as its own
+  // section, but folded into the one FAQPage below so the page never ships
+  // two competing FAQPage entities.
+  const fairOfferFaqs = city.fairOfferFaqs ?? []
+  const schemaFaqs = [...fairOfferFaqs, ...allFaqs]
   const guides = getNeighborhoodsByCitySlug(slug)
   const otherCities = getCashOfferCityLinks().filter((c) => c.slug !== slug)
 
@@ -159,7 +164,7 @@ export default async function CashOfferCityPage({ params }: Props) {
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'FAQPage',
-            mainEntity: allFaqs.map((f) => ({
+            mainEntity: schemaFaqs.map((f) => ({
               '@type': 'Question',
               name: f.q,
               acceptedAnswer: { '@type': 'Answer', text: f.a },
@@ -434,6 +439,36 @@ export default async function CashOfferCityPage({ params }: Props) {
                   <h3 className="text-base font-black text-black mb-1">{g.name}</h3>
                   <p className="text-xs text-neutral-500">{g.priceBand} · Read guide →</p>
                 </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Fair cash offer FAQ — city-specific, only when the city defines it */}
+      {fairOfferFaqs.length > 0 && (
+        <div id="fair-cash-offer" className="bg-neutral-50 border-t border-neutral-200 py-20 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto">
+            <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3 text-center">
+              Fair Cash Offer
+            </p>
+            <h2 className="text-4xl sm:text-5xl font-black text-black tracking-tight mb-14 text-center">
+              What Is a Fair Cash Offer in {city.name}?
+            </h2>
+            <div className="space-y-8">
+              {fairOfferFaqs.map((faq) => (
+                <div key={faq.q} className="border-b border-neutral-200 pb-6">
+                  <h3 className="text-lg font-black text-black mb-2">{faq.q}</h3>
+                  <p className="text-sm text-neutral-600 leading-relaxed">{faq.a}</p>
+                  {faq.link && (
+                    <Link
+                      href={faq.link.href}
+                      className="inline-block mt-3 text-sm font-semibold text-black underline underline-offset-4 hover:text-neutral-600"
+                    >
+                      {faq.link.label} →
+                    </Link>
+                  )}
+                </div>
               ))}
             </div>
           </div>
