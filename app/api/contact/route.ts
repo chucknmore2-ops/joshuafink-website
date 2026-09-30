@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { classifyLead } from '@/lib/classify-lead'
+import { ensureLeadAttribution, LEAD_ATTRIBUTION_FIELDS } from '@/lib/attribution'
 import { sendEmail, activeEmailProvider, fetchWithTimeout } from '@/lib/send-email'
 
 // Lead notifiers use fetchWithTimeout (LEAD_CHANNEL_TIMEOUT_MS, default 6s)
@@ -14,9 +15,13 @@ export const maxDuration = 30
 // 901415978281. The weekly agent-briefing cron was retired 2026-09-28; this
 // route is the only ClickUp caller left, and it stays off unless enabled.
 const TO_EMAIL = 'joshua@joshuafink.com'
-const N8N_BASE = process.env.N8N_WEBHOOK_BASE || 'http://localhost:5678/webhook'
-const CASH_OFFER_BASE = process.env.CASH_OFFER_WEBHOOK_BASE || 'http://localhost:5679/webhook'
-const BUYER_LEAD_WEBHOOK_BASE = process.env.BUYER_LEAD_WEBHOOK_BASE || 'http://localhost:5680'
+// Read per request so a deploy that sets the env mid-process, and the
+// contact-route tests, see the current base. Loopback defaults stay skipped.
+function webhookBase(envKey: string, fallback: string): string {
+  return process.env[envKey] || fallback
+}
+
+const ATTRIBUTION_FIELD_SET = new Set<string>(LEAD_ATTRIBUTION_FIELDS)
 // Free lead tracker: a Google Apps Script Web App that appends each lead as a
 // row in a Google Sheet. Set GOOGLE_SHEET_WEBHOOK_URL in Vercel to the /exec
 // deployment URL. No-ops safely until then. (Replaces the retired Monday.com CRM.)
@@ -66,6 +71,26 @@ function clickupLeadsEnabled(): boolean {
 
 function clickupLeadsConfigured(): boolean {
   return clickupLeadsEnabled() && !!process.env.CLICKUP_API_TOKEN && !!process.env.CLICKUP_LEADS_LIST_ID
+}
+
+/** Lines for the ClickUp task. Empty parameters are omitted. */
+function attributionNotes(lead: Record<string, string>): string[] {
+  const lines: string[] = []
+  if (lead.traffic_source) lines.push(`**Traffic source:** ${lead.traffic_source}`)
+  const utm = [lead.utm_source, lead.utm_medium, lead.utm_campaign].filter(Boolean).join(' / ')
+  if (utm) lines.push(`**UTM:** ${utm}`)
+  const lastUtm = [lead.last_utm_source, lead.last_utm_medium, lead.last_utm_campaign].filter(Boolean).join(' / ')
+  if (lastUtm && lastUtm !== utm) lines.push(`**Last UTM:** ${lastUtm}`)
+  const click = [
+    lead.gclid ? `gclid ${lead.gclid}` : '',
+    lead.gbraid ? `gbraid ${lead.gbraid}` : '',
+    lead.wbraid ? `wbraid ${lead.wbraid}` : '',
+    lead.fbclid ? `fbclid ${lead.fbclid}` : '',
+  ].filter(Boolean).join(', ')
+  if (click) lines.push(`**Click ID:** ${click}`)
+  if (lead.landing_page) lines.push(`**Landing page:** ${lead.landing_page}`)
+  if (lead.page_url) lines.push(`**Submitted from:** ${lead.page_url}`)
+  return lines
 }
 
 /**
@@ -123,6 +148,7 @@ async function sendClickUp(lead: Record<string, string>, testMode = false): Prom
     lead.situation ? `**Situation:** ${lead.situation}` : null,
     lead.timeline ? `**Timeline:** ${lead.timeline}` : null,
     lead.body ? `**Message:**\n${lead.body}` : null,
+    ...attributionNotes(lead),
   ].filter(Boolean).join('\n')
 
   try {
@@ -270,7 +296,10 @@ async function forwardToJoshua(lead: Record<string, string>, testMode = false): 
   }
 
   const lines = Object.entries(lead)
-    .filter(([k]) => !k.startsWith('_') && k !== 'website')
+    // Empty attribution cells (a direct visitor has no gclid) would add a
+    // couple dozen blank rows. Non-empty values still render. Other fields
+    // keep their previous "show even if blank" behavior.
+    .filter(([k, v]) => !k.startsWith('_') && k !== 'website' && !(ATTRIBUTION_FIELD_SET.has(k) && v.trim() === ''))
     .map(([k, v]) => `<tr><td style="padding:6px 12px;color:#666;font-size:13px;width:140px;vertical-align:top;">${escapeHtml(k)}</td><td style="padding:6px 12px;font-size:13px;">${escapeHtml(v)}</td></tr>`)
     .join('')
 
@@ -309,7 +338,11 @@ async function pushToSheet(
     return skip('sheet')
   }
 
-  // Drop internal fields (honeypot + timing) before logging.
+  // Drop internal fields (honeypot + timing) before logging. Attribution
+  // keys are ordinary lead fields — utm_*, click ids, first/last touch,
+  // landing_page, referrer, page_url — and must stay in the payload. The
+  // Apps Script appends any of them that the CRM tab doesn't have yet;
+  // it does not depend on key order.
   const clean = Object.fromEntries(
     Object.entries(lead).filter(([k]) => !k.startsWith('_') && k !== 'website')
   )
@@ -374,6 +407,7 @@ async function sendPushover(lead: Record<string, string>): Promise<ChannelResult
   const source = lead.source ? ` · ${lead.source}` : ''
   const message = [
     lead.suspected_spam ? `⚠️ flagged: ${lead.suspected_spam} — check it` : null,
+    lead.traffic_source ? `↗ ${lead.traffic_source}` : null,
     lead.phone ? `📞 ${lead.phone}` : null,
     lead.email ? `✉️ ${lead.email}` : null,
     lead.property_address ? `🏠 ${lead.property_address}` : null,
@@ -432,6 +466,7 @@ async function sendEmergencyPushover(
 
   const message = [
     '⚠️ A LEAD DID NOT DELIVER. Contact them now:',
+    lead.traffic_source ? `↗ ${lead.traffic_source}` : null,
     lead.name ? `👤 ${lead.name}` : null,
     lead.phone ? `📞 ${lead.phone}` : null,
     lead.email ? `✉️ ${lead.email}` : null,
@@ -576,6 +611,11 @@ export async function POST(req: NextRequest) {
       lead.email = ''
     }
 
+    // No-JS submits don't carry the stashed first touch. Copy campaign
+    // parameters off the form-page Referer when the body left them blank,
+    // and never overwrite a value the browser already captured.
+    ensureLeadAttribution(lead, req.headers.get('referer'))
+
     // ---------- Classify ----------
     const verdict = classifyLead(lead)
 
@@ -646,22 +686,29 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    const n8nBase = webhookBase('N8N_WEBHOOK_BASE', 'http://localhost:5678/webhook')
+    const cashOfferBase = webhookBase('CASH_OFFER_WEBHOOK_BASE', 'http://localhost:5679/webhook')
+    const buyerBase = webhookBase('BUYER_LEAD_WEBHOOK_BASE', 'http://localhost:5680')
+
     const isSeller = ['sell', 'seller'].includes(leadType)
     const drip = isSeller ? 'seller-lead' : 'buyer-lead'
-    enqueueWebhook(N8N_BASE, `${N8N_BASE}/${drip}`, lead)
+    enqueueWebhook(n8nBase, `${n8nBase}/${drip}`, lead)
 
     if (isCashOffer) {
-      enqueueWebhook(CASH_OFFER_BASE, `${CASH_OFFER_BASE}/cash-offer`, lead)
+      enqueueWebhook(cashOfferBase, `${cashOfferBase}/cash-offer`, lead)
     }
 
     if (isBuyerLead) {
-      enqueueWebhook(BUYER_LEAD_WEBHOOK_BASE, `${BUYER_LEAD_WEBHOOK_BASE}/buyer-lead`, {
+      const attribution: Record<string, string> = {}
+      for (const key of LEAD_ATTRIBUTION_FIELDS) attribution[key] = lead[key] || ''
+      enqueueWebhook(buyerBase, `${buyerBase}/buyer-lead`, {
         name: lead.name || '',
         phone: lead.phone || '',
         email: lead.email || '',
         subject: lead.subject || lead.lead_type || '',
         body: lead.body || '',
         source: lead.source || 'joshuafink.com',
+        ...attribution,
       })
     }
 
