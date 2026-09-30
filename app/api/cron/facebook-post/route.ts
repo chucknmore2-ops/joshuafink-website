@@ -1,14 +1,11 @@
 import { NextResponse } from 'next/server'
 import { hasPostedRef, logPost } from '@/lib/admin-db'
-import { withUtm } from '@/lib/utm'
+import { buildMonthlyFacebookPost } from '@/lib/monthly-facebook-post'
 import {
   currentSnapshot,
-  marketUpdateSlug,
-  monthLabel,
   snapshotExpectFromSearchParams,
   snapshotMatchesExpect,
   snapshotSkipReason,
-  snapshotStatLines,
 } from '@/lib/market-snapshot'
 
 export const dynamic = 'force-dynamic'
@@ -17,53 +14,15 @@ export const dynamic = 'force-dynamic'
 //
 // Fired by .github/workflows/monthly-market-update.yml after a new month lands
 // in lib/market-snapshot.ts, alongside the LinkedIn and Google Business posts.
-// All three read the
-// same figures from lib/market-snapshot.ts as the monthly blog post, so the
-// site and every channel quote identical numbers.
+// Facebook is published by Railway services/autoposter, which already holds
+// FB_PAGE_ID and FB_PAGE_TOKEN. This route does not call Graph. It reports
+// already_posted from the shared post_log row, or pending until that service
+// writes one. The healthcheck reads the same row.
 //
-// This route exists because the Railway `autoposter-stats` / `-testimonial` /
-// `-tips` / `-engagement` services in services/autoposter were never actually
-// created — they showed as permanent [GAP]s in the morning healthcheck for
-// months. Facebook's *listing spotlight* still runs on Railway
-// (services/autoposter, job `listing-spotlight`); this is a separate pipeline
-// and logs under its own job name.
-//
-// Required env vars (set in Vercel):
-//   CRON_SECRET    — same secret used by the other /api/cron/* routes
-//   FB_PAGE_ID     — numeric Page ID (same value Railway's autoposter uses)
-//   FB_PAGE_TOKEN  — Page access token with pages_manage_posts
+// Required env var (set in Vercel):
+//   CRON_SECRET — same secret used by the other /api/cron/* routes
 
-const GRAPH_VERSION = 'v19.0'
-const SITE = 'https://www.joshuafink.com'
 const JOB_NAME = 'monthly-market-update'
-
-interface PreparedPost {
-  message: string
-  link: string
-  refKey: string
-}
-
-function buildMonthlyMarketPost(): PreparedPost | null {
-  const s = currentSnapshot()
-  if (!s) return null
-  const label = monthLabel(s.month)
-  const link = withUtm(`${SITE}/blog/${marketUpdateSlug(s.month)}`, {
-    source: 'facebook',
-    medium: 'auto',
-    campaign: 'monthly-market-update',
-    content: s.month,
-  })
-  const message =
-    `📊 Middle Tennessee real estate market update — ${label}\n\n` +
-    snapshotStatLines(s).map((line) => `• ${line}`).join('\n') +
-    `\n\nSource: ${s.source}, ${label} nine-county report.\n\n` +
-    `${s.takeaways[0] ?? ''}\n\n`.trimStart() +
-    `Metro-wide medians are useful for direction, not for decisions — your street ` +
-    `is what matters. Call or text Joshua Fink at 615-551-2727 for an honest read ` +
-    `on your specific home, or read the full ${label} breakdown below.\n\n` +
-    `#NashvilleRealEstate #MiddleTennessee #JoshuaFinkGroup #Compass`
-  return { message, link, refKey: s.month }
-}
 
 export async function GET(request: Request) {
   const expected = process.env.CRON_SECRET
@@ -79,7 +38,10 @@ export async function GET(request: Request) {
   }
 
   const params = new URL(request.url).searchParams
-  const post = buildMonthlyMarketPost()
+  const built = buildMonthlyFacebookPost()
+  const post = built
+    ? { message: built.message, link: built.link, refKey: built.month }
+    : null
   const expect = snapshotExpectFromSearchParams(params)
 
   // ?preview=1 composes the copy and hands it back without touching Facebook,
@@ -132,103 +94,12 @@ export async function GET(request: Request) {
     })
   }
 
-  const pageId = process.env.FB_PAGE_ID
-  const pageToken = process.env.FB_PAGE_TOKEN
-  if (!pageId || !pageToken) {
-    // Log the early exit too — otherwise a channel that never even reaches
-    // Facebook looks identical in /admin to one that was never scheduled.
-    await logPost({
-      channel: 'facebook',
-      jobName: JOB_NAME,
-      payloadKind: 'market',
-      refKey: post.refKey,
-      status: 'failed',
-      errorMessage: 'FB_PAGE_ID or FB_PAGE_TOKEN not set',
-    })
-    return NextResponse.json(
-      { error: 'FB_PAGE_ID or FB_PAGE_TOKEN not set' },
-      { status: 500 },
-    )
-  }
-
-  const body = new URLSearchParams({
-    message: post.message,
-    link: post.link,
-    access_token: pageToken,
+  // services/autoposter publishes this month and writes the posted row.
+  // Polling must not insert a failed row on every check.
+  return NextResponse.json({
+    posted: false,
+    pending: 'autoposter',
+    month: post.refKey,
+    at: new Date().toISOString(),
   })
-
-  try {
-    const res = await fetch(
-      `https://graph.facebook.com/${GRAPH_VERSION}/${pageId}/feed`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: body.toString(),
-      },
-    )
-    if (!res.ok) {
-      // Don't log the raw upstream body — Graph API errors carry request IDs
-      // and account metadata. Status plus a sanitized snippet only.
-      const bodySnippet = await res
-        .text()
-        .then((t) => t.slice(0, 100).replace(/[^\w\s.:,\-]/g, ''))
-        .catch(() => '')
-      console.error('[facebook-post] upstream error', res.status, bodySnippet)
-      await logPost({
-        channel: 'facebook',
-        jobName: JOB_NAME,
-        payloadKind: 'market',
-        refKey: post.refKey,
-        messagePreview: post.message.slice(0, 200),
-        link: post.link,
-        externalPostId: null,
-        status: 'failed',
-        errorMessage: `upstream ${res.status} ${bodySnippet}`.slice(0, 500),
-      })
-      return NextResponse.json(
-        {
-          error: 'facebook upstream returned non-2xx',
-          upstreamStatus: res.status,
-          hint:
-            res.status === 400 || res.status === 401
-              ? 'FB_PAGE_TOKEN may have expired or lost pages_manage_posts. Re-issue it at developers.facebook.com/tools/debug/accesstoken/.'
-              : undefined,
-        },
-        { status: 502 },
-      )
-    }
-    const data = (await res.json()) as { id?: string }
-    await logPost({
-      channel: 'facebook',
-      jobName: JOB_NAME,
-      payloadKind: 'market',
-      refKey: post.refKey,
-      messagePreview: post.message.slice(0, 200),
-      link: post.link,
-      externalPostId: data.id ?? null,
-      status: 'posted',
-    })
-    return NextResponse.json({
-      posted: true,
-      postId: data.id,
-      month: post.refKey,
-      preview: post.message.slice(0, 120),
-      link: post.link,
-      at: new Date().toISOString(),
-    })
-  } catch (err) {
-    console.error('[facebook-post] network error', err)
-    await logPost({
-      channel: 'facebook',
-      jobName: JOB_NAME,
-      payloadKind: 'market',
-      refKey: post.refKey,
-      messagePreview: post.message.slice(0, 200),
-      link: post.link,
-      externalPostId: null,
-      status: 'failed',
-      errorMessage: `network: ${(err as Error).message}`.slice(0, 500),
-    })
-    return NextResponse.json({ error: 'facebook post failed' }, { status: 502 })
-  }
 }

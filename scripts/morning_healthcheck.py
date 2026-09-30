@@ -1643,11 +1643,12 @@ def _remediation_for(result: CheckResult) -> Optional[str]:
     if "monthly-market-update" in name:
         return (
             "The monthly Facebook post is stale. Fetch GNAR market snapshot "
-            "should have written lib/market-snapshot.ts (daily on the 3rd–12th) "
-            "and then posted it. Open the latest Fetch GNAR market snapshot run. "
-            "A failure on or after the 10th means the numbers were missing or "
-            "failed validation, so nothing was written. Re-run that workflow, "
-            "then Actions → Monthly Market Update."
+            "should have written lib/market-snapshot.ts (daily on the 3rd–12th). "
+            "Railway services/autoposter publishes that month to Facebook and "
+            "writes this post_log row. LinkedIn and GBP stay on the Vercel "
+            "cron. Re-run Actions → Monthly Market Update after the snapshot "
+            "is on main; it waits for the autoposter and does not re-post a "
+            "month that is already_posted."
         )
     if "vercel-cron-linkedin" in name:
         return (
