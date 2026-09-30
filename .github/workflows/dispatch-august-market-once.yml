@@ -1,0 +1,41 @@
+name: Dispatch August market update once
+
+# The agent token that merged the workflow fix cannot create a
+# workflow_dispatch event (actions: write is denied). This workflow's
+# GITHUB_TOKEN can, which is the same path fetch-gnar-snapshot.yml uses
+# after a merge. It dispatches Monthly Market Update for 2026-08 once.
+# A later run, including one caused by deleting this file, sees the
+# existing dispatch and does not post again.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dispatch-august-market-once.yml'
+
+permissions:
+  actions: write
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Dispatch August 2026 exactly once
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          count=$(gh run list \
+            --workflow monthly-market-update.yml \
+            --event workflow_dispatch \
+            --limit 5 \
+            --json databaseId \
+            --jq 'length')
+          echo "Existing workflow_dispatch runs: ${count}"
+          if [ "$count" != "0" ]; then
+            echo "A dispatch already exists. Not starting another."
+            exit 0
+          fi
+          gh workflow run monthly-market-update.yml --ref main -f month=2026-08
+          echo "Dispatched Monthly Market Update for 2026-08."
