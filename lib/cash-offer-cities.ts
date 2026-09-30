@@ -1,4 +1,5 @@
 import { getSuburb } from './suburbs'
+import { marketUpdateSlug } from './market-snapshot'
 
 /**
  * Per-city cash-offer landing content for /cash-offer/[city].
@@ -53,6 +54,21 @@ export type CashOfferCityContent = {
   situationDetails?: { id: string; heading: string; body: string; href?: string; linkLabel?: string }[]
   /** Optional related-reading links rendered on this city's cash-offer page only. */
   relatedReading?: CashOfferRelatedLink[]
+  /**
+   * Optional "what is a fair cash offer here?" FAQ block. Rendered as its own
+   * section on /cash-offer/[city] and folded into the page's single FAQPage
+   * JSON-LD (one FAQPage per page). Reuse figures already published on the
+   * site only — the Redfin city median and the 70–85% of after-repair value
+   * framing — never new numbers.
+   */
+  fairOfferFaqs?: CashOfferFaq[]
+}
+
+export type CashOfferFaq = {
+  q: string
+  a: string
+  /** Optional supporting link rendered under the visible answer. */
+  link?: CashOfferRelatedLink
 }
 
 const cityContent: Record<string, CashOfferCityContent> = {
@@ -244,6 +260,21 @@ const cityContent: Record<string, CashOfferCityContent> = {
       { href: '/blog/sell-inherited-house-nashville-tn', label: 'Selling an inherited Nashville house' },
       { href: '/blog/facing-foreclosure-nashville-tn', label: 'Facing foreclosure in Nashville' },
       { href: '/sell/nashville-tn', label: 'List your Nashville home instead' },
+    ],
+    fairOfferFaqs: [
+      {
+        q: 'What is a fair cash offer for a house in Nashville?',
+        a: "A fair cash offer starts from your home's after-repair value — what it would sell for fixed up, based on recent Davidson County comps — and accounts for the repairs it actually needs. Investor cash offers typically land at 70–85% of after-repair value; where yours falls inside that range depends on condition, not on a formula. The less work the house needs, the closer the offer should sit to the top of the range.",
+      },
+      {
+        q: "Does Nashville's median home price tell me what my cash offer will be?",
+        a: "No. Nashville's ~$480K median (Redfin, as of August 20, 2026) is a citywide midpoint that blends updated East Nashville bungalows with dated homes in Madison, Antioch, and Donelson. A fair offer on your house should be tied to comps near your address and to your home's condition, not to the citywide number. For the regional trend, see the August 2026 Middle Tennessee market update, built from Greater Nashville REALTORS® figures.",
+        link: { href: `/blog/${marketUpdateSlug('2026-08')}`, label: 'August 2026 Middle Tennessee market update' },
+      },
+      {
+        q: 'How can I tell if a Nashville cash offer is fair?',
+        a: "Ask for the math. A fair offer shows the after-repair value, the comps behind it, and the repair estimate, so you can check each piece yourself. Joshua puts that in writing next to a traditional-listing estimate, because he also lists homes with Compass. If an offer comes with no comps and no repair breakdown, compare it against a second opinion before you sign — you're never obligated to accept.",
+      },
     ],
     faqs: [
       {
@@ -594,7 +625,7 @@ export function getAllCashOfferCitySlugs(): string[] {
 // FAQs) was last reviewed. Mirrors `marketStatsLastUpdated` in lib/suburbs.ts —
 // update when refreshing this file's content. Feeds the WebPage `dateModified`
 // on /cash-offer/[city], a freshness signal these pages previously lacked.
-export const cashOfferContentLastUpdated = '2026-09-25'
+export const cashOfferContentLastUpdated = '2026-09-29'
 
 /** Lightweight list for nav/grid linking (slug + display name), in declared order. */
 export function getCashOfferCityLinks(): Array<{ slug: string; name: string }> {
