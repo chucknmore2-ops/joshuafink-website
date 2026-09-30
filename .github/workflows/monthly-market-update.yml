@@ -5,20 +5,31 @@ name: Monthly Market Update
 # post is already rendered from that file by lib/blog.ts; it goes live with
 # the deploy that carries the commit.
 #
-# Triggered by the merge from fetch-gnar-snapshot.yml (and by that workflow's
-# explicit dispatch, because a GITHUB_TOKEN merge does not start push
-# workflows). workflow_dispatch still runs it by hand.
+# Does not run on unrelated pushes. A push to main starts it only when
+# lib/market-snapshot.ts changes (the GNAR snapshot PR). fetch-gnar-snapshot.yml
+# also dispatches it, because a GITHUB_TOKEN merge does not start push
+# workflows. workflow_dispatch runs it by hand; pass month=YYYY-MM to refuse
+# any other snapshot.
 #
 # Waits until www.joshuafink.com is serving this commit's figures, then
 # posts. Each channel skips with already_posted if that month went out
 # before, so a second run does not double-post. A stale deploy is not posted.
+#
+# The production HTML check is scripts/snapshot-page-ready.mjs. Do not paste
+# a column-0 script into this file: that ends the YAML block and GitHub then
+# fails the workflow on every push with zero jobs.
 
 on:
   push:
     branches: [main]
     paths:
       - 'lib/market-snapshot.ts'
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      month:
+        description: 'Post this month only (YYYY-MM). Must be the newest snapshot. Empty posts the newest.'
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -43,6 +54,7 @@ jobs:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
           PUSHOVER_TOKEN: ${{ secrets.PUSHOVER_TOKEN }}
           PUSHOVER_USER: ${{ secrets.PUSHOVER_USER }}
+          REQUESTED_MONTH: ${{ inputs.month || '' }}
         run: |
           alert() {
             echo "::error::$1"
@@ -65,6 +77,18 @@ jobs:
           meta=$(node scripts/snapshot-expect.mjs)
           query=$(printf '%s\n' "$meta" | head -n1)
           slug=$(printf '%s\n' "$meta" | sed -n '2p')
+          got_month=$(printf '%s\n' "$query" | tr '&' '\n' | sed -n 's/^expectMonth=//p')
+          echo "Newest snapshot is ${got_month} (${slug})."
+          if [ -n "$REQUESTED_MONTH" ]; then
+            if ! printf '%s' "$REQUESTED_MONTH" | grep -Eq '^[0-9]{4}-[0-9]{2}$'; then
+              alert "month input must be YYYY-MM."
+              exit 1
+            fi
+            if [ "$got_month" != "$REQUESTED_MONTH" ]; then
+              alert "Refusing to post ${got_month}; this run was dispatched for ${REQUESTED_MONTH}."
+              exit 1
+            fi
+          fi
           median=$(printf '%s\n' "$query" | tr '&' '\n' | sed -n 's/^expectMedian=//p')
           supply=$(printf '%s\n' "$query" | tr '&' '\n' | sed -n 's/^expectSupply=//p')
           yoy_raw=$(printf '%s\n' "$query" | tr '&' '\n' | sed -n 's/^expectYoy=//p')
@@ -76,19 +100,7 @@ jobs:
           ready=0
           for attempt in $(seq 1 16); do
             html=$(curl -fsSL --max-time 25 "$page" || true)
-            if printf '%s' "$html" | MEDIAN="$median_text" SUPPLY="$supply" YOY="$yoy" python3 -c '
-import os, sys
-html = sys.stdin.read()
-ok = ("$" + os.environ["MEDIAN"]) in html
-supply = os.environ["SUPPLY"]
-yoy = os.environ["YOY"]
-if supply != "none":
-    i = html.find("Months of supply")
-    ok = ok and i >= 0 and supply in html[i:i+80]
-if yoy != "none":
-    ok = ok and yoy in html
-sys.exit(0 if ok else 1)
-'; then
+            if printf '%s' "$html" | MEDIAN="$median_text" SUPPLY="$supply" YOY="$yoy" node scripts/snapshot-page-ready.mjs; then
               ready=1
               echo "Production is serving this snapshot (attempt $attempt)."
               break
