@@ -44,7 +44,7 @@ env:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -125,7 +125,14 @@ jobs:
             echo "──────────────────────────────────────────────"
             echo "Posting via $URL"
             posted=0
-            for attempt in 1 2 3; do
+            # Facebook is published by the Railway autoposter, which wakes
+            # every 5 minutes. Wait for its post_log row. LinkedIn and GBP
+            # post in this run and return already_posted on a repeat.
+            max_attempts=3
+            case "$endpoint" in
+              facebook-post*) max_attempts=24 ;;
+            esac
+            for attempt in $(seq 1 "$max_attempts"); do
               echo "Attempt $attempt…"
               response=$(curl -sSL -w "\n%{http_code}" \
                 -H "Authorization: Bearer $CRON_SECRET" \
@@ -137,6 +144,11 @@ jobs:
               if [ "$status" = "200" ]; then
                 if echo "$body" | grep -q '"deploy_pending"'; then
                   echo "Deploy flag still pending; retrying."
+                elif echo "$body" | grep -q '"skipped":"no_snapshot"'; then
+                  echo "No current snapshot. Not posting."
+                  break
+                elif echo "$body" | grep -q '"pending":"autoposter"'; then
+                  echo "Waiting for the autoposter to publish this month."
                 elif echo "$body" | grep -q '"already_posted"'; then
                   posted=1
                   echo "Already posted for this month."
@@ -149,7 +161,9 @@ jobs:
                   echo "200 but not a confirmed post. Body left unposted."
                 fi
               fi
-              sleep $((attempt * 15))
+              if [ "$attempt" -lt "$max_attempts" ]; then
+                sleep 20
+              fi
             done
             if [ "$posted" != "1" ]; then
               echo "::error::$endpoint was not posted."
