@@ -1,9 +1,11 @@
 name: Monthly Market Update
 
-# Posts the month's Middle Tennessee market numbers to Facebook, LinkedIn,
-# and Google Business once lib/market-snapshot.ts changes on main. The blog
-# post is already rendered from that file by lib/blog.ts; it goes live with
-# the deploy that carries the commit.
+# Posts the month's Middle Tennessee market numbers to LinkedIn and Google
+# Business once lib/market-snapshot.ts changes on main. Facebook is published
+# by the Railway autoposter, which holds the Page token. This workflow only
+# waits for that service's post_log row. It does not call a site Facebook
+# endpoint. The blog post is already rendered from that file by lib/blog.ts;
+# it goes live with the deploy that carries the commit.
 #
 # Does not run on unrelated pushes. A push to main starts it only when
 # lib/market-snapshot.ts changes (the GNAR snapshot PR). fetch-gnar-snapshot.yml
@@ -12,8 +14,10 @@ name: Monthly Market Update
 # any other snapshot.
 #
 # Waits until www.joshuafink.com is serving this commit's figures, then
-# posts. Each channel skips with already_posted if that month went out
-# before, so a second run does not double-post. A stale deploy is not posted.
+# posts LinkedIn and Google Business. Each of those skips with already_posted
+# if that month went out before, so a second run does not double-post. Facebook
+# is already deduped by the autoposter on the same post_log key. A stale
+# deploy is not posted.
 #
 # The production HTML check is scripts/snapshot-page-ready.mjs. Do not paste
 # a column-0 script into this file: that ends the YAML block and GitHub then
@@ -55,6 +59,7 @@ jobs:
           PUSHOVER_TOKEN: ${{ secrets.PUSHOVER_TOKEN }}
           PUSHOVER_USER: ${{ secrets.PUSHOVER_USER }}
           REQUESTED_MONTH: ${{ inputs.month || '' }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           alert() {
             echo "::error::$1"
@@ -114,7 +119,6 @@ jobs:
           fi
 
           ENDPOINTS=(
-            "facebook-post?${query}"
             "linkedin-post?kind=market&${query}"
             "gbp-post?kind=market&${query}"
           )
@@ -125,13 +129,9 @@ jobs:
             echo "──────────────────────────────────────────────"
             echo "Posting via $URL"
             posted=0
-            # Facebook is published by the Railway autoposter, which wakes
-            # every 5 minutes. Wait for its post_log row. LinkedIn and GBP
-            # post in this run and return already_posted on a repeat.
+            # LinkedIn and GBP post in this run and return already_posted
+            # on a repeat. Facebook is not called here.
             max_attempts=3
-            case "$endpoint" in
-              facebook-post*) max_attempts=24 ;;
-            esac
             for attempt in $(seq 1 "$max_attempts"); do
               echo "Attempt $attempt…"
               response=$(curl -sSL -w "\n%{http_code}" \
@@ -170,6 +170,38 @@ jobs:
               failed=$((failed + 1))
             fi
           done
+
+          # The autoposter tick publishes Facebook and writes the dedupe row.
+          # Poll that row. Do not call the site.
+          python3 -m pip install --quiet 'psycopg2-binary==2.9.10'
+          fb_posted=0
+          fb_error=0
+          for attempt in $(seq 1 24); do
+            set +e
+            python3 scripts/monthly-facebook-row.py "$got_month"
+            code=$?
+            set -e
+            if [ "$code" -eq 0 ]; then
+              fb_posted=1
+              echo "Facebook post_log row is present for ${got_month}."
+              break
+            fi
+            if [ "$code" -ne 2 ]; then
+              echo "::error::Facebook post_log for ${got_month} is not exactly one posted row with an external id."
+              fb_error=1
+              break
+            fi
+            echo "Autoposter has not recorded ${got_month} yet (attempt $attempt)."
+            if [ "$attempt" -lt 24 ]; then
+              sleep 20
+            fi
+          done
+          if [ "$fb_posted" != "1" ]; then
+            if [ "$fb_error" != "1" ]; then
+              echo "::error::Facebook monthly market update was not recorded for ${got_month}."
+            fi
+            failed=$((failed + 1))
+          fi
 
           if [ "$failed" -gt 0 ]; then
             alert "${failed} market channel(s) did not post. See run ${{ github.run_id }}."
