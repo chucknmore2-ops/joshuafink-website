@@ -13,11 +13,11 @@ name: Monthly Market Update
 # workflows. workflow_dispatch runs it by hand; pass month=YYYY-MM to refuse
 # any other snapshot.
 #
-# Waits until www.joshuafink.com is serving this commit's figures, then
-# posts LinkedIn and Google Business. Each of those skips with already_posted
-# if that month went out before, so a second run does not double-post. Facebook
-# is already deduped by the autoposter on the same post_log key. A stale
-# deploy is not posted.
+# A month outside the publish window, or a month that already has a posted
+# row on every channel, exits green without calling the post routes. If
+# production is not serving the month yet, the run polls for a bounded time
+# and then exits green with a notice. It does not send a failure alert for
+# that wait. A stale deploy is not posted.
 #
 # The production HTML check is scripts/snapshot-page-ready.mjs. Do not paste
 # a column-0 script into this file: that ends the YAML block and GitHub then
@@ -74,6 +74,11 @@ jobs:
             fi
           }
 
+          notice() {
+            echo "$1"
+            echo "::notice::$1"
+          }
+
           if [ -z "$CRON_SECRET" ]; then
             alert "CRON_SECRET is not set in repo secrets."
             exit 1
@@ -94,6 +99,35 @@ jobs:
               exit 1
             fi
           fi
+
+          set +e
+          window_out=$(node scripts/snapshot-publish-window.mjs)
+          window_code=$?
+          set -e
+          echo "$window_out"
+          if [ "$window_code" -eq 2 ]; then
+            notice "Month ${got_month} is outside the publish window. Not posting."
+            exit 0
+          fi
+          if [ "$window_code" -ne 0 ]; then
+            alert "Could not read the publish window for ${got_month}."
+            exit 1
+          fi
+
+          python3 -m pip install --quiet 'psycopg2-binary==2.9.10'
+          set +e
+          python3 scripts/monthly-channels-posted.py "$got_month"
+          channels_code=$?
+          set -e
+          if [ "$channels_code" -eq 0 ]; then
+            notice "LinkedIn, Google Business, and Facebook already have a posted row for ${got_month}. Not posting."
+            exit 0
+          fi
+          if [ "$channels_code" -ne 2 ]; then
+            alert "Could not read monthly post_log for ${got_month}."
+            exit 1
+          fi
+
           median=$(printf '%s\n' "$query" | tr '&' '\n' | sed -n 's/^expectMedian=//p')
           supply=$(printf '%s\n' "$query" | tr '&' '\n' | sed -n 's/^expectSupply=//p')
           yoy_raw=$(printf '%s\n' "$query" | tr '&' '\n' | sed -n 's/^expectYoy=//p')
@@ -114,9 +148,53 @@ jobs:
             sleep 30
           done
           if [ "$ready" != "1" ]; then
-            alert "Production never served ${slug} with median ${median_text}. Social posts were not sent."
-            exit 1
+            notice "Production is not serving ${got_month} after the wait. Not posting."
+            exit 0
           fi
+
+          # 0 = posted or already posted. 2 = still not on production. 1 = hard failure.
+          post_one() {
+            local endpoint="$1"
+            local url="https://www.joshuafink.com/api/cron/${endpoint}"
+            echo "──────────────────────────────────────────────"
+            echo "Posting via $url"
+            local attempt response status body
+            for attempt in $(seq 1 16); do
+              echo "Attempt $attempt…"
+              response=$(curl -sSL -w "\n%{http_code}" \
+                -H "Authorization: Bearer $CRON_SECRET" \
+                "$url" || true)
+              status=$(echo "$response" | tail -n1)
+              body=$(echo "$response" | sed '$d')
+              echo "HTTP $status"
+              echo "$body"
+              if [ "$status" = "200" ]; then
+                if echo "$body" | grep -q '"deploy_pending"'; then
+                  echo "Production route is not serving ${got_month} yet."
+                elif echo "$body" | grep -q '"skipped":"no_snapshot"'; then
+                  echo "Production has no current snapshot. Not posting."
+                  return 2
+                elif echo "$body" | grep -q '"already_posted"'; then
+                  echo "Already posted for this month."
+                  return 0
+                elif echo "$body" | grep -q '"posted":true\|"posted": true'; then
+                  echo "Posted."
+                  return 0
+                else
+                  echo "200 but not a confirmed post."
+                  return 1
+                fi
+              else
+                echo "Request failed with HTTP ${status}."
+                return 1
+              fi
+              if [ "$attempt" -lt 16 ]; then
+                sleep 20
+              fi
+            done
+            echo "Production did not start serving ${got_month} on this route. Not posting."
+            return 2
+          }
 
           ENDPOINTS=(
             "linkedin-post?kind=market&${query}"
@@ -124,56 +202,34 @@ jobs:
           )
 
           failed=0
+          skipped=0
           for endpoint in "${ENDPOINTS[@]}"; do
-            URL="https://www.joshuafink.com/api/cron/${endpoint}"
-            echo "──────────────────────────────────────────────"
-            echo "Posting via $URL"
-            posted=0
-            # LinkedIn and GBP post in this run and return already_posted
-            # on a repeat. Facebook is not called here.
-            max_attempts=3
-            for attempt in $(seq 1 "$max_attempts"); do
-              echo "Attempt $attempt…"
-              response=$(curl -sSL -w "\n%{http_code}" \
-                -H "Authorization: Bearer $CRON_SECRET" \
-                "$URL" || true)
-              status=$(echo "$response" | tail -n1)
-              body=$(echo "$response" | sed '$d')
-              echo "HTTP $status"
-              echo "$body"
-              if [ "$status" = "200" ]; then
-                if echo "$body" | grep -q '"deploy_pending"'; then
-                  echo "Deploy flag still pending; retrying."
-                elif echo "$body" | grep -q '"skipped":"no_snapshot"'; then
-                  echo "No current snapshot. Not posting."
-                  break
-                elif echo "$body" | grep -q '"pending":"autoposter"'; then
-                  echo "Waiting for the autoposter to publish this month."
-                elif echo "$body" | grep -q '"already_posted"'; then
-                  posted=1
-                  echo "Already posted for this month."
-                  break
-                elif echo "$body" | grep -q '"posted":true\|"posted": true'; then
-                  posted=1
-                  echo "Posted."
-                  break
-                else
-                  echo "200 but not a confirmed post. Body left unposted."
-                fi
-              fi
-              if [ "$attempt" -lt "$max_attempts" ]; then
-                sleep 20
-              fi
-            done
-            if [ "$posted" != "1" ]; then
-              echo "::error::$endpoint was not posted."
-              failed=$((failed + 1))
+            set +e
+            post_one "$endpoint"
+            code=$?
+            set -e
+            if [ "$code" -eq 0 ]; then
+              continue
             fi
+            if [ "$code" -eq 2 ]; then
+              skipped=$((skipped + 1))
+              continue
+            fi
+            echo "::error::$endpoint was not posted."
+            failed=$((failed + 1))
           done
+
+          if [ "$failed" -gt 0 ]; then
+            alert "${failed} market channel(s) did not post. See run ${{ github.run_id }}."
+            exit 1
+          fi
+          if [ "$skipped" -gt 0 ]; then
+            notice "Production is not serving ${got_month} on every channel after the wait. Not posting."
+            exit 0
+          fi
 
           # The autoposter tick publishes Facebook and writes the dedupe row.
           # Poll that row. Do not call the site.
-          python3 -m pip install --quiet 'psycopg2-binary==2.9.10'
           fb_posted=0
           fb_error=0
           for attempt in $(seq 1 24); do
@@ -200,11 +256,7 @@ jobs:
             if [ "$fb_error" != "1" ]; then
               echo "::error::Facebook monthly market update was not recorded for ${got_month}."
             fi
-            failed=$((failed + 1))
-          fi
-
-          if [ "$failed" -gt 0 ]; then
-            alert "${failed} market channel(s) did not post. See run ${{ github.run_id }}."
+            alert "Facebook monthly market update was not recorded for ${got_month}. See run ${{ github.run_id }}."
             exit 1
           fi
           echo "Done."
