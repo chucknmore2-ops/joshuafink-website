@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-09-30T14:45:25.558Z
+// AUTO-GENERATED — Last synced: 2026-10-01T15:20:44.920Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -21,33 +21,9 @@ export interface Listing {
 
 // Mirrors the header timestamp so server components can compute sync staleness
 // without parsing comments. Updated by scripts/fetch-images.mjs each sync.
-export const listingsSyncedAt = "2026-09-30T14:45:25.558Z";
+export const listingsSyncedAt = "2026-10-01T15:20:44.920Z";
 
 export const listings: Listing[] = [
-  {
-    address: "511 Wanda Dr",
-    city: "Nashville, TN 37210 | MLS #3524691",
-    price: 414500,
-    beds: 4,
-    baths: 2,
-    sqft: 1400,
-    status: "Active",
-    compassUrl: "https://www.compass.com/homedetails/511-Wanda-Dr-Nashville-TN-37210/SDYP1_pid/",
-    imageUrl: "https://www.compass.com/m/f0024ff837d3adc039ba8c6d1dc635742a6efeecc314e741179475524cec3185/2048x1536.webp",
-    lastVerified: listingsSyncedAt,
-  },
-  {
-    address: "4127 Edwards Ave",
-    city: "Nashville, TN 37216 | MLS #3319964",
-    price: 409900,
-    beds: 3,
-    baths: 1,
-    sqft: 1223,
-    status: "Active",
-    compassUrl: "https://www.compass.com/homedetails/4127-Edwards-Ave-Nashville-TN-37216/THUS9_pid/",
-    imageUrl: "https://www.compass.com/m/a9acaa52f1af4a5177df8b946004d09e9a06867e02336fcf803a804d4570b560/2048x1536.webp",
-    lastVerified: listingsSyncedAt,
-  },
   {
     address: "1100 Gibson Dr",
     city: "Madison, TN 37115",
@@ -106,18 +82,6 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/2037-Walnut-Ln-Gallatin-TN-37066/SFFDI_pid/",
     imageUrl: "https://www.compass.com/m/cfb0b5c09b81c0659c2b0baa6b3bc9332777f4a2bd4d6d647b185638b946738f/2048x1536.webp",
-    lastVerified: listingsSyncedAt,
-  },
-  {
-    address: "4874 Sparta Pike",
-    city: "Watertown, TN 37184 | MLS #3319962",
-    price: 299900,
-    beds: 3,
-    baths: 1,
-    sqft: 1248,
-    status: "Active",
-    compassUrl: "https://www.compass.com/homedetails/4874-Sparta-Pike-Watertown-TN-37184/TMU6R_pid/",
-    imageUrl: "https://www.compass.com/m/9271db1e1cbdb146eb498cd63a192c09a438f39c3b9627023b0cbda6f044a677/2048x1536.webp",
     lastVerified: listingsSyncedAt,
   }
 ];
