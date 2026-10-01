@@ -10,7 +10,7 @@ Three Vercel Cron jobs + one GitHub Actions job run on a schedule for joshuafink
 | Google Business Profile post | Vercel Cron | `0 14 * * 2` (Tue) | 9am Tuesdays | `CRON_SECRET`, `GBP_*` (5 vars) |
 | LinkedIn post | Vercel Cron | `0 14 * * 4` (Thu) | 9am Thursdays | `CRON_SECRET`, `LINKEDIN_*` (2 vars) |
 | Instagram post | GitHub Actions `social-autopost.yml` | `0 14 * * 3` (Wed) | 9am Wednesdays | `CRON_SECRET`, `BUFFER_API_KEY`, `BUFFER_IG_CHANNEL_ID` (GitHub secrets). Graph stays off (`IG_AUTOPOST=buffer`). |
-| **Monthly market update** (FB + LinkedIn + GBP) | GitHub Actions | `0 14 5 * *` (5th) | 9am on the 5th | `CRON_SECRET`, `FB_PAGE_ID`, `FB_PAGE_TOKEN`, plus the `LINKEDIN_*` / `GBP_*` vars above |
+| **Monthly market update** (LinkedIn + GBP; Facebook via Railway) | GitHub Actions + Railway autoposter | when the GNAR snapshot merges | typically the 6th–8th | `CRON_SECRET`, `DATABASE_URL` (post_log read), plus the `LINKEDIN_*` / `GBP_*` vars above. Facebook uses the autoposter's Page token, not Vercel. |
 | Compass listings sync | GitHub Actions | `0 8 * * 1` (Mon) | 3am Mondays | None (uses Playwright against public page) |
 
 ## Vercel env vars
@@ -32,9 +32,10 @@ LINKEDIN_ACCESS_TOKEN    = <from /api/linkedin/callback response>
 LINKEDIN_AUTHOR_URN      = urn:li:person:XXXXXXXX (from /api/linkedin/callback response)
 IG_BUSINESS_ACCOUNT_ID   = unused by the live path (Graph leftovers; do not point autopost back at Graph)
 IG_ACCESS_TOKEN          = unused by the live path (Graph leftovers)
-FB_PAGE_ID               = <numeric Facebook Page ID — same value Railway's autoposter uses>
-FB_PAGE_TOKEN            = <Page access token w/ pages_manage_posts — same value as Railway>
 ```
+
+Facebook Page credentials stay on the Railway autoposter only. Do not add
+`FB_PAGE_ID` or `FB_PAGE_TOKEN` to Vercel. The site does not read them.
 
 Instagram does not use the Graph vars above. Social Autopost reads GitHub
 secrets `BUFFER_API_KEY` and `BUFFER_IG_CHANNEL_ID` and forwards them to
@@ -122,7 +123,7 @@ You need a refresh_token with the `https://www.googleapis.com/auth/business.mana
 
 `.github/workflows/fetch-gnar-snapshot.yml` runs that script at 15:00 UTC on the 3rd–12th of each month (and whenever you run it by hand). GNAR usually publishes around the 6th–8th. Through the 8th it waits if the stats are in but the release is not, so months of supply can be included. From the 9th it publishes the validated stats anyway and omits months of supply.
 
-A new month is committed by opening an auto-merging pull request (main rejects a direct push). `lib/blog.ts` renders `/blog/middle-tennessee-market-update-<month>-<year>` from that entry, so the post goes live with the merge. `.github/workflows/monthly-market-update.yml` then waits until the production blog is serving those figures and posts them to Facebook, LinkedIn, and Google Business. A month that was already posted is skipped.
+A new month is committed by opening an auto-merging pull request (main rejects a direct push). `lib/blog.ts` renders `/blog/middle-tennessee-market-update-<month>-<year>` from that entry, so the post goes live with the merge. `.github/workflows/monthly-market-update.yml` then waits until the production blog is serving those figures and posts them to LinkedIn and Google Business. Facebook is published by the Railway autoposter (`services/autoposter`, every 5 minutes). It fetches `/api/market-update/facebook` and writes one `post_log` row for `(facebook, monthly-market-update, YYYY-MM)`. A month that was already posted is skipped.
 
 **If the month is already in `lib/market-snapshot.ts`, the run does nothing.**
 
@@ -133,15 +134,15 @@ A new month is committed by opening an auto-merging pull request (main rejects a
 **Preview before publishing:**
 
 ```bash
-curl -H "Authorization: Bearer $CRON_SECRET" \
-  'https://www.joshuafink.com/api/cron/facebook-post?preview=1'
+curl 'https://www.joshuafink.com/api/market-update/facebook'
 curl -H "Authorization: Bearer $CRON_SECRET" \
   'https://www.joshuafink.com/api/cron/linkedin-post?kind=market&preview=1'
 ```
 
-`?preview=1` composes the copy and hands it back without touching Facebook or LinkedIn.
+The Facebook URL is the copy the autoposter posts. It does not publish.
+`?preview=1` on LinkedIn composes the copy and hands it back without posting.
 
-> **Note on Facebook.** Only the *listing spotlight* posts run on Railway (`services/autoposter`, M/W/F). The four Railway content services — `autoposter-stats`, `-testimonial`, `-tips`, `-engagement` — were listed in the schedule for months but never actually created in Railway, which is why the healthcheck reported them as permanent `[GAP]`s. `/api/cron/facebook-post` replaces the market-stats one; the other three are simply gone from the schedule.
+> **Note on Facebook.** Listing spotlight and the monthly market post both run on Railway (`services/autoposter`). The Page token is a Railway variable. The site never calls Graph for the Page feed.
 
 ### 5. GitHub Actions — listings sync
 

@@ -2,12 +2,13 @@
  * Monthly Middle Tennessee market snapshot — one month of numbers, read by
  * every channel that publishes them.
  *
- * The monthly blog post (lib/blog.ts), the Facebook post
- * (/api/cron/facebook-post), the LinkedIn post (/api/cron/linkedin-post?kind=market)
- * and the Google Business post (/api/cron/gbp-post?kind=market) all read this
- * file, so the site and every social channel quote the same figures and can't
- * drift apart. Nothing here is derived or estimated — every number is typed in
- * from a named published report.
+ * The monthly blog post (lib/blog.ts), the Facebook post (Railway autoposter,
+ * copy from /api/market-update/facebook), the LinkedIn post
+ * (/api/cron/linkedin-post?kind=market) and the Google Business post
+ * (/api/cron/gbp-post?kind=market) all read this file, so the site and every
+ * social channel quote the same figures and can't drift apart. Nothing here
+ * is derived or estimated — every number is typed in from a named published
+ * report.
  *
  * ── HOW A MONTH GETS PUBLISHED ─────────────────────────────────────────────
  *
@@ -17,8 +18,9 @@
  * that release. .github/workflows/fetch-gnar-snapshot.yml runs it daily on
  * the 3rd–12th. A validated new month is committed and auto-merged to main.
  * lib/blog.ts renders the post from that entry. The monthly social workflow
- * then posts Facebook, LinkedIn, and Google Business once production is
- * serving the same figures.
+ * then posts LinkedIn and Google Business once production is serving the
+ * same figures. The Railway autoposter posts Facebook on its next tick from
+ * that deployed snapshot.
  *
  * Nothing here is estimated. A failed check writes nothing. If the month is
  * still missing on the 10th, that workflow sends a Pushover alert.

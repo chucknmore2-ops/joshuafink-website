@@ -118,9 +118,10 @@ EXPECTED_JOBS: tuple[ExpectedJob, ...] = (
         cadence_ct="Mon/Wed/Fri 9:00am CT",
         max_age_days=4,
     ),
-    # Monthly market update — fetch-gnar-snapshot.yml merges the month, then
-    # monthly-market-update.yml posts FB + LinkedIn + GBP. Facebook is the
-    # canary. The post can land any day from the 3rd through the 12th, so the
+    # Monthly market update — fetch-gnar-snapshot.yml merges the month. The
+    # Railway autoposter posts Facebook; monthly-market-update.yml posts
+    # LinkedIn and GBP. Facebook is the canary. The post can land any day
+    # from the 3rd through the 12th, so the
     # gap from an early month (the 3rd) to a late one (the 12th) is about 40
     # days. 42d still pages when a whole month is missed.
     #

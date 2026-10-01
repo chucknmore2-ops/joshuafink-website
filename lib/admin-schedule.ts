@@ -28,10 +28,10 @@ export const scheduledJobs: ScheduledJob[] = [
   {
     // Fired by .github/workflows/monthly-market-update.yml after
     // fetch-gnar-snapshot.yml merges a new month into lib/market-snapshot.ts.
-    // Hits /api/cron/facebook-post, /api/cron/linkedin-post?kind=market and
-    // /api/cron/gbp-post?kind=market together. All three read that file — the
-    // same numbers as the blog post. Facebook is the freshness canary for the
-    // whole monthly job in scripts/morning_healthcheck.py.
+    // That workflow posts LinkedIn and Google Business. Facebook is published
+    // by the Railway autoposter, which reads /api/market-update/facebook and
+    // dedupes on post_log (facebook, monthly-market-update, YYYY-MM). That
+    // Facebook row is the freshness canary in scripts/morning_healthcheck.py.
     //
     // Replaces the four Railway `autoposter-*` content services (market-stats,
     // testimonial, tips, engagement) that were listed here for months but were
