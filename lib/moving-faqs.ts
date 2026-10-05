@@ -49,3 +49,50 @@ export function homesCostFaqAnswer(): string {
     `Joshua can pull exact, current comps for any specific area.`
   )
 }
+
+export const HOUSING_MARKET_FAQ_QUESTION =
+  "What's the Middle Tennessee housing market like right now?"
+
+function joinList(parts: string[]): string {
+  if (parts.length <= 1) return parts[0] ?? ''
+  if (parts.length === 2) return `${parts[0]} and ${parts[1]}`
+  return `${parts.slice(0, -1).join(', ')}, and ${parts[parts.length - 1]}`
+}
+
+/**
+ * “What's the Middle Tennessee housing market like right now?” — figures come
+ * only from the newest Greater Nashville REALTORS® entry in
+ * lib/market-snapshot.ts. Missing fields are omitted, never estimated.
+ */
+export function housingMarketFaqAnswer(): string {
+  const gnar = latestSnapshot()
+  if (!gnar) {
+    return (
+      'A current Greater Nashville REALTORS® regional snapshot is not on this page yet. ' +
+      'Joshua Fink and the Joshua Fink Group at Compass Real Estate can walk through the latest Middle Tennessee numbers for the city you are considering.'
+    )
+  }
+
+  const label = monthLabel(gnar.month)
+  const count = (value: number) => value.toLocaleString('en-US')
+  const yoy = gnar.medianYoyChange ? `, ${gnar.medianYoyChange} year over year` : ''
+  const daysPhrase =
+    gnar.daysMetric === 'list-to-contract'
+      ? `a ${gnar.avgDaysOnMarket}-day average list-to-contract time`
+      : `an average of ${gnar.avgDaysOnMarket} days on market`
+  const detailParts = [
+    `${count(gnar.closedSales)} closings`,
+    `${count(gnar.activeListings)} active listings`,
+  ]
+  if (gnar.monthsOfInventory != null) {
+    detailParts.push(`${gnar.monthsOfInventory} months of supply`)
+  }
+  const updateUrl = `${SITE_ORIGIN}${gnarMarketUpdatePath()}`
+
+  return (
+    `Right now, per ${gnar.source}, ${label}, the nine-county Middle Tennessee residential median is ${gnar.medianSalePrice}${yoy}. ` +
+    `The same report shows ${joinList(detailParts)}, with ${daysPhrase}. ` +
+    `Joshua Fink and the Joshua Fink Group at Compass Real Estate work with buyers and sellers across Middle Tennessee and can translate those regional numbers into a plan for a specific city or neighborhood. ` +
+    `See the full ${label} write-up at ${updateUrl}.`
+  )
+}

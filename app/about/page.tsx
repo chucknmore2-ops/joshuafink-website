@@ -213,6 +213,12 @@ export default function AboutPage() {
             </p>
             <div className="text-[#333] leading-relaxed space-y-4 text-base">
               <p>
+                Joshua Fink is an Affiliate Broker with Compass Real Estate serving Middle Tennessee,
+                including Nashville, Franklin, Brentwood, Spring Hill, and the surrounding suburbs.
+                He has 17+ years of experience and holds Tennessee Real Estate Commission license
+                #351484.
+              </p>
+              <p>
                 Joshua Fink is a leading realtor in Middle Tennessee. Josh is an experienced and
                 knowledgeable professional with in-depth knowledge of the market, strong negotiation
                 skills, and valuable relationships with local agents. Most importantly, he knows how
