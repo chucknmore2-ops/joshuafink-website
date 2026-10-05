@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { latestSnapshot } from './market-snapshot.ts'
+import { marketSnapshots } from './market-snapshot.ts'
 import {
   buildSnapshot,
   categoryClosings,
@@ -101,7 +101,9 @@ describe('GNAR snapshot builder', () => {
     })
     assert.equal(built.ok, true)
     if (!built.ok) return
-    assert.deepEqual(built.built.snapshot, latestSnapshot())
+    const checkedIn = marketSnapshots.find((s) => s.month === '2026-08')
+    assert.ok(checkedIn)
+    assert.deepEqual(built.built.snapshot, checkedIn)
     const source = readFileSync(new URL('./market-snapshot.ts', import.meta.url), 'utf8')
     assert.ok(source.includes(formatSnapshotBlock(built.built)))
   })

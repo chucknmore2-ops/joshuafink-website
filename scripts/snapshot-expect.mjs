@@ -3,7 +3,7 @@
  * posts only after it is serving this commit's snapshot.
  *
  *   node scripts/snapshot-expect.mjs
- *   → expectMonth=2026-08&expectMedian=515725&...
+ *   → expectMonth=<newest YYYY-MM>&expectMedian=<median>&...
  */
 
 import { readFileSync } from 'node:fs'
