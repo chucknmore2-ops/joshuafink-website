@@ -8,26 +8,40 @@ import {
   marketReadFromSupply,
   marketSnapshots,
   marketUpdateSlug,
+  MAX_MONTHS_BEHIND,
   monthLabel,
   showsGnarRegionalSnapshot,
   snapshotDaysStat,
   snapshotMatchesExpect,
   snapshotMedianLine,
   snapshotStatLines,
+  type MarketSnapshot,
 } from './market-snapshot.ts'
 
-describe('August 2026 GNAR snapshot', () => {
-  const august = latestSnapshot()
+function snapshotFor(month: string): MarketSnapshot {
+  const found = marketSnapshots.find((s) => s.month === month)
+  assert.ok(found, `${month} snapshot is checked in`)
+  return found
+}
 
-  it('is the current/latest month', () => {
-    assert.ok(august)
+/** UTC date `monthsAfter` calendar months after `isoMonth`, on `day`. */
+function dateAfterMonth(isoMonth: string, monthsAfter: number, day: number, hour = 12): Date {
+  const [year, month] = isoMonth.split('-').map(Number)
+  return new Date(Date.UTC(year, month - 1 + monthsAfter, day, hour))
+}
+
+describe('August 2026 GNAR snapshot', () => {
+  const august = snapshotFor('2026-08')
+
+  it('stays checked in with July behind it', () => {
     assert.equal(august.month, '2026-08')
     assert.equal(monthLabel(august.month), 'August 2026')
     assert.equal(
       marketUpdateSlug(august.month),
       'middle-tennessee-market-update-august-2026',
     )
-    assert.equal(marketSnapshots[1]?.month, '2026-07')
+    const index = marketSnapshots.findIndex((s) => s.month === '2026-08')
+    assert.equal(marketSnapshots[index + 1]?.month, '2026-07')
   })
 
   it('is reused on Franklin and Nolensville buy pages', () => {
@@ -56,12 +70,6 @@ describe('August 2026 GNAR snapshot', () => {
     )
   })
 
-  it('is current enough to publish in September 2026', () => {
-    const s = currentSnapshot(new Date('2026-09-07T12:00:00Z'))
-    assert.ok(s)
-    assert.equal(s.month, '2026-08')
-  })
-
   it('quotes the release YoY, months of supply, and list-to-contract label', () => {
     assert.ok(august)
     assert.equal(snapshotMedianLine(august), '$515,725 (+2.1% year over year)')
@@ -76,29 +84,9 @@ describe('August 2026 GNAR snapshot', () => {
     assert.ok(lines.some((l) => l.includes('Months of supply: 5.8')))
   })
 
-  it('treats a deploy as pending until production matches the committed snapshot', () => {
-    assert.ok(august)
-    assert.equal(
-      snapshotMatchesExpect(august, {
-        expectMonth: '2026-08',
-        expectMedian: '515725',
-        expectClosings: '2928',
-        expectSupply: '5.8',
-        expectYoy: '+2.1%',
-      }),
-      true,
-    )
-    assert.equal(
-      snapshotMatchesExpect(august, { expectMonth: '2026-09', expectMedian: '1' }),
-      false,
-    )
-    assert.equal(snapshotMatchesExpect(null, { expectMonth: '2026-08' }), false)
-  })
-
-  it('leads the blog with the generated August post', () => {
-    const post = blogPosts[0]
+  it('still quotes the generated August post after newer months are added', () => {
+    const post = blogPosts.find((p) => p.slug === 'middle-tennessee-market-update-august-2026')
     assert.ok(post)
-    assert.equal(post.slug, 'middle-tennessee-market-update-august-2026')
     assert.ok(post.content.includes('$515,725'))
     assert.ok(post.content.includes('$339,995'))
     assert.ok(post.content.includes('2,928'))
@@ -114,5 +102,83 @@ describe('August 2026 GNAR snapshot', () => {
     )
     assert.ok(julyGenerated)
     assert.ok(julyGenerated.content.includes('$520,000'))
+  })
+})
+
+describe('newest checked-in GNAR snapshot', () => {
+  it('is the current/latest month', () => {
+    const latest = latestSnapshot()
+    assert.ok(latest)
+    assert.equal(latest, marketSnapshots[0])
+    const [year, month] = latest.month.split('-').map(Number)
+    const label = new Date(Date.UTC(year, month - 1, 1)).toLocaleString('en-US', {
+      month: 'long',
+      year: 'numeric',
+      timeZone: 'UTC',
+    })
+    assert.equal(monthLabel(latest.month), label)
+    assert.equal(
+      marketUpdateSlug(latest.month),
+      `middle-tennessee-market-update-${label.toLowerCase().replace(/\s+/g, '-')}`,
+    )
+    const prev = new Date(Date.UTC(year, month - 2, 1))
+    const prevMonth = `${prev.getUTCFullYear()}-${String(prev.getUTCMonth() + 1).padStart(2, '0')}`
+    assert.equal(marketSnapshots[1]?.month, prevMonth)
+  })
+
+  it('is current enough to publish through the following month', () => {
+    const latest = latestSnapshot()
+    assert.ok(latest)
+    const duringFollowingMonth = dateAfterMonth(latest.month, 1, 7)
+    const s = currentSnapshot(duringFollowingMonth)
+    assert.ok(s)
+    assert.equal(s.month, latest.month)
+    assert.equal(currentSnapshot(dateAfterMonth(latest.month, MAX_MONTHS_BEHIND + 1, 1, 0)), null)
+  })
+
+  it('treats a deploy as pending until production matches the committed snapshot', () => {
+    const latest = latestSnapshot()
+    assert.ok(latest)
+    assert.equal(
+      snapshotMatchesExpect(latest, {
+        expectMonth: latest.month,
+        expectMedian: String(latest.medianSalePriceNum),
+        expectClosings: String(latest.closedSales),
+        expectSupply: latest.monthsOfInventory == null ? 'none' : String(latest.monthsOfInventory),
+        expectYoy: latest.medianYoyChange ?? 'none',
+      }),
+      true,
+    )
+    assert.equal(
+      snapshotMatchesExpect(latest, { expectMonth: latest.month, expectMedian: '1' }),
+      false,
+    )
+    assert.equal(snapshotMatchesExpect(null, { expectMonth: latest.month }), false)
+  })
+
+  it('leads the blog with the generated post for the newest month', () => {
+    const latest = latestSnapshot()
+    assert.ok(latest)
+    const post = blogPosts[0]
+    assert.ok(post)
+    assert.equal(post.slug, marketUpdateSlug(latest.month))
+    assert.ok(post.content.includes(latest.medianSalePrice))
+    assert.ok(post.content.includes(latest.closedSales.toLocaleString('en-US')))
+    assert.ok(post.content.includes(latest.activeListings.toLocaleString('en-US')))
+    if (latest.condoMedianPrice) assert.ok(post.content.includes(latest.condoMedianPrice))
+    if (latest.pendingSales != null) {
+      assert.ok(post.content.includes(latest.pendingSales.toLocaleString('en-US')))
+    }
+    assert.ok(post.content.includes('nine-county'))
+    if (latest.medianYoyChange) assert.ok(post.content.includes(latest.medianYoyChange))
+    if (latest.monthsOfInventory != null) {
+      assert.ok(post.content.includes(String(latest.monthsOfInventory)))
+    }
+    if (latest.daysMetric === 'list-to-contract') {
+      assert.ok(post.content.includes('List to contract'))
+    }
+    if (latest.medianYoyChange && latest.monthsOfInventory != null) {
+      assert.doesNotMatch(post.content, /did not publish year-over-year or months-of-supply/)
+    }
   })
 })
