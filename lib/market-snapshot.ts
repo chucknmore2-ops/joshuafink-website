@@ -106,6 +106,29 @@ export interface MarketSnapshot {
  */
 export const marketSnapshots: MarketSnapshot[] = [
   {
+    month: '2026-09',
+    medianSalePrice: '$510,000',
+    medianSalePriceNum: 510000,
+    medianYoyChange: '+4.1%', // $510,000 vs September 2025 $490,000
+    avgDaysOnMarket: 57,
+    daysMetric: 'list-to-contract', // release: average list-to-contract time
+    closedSales: 2885, // 2284 residential + 452 condominium + 20 multi-family + 129 farms, land, and lots
+    activeListings: 15536, // 10462 residential + 2788 condominium + 143 multi-family + 2143 farms, land, and lots
+    monthsOfInventory: 5.7, // release: "5.7 months of available inventory"
+    condoMedianPrice: '$331,780',
+    condoMedianPriceNum: 331780,
+    pendingSales: 2045,
+    source: 'Greater Nashville REALTORS®',
+    sourceUrl: 'https://www.greaternashvillerealtors.org/news/september-homes-sales-continued-to-show-mixed-results-across-counties-and-price-points',
+    reportDate: '2026-10-07',
+    takeaways: [
+      'September 2026 closed 2,885 nine-county sales: 2,284 residential, 452 condominium, 20 multi-family, and 129 farms, land, and lots.',
+      'The residential median was $510,000, +4.1% from $490,000 in September 2025.',
+      'The condominium median was $331,780, compared with $329,250 in September 2025.',
+      'Active inventory was 15,536, with 2,045 pending sales. Average list-to-contract time was 57 days. The release reported 5.7 months of available inventory.',
+    ],
+  },
+  {
     month: '2026-08',
     medianSalePrice: '$515,725',
     medianSalePriceNum: 515725,
