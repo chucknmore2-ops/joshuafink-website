@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getSuburb, getAllSuburbSlugs, getSuburbSlugForListing, citywideStatsCitation, marketStatsLastUpdated, suburbCityGeo, type Suburb } from '@/lib/suburbs'
+import { getSuburb, getAllSuburbSlugs, getSuburbSlugForListing, citywideStatsCitation, marketStatsLastUpdated, suburbCityGeo, yoyColor, type Suburb } from '@/lib/suburbs'
 import { listings } from '@/lib/listings'
 import { schools } from '@/lib/schools'
 import ListingCard from '@/components/ListingCard'
@@ -499,8 +499,8 @@ export default async function BuySuburbPage({ params }: Props) {
                 <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">Price Per Sq Ft</p>
               </div>
               <div className="bg-white p-6 border border-[#E8E8E8]">
-                <p className="text-3xl font-black" style={{ color: '#16a34a' }}>{suburb.yoyChange}</p>
-                <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">YoY Appreciation</p>
+                <p className="text-3xl font-black" style={{ color: yoyColor(suburb.yoyChange) }}>{suburb.yoyChange}</p>
+                <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">YoY Price Change</p>
               </div>
             </div>
           </div>
@@ -562,8 +562,8 @@ export default async function BuySuburbPage({ params }: Props) {
                     </div>
                   )}
                   <div className="flex justify-between items-center">
-                    <dt className="text-sm text-[#A0A0A0]">Appreciation</dt>
-                    <dd className="text-sm font-bold" style={{ color: '#4ade80' }}>{suburb.yoyChange} YoY</dd>
+                    <dt className="text-sm text-[#A0A0A0]">YoY change</dt>
+                    <dd className="text-sm font-bold" style={{ color: yoyColor(suburb.yoyChange, true) }}>{suburb.yoyChange} YoY</dd>
                   </div>
                 </dl>
               </div>

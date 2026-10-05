@@ -21,10 +21,10 @@ test('homes-cost FAQ quotes the same Redfin city medians as the city cards', () 
   }
 
   // Pin the rounded figures the city cards currently display.
-  assert.equal(compactMedian(suburbs['spring-hill-tn'].medianPriceNum), '$532K')
-  assert.equal(compactMedian(suburbs['nolensville-tn'].medianPriceNum), '$935K')
-  assert.equal(compactMedian(suburbs['franklin-tn'].medianPriceNum), '$870K')
-  assert.equal(compactMedian(suburbs['brentwood-tn'].medianPriceNum), '$1.40M')
+  assert.equal(compactMedian(suburbs['spring-hill-tn'].medianPriceNum), '$508K')
+  assert.equal(compactMedian(suburbs['nolensville-tn'].medianPriceNum), '$929K')
+  assert.equal(compactMedian(suburbs['franklin-tn'].medianPriceNum), '$863K')
+  assert.equal(compactMedian(suburbs['brentwood-tn'].medianPriceNum), '$1.42M')
 
   assert.match(answer, /Source: Redfin|same Redfin city medians/)
   assert.match(answer, /Greater Nashville REALTORS/)
