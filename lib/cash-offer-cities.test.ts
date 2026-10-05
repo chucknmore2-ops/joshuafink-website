@@ -2,17 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { getAllCashOfferCitySlugs, getCashOfferCity, cashOfferContentLastUpdated, cashOfferSeo, cashOfferPath } from './cash-offer-cities.ts'
 import { suburbs, citywideStatsCitation, formatStatsDate, suburbStatsAsOf } from './suburbs.ts'
-import { compactMedian } from './moving-faqs.ts'
 import { blogPosts } from './blog.ts'
-
-/** Expand compactMedian ($870K / $1.40M) the way Franklin body copy writes it ($870,000 / $1,400,000). */
-function expandedMedian(compact: string): string {
-  const m = compact.match(/^\$([0-9.]+)([KM])$/)
-  if (!m) throw new Error(`unexpected compact median ${compact}`)
-  const n = Number(m[1])
-  if (m[2] === 'M') return `$${(n * 1_000_000).toLocaleString('en-US')}`
-  return `$${(n * 1_000).toLocaleString('en-US')}`
-}
 
 /** Stale cash-offer ballparks that disagreed with live /buy/[suburb] Redfin medians. */
 const staleBySlug: Record<string, RegExp[]> = {
@@ -43,15 +33,17 @@ test('every cash-offer city quotes the same Redfin median as /buy/[suburb]', () 
     const suburb = suburbs[slug]
     assert.ok(suburb, slug)
 
-    const compact = compactMedian(suburb.medianPriceNum)
-    const expanded = expandedMedian(compact)
     const citation = citywideStatsCitation(suburb)
     const asOf = formatStatsDate(suburbStatsAsOf(suburb))
 
     assert.match(citation, /Redfin/)
     assert.match(citation, new RegExp(asOf.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')))
 
-    assert.match(city.localAngle, new RegExp(expanded.replace(/[$,]/g, (ch) => `\\${ch}`)), `${slug} localAngle should use ${expanded}`)
+    assert.match(
+      city.localAngle,
+      new RegExp(suburb.medianPrice.replace(/[$,]/g, (ch) => `\\${ch}`)),
+      `${slug} localAngle should use exact median ${suburb.medianPrice}`,
+    )
     assert.match(city.localAngle, /Redfin/, `${slug} localAngle should cite Redfin`)
     assert.match(city.localAngle, new RegExp(asOf.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), `${slug} localAngle should cite ${asOf}`)
 
@@ -65,39 +57,45 @@ test('every cash-offer city quotes the same Redfin median as /buy/[suburb]', () 
       if (!/\$[0-9]/.test(faq.a)) continue
       // FAQ dollar figures that name the city median should use compact form + Redfin.
       if (/median|market/.test(faq.a)) {
-        assert.match(faq.a, new RegExp(compact.replace(/[$.]/g, (ch) => `\\${ch}`)), `${slug} FAQ should use compact ${compact}`)
+        assert.match(
+          faq.a,
+          new RegExp(suburb.medianPrice.replace(/[$,]/g, (ch) => `\\${ch}`)),
+          `${slug} FAQ should use exact median ${suburb.medianPrice}`,
+        )
         assert.match(faq.a, /Redfin/, `${slug} median FAQ should cite Redfin`)
       }
     }
   }
 })
 
-test('Franklin cash-offer copy stays pinned to the live Redfin $869,565 (~$870K)', () => {
+test('Franklin cash-offer copy stays pinned to the live Redfin $862,929', () => {
   const city = getCashOfferCity('franklin-tn')
   assert.ok(city)
 
   const franklin = suburbs['franklin-tn']
-  const compact = compactMedian(franklin.medianPriceNum)
   const citation = citywideStatsCitation(franklin)
 
-  assert.equal(franklin.medianPrice, '$869,565')
-  assert.equal(compact, '$870K')
-  assert.equal(citation, 'Source: Redfin, as of August 20, 2026')
+  assert.equal(franklin.medianPrice, '$862,929')
+  assert.equal(franklin.avgDaysOnMarket, 49)
+  assert.equal(franklin.pricePerSqft, 330.85)
+  assert.equal(franklin.yoyChange, '+12.43%')
+  assert.equal(citation, 'Source: Redfin, as of October 5, 2026')
 
-  assert.match(city.localAngle, /\$870,000/)
+  assert.match(city.localAngle, /\$862,929/)
   assert.match(city.localAngle, /Redfin/)
-  assert.match(city.localAngle, /August 20, 2026/)
+  assert.match(city.localAngle, /October 5, 2026/)
   assert.doesNotMatch(city.localAngle, /\$650,000/)
+  assert.doesNotMatch(city.localAngle, /\$870,000/)
 
   const repairFaq = city.faqs.find((f) => /repairs/i.test(f.q))
   assert.ok(repairFaq)
-  assert.match(repairFaq.a, /\$870K-median/)
+  assert.match(repairFaq.a, /\$862,929-median/)
   assert.match(repairFaq.a, /Redfin/)
   assert.doesNotMatch(repairFaq.a, /\$650K/)
 })
 
 test('cash-offer freshness stamp is current after the Nashville fair-offer FAQ', () => {
-  assert.equal(cashOfferContentLastUpdated, '2026-09-29')
+  assert.equal(cashOfferContentLastUpdated, '2026-10-05')
 })
 
 test('Nashville fair-cash-offer FAQ reuses only figures already on the site', () => {
@@ -107,13 +105,11 @@ test('Nashville fair-cash-offer FAQ reuses only figures already on the site', ()
   assert.ok(faqs.length >= 3, 'expected the Nashville fair-offer FAQ block')
 
   const nashville = suburbs['nashville-tn']
-  const compact = compactMedian(nashville.medianPriceNum)
-  assert.equal(compact, '$480K')
   const asOf = formatStatsDate(suburbStatsAsOf(nashville))
 
   const copy = faqs.map((f) => `${f.q} ${f.a}`).join('\n')
   // Median is quoted in compact form with its Redfin as-of citation.
-  assert.match(copy, new RegExp(compact.replace(/[$.]/g, (ch) => `\\${ch}`)))
+  assert.match(copy, /\$475,538/)
   assert.match(copy, /Redfin/)
   assert.match(copy, new RegExp(asOf))
   // The shared 70–85% of after-repair value framing, no new percentages.
@@ -122,7 +118,7 @@ test('Nashville fair-cash-offer FAQ reuses only figures already on the site', ()
   assert.deepEqual(Array.from(new Set(percents)), ['70–85%'])
   // Only the Redfin median — no other dollar figures.
   const dollars = copy.match(/\$[0-9][0-9,.]*[KM]?/g) ?? []
-  assert.deepEqual(Array.from(new Set(dollars)), [compact])
+  assert.deepEqual(Array.from(new Set(dollars)), ['$475,538'])
 
   // Links to the August 2026 GNAR market update, which must exist.
   const links = faqs.flatMap((f) => (f.link ? [f.link.href] : []))
@@ -158,7 +154,7 @@ test('Nashville cash-offer SEO targets both house and home sell-fast queries', (
   assert.ok(seo.keywords.includes('sell my house fast Nashville'))
 
   assert.match(city.intro, /sell your home fast in Nashville/)
-  assert.match(city.localAngle, /\$480,000/)
+  assert.match(city.localAngle, /\$475,538/)
   assert.match(city.localAngle, /Redfin/)
   assert.doesNotMatch(city.localAngle, /\$425,000/)
 
@@ -219,10 +215,10 @@ test('Columbia cash-offer SEO targets cash-offer and sell-fast queries without s
   assert.match(city.intro, /as-is/i)
   assert.match(city.intro, /form on this page/)
 
-  assert.match(city.localAngle, /\$385,000/)
+  assert.match(city.localAngle, /\$368,006/)
   assert.match(city.localAngle, /Redfin/)
-  assert.match(city.localAngle, /August 20, 2026/)
-  assert.match(city.localAngle, /77 days/)
+  assert.match(city.localAngle, /October 5, 2026/)
+  assert.match(city.localAngle, /78 days/)
   assert.doesNotMatch(
     [city.intro, city.localAngle, city.compareNote ?? '', ...city.faqs.map((f) => `${f.q} ${f.a}`)].join('\n'),
     /\$340,000/,
@@ -233,8 +229,8 @@ test('Columbia cash-offer SEO targets cash-offer and sell-fast queries without s
   assert.match(city.differentiator, /Compass/)
 
   assert.ok(city.compareNote)
-  assert.match(city.compareNote, /77 days/)
-  assert.match(city.compareNote, /\$385,000/)
+  assert.match(city.compareNote, /78 days/)
+  assert.match(city.compareNote, /\$368,006/)
   assert.match(city.compareNote, /Redfin/)
 
   const situationIds = (city.situationDetails ?? []).map((s) => s.id)

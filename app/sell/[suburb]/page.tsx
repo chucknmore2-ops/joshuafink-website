@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated, suburbCityGeo } from '@/lib/suburbs'
+import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated, suburbCityGeo, yoyColor, yoyMovement } from '@/lib/suburbs'
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
 import { linkifyNeighborhoods } from '@/lib/linkify-neighborhoods'
 import { reviewStats } from '@/lib/reviews'
@@ -225,7 +225,7 @@ export default async function SuburbPage({ params }: Props) {
             </h1>
             <p className="text-lg mt-5 max-w-2xl leading-relaxed" style={{ color: '#A0A0A0' }}>
               Median home prices in {suburb.displayName} are <strong className="text-white">{suburb.medianPrice}</strong> in
-              2026 — up <strong className="text-white">{suburb.yoyChange}</strong> year-over-year. Find out exactly what
+              2026 — <strong className="text-white">{yoyMovement(suburb.yoyChange)}</strong> year-over-year. Find out exactly what
               your home is worth with a free, no-obligation valuation from Joshua Fink at Compass.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-4">
@@ -273,7 +273,7 @@ export default async function SuburbPage({ params }: Props) {
                 <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">Price Per Sq Ft</p>
               </div>
               <div className="bg-white p-6 border border-[#E8E8E8]">
-                <p className="text-3xl font-black" style={{ color: '#16a34a' }}>{suburb.yoyChange}</p>
+                <p className="text-3xl font-black" style={{ color: yoyColor(suburb.yoyChange) }}>{suburb.yoyChange}</p>
                 <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">YoY Price Change</p>
               </div>
             </div>
@@ -333,7 +333,7 @@ export default async function SuburbPage({ params }: Props) {
                   </div>
                   <div className="flex justify-between items-center">
                     <dt className="text-sm text-[#A0A0A0]">YoY Change</dt>
-                    <dd className="text-sm font-bold" style={{ color: '#4ade80' }}>{suburb.yoyChange}</dd>
+                    <dd className="text-sm font-bold" style={{ color: yoyColor(suburb.yoyChange, true) }}>{suburb.yoyChange}</dd>
                   </div>
                 </dl>
               </div>

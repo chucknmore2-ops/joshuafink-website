@@ -38,10 +38,10 @@ export function homesCostFaqAnswer(): string {
 
   return (
     `It varies widely by city. Using the same ${marketStatsSource} city medians shown in the city cards on this page (as of ${redfinAsOf}): ` +
-    `La Vergne and Columbia sit in the high $300Ks (${cityMedian('la-vergne-tn')} and ${cityMedian('columbia-tn')}); ` +
+    `Columbia and La Vergne sit in the high $300Ks (${cityMedian('columbia-tn')} and ${cityMedian('la-vergne-tn')}); ` +
     `Smyrna, Lebanon, Murfreesboro, and Gallatin in the low-to-mid $400Ks (${cityMedian('smyrna-tn')}–${cityMedian('gallatin-tn')}); ` +
     `Hendersonville around ${cityMedian('hendersonville-tn')}. ` +
-    `The Williamson County core is higher — Spring Hill around ${cityMedian('spring-hill-tn')}, ` +
+    `Williamson County spans a wide range — Spring Hill around ${cityMedian('spring-hill-tn')}, ` +
     `Franklin around ${cityMedian('franklin-tn')}, ` +
     `Nolensville around ${cityMedian('nolensville-tn')}, ` +
     `and Brentwood around ${cityMedian('brentwood-tn')}. ` +

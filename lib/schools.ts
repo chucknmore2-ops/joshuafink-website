@@ -92,7 +92,7 @@ export const schools: Record<string, School> = {
         // accessible than Westhaven/Independence" framing already published
         // in this same school's FAQs below — no new market claims.
         q: 'What are homes near Page High School in Franklin, TN worth?',
-        a: "Homes zoned to Page High School sit within the broader Franklin, TN market, where the 2026 median sale price is approximately $870,000. Page-zoned subdivisions — McKay's Mill, Brixworth, Berry Farms, and Cottonwood — typically enter at a slightly more accessible price point than the Westhaven/Independence corridor on Franklin's west side, while still carrying the resale premium that comes with Williamson County Schools. Joshua Fink, a Compass Affiliate Broker, can pull current comps for any specific Page-zoned subdivision or street. Call or text 615-551-2727.",
+        a: "Homes zoned to Page High School sit within the broader Franklin, TN market, where the 2026 median sale price is $862,929. Page-zoned subdivisions — McKay's Mill, Brixworth, Berry Farms, and Cottonwood — typically enter at a slightly more accessible price point than the Westhaven/Independence corridor on Franklin's west side, while still carrying the resale premium that comes with Williamson County Schools. Joshua Fink, a Compass Affiliate Broker, can pull current comps for any specific Page-zoned subdivision or street. Call or text 615-551-2727.",
       },
       {
         q: 'What Franklin neighborhoods feed Page High School?',
