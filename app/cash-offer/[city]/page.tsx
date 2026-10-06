@@ -105,7 +105,7 @@ export default async function CashOfferCityPage({ params }: Props) {
   // published /about bio, not new claims.
   const agentFaq = {
     q: `Is there a real estate agent who buys houses for cash in ${cityName}, TN?`,
-    a: `Yes. Joshua Fink is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate who personally buys houses for cash in ${cityName}, in addition to representing traditional buyers and sellers. With 17+ years of experience and ${reviewStats.total}+ five-star reviews, he gives you a written cash offer and a traditional-listing estimate side by side, so you choose the path that fits — not a call-center algorithm. Call 615-551-2727 to get started.`,
+    a: `Yes. Joshua Fink is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate who personally buys houses for cash in ${cityName}, in addition to representing traditional buyers and sellers. Licensed since 2008, with ${reviewStats.total}+ five-star reviews, he gives you a written cash offer and a traditional-listing estimate side by side, so you choose the path that fits — not a call-center algorithm. Call 615-551-2727 to get started.`,
   }
   const allFaqs = [agentFaq, ...city.faqs, ...evergreenFaqs]
   // Optional "fair cash offer" block (Nashville today). Rendered as its own

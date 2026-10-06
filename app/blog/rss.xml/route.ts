@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { blogPosts } from '@/lib/blog'
+import { blogDateToUtcDate, blogPosts } from '@/lib/blog'
 
 export const dynamic = 'force-static'
 export const revalidate = 3600 // 1 hour
@@ -19,8 +19,8 @@ function escapeXml(s: string): string {
 }
 
 function toRfc822(human: string): string {
-  const d = new Date(human)
-  if (isNaN(d.getTime())) return new Date().toUTCString()
+  const d = blogDateToUtcDate(human)
+  if (!d) return new Date().toUTCString()
   return d.toUTCString()
 }
 

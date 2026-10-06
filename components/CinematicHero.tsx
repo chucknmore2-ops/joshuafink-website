@@ -107,8 +107,8 @@ export default function CinematicHero({ slides }: { slides: HeroSlide[] }) {
           className="text-lg sm:text-xl text-white/90 font-light leading-relaxed max-w-xl mb-10 animate-fade-in-up motion-reduce:animate-none"
           style={{ animationDelay: '350ms' }}
         >
-          Joshua Fink — Affiliate Broker at Compass Real Estate. <span className="font-semibold text-white">17+ years</span>,{' '}
-          <span className="font-semibold text-white">100+ homes sold annually</span>, and a home-field
+          Joshua Fink — Affiliate Broker at Compass Real Estate. <span className="font-semibold text-white">Licensed since 2008</span>,{' '}
+          <span className="font-semibold text-white">40+ homes a year in Middle Tennessee</span>, and a home-field
           advantage in every Nashville suburb.
         </p>
 

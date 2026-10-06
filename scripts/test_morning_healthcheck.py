@@ -89,6 +89,20 @@ def test_expected_jobs_match_admin_schedule_ts():
     # surfaced in /admin.
 
 
+def test_gbp_freshness_is_the_weekly_rotator_only():
+    """Just Listed and manual GBP posts must not count as the Tuesday cron.
+
+    They write post_log under gbp-just-listed / gbp-on-demand. If either
+    name landed in EXPECTED_JOBS, a new listing (or a week with none) would
+    mask a dead weekly rotator or page when nothing new was listed.
+    """
+    gbp_jobs = [j.job_name for j in hc.EXPECTED_JOBS if j.channel == "gbp"]
+    assert gbp_jobs == ["gbp-post"]
+    names = {j.job_name for j in hc.EXPECTED_JOBS}
+    assert "gbp-just-listed" not in names
+    assert "gbp-on-demand" not in names
+
+
 # ---------------------------------------------------------------------------
 # check_pipeline_freshness
 # ---------------------------------------------------------------------------
