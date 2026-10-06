@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-10-05T16:56:31.243Z
+// AUTO-GENERATED — Last synced: 2026-10-06T14:53:43.661Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -21,7 +21,7 @@ export interface Listing {
 
 // Mirrors the header timestamp so server components can compute sync staleness
 // without parsing comments. Updated by scripts/fetch-images.mjs each sync.
-export const listingsSyncedAt = "2026-10-05T16:56:31.243Z";
+export const listingsSyncedAt = "2026-10-06T14:53:43.661Z";
 
 export const listings: Listing[] = [
   {
@@ -70,6 +70,18 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/3814-Plantation-Dr-Hermitage-TN-37076/TFS3S_pid/",
     imageUrl: "https://www.compass.com/m/6639cc5243226d377992b3c778d4794a2f72457c3b18b67263cd98c6a21838fa/2048x1536.webp",
+    lastVerified: listingsSyncedAt,
+  },
+  {
+    address: "261 Paragon Mills Rd",
+    city: "Nashville, TN 37211 | MLS #3611676",
+    price: 349700,
+    beds: 3,
+    baths: 1,
+    sqft: 1014,
+    status: "Active",
+    compassUrl: "https://www.compass.com/homedetails/261-Paragon-Mills-Rd-Nashville-TN-37211/TLH7F_pid/",
+    imageUrl: "https://www.compass.com/m/4e0ad91dae272cb8d10ab72fe92e356caa4ea6acda5b71c2fdc9a5e7d5b4f0ef/2048x1536.webp",
     lastVerified: listingsSyncedAt,
   },
   {

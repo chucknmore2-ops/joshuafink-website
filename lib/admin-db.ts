@@ -138,6 +138,44 @@ export async function hasPostedRef(opts: {
   }
 }
 
+/**
+ * Whether this listing was already announced on Google Business as a
+ * Just Listed / Coming Soon post.
+ *
+ * Counts a successful row for job `gbp-just-listed`, or for the manual
+ * on-demand job `gbp-on-demand` with payload_kind `listing`. The weekly
+ * rotator (`gbp-post`) is intentionally ignored: a featured-listing week
+ * is not a new-listing announcement, and a Just Listed post must not
+ * satisfy the weekly freshness check either.
+ *
+ * Returns null when the database cannot be read. Callers that auto-post
+ * must treat null as "do not post" so a missing DATABASE_URL cannot
+ * republish the same home on every run.
+ */
+export async function gbpJustListedAnnounced(refKey: string): Promise<boolean | null> {
+  const pool = getPool();
+  if (!pool) return null;
+  try {
+    const r = await pool.query(
+      `SELECT 1
+         FROM post_log
+        WHERE channel = 'gbp'
+          AND ref_key = $1
+          AND status = 'posted'
+          AND (
+            job_name = 'gbp-just-listed'
+            OR (job_name = 'gbp-on-demand' AND payload_kind = 'listing')
+          )
+        LIMIT 1`,
+      [refKey]
+    );
+    return (r.rowCount ?? 0) > 0;
+  } catch (err) {
+    console.error("[admin-db] gbpJustListedAnnounced failed:", (err as Error).message);
+    return null;
+  }
+}
+
 export async function lastSuccessfulPost(opts: {
   channel: string;
   jobName: string;

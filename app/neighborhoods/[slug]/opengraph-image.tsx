@@ -137,7 +137,7 @@ export default function Image({ params }: { params: { slug: string } }) {
                 letterSpacing: '0.08em',
               }}
             >
-              Affiliate Broker · 17+ years · 100+ homes/year
+              Affiliate Broker · Licensed since 2008 · 40+ homes/year
             </div>
           </div>
           <div

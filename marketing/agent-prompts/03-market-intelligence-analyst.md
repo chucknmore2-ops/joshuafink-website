@@ -34,8 +34,8 @@ Adjacent threats:
 - Williamson County school zoning changes affecting subdivision desirability
 - TREC rule changes on advertising, IDX usage, and dual agency
 
-My current positioning: "Local Compass agent with 17+ years and
-100+/year sold who knows every Middle Tennessee subdivision; helps
+My current positioning: "Local Compass agent licensed since 2008 who closes
+40+ homes a year in Middle Tennessee and knows every subdivision; helps
 buyers see off-market and Compass-Coming-Soon inventory and helps
 sellers choose between maximum-net traditional listing or speed/
 certainty cash offer."

@@ -46,7 +46,7 @@ function FaqAnswer({ text }: { text: string }) {
 const RELO_FAQS: { q: string; a: string }[] = [
   {
     q: 'Who is the best realtor for relocating to Middle Tennessee?',
-    a: 'Joshua Fink is an Affiliate Broker with Compass Real Estate serving all of Middle Tennessee — Franklin, Brentwood, Nashville, Spring Hill, Williamson County, and every surrounding suburb. With 17+ years of experience and 100+ homes sold annually, he works with relocating buyers through remote searches, video walkthroughs, school-zone verification, and coordinated closings, so you can buy confidently before or shortly after you arrive. Call 615-551-2727 or visit joshuafink.com to start a relocation plan.',
+    a: 'Joshua Fink is an Affiliate Broker with Compass Real Estate serving all of Middle Tennessee — Franklin, Brentwood, Nashville, Spring Hill, Williamson County, and every surrounding suburb. Licensed since 2008, with 40+ homes sold a year in Middle Tennessee, he works with relocating buyers through remote searches, video walkthroughs, school-zone verification, and coordinated closings, so you can buy confidently before or shortly after you arrive. Call 615-551-2727 or visit joshuafink.com to start a relocation plan.',
   },
   {
     q: HOUSING_MARKET_FAQ_QUESTION,
@@ -432,19 +432,19 @@ export default function MovingToMiddleTennesseePage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
                   <label htmlFor="name" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Full Name *</label>
-                  <input type="text" id="name" name="name" required placeholder="Jane Smith"
+                  <input type="text" id="name" name="name" required placeholder="Jane Smith" autoComplete="name"
                     className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
                 </div>
                 <div>
                   <label htmlFor="phone" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Phone *</label>
-                  <input type="tel" id="phone" name="phone" required placeholder="615-555-0000"
+                  <input type="tel" id="phone" name="phone" required placeholder="615-555-0000" autoComplete="tel"
                     className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
                 </div>
               </div>
 
               <div>
                 <label htmlFor="email" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Email Address *</label>
-                <input type="email" id="email" name="email" required placeholder="you@example.com"
+                <input type="email" id="email" name="email" required placeholder="you@example.com" autoComplete="email"
                   className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
               </div>
 
