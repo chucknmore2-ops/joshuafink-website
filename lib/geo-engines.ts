@@ -10,12 +10,15 @@
 // because ChatGPT Search runs on Bing (which our IndexNow fix now feeds):
 //   - Perplexity (Sonar)      — purpose-built web answer engine, returns citations
 //   - OpenAI (Responses + web_search) — ChatGPT's engine
-//   - Claude (Messages + web_search)  — claude.ai
+//   - xAI Grok (Responses + web_search) — grok.com / X
 //
-// Raw fetch is used uniformly across all three providers on purpose: this is a
+// Claude (Anthropic Messages API) was removed 2026-09-28 with the weekly
+// agent briefing. Do not call api.anthropic.com from here. ANTHROPIC_API_KEY
+// is unused; a leftover value must not start a Claude engine.
+//
+// Raw fetch is used uniformly across providers on purpose: this is a
 // multi-provider abstraction with no shared SDK, and a single transport keeps
-// the adapters parallel. The Claude request shape (model id, web_search tool
-// version, x-api-key + anthropic-version headers) follows the Anthropic docs.
+// the adapters parallel.
 
 import { extractUrls } from './geo-score';
 
@@ -28,9 +31,9 @@ export interface EngineOutput {
   error: string | null;
 }
 
-// Claude's server-side web_search loop routinely runs past 45s, which was
-// silently aborting ~half of its calls and dropping them from the score (a
-// failed call is excluded, so "claude 0%" was measurement, not reality).
+// Web-search calls can run well past a short abort. A failed call is excluded
+// from the score, so the timeout has to be long enough that a slow Perplexity
+// or OpenAI response is still scored.
 const TIMEOUT_MS = 90_000;
 // Timeout / 5xx: one immediate retry. Rate limits get more attempts below.
 const ATTEMPTS = 2;
@@ -47,11 +50,15 @@ export const GEO_QUERY_CONCURRENCY = Math.max(
   Number.parseInt(process.env.GEO_CONCURRENCY ?? '1', 10) || 1,
 );
 
-// Default Claude model is the flagship (what a claude.ai user actually gets);
-// override to a cheaper model (e.g. claude-haiku-4-5) for a low-cost daily run.
-const CLAUDE_MODEL = process.env.GEO_CLAUDE_MODEL || 'claude-opus-4-8';
 const OPENAI_MODEL = process.env.GEO_OPENAI_MODEL || 'gpt-4o';
 const PERPLEXITY_MODEL = process.env.GEO_PERPLEXITY_MODEL || 'sonar';
+
+// grok-4.3 is a current general model at $1.25 / $2.50 per 1M tokens.
+// grok-4.5, grok-4.6, and grok-4.7 are the expensive tier ($2 / $6).
+// Read per call so GEO_GROK_MODEL matches the other GEO_*_MODEL overrides.
+function grokModel(): string {
+  return process.env.GEO_GROK_MODEL || 'grok-4.3';
+}
 
 async function postJson(
   url: string,
@@ -122,35 +129,38 @@ async function runOpenAI(query: string): Promise<EngineOutput> {
   return { engine: 'openai', ok: true, model: OPENAI_MODEL, answerText, sourceUrls, error: null };
 }
 
-// ── Claude (Messages API + web_search) ──────────────────────────────────────
-async function runClaude(query: string): Promise<EngineOutput> {
-  const key = process.env.ANTHROPIC_API_KEY!;
+// ── xAI Grok (Responses API + web_search) ───────────────────────────────────
+// OpenAI-compatible base https://api.x.ai/v1. Live search is the Responses
+// `web_search` tool. Chat completions accept that tool and then ignore it, so
+// this adapter does not call /v1/chat/completions.
+async function runGrok(query: string): Promise<EngineOutput> {
+  const key = process.env.XAI_API_KEY!;
+  const model = grokModel();
   const data = (await postJson(
-    'https://api.anthropic.com/v1/messages',
-    { 'x-api-key': key, 'anthropic-version': '2023-06-01' },
+    'https://api.x.ai/v1/responses',
+    { Authorization: `Bearer ${key}` },
     {
-      model: CLAUDE_MODEL,
-      // Web search runs a server-side loop (multiple server_tool_use rounds that
-      // count against max_tokens). 1024 could be exhausted mid-search, truncating
-      // the answer text we detect on — give it real headroom. Non-streaming, so
-      // stay well under the SDK/HTTP timeout. web_search_20260209 is the current
-      // tool version and is supported on Opus 4.8.
-      max_tokens: 4096,
-      messages: [{ role: 'user', content: query }],
-      tools: [{ type: 'web_search_20260209', name: 'web_search' }],
+      model,
+      input: [{ role: 'user', content: query }],
+      tools: [{ type: 'web_search' }],
     },
   )) as any;
-  const answerText: string = Array.isArray(data?.content)
-    ? data.content
-        .filter((b: any) => b?.type === 'text')
-        .map((b: any) => b?.text ?? '')
-        .join(' ')
-        .trim()
-    : '';
-  // Citations + web_search_tool_result URLs are scattered through content blocks;
-  // sweep the whole response.
-  const sourceUrls = extractUrls(data);
-  return { engine: 'claude', ok: true, model: CLAUDE_MODEL, answerText, sourceUrls, error: null };
+  // Same shape as OpenAI Responses. `output_text` is optional on xAI; the
+  // documented payload puts prose on output[].content[].text. `citations` is
+  // the full URL list the agent opened.
+  let answerText: string = data?.output_text ?? '';
+  if (!answerText && Array.isArray(data?.output)) {
+    answerText = data.output
+      .flatMap((o: any) => (Array.isArray(o?.content) ? o.content : []))
+      .map((c: any) => c?.text ?? '')
+      .join(' ')
+      .trim();
+  }
+  const cited: string[] = Array.isArray(data?.citations)
+    ? data.citations.filter((u: unknown) => typeof u === 'string')
+    : [];
+  const sourceUrls = Array.from(new Set([...cited, ...extractUrls(data)]));
+  return { engine: 'grok', ok: true, model, answerText, sourceUrls, error: null };
 }
 
 interface EngineDef {
@@ -162,11 +172,17 @@ interface EngineDef {
 const ENGINES: EngineDef[] = [
   { name: 'perplexity', envKey: 'PERPLEXITY_API_KEY', run: runPerplexity },
   { name: 'openai', envKey: 'OPENAI_API_KEY', run: runOpenAI },
-  { name: 'claude', envKey: 'ANTHROPIC_API_KEY', run: runClaude },
+  { name: 'grok', envKey: 'XAI_API_KEY', run: runGrok },
 ];
 
 /** Engines that have an API key configured this run. */
 export function configuredEngines(): string[] {
+  // A missing Grok key skips that engine only. Perplexity and OpenAI already
+  // drop out the same way (filter below) without a log line; Grok warns so a
+  // weekly run that forgot XAI_API_KEY is visible and still succeeds.
+  if (!process.env.XAI_API_KEY) {
+    console.warn('[geo] XAI_API_KEY unset — skipping grok engine');
+  }
   return ENGINES.filter((e) => process.env[e.envKey]).map((e) => e.name);
 }
 

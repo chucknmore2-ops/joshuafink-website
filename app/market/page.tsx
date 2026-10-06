@@ -94,7 +94,7 @@ export default function MarketHubPage() {
             </h1>
             <p className="text-lg mt-5 max-w-3xl leading-relaxed" style={{ color: '#A0A0A0' }}>
               Median sale price, average days on market, price per square foot, and year-over-year
-              appreciation for every Middle Tennessee suburb Joshua covers. Honest numbers, no
+              price change for every Middle Tennessee suburb Joshua covers. Honest numbers, no
               algorithm guessing, updated as the market moves.
             </p>
           </div>

@@ -12,6 +12,7 @@ on:
       - 'app/**'
       - 'lib/**'
       - 'scripts/validate-schema.mjs'
+      - '.github/workflows/schema-validation.yml'
   workflow_dispatch:
 
 permissions:
@@ -41,7 +42,18 @@ jobs:
         run: npm ci
 
       - name: Build Next.js
-        run: npm run build
+        # next/font downloads Google Fonts during the build. A bad response
+        # throws `Cannot read properties of null (reading '1')` in the font
+        # loader. That failure is transient, so retry the build.
+        run: |
+          for attempt in 1 2 3; do
+            if npm run build; then
+              exit 0
+            fi
+            echo "next build failed (attempt ${attempt}); retrying"
+            sleep 10
+          done
+          exit 1
         env:
           NEXT_TELEMETRY_DISABLED: 1
 

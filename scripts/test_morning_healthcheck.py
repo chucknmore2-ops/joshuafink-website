@@ -49,24 +49,44 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 ADMIN_SCHEDULE_TS = REPO_ROOT / "lib" / "admin-schedule.ts"
 
 
+def _schedule_pairs(ts: str) -> tuple[set[tuple[str, str]], set[tuple[str, str]]]:
+    """Split admin-schedule.ts objects into live vs paused (channel, jobName)."""
+    live: set[tuple[str, str]] = set()
+    paused: set[tuple[str, str]] = set()
+    for chunk in ts.split("{"):
+        match = re.search(
+            r'channel:\s*"([^"]+)",\s*jobName:\s*"([^"]+)"',
+            chunk,
+            re.S,
+        )
+        if not match:
+            continue
+        pair = (match.group(1), match.group(2))
+        if re.search(r"paused:\s*true", chunk):
+            paused.add(pair)
+        else:
+            live.add(pair)
+    return live, paused
+
+
 def test_expected_jobs_match_admin_schedule_ts():
-    """Catch silent drift: every (channel, jobName) pair in admin-schedule.ts
-    must have a matching ExpectedJob entry in EXPECTED_JOBS."""
+    """Catch silent drift: every live (channel, jobName) pair in
+    admin-schedule.ts must have a matching ExpectedJob. Paused jobs must
+    not alert. Instagram is live via Buffer, so it is freshness-monitored
+    from post_log again."""
     ts = ADMIN_SCHEDULE_TS.read_text()
-    # Parse the channel + jobName fields out of the TS literal. The shape is
-    # stable enough for a regex; if the source format changes meaningfully,
-    # this test will fail loudly and we update both sides together.
-    pairs = set(
-        re.findall(r'channel:\s*"([^"]+)",\s*jobName:\s*"([^"]+)"', ts)
-    )
-    assert pairs, "Failed to parse channel/jobName pairs from admin-schedule.ts"
+    live, paused = _schedule_pairs(ts)
+    assert live, "Failed to parse live channel/jobName pairs from admin-schedule.ts"
     expected_pairs = {(j.channel, j.job_name) for j in hc.EXPECTED_JOBS}
-    missing = pairs - expected_pairs
-    extra = expected_pairs - pairs
+    missing = live - expected_pairs
     assert not missing, f"EXPECTED_JOBS is missing entries from admin-schedule.ts: {missing}"
-    # `extra` is allowed for jobs monitored here but not surfaced in /admin.
-    # If you intend to add a job here without changing admin-schedule.ts,
-    # update this assertion with the rationale.
+    alerting = paused & expected_pairs
+    assert not alerting, f"paused admin-schedule jobs must not alert in EXPECTED_JOBS: {alerting}"
+    assert ("instagram", "instagram-post") in live
+    assert ("instagram", "instagram-post") in expected_pairs
+    assert ("instagram", "instagram-post") not in paused
+    # `extra` (expected - live) is allowed for jobs monitored here but not
+    # surfaced in /admin.
 
 
 # ---------------------------------------------------------------------------
@@ -656,7 +676,8 @@ ALL_CHANNELS_OK = {"ok": True, "channels": [
 def test_lead_pipeline_pass_and_payload_shape():
     """Green path — and pin the request contract: the secret header that
     unlocks the route's test mode, plus the SYSTEM TEST / system-test tagging
-    that keeps the CRM sheet filterable and Josh's phone silent."""
+    that keeps the CRM sheet filterable and his inbox free of an ignore-me
+    test email. Pushover is still a real phone ping."""
     captured: dict = {}
     r = hc.check_lead_pipeline(
         "https://x/api/contact", "s3cret",
@@ -692,9 +713,10 @@ def test_lead_pipeline_alerts_on_failed_channel():
     assert "clickup(HTTP 401)" in r.detail
 
 
-def test_lead_pipeline_unconfigured_channel_is_not_a_failure():
-    """configured:false is an expected no-op (creds not set), not a page —
-    but the channel is still named so silent shrinkage stays visible."""
+def test_lead_pipeline_unconfigured_clickup_is_not_a_failure():
+    """ClickUp configured:false is its NORMAL state (off unless
+    CLICKUP_LEADS_ENABLED=true), not a page — but it is still named so silent
+    shrinkage stays visible."""
     payload = {"ok": True, "channels": [
         _channel("clickup", configured=False, ok=False),
         _channel("joshua-email"), _channel("sheet"), _channel("pushover"),
@@ -704,6 +726,27 @@ def test_lead_pipeline_unconfigured_channel_is_not_a_failure():
     )
     assert r.status == hc.STATUS_PASS
     assert "not configured: clickup" in r.detail
+
+
+def test_lead_pipeline_alerts_when_a_lead_critical_channel_goes_unconfigured():
+    """Deleting RESEND_API_KEY or PUSHOVER_TOKEN produces no error anywhere —
+    the channel just reports configured:false and the lead quietly reaches
+    fewer places. That must page, naming the channel."""
+    for channel in ("joshua-email", "sheet", "pushover"):
+        others = [c for c in ("joshua-email", "sheet", "pushover") if c != channel]
+        payload = {"ok": True, "channels": [
+            _channel("clickup", configured=False, ok=False),
+            _channel(channel, configured=False, ok=False),
+            *(_channel(c) for c in others),
+        ]}
+        r = hc.check_lead_pipeline(
+            "https://x/api/contact", "s3cret", opener=_contact_opener(payload),
+        )
+        assert r.status == hc.STATUS_ERROR, channel
+        assert r.is_alert, channel
+        assert channel in r.detail
+        # The intentionally-off channel must not be blamed alongside it.
+        assert "clickup" not in r.detail.split("NOT CONFIGURED:")[1].split(".")[0]
 
 
 def test_lead_pipeline_alerts_on_502_with_channel_results():
@@ -871,6 +914,107 @@ def test_workflow_run_error_on_api_failure():
     )
     assert r.status == hc.STATUS_ERROR
     assert "HTTP 401" in r.detail
+
+
+def test_social_autopost_ignores_old_graph_failures():
+    """A Graph-era Instagram red must not keep Social Autopost in ERROR
+    once a later non-Graph run succeeded. Instagram freshness is post_log."""
+    payload = {"workflow_runs": [
+        {
+            "conclusion": "failure",
+            "created_at": "2026-09-21T16:56:19Z",
+            "updated_at": "2026-09-21T17:10:00Z",
+            "html_url": "https://github.com/o/r/actions/runs/old-graph",
+        },
+        {
+            "conclusion": "success",
+            "created_at": "2026-09-17T17:54:13Z",
+            "updated_at": "2026-09-17T18:00:00Z",
+            "html_url": "https://github.com/o/r/actions/runs/linkedin-ok",
+        },
+    ]}
+    r = hc.check_workflow_last_run(
+        "social-autopost.yml", "Social Autopost",
+        repo="o/r", token="t", opener=_runs_opener(payload),
+    )
+    assert r.status == hc.STATUS_PASS
+    assert not r.is_alert
+    assert "runs/linkedin-ok" in r.detail
+    assert "old-graph" not in r.detail
+    assert "Graph Instagram" in r.detail
+
+
+def test_social_autopost_still_alerts_on_a_buffer_era_failure():
+    payload = {"workflow_runs": [
+        {
+            "conclusion": "failure",
+            "created_at": "2026-09-23T14:00:00Z",
+            "updated_at": "2026-09-23T14:10:00Z",
+            "html_url": "https://github.com/o/r/actions/runs/buffer-fail",
+        },
+        {
+            "conclusion": "success",
+            "created_at": "2026-09-17T17:54:13Z",
+            "updated_at": "2026-09-17T18:00:00Z",
+            "html_url": "https://github.com/o/r/actions/runs/older-ok",
+        },
+    ]}
+    r = hc.check_workflow_last_run(
+        "social-autopost.yml", "Social Autopost",
+        repo="o/r", token="t", opener=_runs_opener(payload),
+    )
+    assert r.status == hc.STATUS_ERROR
+    assert r.is_alert
+    assert "runs/buffer-fail" in r.detail
+
+
+def test_social_autopost_parses_response_larger_than_200kb():
+    """Regression (2026-09-22): Social Autopost requests per_page=30, which
+    pushed the Actions payload past a 200 KB read cap and truncated the JSON
+    mid-string. The check reported [ERR] unparsable while the latest
+    non-Graph run had concluded success."""
+    payload = {"workflow_runs": [
+        {
+            "conclusion": "failure",
+            "created_at": "2026-09-21T16:56:19Z",
+            "updated_at": "2026-09-21T17:10:00Z",
+            "html_url": "https://github.com/o/r/actions/runs/old-graph",
+            "display_title": "x" * 250_000,
+        },
+        {
+            "conclusion": "success",
+            "created_at": "2026-09-22T14:00:00Z",
+            "updated_at": "2026-09-22T14:10:00Z",
+            "html_url": "https://github.com/o/r/actions/runs/buffer-ok",
+        },
+    ]}
+    assert len(json.dumps(payload).encode()) > 200_000
+    r = hc.check_workflow_last_run(
+        "social-autopost.yml", "Social Autopost",
+        repo="o/r", token="t", opener=_runs_opener(payload),
+    )
+    assert r.status == hc.STATUS_PASS
+    assert not r.is_alert
+    assert "runs/buffer-ok" in r.detail
+    assert "old-graph" not in r.detail
+    assert "unparsable" not in r.detail
+
+
+def test_social_autopost_graph_only_history_is_not_an_alert():
+    payload = {"workflow_runs": [
+        {
+            "conclusion": "failure",
+            "created_at": "2026-09-16T18:05:37Z",
+            "updated_at": "2026-09-16T18:20:00Z",
+            "html_url": "https://github.com/o/r/actions/runs/graph-only",
+        },
+    ]}
+    r = hc.check_workflow_last_run(
+        "social-autopost.yml", "Social Autopost",
+        repo="o/r", token="t", opener=_runs_opener(payload),
+    )
+    assert r.status == hc.STATUS_GAP
+    assert not r.is_alert
 
 
 def test_monitored_workflows_exist_on_disk():
@@ -1232,6 +1376,7 @@ def test_report_includes_gaps_section_on_pass():
     text = hc.format_text_report(results, now=NOW, hostname="ci-runner")
     assert "DOCUMENTED GAPS" in text
     assert "/api/cron/indexnow" in text
+    assert "Instagram autopost" not in text
     assert "OK — all pipelines fresh" in text
 
 
@@ -1331,7 +1476,40 @@ def test_main_no_email_prints_report(monkeypatch, capsys):
     assert "OK — all pipelines fresh" in captured.out
 
 
-def test_main_sends_email_on_failure(monkeypatch, capsys):
+def test_main_does_not_email_on_failure_without_always_email(monkeypatch):
+    """Default path (schedule / default dispatch) stays silent on FAIL.
+    Exit code stays 1 so CI still goes red."""
+    latest = {(j.channel, j.job_name): _fake_latest_real(0.5) for j in hc.EXPECTED_JOBS}
+    latest[("facebook", "listing-spotlight")] = _fake_latest_real(99)
+    _patch_dns_helpers(monkeypatch, healthcheck_status="pass", git_status="pass", latest_map=latest)
+    monkeypatch.setenv("DATABASE_URL", "dsn://")
+    monkeypatch.setenv("GMAIL_USER", "bot@example.com")
+    monkeypatch.setenv("GMAIL_APP_PASSWORD", "xxxx")
+    monkeypatch.setenv("ALERT_TO_EMAIL", "to@example.com")
+
+    called = {"n": 0}
+    monkeypatch.setattr(hc, "send_email", lambda **kw: called.__setitem__("n", called["n"] + 1))
+
+    rc = hc.main(["--repo-dir", "/repo"])
+    assert rc == 1
+    assert called["n"] == 0
+
+
+def test_main_fail_without_email_secrets_still_exits_1(monkeypatch):
+    """Missing SMTP secrets must not turn a FAIL into MISCONFIG (exit 2)
+    when we are not sending mail."""
+    latest = {(j.channel, j.job_name): _fake_latest_real(0.5) for j in hc.EXPECTED_JOBS}
+    latest[("facebook", "listing-spotlight")] = _fake_latest_real(99)
+    _patch_dns_helpers(monkeypatch, healthcheck_status="pass", git_status="pass", latest_map=latest)
+    monkeypatch.setenv("DATABASE_URL", "dsn://")
+    monkeypatch.delenv("GMAIL_USER", raising=False)
+    monkeypatch.delenv("GMAIL_APP_PASSWORD", raising=False)
+    monkeypatch.delenv("ALERT_TO_EMAIL", raising=False)
+    rc = hc.main(["--repo-dir", "/repo"])
+    assert rc == 1
+
+
+def test_main_sends_email_on_failure_with_always_email(monkeypatch, capsys):
     latest = {(j.channel, j.job_name): _fake_latest_real(0.5) for j in hc.EXPECTED_JOBS}
     latest[("facebook", "listing-spotlight")] = _fake_latest_real(99)
     _patch_dns_helpers(monkeypatch, healthcheck_status="pass", git_status="pass", latest_map=latest)
@@ -1347,7 +1525,7 @@ def test_main_sends_email_on_failure(monkeypatch, capsys):
         sent["to"] = to_addr
     monkeypatch.setattr(hc, "send_email", fake_send)
 
-    rc = hc.main(["--repo-dir", "/repo"])
+    rc = hc.main(["--repo-dir", "/repo", "--always-email"])
     assert rc == 1
     assert "FAIL" in sent["subject"]
     assert "autoposter-listing" in sent["body"]
@@ -1434,5 +1612,5 @@ def test_main_email_send_failure_keeps_alert_exit_code(monkeypatch):
     def boom(**kwargs):
         raise RuntimeError("smtp down")
     monkeypatch.setattr(hc, "send_email", boom)
-    rc = hc.main(["--repo-dir", "/repo"])
+    rc = hc.main(["--repo-dir", "/repo", "--always-email"])
     assert rc == 1

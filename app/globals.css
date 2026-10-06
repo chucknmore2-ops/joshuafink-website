@@ -1,7 +1,8 @@
-/* Fonts are loaded via next/font/google in app/layout.tsx; no CSS @import
-   here — that would re-trigger a render-blocking fetch and duplicate the
-   preloaded families. Use Tailwind's font-sans / font-display utilities
-   (backed by --font-inter / --font-display CSS variables). */
+/* Fonts are self-hosted via next/font/local in app/layout.tsx; no CSS
+   @import here — that would re-trigger a render-blocking fetch and
+   duplicate the preloaded families. Use Tailwind's font-sans /
+   font-display utilities (backed by --font-inter / --font-display CSS
+   variables). */
 
 @tailwind base;
 @tailwind components;

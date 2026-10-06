@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef, FormEvent } from 'react'
 import { captureAttribution, getAttribution } from '@/lib/attribution'
+import LeadFormGuards from '@/components/LeadFormGuards'
+import { trackLeadFormError } from '@/lib/lead-form'
 import TrackedTelLink from '@/components/TrackedTelLink'
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error'
@@ -29,8 +31,10 @@ export default function CashOfferForm({ source = 'cash-offer', cityName }: CashO
     el.scrollIntoView({ block: 'center' })
   }, [state])
 
-  // Stash landing URL / utm params / referrer before the visitor can navigate
-  // away, so the submitted lead can say which channel brought them.
+  // 90-day first-touch (and last-touch) attribution, including this page's
+  // URL. AttributionCapture in the root layout records the landing page
+  // before the visitor reaches this form; this call covers a form that is
+  // itself the landing page.
   useEffect(() => {
     captureAttribution()
   }, [])
@@ -69,10 +73,12 @@ export default function CashOfferForm({ source = 'cash-offer', cityName }: CashO
         const json = await res.json().catch(() => ({}))
         setErrorMsg(json.error || 'Something went wrong. Please try again.')
         setState('error')
+        trackLeadFormError('cash_offer', `http_${res.status}`)
       }
     } catch {
       setErrorMsg('Network error — please try again.')
       setState('error')
+      trackLeadFormError('cash_offer', 'network')
     }
   }
 
@@ -118,9 +124,7 @@ export default function CashOfferForm({ source = 'cash-offer', cityName }: CashO
         <input type="hidden" name="subject" value="sell" />
         <input type="hidden" name="source" value={source} />
         {cityName && <input type="hidden" name="suburb" value={cityName} />}
-        {/* Honeypot — invisible to humans, bots auto-fill it */}
-        <input type="text" name="website" autoComplete="off" tabIndex={-1} aria-hidden="true"
-          style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, width: 0 }} />
+        <LeadFormGuards />
 
         <div>
           <input

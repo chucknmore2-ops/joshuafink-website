@@ -8,7 +8,9 @@ name: GEO Audit
 # One-time setup: add these repo Secrets (Settings → Secrets and variables →
 # Actions). CRON_SECRET + DATABASE_URL + PUSHOVER_* already exist; add the
 # answer-engine keys (engines run only when their key is present):
-#   PERPLEXITY_API_KEY   OPENAI_API_KEY   ANTHROPIC_API_KEY
+#   PERPLEXITY_API_KEY   OPENAI_API_KEY   XAI_API_KEY
+# An unset XAI_API_KEY skips Grok with a warning; it does not fail the job.
+# Claude was removed 2026-09-28. Do not pass ANTHROPIC_API_KEY.
 
 # Cadence: WEEKLY, not daily. The score moves on a scale of weeks (Perplexity
 # went 20% → 38% over three weeks), so a daily sample mostly measured noise —
@@ -44,7 +46,7 @@ jobs:
         env:
           PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           PUSHOVER_TOKEN: ${{ secrets.PUSHOVER_TOKEN }}
           PUSHOVER_USER: ${{ secrets.PUSHOVER_USER }}

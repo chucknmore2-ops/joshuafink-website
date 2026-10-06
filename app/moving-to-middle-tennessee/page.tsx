@@ -1,7 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { suburbs } from '@/lib/suburbs'
-import { gnarMarketUpdatePath, homesCostFaqAnswer } from '@/lib/moving-faqs'
+import {
+  gnarMarketUpdatePath,
+  homesCostFaqAnswer,
+  HOUSING_MARKET_FAQ_QUESTION,
+  housingMarketFaqAnswer,
+} from '@/lib/moving-faqs'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
 
@@ -9,7 +14,7 @@ const SITE = 'https://www.joshuafink.com'
 
 // Content-review stamp for this pillar page (America/Chicago). Distinct from
 // `marketStatsLastUpdated`, which is when the Redfin city medians were refreshed.
-const PAGE_LAST_VERIFIED = '2026-09-08'
+const PAGE_LAST_VERIFIED = '2026-10-05'
 
 function FaqAnswer({ text }: { text: string }) {
   const path = gnarMarketUpdatePath()
@@ -42,6 +47,10 @@ const RELO_FAQS: { q: string; a: string }[] = [
   {
     q: 'Who is the best realtor for relocating to Middle Tennessee?',
     a: 'Joshua Fink is an Affiliate Broker with Compass Real Estate serving all of Middle Tennessee — Franklin, Brentwood, Nashville, Spring Hill, Williamson County, and every surrounding suburb. With 17+ years of experience and 100+ homes sold annually, he works with relocating buyers through remote searches, video walkthroughs, school-zone verification, and coordinated closings, so you can buy confidently before or shortly after you arrive. Call 615-551-2727 or visit joshuafink.com to start a relocation plan.',
+  },
+  {
+    q: HOUSING_MARKET_FAQ_QUESTION,
+    a: housingMarketFaqAnswer(),
   },
   {
     q: 'Why are so many people moving to Middle Tennessee?',

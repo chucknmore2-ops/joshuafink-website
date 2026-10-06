@@ -1,0 +1,34 @@
+name: Read monthly market post log once
+
+# Prints the post_log rows the morning healthcheck uses for
+# monthly-market-update. Runs only when this file changes. Does not post.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/read-market-post-log-once.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  read:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install database driver
+        run: pip install 'psycopg2-binary==2.9.10'
+
+      - name: Print monthly-market-update rows
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python3 scripts/print-monthly-post-log.py

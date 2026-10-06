@@ -1,7 +1,7 @@
 // Target queries + brand identity for the GEO (Generative Engine Optimization)
 // visibility tracker. This is the strategic core: the questions a Middle TN
 // buyer/seller would actually ask an AI answer engine (ChatGPT, Perplexity,
-// Claude), and the identifiers that mean "Joshua showed up."
+// Grok), and the identifiers that mean "Joshua showed up."
 //
 // Each query maps to a money page we already rank for in classic search, so a
 // gap here tells us exactly which page to strengthen for AI answers.

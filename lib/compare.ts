@@ -114,7 +114,7 @@ export function pairVerdict(a: Suburb, b: Suburb): {
 
   return {
     forFamilies: `${a.schoolDistrict?.includes('Williamson') ? a.name : b.schoolDistrict?.includes('Williamson') ? b.name : a.name} typically wins for top-rated public schools.`,
-    forValue: `${cheaper.name} offers the lower entry point at ${cheaper.medianPrice}, with ${higherAppreciation.name} showing stronger ${higherAppreciation.yoyChange} appreciation.`,
+    forValue: `${cheaper.name} offers the lower entry point at ${cheaper.medianPrice}, with ${higherAppreciation.name} showing the higher year-over-year median-price change at ${higherAppreciation.yoyChange}.`,
     forSpeed: `${faster.name} moves faster — homes average ${faster.avgDaysOnMarket} days on market.`,
   }
 }
