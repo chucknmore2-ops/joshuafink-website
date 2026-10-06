@@ -689,14 +689,6 @@ export default function BuyerGuidePage() {
                 <input type="hidden" name="lead_type" value="buyer-guide" />
                 <input type="hidden" name="source" value="buyer-guide" />
                 <input type="hidden" name="subject" value="buyer-guide-offmarket-list" />
-                <input
-                  type="text"
-                  name="website"
-                  tabIndex={-1}
-                  autoComplete="off"
-                  style={{ position: 'absolute', left: '-9999px', height: 0, width: 0, opacity: 0 }}
-                  aria-hidden="true"
-                />
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>

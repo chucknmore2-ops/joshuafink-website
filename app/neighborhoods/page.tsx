@@ -199,15 +199,6 @@ export default function NeighborhoodsIndexPage() {
                 >
                   <input type="hidden" name="lead_type" value="buyer" />
                   <input type="hidden" name="source" value="neighborhoods-index" />
-                  {/* Honeypot — real users never see or fill this */}
-                  <input
-                    type="text"
-                    name="website"
-                    tabIndex={-1}
-                    autoComplete="off"
-                    aria-hidden="true"
-                    className="absolute left-[-9999px] h-0 w-0 opacity-0"
-                  />
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>

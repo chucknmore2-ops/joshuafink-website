@@ -598,3 +598,277 @@ test('the buyer-lead webhook keeps its original fields and gains attribution', a
     delete process.env.BUYER_LEAD_WEBHOOK_BASE
   }
 })
+
+// ---------------------------------------------------------------------------
+// Quarantine: high-confidence spam is sheet-only. A real lead still fans out
+// to email, Pushover, and the sheet. Bots always see { ok: true }.
+// ---------------------------------------------------------------------------
+
+const SCREENSHOT_SPAM = {
+  name: 'kicchooge',
+  phone: '85211936711',
+  email: 'stephaniehodges3187@smaqt.com',
+  body: 'Вам перевод 137698 руб. получить тут https://peskartyhrt.buzz/ycSMkSil SVWVE268274NFDAW',
+  lead_type: 'general',
+  source: 'homepage',
+  traffic_source: 'direct',
+  landing_page: 'https://www.joshuafink.com/',
+  page_url: 'https://www.joshuafink.com/',
+  gclid: 'should-survive-quarantine',
+  utm_source: 'direct-test',
+  submit: '',
+  _loaded: String(Date.now() - 60_000),
+}
+
+function mockDeliveryChannels() {
+  const captured: { url: string; body: string }[] = []
+  globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input)
+    captured.push({ url, body: String(init?.body ?? '') })
+    if (url.includes('script.google.com')) {
+      return new Response('{"ok":true}', { status: 200, headers: { 'Content-Type': 'application/json' } })
+    }
+    if (url.includes('api.resend.com')) {
+      return new Response('{"id":"email-1"}', { status: 200, headers: { 'Content-Type': 'application/json' } })
+    }
+    if (url.includes('api.pushover.net')) {
+      return new Response('{"status":1}', { status: 200, headers: { 'Content-Type': 'application/json' } })
+    }
+    return new Response('{}', { status: 200 })
+  }) as typeof fetch
+  return captured
+}
+
+async function postContact(body: Record<string, string>, ip: string) {
+  const { POST } = await import('./route.ts')
+  const res = await POST(
+    new NextRequest('https://www.joshuafink.com/api/contact', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-forwarded-for': ip,
+      },
+      body: JSON.stringify(body),
+    })
+  )
+  const json = await res.json()
+  return { status: res.status, json }
+}
+
+test('the screenshot spam is quarantined: sheet only, success response, attribution kept', async () => {
+  const captured = mockDeliveryChannels()
+  process.env.RESEND_API_KEY = 're_test_key'
+  process.env.PUSHOVER_TOKEN = 'po_test_token'
+  process.env.PUSHOVER_USER = 'po_test_user'
+  try {
+    const { status, json } = await postContact(SCREENSHOT_SPAM, '203.0.113.50')
+    assert.equal(status, 200)
+    assert.deepEqual(json, { ok: true })
+
+    assert.equal(captured.some((c) => c.url.includes('api.resend.com')), false)
+    assert.equal(captured.some((c) => c.url.includes('api.pushover.net')), false)
+
+    const sheetCall = captured.find((c) => c.url.includes('script.google.com'))
+    assert.ok(sheetCall)
+    const sheet = JSON.parse(sheetCall.body)
+    assert.match(sheet.blocked_reason, /non_latin/)
+    assert.match(sheet.blocked_reason, /spam_phrase/)
+    assert.match(sheet.blocked_reason, /spam_url/)
+    assert.equal(sheet.status, 'spam')
+    assert.equal(sheet.lead_type, 'general')
+    assert.equal(sheet.source, 'homepage')
+    assert.equal(sheet.name, 'kicchooge')
+    assert.equal(sheet.phone, '85211936711')
+    assert.equal(sheet.email, 'stephaniehodges3187@smaqt.com')
+    assert.equal(sheet.traffic_source, 'direct')
+    assert.equal(sheet.landing_page, 'https://www.joshuafink.com/')
+    assert.equal(sheet.page_url, 'https://www.joshuafink.com/')
+    assert.equal(sheet.gclid, 'should-survive-quarantine')
+    assert.equal(sheet.utm_source, 'direct-test')
+    assert.equal('_loaded' in sheet, false)
+    assert.equal('website' in sheet, false)
+  } finally {
+    delete process.env.RESEND_API_KEY
+    delete process.env.PUSHOVER_TOKEN
+    delete process.env.PUSHOVER_USER
+  }
+})
+
+test('a honeypot hit is quarantined with no email or Pushover', async () => {
+  const captured = mockDeliveryChannels()
+  process.env.RESEND_API_KEY = 're_test_key'
+  process.env.PUSHOVER_TOKEN = 'po_test_token'
+  process.env.PUSHOVER_USER = 'po_test_user'
+  try {
+    const { status, json } = await postContact({
+      name: 'Sarah Whitfield',
+      phone: '615-555-0142',
+      email: 'sarah@example.com',
+      body: 'We want to sell in Brentwood.',
+      source: 'contact-page',
+      website: 'http://spam.example',
+      traffic_source: 'google',
+      gclid: 'real-click',
+      _loaded: String(Date.now() - 20_000),
+    }, '203.0.113.51')
+    assert.equal(status, 200)
+    assert.deepEqual(json, { ok: true })
+    assert.equal(captured.some((c) => c.url.includes('api.resend.com')), false)
+    assert.equal(captured.some((c) => c.url.includes('api.pushover.net')), false)
+    const sheet = JSON.parse(captured.find((c) => c.url.includes('script.google.com'))!.body)
+    assert.equal(sheet.blocked_reason, 'honeypot')
+    assert.equal(sheet.status, 'spam')
+    assert.equal(sheet.traffic_source, 'google')
+    assert.equal(sheet.gclid, 'real-click')
+    assert.equal(sheet.body, 'We want to sell in Brentwood.')
+    assert.equal('website' in sheet, false)
+  } finally {
+    delete process.env.RESEND_API_KEY
+    delete process.env.PUSHOVER_TOKEN
+    delete process.env.PUSHOVER_USER
+  }
+})
+
+test('a too-fast submit is quarantined with no email or Pushover', async () => {
+  const captured = mockDeliveryChannels()
+  process.env.RESEND_API_KEY = 're_test_key'
+  process.env.PUSHOVER_TOKEN = 'po_test_token'
+  process.env.PUSHOVER_USER = 'po_test_user'
+  try {
+    const { status, json } = await postContact({
+      name: 'Sarah Whitfield',
+      phone: '615-555-0142',
+      email: 'sarah@example.com',
+      body: 'Hi Joshua, we would like a valuation on our Franklin home.',
+      source: 'sell-page',
+      landing_page: 'https://www.joshuafink.com/sell',
+      page_url: 'https://www.joshuafink.com/sell',
+      _loaded: String(Date.now() - 400),
+    }, '203.0.113.52')
+    assert.equal(status, 200)
+    assert.deepEqual(json, { ok: true })
+    assert.equal(captured.some((c) => c.url.includes('api.resend.com')), false)
+    assert.equal(captured.some((c) => c.url.includes('api.pushover.net')), false)
+    const sheet = JSON.parse(captured.find((c) => c.url.includes('script.google.com'))!.body)
+    assert.equal(sheet.blocked_reason, 'too_fast')
+    assert.equal(sheet.status, 'spam')
+    assert.equal(sheet.landing_page, 'https://www.joshuafink.com/sell')
+    assert.equal(sheet.page_url, 'https://www.joshuafink.com/sell')
+  } finally {
+    delete process.env.RESEND_API_KEY
+    delete process.env.PUSHOVER_TOKEN
+    delete process.env.PUSHOVER_USER
+  }
+})
+
+test('a real lead with a Zillow link still emails, pushes, and logs to the CRM sheet', async () => {
+  const captured = mockDeliveryChannels()
+  process.env.RESEND_API_KEY = 're_test_key'
+  process.env.PUSHOVER_TOKEN = 'po_test_token'
+  process.env.PUSHOVER_USER = 'po_test_user'
+  try {
+    const { status, json } = await postContact({
+      name: 'Sarah Whitfield',
+      phone: '615-555-0142',
+      email: 'sarah@example.com',
+      body: 'Is this one still available? https://www.zillow.com/homedetails/123-Main-St-Franklin-TN-37064/12345678_zpid/',
+      lead_type: 'buyer',
+      source: 'listing',
+      traffic_source: 'google',
+      landing_page: 'https://www.joshuafink.com/?gclid=click-z',
+      page_url: 'https://www.joshuafink.com/listings/123-main',
+      gclid: 'click-z',
+      _loaded: String(Date.now() - 45_000),
+    }, '203.0.113.53')
+    assert.equal(status, 200)
+    assert.equal(json.ok, true)
+
+    const emails = captured.filter((c) => c.url.includes('api.resend.com')).map((c) => JSON.parse(c.body))
+    assert.ok(emails.some((e) => /New Lead/.test(e.subject)))
+    assert.ok(captured.some((c) => c.url.includes('api.pushover.net')))
+
+    const sheet = JSON.parse(captured.find((c) => c.url.includes('script.google.com'))!.body)
+    assert.equal(sheet.blocked_reason, undefined)
+    assert.equal(sheet.status, undefined)
+    assert.equal(sheet.suspected_spam || '', '')
+    assert.equal(sheet.name, 'Sarah Whitfield')
+    assert.equal(sheet.lead_type, 'buyer')
+    assert.equal(sheet.traffic_source, 'google')
+    assert.equal(sheet.gclid, 'click-z')
+    assert.equal(sheet.landing_page, 'https://www.joshuafink.com/?gclid=click-z')
+    assert.equal(sheet.page_url, 'https://www.joshuafink.com/listings/123-main')
+    assert.match(sheet.body, /zillow\.com/)
+  } finally {
+    delete process.env.RESEND_API_KEY
+    delete process.env.PUSHOVER_TOKEN
+    delete process.env.PUSHOVER_USER
+  }
+})
+
+test('a real lead with an international name still emails, pushes, and logs', async () => {
+  const captured = mockDeliveryChannels()
+  process.env.RESEND_API_KEY = 're_test_key'
+  process.env.PUSHOVER_TOKEN = 'po_test_token'
+  process.env.PUSHOVER_USER = 'po_test_user'
+  try {
+    const { status, json } = await postContact({
+      name: 'Nguyễn Thị Lan',
+      phone: '615-555-0199',
+      email: 'lan.nguyen@example.com',
+      body: 'We are relocating to Franklin and would like to see homes near Ravenwood.',
+      lead_type: 'buyer',
+      source: 'homepage',
+      traffic_source: 'facebook',
+      fbclid: 'fb-intl',
+      landing_page: 'https://www.joshuafink.com/?fbclid=fb-intl',
+      page_url: 'https://www.joshuafink.com/',
+      _loaded: String(Date.now() - 25_000),
+    }, '203.0.113.54')
+    assert.equal(status, 200)
+    assert.equal(json.ok, true)
+
+    const emails = captured.filter((c) => c.url.includes('api.resend.com')).map((c) => JSON.parse(c.body))
+    const leadEmail = emails.find((e) => /New Lead/.test(e.subject))
+    assert.ok(leadEmail)
+    assert.match(leadEmail.subject, /Nguyễn Thị Lan/)
+    assert.ok(captured.some((c) => c.url.includes('api.pushover.net')))
+
+    const sheet = JSON.parse(captured.find((c) => c.url.includes('script.google.com'))!.body)
+    assert.equal(sheet.blocked_reason, undefined)
+    assert.equal(sheet.name, 'Nguyễn Thị Lan')
+    assert.equal(sheet.traffic_source, 'facebook')
+    assert.equal(sheet.fbclid, 'fb-intl')
+    assert.equal(sheet.page_url, 'https://www.joshuafink.com/')
+    assert.equal(sheet.landing_page, 'https://www.joshuafink.com/?fbclid=fb-intl')
+    assert.equal(sheet.suspected_spam || '', '')
+  } finally {
+    delete process.env.RESEND_API_KEY
+    delete process.env.PUSHOVER_TOKEN
+    delete process.env.PUSHOVER_USER
+  }
+})
+
+test('more than 12 submits in a minute from one IP are told to call', async () => {
+  mockFetch('{"ok":true}', 'application/json')
+  const { POST } = await import('./route.ts')
+  let lastStatus = 0
+  for (let i = 0; i < 13; i++) {
+    const res = await POST(
+      new NextRequest('http://localhost/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-forwarded-for': '203.0.113.99',
+        },
+        body: JSON.stringify({
+          name: 'Flood Test',
+          email: 'flood@example.com',
+          body: 'Just checking the rate limit.',
+          _loaded: String(Date.now() - 30_000),
+        }),
+      })
+    )
+    lastStatus = res.status
+  }
+  assert.equal(lastStatus, 429)
+})
