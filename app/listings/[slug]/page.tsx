@@ -86,7 +86,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       }. Closing date, days on market, and representation side are not published on this page. Ask Joshua about similar homes or a valuation.`
     : `${listing.address} in ${city} — ${formatPrice(listing.price)}${
         specs ? `, ${specs}` : ''
-      }. ${listing.status} listing represented by Joshua Fink at Compass Real Estate. Request full details or a private showing.`
+      }. ${listingStatusLabel(listing.status)} listing represented by Joshua Fink at Compass Real Estate. Request full details or a private showing.`
 
   return {
     title,
