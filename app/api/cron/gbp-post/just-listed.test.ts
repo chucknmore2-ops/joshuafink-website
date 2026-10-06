@@ -120,26 +120,26 @@ test('a live Active listing uses the on-site page with UTM, not the Compass URL'
 test('Coming Soon status says Coming Soon instead of Just Listed', () => {
   const draft = buildJustListedDraft(
     fixture({
-      address: '261 Paragon Mills Rd',
-      city: 'Nashville, TN 37211',
+      address: '900 Coming Soon Test Ln',
+      city: 'Nolensville, TN 37135',
       price: 549000,
       beds: 4,
       baths: 3,
       sqft: 2100,
       status: 'Coming Soon',
-      compassUrl: 'https://www.compass.com/homedetails/261-Paragon-Mills-Rd-Nashville-TN-37211/PARA_pid/',
+      compassUrl: 'https://www.compass.com/homedetails/900-Coming-Soon-Test-Ln-Nolensville-TN-37135/SOON_pid/',
     }),
   )
   assert.equal(draft.headline, 'Coming Soon')
-  assert.match(draft.summary, /^🏡 Coming Soon — 261 Paragon Mills Rd, Nashville\n/)
+  assert.match(draft.summary, /^🏡 Coming Soon — 900 Coming Soon Test Ln, Nolensville\n/)
   assert.match(draft.summary, /4 bed · 3 bath · 2,100 sq ft · \$549,000/)
   assert.match(draft.summary, /Coming soon with Joshua Fink at Compass\./)
-  assert.match(draft.summary, /#ComingSoon #NashvilleTN #JoshuaFinkGroup #Compass/)
+  assert.match(draft.summary, /#ComingSoon #NolensvilleTN #JoshuaFinkGroup #Compass/)
   assert.doesNotMatch(draft.summary, /Just Listed/)
   assert.doesNotMatch(draft.summary, /Parks/)
   assert.equal(validateGbpLocalPost(draft).ok, true)
   // Not in lib/listings.ts, so there is no on-site detail page yet.
-  assert.match(draft.cta.url, /^https:\/\/www\.compass\.com\/homedetails\/261-Paragon-Mills-Rd/)
+  assert.match(draft.cta.url, /^https:\/\/www\.compass\.com\/homedetails\/900-Coming-Soon-Test-Ln/)
   assert.match(draft.cta.url, /utm_campaign=gbp-just-listed/)
 })
 

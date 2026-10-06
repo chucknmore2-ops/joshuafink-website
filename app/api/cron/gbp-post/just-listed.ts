@@ -32,9 +32,9 @@ const SITE = 'https://www.joshuafink.com'
  * (2026-10-06, inventory synced 2026-10-05). Treated as already announced
  * so the first runs do not flood Google Business.
  *
- * Do not add future listings here. 261 Paragon Mills (Nashville) is
- * intentionally absent: it is not in lib/listings.ts yet and should be the
- * first auto post when the Oct 9 2026 Coming Soon sync lands.
+ * Do not add future listings here. 261 Paragon Mills Rd is now an Active
+ * listing in lib/listings.ts and stays outside this baseline so it can
+ * still be announced.
  */
 export const GBP_JUST_LISTED_BASELINE_ADDRESSES = [
   '511 Wanda Dr',
