@@ -3,6 +3,7 @@ import {
   latestSnapshot,
   marketUpdateSlug,
   monthLabel,
+  snapshotDaysStat,
   type MarketSnapshot,
 } from '@/lib/market-snapshot'
 
@@ -28,14 +29,15 @@ function snapshotHref(s: MarketSnapshot): string {
 /**
  * Nine-county Greater Nashville REALTORS® totals from lib/market-snapshot.ts.
  * Shown separately from Redfin citywide medians so the two sources cannot
- * be read as Franklin-only GNAR breakdowns.
+ * be read as a city-only GNAR breakdown.
  */
-export default function GnarRegionalSnapshot() {
+export default function GnarRegionalSnapshot({ cityName }: { cityName: string }) {
   const s = latestSnapshot()
   if (!s) return null
 
   const label = monthLabel(s.month)
   const blogHref = `/blog/${marketUpdateSlug(s.month)}`
+  const days = snapshotDaysStat(s)
 
   return (
     <div className="border-b border-[#E8E8E8] bg-white">
@@ -58,12 +60,12 @@ export default function GnarRegionalSnapshot() {
           </p>
         </div>
         <h2 className="text-2xl font-black text-black tracking-tight mb-2">
-          Regional context for Franklin buyers
+          Regional context for {cityName} buyers
         </h2>
         <p className="text-sm text-[#6B6B6B] leading-relaxed max-w-3xl mb-8">
           Greater Nashville REALTORS® publishes nine-county totals (Davidson,
           Cheatham, Dickson, Maury, Robertson, Rutherford, Sumner, Williamson,
-          and Wilson) — not a Franklin-only breakdown. The city snapshot above
+          and Wilson) — not a {cityName}-only breakdown. The city snapshot above
           is a separate Redfin citywide median. Use both as direction, then
           price the specific street.
         </p>
@@ -77,7 +79,7 @@ export default function GnarRegionalSnapshot() {
           {s.pendingSales != null && (
             <GnarStat value={formatCount(s.pendingSales)} label="Pendings" />
           )}
-          <GnarStat value={String(s.avgDaysOnMarket)} label="Days on market" />
+          <GnarStat value={days.value} label={days.label} />
         </div>
         <p className="mt-6 text-sm text-[#6B6B6B]">
           Full {label} write-up:{' '}

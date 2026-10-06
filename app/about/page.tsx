@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { reviews, reviewStats, reviewDateToIso } from '@/lib/reviews'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 import GoogleReviewCTA from '@/components/GoogleReviewCTA'
+import TrackedTelLink from '@/components/TrackedTelLink'
 
 export const metadata: Metadata = {
   alternates: { canonical: 'https://www.joshuafink.com/about' },
@@ -171,13 +172,14 @@ export default function AboutPage() {
                 Get In Touch
               </p>
               <div className="space-y-3 text-sm">
-                <a
+                <TrackedTelLink
                   href="tel:6155512727"
                   className="flex items-center gap-3 text-black hover:underline font-medium"
+                  data-cta="about-contact-call"
                 >
                   <span className="text-[#A0A0A0]">📞</span>
                   615-551-2727
-                </a>
+                </TrackedTelLink>
                 <a
                   href="mailto:joshua@joshuafink.com"
                   className="flex items-center gap-3 text-black hover:underline font-medium"
@@ -210,6 +212,12 @@ export default function AboutPage() {
               Biography
             </p>
             <div className="text-[#333] leading-relaxed space-y-4 text-base">
+              <p>
+                Joshua Fink is an Affiliate Broker with Compass Real Estate serving Middle Tennessee,
+                including Nashville, Franklin, Brentwood, Spring Hill, and the surrounding suburbs.
+                He has 17+ years of experience and holds Tennessee Real Estate Commission license
+                #351484.
+              </p>
               <p>
                 Joshua Fink is a leading realtor in Middle Tennessee. Josh is an experienced and
                 knowledgeable professional with in-depth knowledge of the market, strong negotiation

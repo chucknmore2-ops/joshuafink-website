@@ -9,8 +9,8 @@ Three Vercel Cron jobs + one GitHub Actions job run on a schedule for joshuafink
 | IndexNow submission | Vercel Cron | `0 2 * * *` (daily) | 9pm daily | `CRON_SECRET` |
 | Google Business Profile post | Vercel Cron | `0 14 * * 2` (Tue) | 9am Tuesdays | `CRON_SECRET`, `GBP_*` (5 vars) |
 | LinkedIn post | Vercel Cron | `0 14 * * 4` (Thu) | 9am Thursdays | `CRON_SECRET`, `LINKEDIN_*` (2 vars) |
-| Instagram post | Vercel Cron | `0 14 * * 3` (Wed) | 9am Wednesdays | `CRON_SECRET`, `IG_BUSINESS_ACCOUNT_ID`, `IG_ACCESS_TOKEN` |
-| **Monthly market update** (FB + LinkedIn + GBP) | GitHub Actions | `0 14 5 * *` (5th) | 9am on the 5th | `CRON_SECRET`, `FB_PAGE_ID`, `FB_PAGE_TOKEN`, plus the `LINKEDIN_*` / `GBP_*` vars above |
+| Instagram post | GitHub Actions `social-autopost.yml` | `0 14 * * 3` (Wed) | 9am Wednesdays | `CRON_SECRET`, `BUFFER_API_KEY`, `BUFFER_IG_CHANNEL_ID` (GitHub secrets). Graph stays off (`IG_AUTOPOST=buffer`). |
+| **Monthly market update** (LinkedIn + GBP; Facebook via Railway) | GitHub Actions + Railway autoposter | when the GNAR snapshot merges | typically the 6th–8th | `CRON_SECRET`, `DATABASE_URL` (post_log read), plus the `LINKEDIN_*` / `GBP_*` vars above. Facebook uses the autoposter's Page token, not Vercel. |
 | Compass listings sync | GitHub Actions | `0 8 * * 1` (Mon) | 3am Mondays | None (uses Playwright against public page) |
 
 ## Vercel env vars
@@ -30,11 +30,17 @@ LINKEDIN_CLIENT_SECRET   = <from LinkedIn Developer app>
 LINKEDIN_REDIRECT_URI    = https://joshuafink.com/api/linkedin/callback
 LINKEDIN_ACCESS_TOKEN    = <from /api/linkedin/callback response>
 LINKEDIN_AUTHOR_URN      = urn:li:person:XXXXXXXX (from /api/linkedin/callback response)
-IG_BUSINESS_ACCOUNT_ID   = <17-digit IG Business account ID, from Meta Business Suite>
-IG_ACCESS_TOKEN          = <Page access token w/ instagram_basic + instagram_content_publish scopes>
-FB_PAGE_ID               = <numeric Facebook Page ID — same value Railway's autoposter uses>
-FB_PAGE_TOKEN            = <Page access token w/ pages_manage_posts — same value as Railway>
+IG_BUSINESS_ACCOUNT_ID   = unused by the live path (Graph leftovers; do not point autopost back at Graph)
+IG_ACCESS_TOKEN          = unused by the live path (Graph leftovers)
 ```
+
+Facebook Page credentials stay on the Railway autoposter only. Do not add
+`FB_PAGE_ID` or `FB_PAGE_TOKEN` to Vercel. The site does not read them.
+
+Instagram does not use the Graph vars above. Social Autopost reads GitHub
+secrets `BUFFER_API_KEY` and `BUFFER_IG_CHANNEL_ID` and forwards them to
+`/api/cron/instagram-post`. `IG_AUTOPOST=buffer` queues with
+`schedulingType: automatic`. `IG_AUTOPOST=live` is retired and soft-skips.
 
 ---
 
@@ -111,39 +117,32 @@ You need a refresh_token with the `https://www.googleapis.com/auth/business.mana
 
 **Re-authenticate every ~60 days.** LinkedIn access tokens expire. The cron will return 502 with hint `"LINKEDIN_ACCESS_TOKEN may have expired"` when this happens — just redo steps 6–10.
 
-### 4. Monthly market update — the two-minute job that has to happen by hand
+### 4. Monthly market update — automatic, from GNAR's published numbers
 
-Everything else on this page runs unattended. This one has a deliberate human gate, because nobody should auto-publish market numbers nobody checked.
+`scripts/fetch-gnar.ts` reads last month's `marketMonthlyStats` from Greater Nashville REALTORS®'s public Sanity dataset, checks every field (present, in range, category sums), computes the residential year-over-year change from the prior-year record, and copies months of supply from the matching press release when that release exists. It does not estimate a missing figure.
 
-**Once a month, after the Greater Nashville REALTORS® report lands (first few days of the following month):**
+`.github/workflows/fetch-gnar-snapshot.yml` runs that script at 15:00 UTC on the 3rd–12th of each month (and whenever you run it by hand). GNAR usually publishes around the 6th–8th. Through the 8th it waits if the stats are in but the release is not, so months of supply can be included. From the 9th it publishes the validated stats anyway and omits months of supply.
 
-1. Open `lib/market-snapshot.ts`. There's a filled-in template in the header comment.
-2. Add one object to the top of `marketSnapshots` — median sale price, YoY change, average days on market, closed sales, active listings, months of supply, the report's name and publish date, plus 2–4 plain-language `takeaways` in Joshua's voice.
-3. Commit and let it deploy.
+A new month is committed by opening an auto-merging pull request (main rejects a direct push). `lib/blog.ts` renders `/blog/middle-tennessee-market-update-<month>-<year>` from that entry, so the post goes live with the merge. `.github/workflows/monthly-market-update.yml` then waits until the production blog is serving those figures and posts them to LinkedIn and Google Business. Facebook is published by the Railway autoposter (`services/autoposter`, every 5 minutes). It fetches `/api/market-update/facebook` and writes one `post_log` row for `(facebook, monthly-market-update, YYYY-MM)`. A month that was already posted is skipped.
 
-That's it. From those numbers:
+**If the month is already in `lib/market-snapshot.ts`, the run does nothing.**
 
-- **The site** gets a new blog post at `/blog/middle-tennessee-market-update-<month>-<year>` — `lib/blog.ts` renders one post per snapshot, so it's live the moment the commit deploys.
-- **Facebook, LinkedIn and Google Business** all get the post on the 5th at 9am CT, via `.github/workflows/monthly-market-update.yml`.
+**If validation fails, or the numbers still are not published on the 10th, nothing is written.** The workflow fails and sends a Pushover alert. The morning healthcheck still pages if the Facebook post itself is older than 42 days (`facebook` / `monthly-market-update`).
 
-Every channel reads the same `lib/market-snapshot.ts`, so the website and the socials can't quote different medians.
-
-**If the numbers aren't entered, nothing is published.** Each endpoint returns `{"posted": false, "skipped": "no_snapshot"}` and the workflow stays green with a warning — it will never recycle last month's figures. The morning healthcheck is what pages you if a whole month gets skipped (35-day threshold on `facebook` / `monthly-market-update`).
-
-**If the report lands after the 5th:** add the numbers, then Actions tab → **Monthly Market Update** → **Run workflow**.
+**To publish a month by hand** (the fetcher is down, or you are correcting a figure): add one object at the top of `marketSnapshots` from the template in `lib/market-snapshot.ts` and commit to main. The social workflow runs on that push. Do not invent a number the report does not state.
 
 **Preview before publishing:**
 
 ```bash
-curl -H "Authorization: Bearer $CRON_SECRET" \
-  'https://www.joshuafink.com/api/cron/facebook-post?preview=1'
+curl 'https://www.joshuafink.com/api/market-update/facebook'
 curl -H "Authorization: Bearer $CRON_SECRET" \
   'https://www.joshuafink.com/api/cron/linkedin-post?kind=market&preview=1'
 ```
 
-`?preview=1` composes the copy and hands it back without touching Facebook or LinkedIn.
+The Facebook URL is the copy the autoposter posts. It does not publish.
+`?preview=1` on LinkedIn composes the copy and hands it back without posting.
 
-> **Note on Facebook.** Only the *listing spotlight* posts run on Railway (`services/autoposter`, M/W/F). The four Railway content services — `autoposter-stats`, `-testimonial`, `-tips`, `-engagement` — were listed in the schedule for months but never actually created in Railway, which is why the healthcheck reported them as permanent `[GAP]`s. `/api/cron/facebook-post` replaces the market-stats one; the other three are simply gone from the schedule.
+> **Note on Facebook.** Listing spotlight and the monthly market post both run on Railway (`services/autoposter`). The Page token is a Railway variable. The site never calls Graph for the Page feed.
 
 ### 5. GitHub Actions — listings sync
 
@@ -160,7 +159,7 @@ No other config needed. Workflow runs every Monday at 08:00 UTC (3am CT). Manual
 | IndexNow | Vercel → Logs → filter `indexnow` → last entry shows `{submitted: 65+, status: 200}` |
 | GBP | google.com/search?q=Joshua+Fink+Group+Compass → Google Business panel shows the latest post within ~15 min; or Vercel Logs filter `gbp-post` |
 | LinkedIn | linkedin.com/in/joshuafinkgroup → latest post visible; or Vercel Logs filter `linkedin-post` |
-| Monthly market update | github.com/.../actions → "Monthly Market Update" green **and** the log shows `✅ ... posted` rather than `⏭️ ... skipped`; the post is visible on all three channels and at `/blog/middle-tennessee-market-update-<month>-<year>` |
+| Monthly market update | github.com/.../actions → "Fetch GNAR market snapshot" green, then "Monthly Market Update" green with each channel posted or `already_posted`; the post is at `/blog/middle-tennessee-market-update-<month>-<year>` |
 | Listings sync | github.com/.../actions → "Sync Compass Listings" green; new commit `chore: bi-weekly listing sync from Compass` on main |
 
 ## What to do if a cron silently fails

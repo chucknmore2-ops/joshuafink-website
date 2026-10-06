@@ -11,7 +11,7 @@ import {
   schoolHeroLine,
   schoolHeroKicker,
 } from '@/lib/schools'
-import { citywideStatsCitation } from '@/lib/suburbs'
+import { citywideStatsCitation, yoyColor } from '@/lib/suburbs'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
 
@@ -169,7 +169,7 @@ export default async function HomesNearSchoolPage({ params }: Props) {
                 successMessage={
                   <>
                     Joshua will text you shortly with {s.name}-zoned listings. Or call{' '}
-                    <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                    <TrackedTelLink href="tel:6155512727" className="text-black font-semibold underline" data-cta="homes-near-form-success-call">615-551-2727</TrackedTelLink>.
                   </>
                 }
                 resetLabel="Send another"
@@ -229,8 +229,8 @@ export default async function HomesNearSchoolPage({ params }: Props) {
                   <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">Citywide Price Per Sq Ft</p>
                 </div>
                 <div className="bg-white p-6 border border-[#E8E8E8]">
-                  <p className="text-3xl font-black" style={{ color: '#16a34a' }}>{suburb.yoyChange}</p>
-                  <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">Citywide YoY Appreciation</p>
+                  <p className="text-3xl font-black" style={{ color: yoyColor(suburb.yoyChange) }}>{suburb.yoyChange}</p>
+                  <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">Citywide YoY Price Change</p>
                 </div>
               </div>
             </div>

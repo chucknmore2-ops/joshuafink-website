@@ -16,7 +16,7 @@ on:
   # protection reads. (sync-listings.yml also dispatches this workflow, because
   # a push made with GITHUB_TOKEN does not itself trigger workflows.)
   push:
-    branches: ['sync-listings/**']
+    branches: ['sync-listings/**', 'gnar-snapshot/**']
   workflow_dispatch:
 
 permissions:
@@ -39,6 +39,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # Invalid workflow YAML never starts jobs: GitHub records a failed run
+      # on every push because it cannot apply path filters. actionlint is the
+      # same check. shellcheck stays off so pre-existing script style does not
+      # fail this gate. The ignore is actionlint's stale metadata for
+      # treosh/lighthouse-ci-action, which emits a `manifest` output the
+      # bundled schema does not list.
+      - name: Lint GitHub Actions workflows
+        run: |
+          curl -fsSL -o /tmp/actionlint.tar.gz \
+            https://github.com/rhysd/actionlint/releases/download/v1.7.7/actionlint_1.7.7_linux_amd64.tar.gz
+          tar -C /tmp -xzf /tmp/actionlint.tar.gz actionlint
+          /tmp/actionlint -shellcheck= -pyflakes= -ignore 'property "manifest" is not defined'
 
       - name: Setup Node
         uses: actions/setup-node@v4

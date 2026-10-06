@@ -1,37 +1,39 @@
 name: Monthly Market Update
 
-# Publishes the month's Middle Tennessee market numbers to every channel at
-# once: Facebook, LinkedIn and Google Business Profile. The matching blog post
-# is already on the site — lib/blog.ts renders one post per entry in
-# lib/market-snapshot.ts, so it goes live with the commit that adds the numbers.
+# Posts the month's Middle Tennessee market numbers to LinkedIn and Google
+# Business once lib/market-snapshot.ts changes on main. Facebook is published
+# by the Railway autoposter, which holds the Page token. This workflow only
+# waits for that service's post_log row. It does not call a site Facebook
+# endpoint. The blog post is already rendered from that file by lib/blog.ts;
+# it goes live with the deploy that carries the commit.
 #
-# Fires on the 5th, after the Greater Nashville REALTORS® report lands in the
-# first few days of the following month.
+# Does not run on unrelated pushes. A push to main starts it only when
+# lib/market-snapshot.ts changes (the GNAR snapshot PR). fetch-gnar-snapshot.yml
+# also dispatches it, because a GITHUB_TOKEN merge does not start push
+# workflows. workflow_dispatch runs it by hand; pass month=YYYY-MM to refuse
+# any other snapshot.
 #
-# THE APPROVAL GATE IS THE DATA. Each month someone pastes the report's figures
-# into lib/market-snapshot.ts (about two minutes — the file has a template at
-# the top). If that month's numbers aren't in, every endpoint below returns
-# `{"posted": false, "skipped": "no_snapshot"}` and NOTHING is published —
-# deliberately, rather than recycling last month's figures under Joshua's name.
-# This job stays green on a skip; the morning healthcheck is what pages if a
-# month gets missed entirely (35-day threshold on facebook/monthly-market-update).
+# A month outside the publish window, or a month that already has a posted
+# row on every channel, exits green without calling the post routes. If
+# production is not serving the month yet, the run polls for a bounded time
+# and then exits green with a notice. It does not send a failure alert for
+# that wait. A stale deploy is not posted.
 #
-# If the report lands late and the 5th has already passed, add the numbers and
-# then run this workflow manually from the Actions tab.
-#
-# REQUIRED GitHub repo secret:
-#   CRON_SECRET — must match the value in the Vercel project env (same secret
-#   social-autopost.yml and indexnow-on-content-change.yml already use).
-#
-# REQUIRED Vercel env vars (see docs/automation.md):
-#   FB_PAGE_ID, FB_PAGE_TOKEN   — for /api/cron/facebook-post
-#   LINKEDIN_*                  — already set, used by the weekly LinkedIn post
-#   GBP_*                       — already set, used by the weekly GBP post
+# The production HTML check is scripts/snapshot-page-ready.mjs. Do not paste
+# a column-0 script into this file: that ends the YAML block and GitHub then
+# fails the workflow on every push with zero jobs.
 
 on:
-  schedule:
-    - cron: '0 14 5 * *'   # 5th of each month, 14:00 UTC = 9am CT
-  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - 'lib/market-snapshot.ts'
+  workflow_dispatch:
+    inputs:
+      month:
+        description: 'Post this month only (YYYY-MM). Must be the newest snapshot. Empty posts the newest.'
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -40,80 +42,221 @@ concurrency:
   group: monthly-market-update
   cancel-in-progress: false
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   publish:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
-      - name: Post the month's market update to FB, LinkedIn and GBP
-        shell: bash
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Post once production is serving this snapshot
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          PUSHOVER_TOKEN: ${{ secrets.PUSHOVER_TOKEN }}
+          PUSHOVER_USER: ${{ secrets.PUSHOVER_USER }}
+          REQUESTED_MONTH: ${{ inputs.month || '' }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
+          alert() {
+            echo "::error::$1"
+            if [ -n "${PUSHOVER_TOKEN:-}" ] && [ -n "${PUSHOVER_USER:-}" ]; then
+              curl -sS --fail -m 20 \
+                --form-string "token=$PUSHOVER_TOKEN" \
+                --form-string "user=$PUSHOVER_USER" \
+                --form-string "title=Monthly market post failed" \
+                --form-string "message=$1" \
+                --form-string "priority=1" \
+                https://api.pushover.net/1/messages.json || echo "::warning::Pushover alert failed"
+            fi
+          }
+
+          notice() {
+            echo "$1"
+            echo "::notice::$1"
+          }
+
           if [ -z "$CRON_SECRET" ]; then
-            echo "::error::CRON_SECRET is not set in repo secrets. Add it at"
-            echo "github.com/chucknmore2-ops/joshuafink-website/settings/secrets/actions"
+            alert "CRON_SECRET is not set in repo secrets."
             exit 1
           fi
 
-          # Hit the www host directly: an apex->www 307 redirect drops the
-          # Authorization header. -L is belt-and-suspenders.
+          meta=$(node scripts/snapshot-expect.mjs)
+          query=$(printf '%s\n' "$meta" | head -n1)
+          slug=$(printf '%s\n' "$meta" | sed -n '2p')
+          got_month=$(printf '%s\n' "$query" | tr '&' '\n' | sed -n 's/^expectMonth=//p')
+          echo "Newest snapshot is ${got_month} (${slug})."
+          if [ -n "$REQUESTED_MONTH" ]; then
+            if ! printf '%s' "$REQUESTED_MONTH" | grep -Eq '^[0-9]{4}-[0-9]{2}$'; then
+              alert "month input must be YYYY-MM."
+              exit 1
+            fi
+            if [ "$got_month" != "$REQUESTED_MONTH" ]; then
+              alert "Refusing to post ${got_month}; this run was dispatched for ${REQUESTED_MONTH}."
+              exit 1
+            fi
+          fi
+
+          set +e
+          window_out=$(node scripts/snapshot-publish-window.mjs)
+          window_code=$?
+          set -e
+          echo "$window_out"
+          if [ "$window_code" -eq 2 ]; then
+            notice "Month ${got_month} is outside the publish window. Not posting."
+            exit 0
+          fi
+          if [ "$window_code" -ne 0 ]; then
+            alert "Could not read the publish window for ${got_month}."
+            exit 1
+          fi
+
+          python3 -m pip install --quiet 'psycopg2-binary==2.9.10'
+          set +e
+          python3 scripts/monthly-channels-posted.py "$got_month"
+          channels_code=$?
+          set -e
+          if [ "$channels_code" -eq 0 ]; then
+            notice "LinkedIn, Google Business, and Facebook already have a posted row for ${got_month}. Not posting."
+            exit 0
+          fi
+          if [ "$channels_code" -ne 2 ]; then
+            alert "Could not read monthly post_log for ${got_month}."
+            exit 1
+          fi
+
+          median=$(printf '%s\n' "$query" | tr '&' '\n' | sed -n 's/^expectMedian=//p')
+          supply=$(printf '%s\n' "$query" | tr '&' '\n' | sed -n 's/^expectSupply=//p')
+          yoy_raw=$(printf '%s\n' "$query" | tr '&' '\n' | sed -n 's/^expectYoy=//p')
+          yoy=$(python3 -c 'import sys, urllib.parse; print(urllib.parse.unquote(sys.argv[1]))' "$yoy_raw")
+          median_text=$(python3 -c 'import sys; print(f"{int(sys.argv[1]):,}")' "$median")
+          page="https://www.joshuafink.com/blog/${slug}"
+          echo "Waiting until $page contains $median_text"
+
+          ready=0
+          for attempt in $(seq 1 16); do
+            html=$(curl -fsSL --max-time 25 "$page" || true)
+            if printf '%s' "$html" | MEDIAN="$median_text" SUPPLY="$supply" YOY="$yoy" node scripts/snapshot-page-ready.mjs; then
+              ready=1
+              echo "Production is serving this snapshot (attempt $attempt)."
+              break
+            fi
+            echo "Not live yet (attempt $attempt); sleeping 30s."
+            sleep 30
+          done
+          if [ "$ready" != "1" ]; then
+            notice "Production is not serving ${got_month} after the wait. Not posting."
+            exit 0
+          fi
+
+          # 0 = posted or already posted. 2 = still not on production. 1 = hard failure.
+          post_one() {
+            local endpoint="$1"
+            local url="https://www.joshuafink.com/api/cron/${endpoint}"
+            echo "──────────────────────────────────────────────"
+            echo "Posting via $url"
+            local attempt response status body
+            for attempt in $(seq 1 16); do
+              echo "Attempt $attempt…"
+              response=$(curl -sSL -w "\n%{http_code}" \
+                -H "Authorization: Bearer $CRON_SECRET" \
+                "$url" || true)
+              status=$(echo "$response" | tail -n1)
+              body=$(echo "$response" | sed '$d')
+              echo "HTTP $status"
+              echo "$body"
+              if [ "$status" = "200" ]; then
+                if echo "$body" | grep -q '"deploy_pending"'; then
+                  echo "Production route is not serving ${got_month} yet."
+                elif echo "$body" | grep -q '"skipped":"no_snapshot"'; then
+                  echo "Production has no current snapshot. Not posting."
+                  return 2
+                elif echo "$body" | grep -q '"already_posted"'; then
+                  echo "Already posted for this month."
+                  return 0
+                elif echo "$body" | grep -q '"posted":true\|"posted": true'; then
+                  echo "Posted."
+                  return 0
+                else
+                  echo "200 but not a confirmed post."
+                  return 1
+                fi
+              else
+                echo "Request failed with HTTP ${status}."
+                return 1
+              fi
+              if [ "$attempt" -lt 16 ]; then
+                sleep 20
+              fi
+            done
+            echo "Production did not start serving ${got_month} on this route. Not posting."
+            return 2
+          }
+
           ENDPOINTS=(
-            "facebook-post"
-            "linkedin-post?kind=market"
-            "gbp-post?kind=market"
+            "linkedin-post?kind=market&${query}"
+            "gbp-post?kind=market&${query}"
           )
 
           failed=0
           skipped=0
           for endpoint in "${ENDPOINTS[@]}"; do
-            URL="https://www.joshuafink.com/api/cron/$endpoint"
-            echo "──────────────────────────────────────────────"
-            echo "Posting via $URL"
-
-            posted=0
-            # Retry a few times in case a deploy is mid-flight.
-            for attempt in 1 2 3; do
-              echo "Attempt $attempt…"
-              # `|| true` so a network-level curl failure retries instead of
-              # aborting the step under `bash -e`.
-              response=$(curl -sSL -w "\n%{http_code}" \
-                -H "Authorization: Bearer $CRON_SECRET" \
-                "$URL" || true)
-              status=$(echo "$response" | tail -n1)
-              body=$(echo "$response" | sed '$d')
-              echo "HTTP $status"
-              echo "$body"
-
-              if [ "$status" = "200" ]; then
-                posted=1
-                if echo "$body" | grep -q '"skipped"'; then
-                  skipped=$((skipped + 1))
-                  echo "⏭️  $endpoint skipped (no numbers entered for this month)."
-                else
-                  echo "✅ $endpoint posted."
-                fi
-                break
-              fi
-              echo "Non-200 (attempt $attempt); retrying in $((attempt * 10))s…"
-              sleep $((attempt * 10))
-            done
-
-            if [ "$posted" != "1" ]; then
-              echo "::error::$endpoint failed after 3 attempts (last HTTP $status)."
-              failed=$((failed + 1))
+            set +e
+            post_one "$endpoint"
+            code=$?
+            set -e
+            if [ "$code" -eq 0 ]; then
+              continue
             fi
+            if [ "$code" -eq 2 ]; then
+              skipped=$((skipped + 1))
+              continue
+            fi
+            echo "::error::$endpoint was not posted."
+            failed=$((failed + 1))
           done
 
-          echo "──────────────────────────────────────────────"
-          if [ "$skipped" -gt 0 ]; then
-            echo "::warning::$skipped channel(s) skipped — this month's figures are"
-            echo "::warning::not in lib/market-snapshot.ts yet. Paste them from the"
-            echo "::warning::Greater Nashville REALTORS report and re-run this workflow."
-          fi
-
           if [ "$failed" -gt 0 ]; then
-            echo "::error::$failed of ${#ENDPOINTS[@]} channels failed."
+            alert "${failed} market channel(s) did not post. See run ${{ github.run_id }}."
             exit 1
           fi
-          echo "Done — $((${#ENDPOINTS[@]} - skipped)) channel(s) published, $skipped skipped."
+          if [ "$skipped" -gt 0 ]; then
+            notice "Production is not serving ${got_month} on every channel after the wait. Not posting."
+            exit 0
+          fi
+
+          # The autoposter tick publishes Facebook and writes the dedupe row.
+          # Poll that row. Do not call the site.
+          fb_posted=0
+          fb_error=0
+          for attempt in $(seq 1 24); do
+            set +e
+            python3 scripts/monthly-facebook-row.py "$got_month"
+            code=$?
+            set -e
+            if [ "$code" -eq 0 ]; then
+              fb_posted=1
+              echo "Facebook post_log row is present for ${got_month}."
+              break
+            fi
+            if [ "$code" -ne 2 ]; then
+              echo "::error::Facebook post_log for ${got_month} is not exactly one posted row with an external id."
+              fb_error=1
+              break
+            fi
+            echo "Autoposter has not recorded ${got_month} yet (attempt $attempt)."
+            if [ "$attempt" -lt 24 ]; then
+              sleep 20
+            fi
+          done
+          if [ "$fb_posted" != "1" ]; then
+            if [ "$fb_error" != "1" ]; then
+              echo "::error::Facebook monthly market update was not recorded for ${got_month}."
+            fi
+            alert "Facebook monthly market update was not recorded for ${got_month}. See run ${{ github.run_id }}."
+            exit 1
+          fi
+          echo "Done."

@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef, FormEvent } from 'react'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import { captureAttribution, getAttribution } from '@/lib/attribution'
+import LeadFormGuards from '@/components/LeadFormGuards'
+import { MISSING_CONTACT_MESSAGE, missingContact, trackLeadFormError } from '@/lib/lead-form'
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error'
 
@@ -22,22 +24,32 @@ export default function ContactForm() {
     el.scrollIntoView({ block: 'center' })
   }, [state])
 
-  // Stash landing URL / utm params / referrer before the visitor can navigate
-  // away, so the submitted lead can say which channel brought them.
+  // 90-day first-touch (and last-touch) attribution, including this page's
+  // URL. AttributionCapture in the root layout records the landing page
+  // before the visitor reaches this form; this call covers a form that is
+  // itself the landing page.
   useEffect(() => {
     captureAttribution()
   }, [])
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setState('submitting')
-    setErrorMsg('')
 
     const form = e.currentTarget
     const data: Record<string, FormDataEntryValue | string> = {
       ...Object.fromEntries(new FormData(form).entries()),
       ...getAttribution(),
     }
+
+    if (missingContact(form)) {
+      setErrorMsg(MISSING_CONTACT_MESSAGE)
+      setState('error')
+      trackLeadFormError((data.source as string) || 'contact_form', 'missing_contact')
+      return
+    }
+
+    setState('submitting')
+    setErrorMsg('')
 
     try {
       const res = await fetch('/api/contact', {
@@ -62,10 +74,12 @@ export default function ContactForm() {
         const json = await res.json().catch(() => ({}))
         setErrorMsg(json.error || 'Something went wrong. Please try again.')
         setState('error')
+        trackLeadFormError((data.source as string) || 'contact_form', `http_${res.status}`)
       }
     } catch {
       setErrorMsg('Network error — please check your connection and try again.')
       setState('error')
+      trackLeadFormError((data.source as string) || 'contact_form', 'network')
     }
   }
 
@@ -102,10 +116,8 @@ export default function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      {/* Honeypot — invisible to humans, bots auto-fill it. */}
-      <input type="text" name="website" autoComplete="off" tabIndex={-1} aria-hidden="true"
-        style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, width: 0 }} />
+    <form method="POST" action="/api/contact" onSubmit={handleSubmit} className="space-y-5">
+      <LeadFormGuards />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div>
           <label

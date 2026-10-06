@@ -2,10 +2,10 @@
 //
 // Run: npm test
 //
-// The point of lib/send-email.ts is that swapping providers is a single env
-// var. These tests pin that contract, and pin the one behaviour every caller
-// depends on: sending must never throw, because email is one lead-delivery
-// channel among several and a mail outage must not fail a lead.
+// These tests pin which provider lib/send-email.ts picks, and pin the one
+// behaviour every caller depends on: sending must never throw, because email
+// is one lead-delivery channel among several and a mail outage must not fail
+// a lead.
 
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
@@ -33,26 +33,27 @@ async function provider() {
   return m.activeEmailProvider()
 }
 
-test('Resend wins when both keys are present — that is the cutover', async () => {
-  await withEnv({ RESEND_API_KEY: 're_test', SENDGRID_API_KEY: 'SG.test' }, async () => {
+test('Resend is used when its key is set', async () => {
+  await withEnv({ RESEND_API_KEY: 're_test' }, async () => {
     assert.equal(await provider(), 'resend')
   })
 })
 
-test('falls back to SendGrid when only that key is set', async () => {
+test('a leftover SENDGRID_API_KEY no longer selects a provider', async () => {
+  // SendGrid support was removed; a stale key in Vercel must not resurrect it.
   await withEnv({ RESEND_API_KEY: undefined, SENDGRID_API_KEY: 'SG.test' }, async () => {
-    assert.equal(await provider(), 'sendgrid')
+    assert.equal(await provider(), 'none')
   })
 })
 
-test('reports none when neither key is configured', async () => {
-  await withEnv({ RESEND_API_KEY: undefined, SENDGRID_API_KEY: undefined }, async () => {
+test('reports none when no key is configured', async () => {
+  await withEnv({ RESEND_API_KEY: undefined }, async () => {
     assert.equal(await provider(), 'none')
   })
 })
 
 test('sending with no provider resolves — it must never throw at a lead', async () => {
-  await withEnv({ RESEND_API_KEY: undefined, SENDGRID_API_KEY: undefined }, async () => {
+  await withEnv({ RESEND_API_KEY: undefined }, async () => {
     const { sendEmail } = await import('./send-email.ts')
     const res = await sendEmail({
       to: 'someone@example.com',

@@ -1,4 +1,5 @@
 import { getSuburb } from './suburbs'
+import { marketUpdateSlug } from './market-snapshot'
 
 /**
  * Per-city cash-offer landing content for /cash-offer/[city].
@@ -12,6 +13,21 @@ import { getSuburb } from './suburbs'
  * disclosure) live in the page template, not here — only what varies by city does.
  */
 
+export type CashOfferSeo = {
+  title: string
+  description: string
+  ogTitle: string
+  ogDescription: string
+  keywords: string[]
+  /** Replaces the shared "{county} · Cash Home Buyers" hero eyebrow. */
+  eyebrow?: string
+}
+
+export type CashOfferRelatedLink = {
+  href: string
+  label: string
+}
+
 export type CashOfferCityContent = {
   /** Matches the suburb slug so /cash-offer/<slug> mirrors /sell/<slug>. */
   slug: string
@@ -21,8 +37,38 @@ export type CashOfferCityContent = {
   intro: string
   /** Who sells for cash here + why — distinct local framing. */
   localAngle: string
-  /** 3 city-specific cash-offer FAQs (in addition to the shared global FAQ set). */
+  /** City-specific cash-offer FAQs (in addition to the shared global FAQ set). */
   faqs: { q: string; a: string }[]
+  /** Optional on-page SEO overrides. Omit to use the shared city-template strings. */
+  seo?: CashOfferSeo
+  /**
+   * Optional hero H1. Omit to keep "Sell My House Fast / in {City}."
+   * Use when title, meta, and H1 need to share one query (e.g. a cash-offer landing).
+   */
+  headline?: { lead: string; accent: string }
+  /** Licensed-broker vs cash-buyer-site callout. Set per city when the page needs it. */
+  differentiator?: string
+  /** Extra compare-table closer. Rendered under the shared traditional-vs-cash grid. */
+  compareNote?: string
+  /** Expanded situational copy (inherited, foreclosure, etc.). Omit to keep icon cards only. */
+  situationDetails?: { id: string; heading: string; body: string; href?: string; linkLabel?: string }[]
+  /** Optional related-reading links rendered on this city's cash-offer page only. */
+  relatedReading?: CashOfferRelatedLink[]
+  /**
+   * Optional "what is a fair cash offer here?" FAQ block. Rendered as its own
+   * section on /cash-offer/[city] and folded into the page's single FAQPage
+   * JSON-LD (one FAQPage per page). Reuse figures already published on the
+   * site only — the Redfin city median and the 70–85% of after-repair value
+   * framing — never new numbers.
+   */
+  fairOfferFaqs?: CashOfferFaq[]
+}
+
+export type CashOfferFaq = {
+  q: string
+  a: string
+  /** Optional supporting link rendered under the visible answer. */
+  link?: CashOfferRelatedLink
 }
 
 const cityContent: Record<string, CashOfferCityContent> = {
@@ -32,11 +78,11 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Not every Franklin home is ready for a Williamson County showing. If yours needs work, is tied up in an estate, or you simply can't wait out a 21-day listing cycle, a cash sale skips the prep, the repairs, and the showings entirely.",
     localAngle:
-      "Franklin's median sits around $870,000 (Redfin, as of August 20, 2026), which means even an as-is or dated home carries real equity — and a fair cash offer lets you capture it without sinking $20K into renovations to compete with the move-in-ready inventory in Cool Springs and Westhaven. Joshua prices off real Williamson County comps, not a national algorithm, so the number reflects what your home actually is.",
+      "Franklin's median sits around $862,929 (Redfin, as of October 5, 2026), which means even an as-is or dated home carries real equity — and a fair cash offer lets you capture it without sinking $20K into renovations to compete with the move-in-ready inventory in Cool Springs and Westhaven. Joshua prices off real Williamson County comps, not a national algorithm, so the number reflects what your home actually is.",
     faqs: [
       {
         q: 'Can I get a cash offer on a Franklin home that needs major repairs?',
-        a: "Yes. Franklin buyers expect pristine, updated homes — so an older or distressed property can be hard to sell traditionally without significant investment. A cash offer is built for exactly that situation: Joshua buys as-is, you skip the renovation spend, and you still capture the equity a $870K-median market provides (Redfin, as of August 20, 2026).",
+        a: "Yes. Franklin buyers expect pristine, updated homes — so an older or distressed property can be hard to sell traditionally without significant investment. A cash offer is built for exactly that situation: Joshua buys as-is, you skip the renovation spend, and you still capture the equity a $862,929-median market provides (Redfin, as of October 5, 2026).",
       },
       {
         q: 'How fast can I sell my house for cash in Franklin, TN?',
@@ -52,13 +98,13 @@ const cityContent: Record<string, CashOfferCityContent> = {
     slug: 'brentwood-tn',
     areas: 'Governors Club, Annandale, Otter Creek, Brentwood Hills, and the Murray Lane corridor',
     intro:
-      "Brentwood's luxury buyers expect flawless presentation. If your home is dated, tenant-occupied, caught in an estate, or you just need to move without staging a $1.40M listing, a cash sale removes the prep, the showings, and the months of carrying costs.",
+      "Brentwood's luxury buyers expect flawless presentation. If your home is dated, tenant-occupied, caught in an estate, or you just need to move without staging a $1,424,058 listing, a cash sale removes the prep, the showings, and the months of carrying costs.",
     localAngle:
-      "At a ~$1,400,000 median (Redfin, as of August 20, 2026), Brentwood homes carry significant equity even in as-is condition — but selling traditionally at this tier means staging, professional photography, and buyers who walk over deferred maintenance. A cash offer lets you convert that equity now, on your timeline, without spending into a high-expectation market.",
+      "At a $1,424,058 median (Redfin, as of October 5, 2026), Brentwood homes carry significant equity even in as-is condition — but selling traditionally at this tier means staging, professional photography, and buyers who walk over deferred maintenance. A cash offer lets you convert that equity now, on your timeline, without spending into a high-expectation market.",
     faqs: [
       {
         q: 'Do you buy higher-value Brentwood homes for cash?',
-        a: "Yes. Brentwood's price point ($1.40M median, with Governors Club and Murray Lane estates well above) is squarely in range (Redfin, as of August 20, 2026). Whether it's a luxury home that needs updating, an inherited estate, or a property you need to move quickly without a months-long luxury listing campaign, Joshua makes fair, no-obligation cash offers priced off real Brentwood comps.",
+        a: "Yes. Brentwood's price point ($1,424,058 median, with Governors Club and Murray Lane estates well above) is squarely in range (Redfin, as of October 5, 2026). Whether it's a luxury home that needs updating, an inherited estate, or a property you need to move quickly without a months-long luxury listing campaign, Joshua makes fair, no-obligation cash offers priced off real Brentwood comps.",
       },
       {
         q: 'I inherited a Brentwood home in probate — can I still sell it for cash?',
@@ -76,7 +122,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Spring Hill straddles Williamson and Maury counties and moves fast — but if your home needs work, you're relocating for a GM or plant job, or you're behind on payments, a cash sale lets you skip the repairs and showings and close on your schedule.",
     localAngle:
-      "With a ~$532,000 median (Redfin, as of August 20, 2026), Spring Hill is a value market where many sellers are relocating for work or upsizing quickly. A cash offer is ideal when timing matters more than squeezing the last dollar — Joshua buys as-is across both the Williamson and Maury sides and prices off true local comps.",
+      "With a $508,284 median (Redfin, as of October 5, 2026), Spring Hill is a value market where many sellers are relocating for work or upsizing quickly. A cash offer is ideal when timing matters more than squeezing the last dollar — Joshua buys as-is across both the Williamson and Maury sides and prices off true local comps.",
     faqs: [
       {
         q: 'I got relocated for work — can you close fast on my Spring Hill home?',
@@ -98,7 +144,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Nolensville's newer subdivisions set a high bar for condition. If your home is older, on acreage that needs clearing, or tied to an estate or divorce, a cash offer lets you sell as-is without competing against the move-in-ready inventory in Bent Creek and Scales Farmstead.",
     localAngle:
-      "At a ~$935,000 median (Redfin, as of August 20, 2026) in fast-growing Williamson County, Nolensville homes hold strong equity — but much of the market is new construction, so an older or distressed property can struggle traditionally. A cash sale converts your equity now, with no prep and no showings.",
+      "At a $929,385 median (Redfin, as of October 5, 2026) in fast-growing Williamson County, Nolensville homes hold strong equity — but much of the market is new construction, so an older or distressed property can struggle traditionally. A cash sale converts your equity now, with no prep and no showings.",
     faqs: [
       {
         q: 'Can I sell an older Nolensville home for cash against all the new construction?',
@@ -120,7 +166,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Thompson's Station mixes new subdivisions with rural acreage. Whether your home needs work, sits on land that's become hard to maintain, or you're settling an estate, a cash offer lets you sell as-is and close on your schedule.",
     localAngle:
-      "With a ~$842,000 median (Redfin, as of August 20, 2026) and a lot of land in the mix, Thompson's Station sellers often value speed and simplicity — especially on acreage or older homes that don't fit the new-build demand. Joshua buys as-is and prices off real Williamson County comps.",
+      "With a $829,451 median (Redfin, as of October 5, 2026) and a lot of land in the mix, Thompson's Station sellers often value speed and simplicity — especially on acreage or older homes that don't fit the new-build demand. Joshua buys as-is and prices off real Williamson County comps.",
     faqs: [
       {
         q: 'Do you buy homes on acreage in Thompson’s Station?',
@@ -132,7 +178,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
       },
       {
         q: 'Is a cash offer worth it in a growing market like Thompson’s Station?',
-        a: "It depends on your situation. If the home is turnkey and you can wait, listing traditionally in a ~$842K-and-rising market may net more (Redfin, as of August 20, 2026). If it's dated, inherited, or you need to move now, the cash route often nets more after repairs, carrying costs, and time — and Joshua will walk you through both honestly.",
+        a: "It depends on your situation. If the home is turnkey and you can wait, listing traditionally in a $829,451 median market may net more (Redfin, as of October 5, 2026). If it's dated, inherited, or you need to move now, the cash route often nets more after repairs, carrying costs, and time — and Joshua will walk you through both honestly.",
       },
     ],
   },
@@ -140,10 +186,109 @@ const cityContent: Record<string, CashOfferCityContent> = {
     slug: 'nashville-tn',
     areas: 'East Nashville, Wedgewood-Houston, Madison, Antioch, Donelson, and the urban core',
     intro:
-      "Nashville is the most varied market in Middle TN — and the most common place for cash situations: inherited homes, tired rentals, pre-foreclosure, and properties that need more work than a retail buyer will take on. A cash offer lets you sell any of them as-is, fast.",
+      'Need to sell your home fast in Nashville? This is the most varied market in Middle TN — and the most common place for cash situations: inherited homes, tired rentals, pre-foreclosure, vacant houses, and properties that need more work than a retail buyer will take on. A cash offer lets you sell any of them as-is, without waiting on a traditional listing.',
     localAngle:
-      "Across Davidson County, Nashville's ~$480,000 median (Redfin, as of August 20, 2026) spans everything from updated East Nashville bungalows to dated homes in Madison, Antioch, and Donelson that are hard to sell traditionally. Cash is the cleanest exit for landlords done with tenants, heirs settling an estate, or owners facing foreclosure — Joshua buys in any condition, anywhere in the metro.",
+      "Across Davidson County, Nashville's $475,538 median (Redfin, as of October 5, 2026) spans everything from updated East Nashville bungalows to dated homes in Madison, Antioch, and Donelson that are hard to sell traditionally. Cash is the cleanest exit for landlords done with tenants, heirs settling an estate, or owners facing foreclosure — Joshua buys in any condition, anywhere in the metro.",
+    seo: {
+      title: 'Sell My House Fast Nashville | Sell My Home Fast for Cash',
+      description:
+        'Sell my home fast in Nashville for cash — any condition. Fair offer in 24 hours, close in as little as 7 days. Licensed Compass broker (TREC #351484). No repairs, no commissions. 218+ five-star reviews.',
+      ogTitle: 'Sell My Home Fast in Nashville, TN — Cash Offer in 24 Hours',
+      ogDescription:
+        'Need to sell your house fast in Nashville? Fair cash offer in 24 hours. Close in as little as 7 days. Licensed Compass broker — cash or traditional listing, your call. 615-551-2727.',
+      keywords: [
+        'sell my home fast Nashville',
+        'sell my house fast Nashville',
+        'sell my house fast Nashville TN',
+        'sell my home fast Nashville TN',
+        'we buy houses Nashville TN',
+        'cash home buyer Nashville',
+        'cash offer for my home Nashville',
+        'sell house as-is Nashville',
+        'Joshua Fink',
+      ],
+      eyebrow: 'Sell My Home Fast · Davidson County',
+    },
+    differentiator:
+      "Most “sell my house fast Nashville” results are cash-buyer websites. Joshua is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate — 218+ five-star reviews and 17+ years in Middle Tennessee. He can buy your Nashville home for cash or list it for full market value, and he shows you both numbers in writing before you choose.",
+    compareNote:
+      "The table is the tradeoff in plain numbers. What it doesn’t show: Joshua runs both paths. If your Nashville home is in good shape and you can wait 30–90 days, listing usually nets more — and he’ll say so. If you need to sell your house fast in Nashville, cash is the certain close. Either way you deal with the same licensed broker, not a call center.",
+    situationDetails: [
+      {
+        id: 'inherited',
+        heading: 'Selling an inherited house in Nashville',
+        body: 'Probate, siblings who don’t agree, and a house that hasn’t been updated in years are the usual mix. Joshua buys inherited Nashville homes as-is — cleanout, repairs, and leftover belongings included — and the closing attorney coordinates title around the probate timeline. Out-of-state heirs can sign remotely.',
+        href: '/blog/sell-inherited-house-nashville-tn',
+        linkLabel: 'Inherited-home guide',
+      },
+      {
+        id: 'divorce',
+        heading: 'Selling a house during a Nashville divorce',
+        body: 'When the house is the last asset tying two people together, a cash close is often cleaner than months of showings. Joshua gives one written offer, coordinates with both parties and the closing attorney, and splits proceeds per your agreement — often within a couple of weeks.',
+      },
+      {
+        id: 'foreclosure',
+        heading: 'Behind on payments or facing foreclosure',
+        body: 'A notice of default or a sale date on the calendar shrinks your options every week. A fast cash close can pay off the lender before the auction and protect remaining equity and credit. Call as early as you can; if you’re upside-down, Joshua can still walk a short sale with most major Tennessee lenders.',
+        href: '/blog/facing-foreclosure-nashville-tn',
+        linkLabel: 'Foreclosure guide',
+      },
+      {
+        id: 'vacant',
+        heading: 'Selling a vacant Nashville house',
+        body: 'Empty houses get expensive fast — insurance, vandalism, frozen pipes, code violations. There are no tenants to coordinate and no need to keep the place show-ready. Send the address; Joshua prices it as-is and can often close inside two weeks.',
+      },
+      {
+        id: 'liens',
+        heading: 'Selling a Nashville house with liens',
+        body: 'Tax liens, contractor liens, HOA liens, and judgments attach to the property — they don’t have to kill the deal. The closing attorney pays lienholders from the proceeds before you get your check. If the liens exceed value, Joshua will talk through whether a short sale or negotiated payoff still works.',
+      },
+      {
+        id: 'as-is',
+        heading: 'As-is, fire-damaged, or major repairs',
+        body: 'Fire, water, mold, foundation, hoarder conditions — Joshua buys Nashville homes completely as-is. You’re not warranting condition or negotiating after an inspector finds something. Damage is priced into the offer up front, and that’s the number that funds.',
+      },
+      {
+        id: 'tenants',
+        heading: 'Tired of tenants — or can’t get them out',
+        body: 'You don’t have to evict, turn the unit, or wait for a lease to end. Joshua buys tenant-occupied Nashville rentals as-is and handles occupancy after closing, so you exit the property and the landlord headaches in one step.',
+      },
+    ],
+    relatedReading: [
+      { href: '/blog/cash-offer-vs-ibuyer-vs-listing-middle-tennessee', label: 'Cash offer vs. iBuyer vs. listing' },
+      { href: '/blog/traditional-sale-vs-cash-offer-nashville', label: 'Traditional sale vs. cash offer in Nashville' },
+      { href: '/blog/sell-inherited-house-nashville-tn', label: 'Selling an inherited Nashville house' },
+      { href: '/blog/facing-foreclosure-nashville-tn', label: 'Facing foreclosure in Nashville' },
+      { href: '/sell/nashville-tn', label: 'List your Nashville home instead' },
+    ],
+    fairOfferFaqs: [
+      {
+        q: 'What is a fair cash offer for a house in Nashville?',
+        a: "A fair cash offer starts from your home's after-repair value — what it would sell for fixed up, based on recent Davidson County comps — and accounts for the repairs it actually needs. Investor cash offers typically land at 70–85% of after-repair value; where yours falls inside that range depends on condition, not on a formula. The less work the house needs, the closer the offer should sit to the top of the range.",
+      },
+      {
+        q: "Does Nashville's median home price tell me what my cash offer will be?",
+        a: "No. Nashville's $475,538 median (Redfin, as of October 5, 2026) is a citywide midpoint that blends updated East Nashville bungalows with dated homes in Madison, Antioch, and Donelson. A fair offer on your house should be tied to comps near your address and to your home's condition, not to the citywide number. For the regional trend, see the August 2026 Middle Tennessee market update, built from Greater Nashville REALTORS® figures.",
+        link: { href: `/blog/${marketUpdateSlug('2026-08')}`, label: 'August 2026 Middle Tennessee market update' },
+      },
+      {
+        q: 'How can I tell if a Nashville cash offer is fair?',
+        a: "Ask for the math. A fair offer shows the after-repair value, the comps behind it, and the repair estimate, so you can check each piece yourself. Joshua puts that in writing next to a traditional-listing estimate, because he also lists homes with Compass. If an offer comes with no comps and no repair breakdown, compare it against a second opinion before you sign — you're never obligated to accept.",
+      },
+    ],
     faqs: [
+      {
+        q: 'How fast can I sell my home in Nashville?',
+        a: "You'll have a no-obligation cash offer within 24 hours, and you can close in as little as 7 days. There's no lender, appraisal, or inspection-repair loop — a Tennessee title attorney clears title and schedules closing, usually within the same week you accept. If you need to sell your home fast in Nashville, this is the path built for a firm timeline rather than a 30–90 day listing. Need longer? Joshua closes on your schedule.",
+      },
+      {
+        q: 'Can I sell my house fast in Nashville without listing it?',
+        a: "Yes. A cash sale skips MLS, showings, staging, and buyer financing. Joshua buys as-is across Davidson County — East Nashville, Madison, Antioch, Donelson, and the urban core included — so you can sell your house fast in Nashville without listing it. If you'd rather chase full retail, he can also list it traditionally and walk you through both numbers.",
+      },
+      {
+        q: 'How do cash home buyers work in Nashville?',
+        a: "A cash buyer looks at your Nashville home, estimates after-repair value, subtracts repairs and holding costs, and offers a number they can close without a bank. Joshua's offers typically land at 70–85% of after-repair value. There is no appraisal contingency and no inspection re-trade — the offer you accept is the number that funds at a Tennessee closing attorney. If listing would net more, he'll show you that math too, because he also sells homes the traditional way with Compass.",
+      },
       {
         q: 'I’m a landlord ready to sell my Nashville rental — can you buy it with tenants in place?',
         a: "Yes. Tenant-occupied Nashville rentals are one of the most common cash purchases — you don't have to evict, turn the unit, or wait for a lease to end. Joshua buys with tenants in place and handles the occupancy, so you exit the property and the landlord headaches at once.",
@@ -156,6 +301,22 @@ const cityContent: Record<string, CashOfferCityContent> = {
         q: 'Do you buy homes in every part of Nashville?',
         a: "Yes — East Nashville, Madison, Antioch, Donelson, Bordeaux, Hermitage, and the urban core. Condition and neighborhood don't disqualify a home; Joshua makes as-is cash offers across all of Davidson County and the surrounding metro.",
       },
+      {
+        q: 'I inherited a Nashville home and I live out of state — can I still sell?',
+        a: "Yes. Out-of-state heirs sell Nashville homes this way all the time. Joshua and the closing attorney coordinate probate and title; you sign remotely. You don't have to fly in, clean out the house, or make repairs. If the estate is still in probate, the contract can wait on the court — no penalty for a longer timeline.",
+      },
+      {
+        q: 'What if my Nashville house is already listed with an agent?',
+        a: "If you're under a listing agreement, you may still owe your agent a commission on a private sale — check the contract first. Joshua is a licensed broker, so he can talk with your listing agent directly or wait until the listing expires. He won't ask you to break an agreement.",
+      },
+      {
+        q: 'Do you buy vacant or fire-damaged Nashville homes as-is?',
+        a: 'Yes. Vacant houses, fire or water damage, code violations, hoarder conditions — Joshua buys Nashville homes completely as-is. You make zero repairs. Condition is priced into the offer up front, and that’s the number that funds.',
+      },
+      {
+        q: 'Can I sell my Nashville house during a divorce?',
+        a: 'Yes. A cash close avoids months of showings while a marriage is ending. Joshua coordinates with both parties and the closing attorney so proceeds split per your agreement, often within a couple of weeks.',
+      },
     ],
   },
   'murfreesboro-tn': {
@@ -164,7 +325,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Murfreesboro is one of the fastest-growing cities in the state, but plenty of homes here need work, are caught in an estate, or belong to owners who need to move before MTSU's rental rush. A cash offer lets you sell as-is and close fast.",
     localAngle:
-      "With a ~$429,000 median (Redfin, as of August 20, 2026) in Rutherford County, Murfreesboro is an affordability-driven market where speed often beats squeezing the last dollar. Joshua buys as-is — including tired student rentals near MTSU, inherited homes, and properties needing major repairs — and prices off real local comps.",
+      "With a $429,716 median (Redfin, as of October 5, 2026) in Rutherford County, Murfreesboro is an affordability-driven market where speed often beats squeezing the last dollar. Joshua buys as-is — including tired student rentals near MTSU, inherited homes, and properties needing major repairs — and prices off real local comps.",
     faqs: [
       {
         q: 'Can you buy my MTSU-area rental property for cash?',
@@ -186,7 +347,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Gallatin blends lakeside living with affordable Sumner County inventory. If your home needs work, is part of an estate, or you need to relocate quickly, a cash offer lets you sell as-is without the wait of a traditional listing.",
     localAngle:
-      "At a ~$440,000 median (Redfin, as of August 20, 2026), Gallatin is one of the more affordable Sumner County markets — which means even a dated or distressed home holds usable equity. A cash sale is the simplest path for heirs, downsizers, and owners who'd rather not invest in repairs before selling.",
+      "At a $447,154 median (Redfin, as of October 5, 2026), Gallatin is one of the more affordable Sumner County markets — which means even a dated or distressed home holds usable equity. A cash sale is the simplest path for heirs, downsizers, and owners who'd rather not invest in repairs before selling.",
     faqs: [
       {
         q: 'Can I sell an inherited Gallatin home for cash?',
@@ -198,7 +359,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
       },
       {
         q: 'Is a cash offer competitive in an affordable market like Gallatin?',
-        a: "It can be very competitive for the right situation. In a ~$440K market (Redfin, as of August 20, 2026), the repair-and-carry costs of getting a dated home listing-ready often eat much of the retail premium. For as-is, inherited, or time-sensitive sales, the cash net is frequently close to — or better than — a traditional sale, and Joshua will show you both.",
+        a: "It can be very competitive for the right situation. In a $447,154 market (Redfin, as of October 5, 2026), the repair-and-carry costs of getting a dated home listing-ready often eat much of the retail premium. For as-is, inherited, or time-sensitive sales, the cash net is frequently close to — or better than — a traditional sale, and Joshua will show you both.",
       },
     ],
   },
@@ -208,7 +369,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Hendersonville's Old Hickory Lake setting draws steady demand, but lakeside and older homes often need work that retail buyers won't take on. A cash offer lets you sell as-is — no repairs, no showings, no waiting.",
     localAngle:
-      "With a ~$533,000 median (Redfin, as of August 20, 2026) in Sumner County, Hendersonville sellers facing an estate, a divorce, or a relocation often value certainty over a drawn-out listing. Joshua buys as-is across the lake corridor and prices off real Hendersonville comps.",
+      "With a $534,646 median (Redfin, as of October 5, 2026) in Sumner County, Hendersonville sellers facing an estate, a divorce, or a relocation often value certainty over a drawn-out listing. Joshua buys as-is across the lake corridor and prices off real Hendersonville comps.",
     faqs: [
       {
         q: 'Do you buy older lakefront homes in Hendersonville that need work?',
@@ -226,23 +387,114 @@ const cityContent: Record<string, CashOfferCityContent> = {
   },
   'columbia-tn': {
     slug: 'columbia-tn',
-    areas: 'Downtown Columbia, Sunnyside, North Columbia, The Crossings, and Bear Creek',
+    areas:
+      'Historic Downtown Columbia, the Downtown Columbia Historic District, North Columbia / Carters Creek (Spring Hill-Adjacent), Sunnyside, The Crossings, and Bear Creek',
+    headline: {
+      lead: 'Cash Offer',
+      accent: 'in Columbia, TN.',
+    },
     intro:
-      "Columbia is Maury County's hub — historic, affordable, and growing with the Spring Hill spillover. If your home needs work, is tied to an estate, or you're behind on payments, a cash offer lets you sell as-is and close fast.",
+      'A Columbia, TN cash offer is for the seller who needs a date more than a perfect retail price. That includes a divorce, an inherited house, a relocation, a home you want to sell as-is, or any timeline that cannot wait on showings. Use the form on this page — the same cash-offer request Joshua reviews himself — and you will have a fair, no-obligation number within 24 hours.',
     localAngle:
-      "At a ~$385,000 median (Redfin, as of August 20, 2026), Columbia is among the most affordable Middle TN markets, with many older and historic homes that need updating. A cash sale lets owners avoid the repair spend a traditional listing would demand — Joshua buys as-is across Maury County.",
+      "Columbia's median sits around $368,006 (Redfin, as of October 5, 2026), and homes are averaging about 78 days on market. That wait is why cash is a real option here: historic houses near the Square often need systems work a retail buyer will not take on, and repair bills eat more of a listing in an attainable Maury County price band than they do in Williamson County. Maury County was Tennessee's #2 fastest-growing county by percentage from 2024 to 2025 (Maury Alliance), so the equity is real — Joshua prices it off current Maury County comps, buys as-is, and will also show you a traditional listing net if the house is ready and you can wait.",
+    seo: {
+      title: 'Cash Offer in Columbia, TN | Sell My House Fast',
+      description:
+        'Cash offer in Columbia, TN — inherited, divorce, relocation, or as-is. Fair offer in 24 hours, close in as little as 7 days. No repairs or commissions.',
+      ogTitle: 'Cash Offer in Columbia, TN — Sell My House Fast',
+      ogDescription:
+        'Fair cash offer on your Columbia, TN home in 24 hours. Close in as little as 7 days. As-is, no showings, no commissions. Call or text 615-551-2727.',
+      keywords: [
+        'cash offer Columbia TN',
+        'Columbia TN cash offer',
+        'sell my house fast Columbia TN',
+        'sell my house fast Columbia',
+        'we buy houses Columbia TN',
+        'cash home buyer Columbia',
+        'sell house as-is Columbia TN',
+        'Joshua Fink',
+      ],
+      eyebrow: 'Columbia, TN · Cash Offer',
+    },
+    differentiator:
+      'Search results for a Columbia cash offer are full of out-of-town "we buy houses" sites. Joshua is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate — 218+ five-star reviews and 17+ years in Middle Tennessee. He can buy your Columbia home for cash or list it, and he shows you both numbers in writing before you choose.',
+    compareNote:
+      'Columbia homes are averaging about 78 days on market, with a citywide median around $368,006 (Redfin, as of October 5, 2026). Listing can still net more on a move-in-ready house if you can wait. If you need to sell your house fast in Columbia — as-is, or on a date you can plan around — cash is the certain close. Same licensed broker either way.',
+    situationDetails: [
+      {
+        id: 'inherited',
+        heading: 'Selling an inherited house in Columbia',
+        body: 'Many of the Columbia houses that fit a cash sale are family homes held for decades, especially around Historic Downtown Columbia and the Downtown Columbia Historic District. Heirs are often out of state, the house needs work, and nobody wants to run a renovation or a cleanout from another city. Joshua buys inherited homes as-is — leftover belongings included — and the closing attorney coordinates title around probate. You can sign remotely.',
+      },
+      {
+        id: 'divorce',
+        heading: 'Selling a Columbia house during a divorce',
+        body: 'When the house is the last asset two people share, a long listing means more showings, more disagreement, and more months of carrying costs. A Columbia cash close is one written offer and one closing date. Joshua coordinates with both parties and the closing attorney so proceeds split per your agreement, often within a couple of weeks.',
+      },
+      {
+        id: 'relocation',
+        heading: 'Relocating out of Columbia',
+        body: "Job moves land here from both directions. Maury Regional Health is headquartered in Columbia (3,000+ employees), GM and Ultium Cells are still growing in neighboring Spring Hill, and a Nashville commute on I-65 is about 45 minutes depending on traffic — until a transfer means you cannot keep the house. Joshua can close in as little as 7 days, including if you have already left town. Newer pockets such as North Columbia / Carters Creek (Spring Hill-Adjacent) are in range the same as older in-town houses.",
+      },
+      {
+        id: 'as-is',
+        heading: 'As-is, historic, or major repairs',
+        body: 'Antebellum and Victorian houses near the Square, and plenty of mid-century homes farther out, need roof, electrical, foundation, or systems work that a retail buyer will walk past. Some downtown parcels also sit in a historic overlay, which can slow exterior work even when you are willing to spend. You do not have to restore the house to sell it. Joshua buys completely as-is and prices condition into the offer up front. Selling as-is still means disclosing known material defects; it means you are not paying to fix them.',
+        href: '/blog/sell-house-as-is-middle-tennessee',
+        linkLabel: 'What selling as-is actually means',
+      },
+      {
+        id: 'speed',
+        heading: 'You need a closing date, not another month of showings',
+        body: 'Columbia homes are averaging about 78 days on market (Redfin, as of October 5, 2026). A cash sale skips the lender, the appraisal, and the showing calendar. You get a no-obligation offer within 24 hours and can close in as little as 7 days — or later, if you still need time to move. Start with the form on this page.',
+        href: '#cash-offer-form',
+        linkLabel: 'Get your Columbia cash offer',
+      },
+    ],
+    relatedReading: [
+      { href: '/sell/columbia-tn', label: 'Free Columbia home valuation' },
+      { href: '/buy/columbia-tn', label: 'Homes for sale in Columbia' },
+      { href: '/market/columbia-tn', label: 'Columbia housing market' },
+      { href: '/cash-offer', label: 'Middle Tennessee cash-offer hub' },
+      { href: '/cash-offer/nashville-tn', label: 'Nashville cash offer' },
+      { href: '/blog/cash-offer-vs-ibuyer-vs-listing-middle-tennessee', label: 'Cash offer vs. iBuyer vs. listing' },
+    ],
     faqs: [
       {
+        q: 'How fast can I sell my house for cash in Columbia, TN?',
+        a: 'You will have a no-obligation cash offer within 24 hours, and you can close in as little as 7 days. There is no lender, appraisal, or inspection-repair loop — a Tennessee title attorney clears title and schedules closing, usually within the same week you accept. If you need more time to move, Joshua closes on your date instead.',
+      },
+      {
+        q: 'Can I sell my Columbia house as-is without repairs or showings?',
+        a: 'Yes. Zero repairs, zero cleaning, zero showings. Joshua buys Columbia houses completely as-is, including roof, HVAC, foundation, water damage, and dated historic homes near the Square. Condition is priced into the offer. You still disclose known material defects; you just do not pay to fix them.',
+      },
+      {
         q: 'Do you buy historic or older homes in downtown Columbia?',
-        a: "Yes. Columbia has a deep stock of historic and older homes that often need significant updating. Joshua buys them as-is — including properties with foundation, electrical, or roof issues — so you don't have to navigate costly restoration before selling.",
+        a: 'Yes. Columbia has a deep stock of older and historic houses, including around Historic Downtown Columbia, that often need significant updating. Joshua buys them as-is — foundation, electrical, or roof issues included — so you do not have to restore the house, or clear historic-overlay design review, before you can sell.',
       },
       {
-        q: 'I’m behind on my mortgage in Columbia — can a cash sale help?',
-        a: "Often, yes. If you're behind or facing foreclosure, a fast cash close can pay off the lender and protect your remaining equity and credit. The earlier you reach out, the more options exist — including a short sale if you owe more than the home is worth. Joshua has negotiated these with most major Tennessee lenders.",
+        q: 'I inherited a Columbia home and I live out of state — can I still sell?',
+        a: 'Yes. Out-of-state heirs can sell a Columbia home this way without being in town. Joshua and the closing attorney coordinate probate and title; you sign remotely. You do not have to fly in, empty the house, or make repairs. If the estate is still in probate, the contract can wait on the court.',
       },
       {
-        q: 'How does Columbia’s growth affect my cash offer?',
-        a: "Columbia's Spring Hill spillover is lifting values, which is good news for your equity. The offer is priced off current Maury County comps, so you benefit from recent appreciation — while still skipping the repairs, showings, and wait of a traditional sale.",
+        q: 'I am going through a divorce — can you close on our Columbia house?',
+        a: 'Yes. A cash close avoids months of showings while a marriage is ending. Joshua coordinates with both parties and the closing attorney so proceeds split per your agreement, often within a couple of weeks.',
+      },
+      {
+        q: 'I got relocated — can you close fast on my Columbia home?',
+        a: 'Yes. Relocation is a common reason Columbia owners sell for cash, whether the job is at Maury Regional Health in town, at the plants in Spring Hill, or back toward Nashville. Joshua can close in as little as 7 days so you are not carrying the house from out of state or rushing a traditional listing you cannot attend.',
+      },
+      {
+        q: 'I am behind on my mortgage in Columbia — can a cash sale help?',
+        a: 'Often, yes. If you are behind or facing foreclosure, a fast cash close can pay off the lender and protect remaining equity and credit. The earlier you reach out, the more options exist — including a short sale if you owe more than the home is worth. Joshua has negotiated these with most major Tennessee lenders.',
+      },
+      {
+        q: 'How does a cash offer compare with listing my Columbia home?',
+        a: "A cash offer typically runs 70–85% of after-repair value. You trade some retail price for speed and certainty. In Columbia's $368,006 market (Redfin, as of October 5, 2026), homes average about 78 days on market, and repair costs on an older house often consume the gap between cash and a list price. For a move-in-ready home you can wait on, listing usually nets more. Joshua will lay out both numbers before you choose.",
+      },
+      {
+        q: 'What if my Columbia house is already listed with an agent?',
+        a: 'If you are under a listing agreement, you may still owe your agent a commission on a private sale — check the contract first. Joshua is a licensed broker, so he can talk with your listing agent directly or wait until the listing expires. He will not ask you to break an agreement.',
       },
     ],
   },
@@ -252,7 +504,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Mount Juliet is one of Wilson County's hottest markets, but newer subdivisions set a high bar for condition. If your home is older, an inherited property, or you need to relocate fast, a cash offer lets you sell as-is without competing against new construction.",
     localAngle:
-      "With a ~$563,000 median (Redfin, as of August 20, 2026), Mount Juliet homes hold strong equity — but the market favors move-in-ready inventory in Providence and Willoughby Station. A cash sale converts your equity now, with no repairs and no showings, on whatever timeline you need.",
+      "With a $564,626 median (Redfin, as of October 5, 2026), Mount Juliet homes hold strong equity — but the market favors move-in-ready inventory in Providence and Willoughby Station. A cash sale converts your equity now, with no repairs and no showings, on whatever timeline you need.",
     faqs: [
       {
         q: 'Can I sell an older Mount Juliet home for cash against the newer subdivisions?',
@@ -274,7 +526,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Lebanon offers affordable Wilson County living with room to grow. If your home needs work, sits on acreage that's hard to maintain, or you're settling an estate, a cash offer lets you sell as-is and close on your schedule.",
     localAngle:
-      "At a ~$426,000 median (Redfin, as of August 20, 2026), Lebanon mixes subdivisions with rural acreage, and many sellers value a simple, certain exit over a drawn-out listing. Joshua buys as-is — including homes on land and properties needing major repairs — and prices off real Wilson County comps.",
+      "At a $424,719 median (Redfin, as of October 5, 2026), Lebanon mixes subdivisions with rural acreage, and many sellers value a simple, certain exit over a drawn-out listing. Joshua buys as-is — including homes on land and properties needing major repairs — and prices off real Wilson County comps.",
     faqs: [
       {
         q: 'Do you buy homes on acreage or farmland near Lebanon?',
@@ -296,7 +548,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Smyrna's affordability and Nissan-anchored job base keep it moving, but plenty of homes here need work or belong to owners relocating fast. A cash offer lets you sell as-is — no repairs, no showings, no waiting on a buyer's loan.",
     localAngle:
-      "With a ~$420,000 median (Redfin, as of August 20, 2026) in Rutherford County, Smyrna is a value market where relocation and speed often drive sales. Joshua buys as-is — including homes near the Nissan plant tied to job moves, inherited properties, and homes needing major repairs — and prices off real local comps.",
+      "With a $413,476 median (Redfin, as of October 5, 2026) in Rutherford County, Smyrna is a value market where relocation and speed often drive sales. Joshua buys as-is — including homes near the Nissan plant tied to job moves, inherited properties, and homes needing major repairs — and prices off real local comps.",
     faqs: [
       {
         q: 'I’m relocating for a job at Nissan — can you close fast on my Smyrna home?',
@@ -318,7 +570,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "La Vergne is one of the most affordable doorways into Rutherford County, popular with commuters and investors. If your home needs work, is a tired rental, or you need to move quickly, a cash offer lets you sell as-is and close fast.",
     localAngle:
-      "At a ~$373,000 median (Redfin, as of August 20, 2026) — the most affordable in this group — La Vergne sees a lot of rental and commuter inventory where speed beats squeezing the last dollar. Joshua buys as-is, including tenant-occupied homes and properties needing major repairs, priced off real Rutherford County comps.",
+      "At a $378,549 median (Redfin, as of October 5, 2026), La Vergne sees a lot of rental and commuter inventory where speed beats squeezing the last dollar. Joshua buys as-is, including tenant-occupied homes and properties needing major repairs, priced off real Rutherford County comps.",
     faqs: [
       {
         q: 'Can you buy my La Vergne rental property with tenants in place?',
@@ -373,7 +625,7 @@ export function getAllCashOfferCitySlugs(): string[] {
 // FAQs) was last reviewed. Mirrors `marketStatsLastUpdated` in lib/suburbs.ts —
 // update when refreshing this file's content. Feeds the WebPage `dateModified`
 // on /cash-offer/[city], a freshness signal these pages previously lacked.
-export const cashOfferContentLastUpdated = '2026-09-09'
+export const cashOfferContentLastUpdated = '2026-10-05'
 
 /** Lightweight list for nav/grid linking (slug + display name), in declared order. */
 export function getCashOfferCityLinks(): Array<{ slug: string; name: string }> {
@@ -383,4 +635,43 @@ export function getCashOfferCityLinks(): Array<{ slug: string; name: string }> {
       return s ? { slug, name: s.name } : null
     })
     .filter((x): x is { slug: string; name: string } => x !== null)
+}
+
+export type ResolvedCashOfferSeo = {
+  title: string
+  description: string
+  ogTitle: string
+  ogDescription: string
+  keywords: string[]
+  eyebrow: string
+}
+
+/** Shared template strings, with optional per-city SEO overrides. */
+export function cashOfferSeo(city: CashOfferCity): ResolvedCashOfferSeo {
+  return {
+    title: city.seo?.title ?? `Sell My House Fast ${city.displayName} | Cash Offer in 24 Hours`,
+    description:
+      city.seo?.description ??
+      `Sell your ${city.name} house fast for cash — any condition, any situation. Fair cash offer in 24 hours, close in as little as 7 days. No repairs, no commissions, no fees. Serving all of ${city.county}.`,
+    ogTitle: city.seo?.ogTitle ?? `We Buy Houses ${city.name}, TN — Cash Offer in 24 Hours`,
+    ogDescription:
+      city.seo?.ogDescription ??
+      `Get a fair cash offer on your ${city.name} home in 24 hours. No repairs, no commissions, no hassle. Close in as little as 7 days.`,
+    keywords: city.seo?.keywords ?? [
+      `sell my house fast ${city.name} TN`,
+      `we buy houses ${city.name} TN`,
+      `cash home buyer ${city.name}`,
+      `cash offer for my home ${city.name}`,
+      `sell house as-is ${city.name}`,
+      `sell my ${city.name} house for cash`,
+      `cash for homes ${city.name} TN`,
+      'Joshua Fink',
+    ],
+    eyebrow: city.seo?.eyebrow ?? `${city.county} · Cash Home Buyers`,
+  }
+}
+
+/** City landing when one exists; otherwise the cash-offer hub. */
+export function cashOfferPath(slug: string): string {
+  return getCashOfferCity(slug) ? `/cash-offer/${slug}` : '/cash-offer'
 }

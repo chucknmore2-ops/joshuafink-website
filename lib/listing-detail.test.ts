@@ -197,14 +197,23 @@ test('listingDetailSlugs includes every active listing plus every indexable sold
   assert.equal(listingDetailSlugs.size, listings.length + soldCount)
 })
 
-test('next.config does not permanently redirect any listing detail slug to /listings', () => {
+test('redirects do not send any live listing detail slug elsewhere', async () => {
   const configPath = join(dirname(fileURLToPath(import.meta.url)), '..', 'next.config.mjs')
   const src = readFileSync(configPath, 'utf8')
+  const { legacyRedirects } = await import('../lib/legacy-redirects.mjs')
+  const sources = new Set(
+    legacyRedirects().map((rule: { source: string }) => rule.source),
+  )
   for (const slug of Array.from(listingDetailSlugs)) {
     const escaped = slug.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
     assert.doesNotMatch(
       src,
       new RegExp(`source:\\s*['\`]/listings/${escaped}['\`]`),
+      `/listings/${slug} must not be redirected away now that a detail page exists`,
+    )
+    assert.equal(
+      sources.has(`/listings/${slug}`),
+      false,
       `/listings/${slug} must not be redirected away now that a detail page exists`,
     )
   }

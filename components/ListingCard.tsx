@@ -4,6 +4,7 @@ import type { Listing } from '@/lib/listings'
 import { getSuburb, getSuburbSlugForListing } from '@/lib/suburbs'
 import { listingDetailPath } from '@/lib/listing-detail'
 import { withUtm } from '@/lib/utm'
+import TrackedTelLink from '@/components/TrackedTelLink'
 
 function formatPrice(price: number): string {
   if (price >= 1000000) {
@@ -185,7 +186,7 @@ export default function ListingCard({ listing, featured }: Props) {
               View Details →
             </Link>
           ) : (
-            <a
+            <TrackedTelLink
               href={`sms:+16155512727?body=${encodeURIComponent(
                 `Hi Joshua — I'm interested in ${addressDisplay}. Can you tell me more?`
               )}`}
@@ -194,11 +195,11 @@ export default function ListingCard({ listing, featured }: Props) {
               aria-label={`Text Joshua about ${listing.address}`}
             >
               Ask Joshua about this home
-            </a>
+            </TrackedTelLink>
           )}
 
           {detailHref && (
-            <a
+            <TrackedTelLink
               href={`sms:+16155512727?body=${encodeURIComponent(
                 `Hi Joshua — I'm interested in ${addressDisplay}. Can you tell me more?`
               )}`}
@@ -207,7 +208,7 @@ export default function ListingCard({ listing, featured }: Props) {
               aria-label={`Text Joshua about ${listing.address}`}
             >
               Ask Joshua about this home
-            </a>
+            </TrackedTelLink>
           )}
 
           {/* No on-site page (thin / undisclosed sold records): Compass is the

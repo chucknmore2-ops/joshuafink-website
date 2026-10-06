@@ -3,8 +3,12 @@ import { pool } from "./db.ts";
 import { applySchema } from "./schema.ts";
 import { runListingSpotlight } from "./jobs/listing-spotlight.ts";
 import { runContentRotator } from "./jobs/content-rotator.ts";
+import { runMonthlyMarketUpdate } from "./jobs/monthly-market-update.ts";
+import { runAutoposterTick } from "./jobs/tick.ts";
 
 const JOBS = {
+  tick: () => runAutoposterTick(),
+  "monthly-market-update": () => runMonthlyMarketUpdate(),
   "listing-spotlight": () => runListingSpotlight(),
   "content-market-stats": () => runContentRotator("market-stats"),
   "content-testimonial": () => runContentRotator("testimonial"),

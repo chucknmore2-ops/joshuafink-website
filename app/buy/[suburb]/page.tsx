@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getSuburb, getAllSuburbSlugs, getSuburbSlugForListing, citywideStatsCitation, suburbCityGeo, type Suburb } from '@/lib/suburbs'
+import { getSuburb, getAllSuburbSlugs, getSuburbSlugForListing, citywideStatsCitation, marketStatsLastUpdated, suburbCityGeo, yoyColor, type Suburb } from '@/lib/suburbs'
 import { listings } from '@/lib/listings'
 import { schools } from '@/lib/schools'
 import ListingCard from '@/components/ListingCard'
@@ -12,6 +12,8 @@ import { reviewStats } from '@/lib/reviews'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import GnarRegionalSnapshot from '@/components/GnarRegionalSnapshot'
+import { showsGnarRegionalSnapshot } from '@/lib/market-snapshot'
+import { cashOfferPath } from '@/lib/cash-offer-cities'
 
 type Props = {
   params: Promise<{ suburb: string }>
@@ -58,6 +60,18 @@ export default async function BuySuburbPage({ params }: Props) {
   const schemaOrg = {
     '@context': 'https://schema.org',
     '@graph': [
+      {
+        // Freshness signal for crawlers/AI answer engines — no page-level
+        // dateModified existed here before, unlike /market/[suburb], even
+        // though the same verified suburb data (and its update date) backs
+        // both templates.
+        '@type': 'WebPage',
+        '@id': `https://www.joshuafink.com/buy/${slug}#webpage`,
+        url: `https://www.joshuafink.com/buy/${slug}`,
+        name: `Homes for Sale in ${suburb.displayName} | Buyer's Agent`,
+        dateModified: suburb.dataUpdatedAt ?? marketStatsLastUpdated,
+        about: { '@id': `https://www.joshuafink.com/buy/${slug}#place` },
+      },
       {
         '@type': 'RealEstateAgent',
         '@id': 'https://www.joshuafink.com/#agent',
@@ -353,7 +367,7 @@ export default async function BuySuburbPage({ params }: Props) {
                   <div className="space-y-1">
                     <Link href="/listings" className="block text-sm font-semibold text-black hover:underline">→ View active listings</Link>
                     <Link href={`/sell/${slug}`} className="block text-sm font-semibold text-black hover:underline">→ Selling in {suburb.name}?</Link>
-                    <Link href="/cash-offer" className="block text-sm font-semibold text-black hover:underline">→ Want a cash offer instead?</Link>
+                    <Link href={cashOfferPath(slug)} className="block text-sm font-semibold text-black hover:underline">→ Want a cash offer instead?</Link>
                   </div>
                 </div>
               </div>
@@ -485,14 +499,16 @@ export default async function BuySuburbPage({ params }: Props) {
                 <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">Price Per Sq Ft</p>
               </div>
               <div className="bg-white p-6 border border-[#E8E8E8]">
-                <p className="text-3xl font-black" style={{ color: '#16a34a' }}>{suburb.yoyChange}</p>
-                <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">YoY Appreciation</p>
+                <p className="text-3xl font-black" style={{ color: yoyColor(suburb.yoyChange) }}>{suburb.yoyChange}</p>
+                <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">YoY Price Change</p>
               </div>
             </div>
           </div>
         </div>
 
-        {slug === 'franklin-tn' && <GnarRegionalSnapshot />}
+        {showsGnarRegionalSnapshot(slug) && (
+          <GnarRegionalSnapshot cityName={suburb.name} />
+        )}
 
         {/* About the Market */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -546,8 +562,8 @@ export default async function BuySuburbPage({ params }: Props) {
                     </div>
                   )}
                   <div className="flex justify-between items-center">
-                    <dt className="text-sm text-[#A0A0A0]">Appreciation</dt>
-                    <dd className="text-sm font-bold" style={{ color: '#4ade80' }}>{suburb.yoyChange} YoY</dd>
+                    <dt className="text-sm text-[#A0A0A0]">YoY change</dt>
+                    <dd className="text-sm font-bold" style={{ color: yoyColor(suburb.yoyChange, true) }}>{suburb.yoyChange} YoY</dd>
                   </div>
                 </dl>
               </div>
@@ -776,7 +792,7 @@ export default async function BuySuburbPage({ params }: Props) {
                   out-of-state moves, or freeing up a non-contingent {suburb.name} offer.
                 </p>
                 <Link
-                  href="/cash-offer"
+                  href={cashOfferPath(slug)}
                   className="inline-block text-sm font-bold px-6 py-3 tracking-wide transition-colors text-center"
                   style={{ backgroundColor: '#C41E3A', color: '#FFFFFF' }}
                 >

@@ -404,8 +404,9 @@ export default async function ListingDetailPage({ params }: Props) {
             </div>
           </div>
 
-          {/* Right: lead capture — first in the mobile stack so the form is reachable without scrolling the whole page */}
-          <div className="lg:col-span-1 order-first lg:order-last">
+          {/* Right: lead capture — last in the mobile stack so price and specs land before the ask;
+              the sticky "Ask Joshua" bar anchors to #lead, so the form stays one tap away */}
+          <div className="lg:col-span-1 lg:order-last">
             <div id="lead" className="lg:sticky lg:top-24 border border-[#E8E8E8] rounded-2xl p-6 sm:p-8 scroll-mt-24">
               <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-2">
                 {sold ? 'This home has sold' : 'Interested in this home?'}
@@ -441,8 +442,8 @@ export default async function ListingDetailPage({ params }: Props) {
               >
                 <input type="hidden" name="lead_type" value="buyer" />
                 <input type="hidden" name="source" value={sold ? 'listing-detail-sold' : 'listing-detail'} />
-                {/* property_address is the field the contact webhook already
-                    surfaces (Slack "Property" field + Monday item name). */}
+                {/* property_address tells Joshua which home the lead is about —
+                    it lands in the lead email and the sheet's property_address column. */}
                 <input type="hidden" name="property_address" value={`${listing.address}, ${city}`} />
                 {suburbName && <input type="hidden" name="suburb" value={suburbName} />}
 

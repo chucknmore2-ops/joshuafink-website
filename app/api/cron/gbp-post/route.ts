@@ -3,16 +3,19 @@ import { listings } from '@/lib/listings'
 import { soldListings } from '@/lib/sold-listings'
 import { blogPosts } from '@/lib/blog'
 import { reviews } from '@/lib/reviews'
-import { logPost } from '@/lib/admin-db'
+import { hasPostedRef, logPost } from '@/lib/admin-db'
 import { withUtm } from '@/lib/utm'
 import { suburbs, marketStatsLastUpdated, marketStatsSource } from '@/lib/suburbs'
 import {
   currentSnapshot,
   marketUpdateSlug,
   monthLabel,
+  snapshotExpectFromSearchParams,
+  snapshotMatchesExpect,
   snapshotSkipReason,
   snapshotStatLines,
 } from '@/lib/market-snapshot'
+import { compassJpegUrl } from '@/lib/compass-photo'
 import {
   CALL_CTA,
   ctaLink,
@@ -77,7 +80,7 @@ type GbpPayloadKind = 'listing' | 'sold' | 'market-update' | 'tip' | 'review' | 
 interface PreparedPost {
   summary: string
   cta?: CTA
-  // Publicly-fetchable JPEG for the post's single photo (see gbpPhotoUrl).
+  // Publicly-fetchable JPEG for the post's single photo (see compassJpegUrl).
   photoUrl?: string
   // kind + refKey populate post_log columns so the morning healthcheck can
   // see freshness per channel and /admin can dedup across reruns.
@@ -87,18 +90,8 @@ interface PreparedPost {
 
 // Google's local-post API takes exactly ONE photo (`media[0]`), not a gallery,
 // and it rejects WebP — which is the format of every Compass image URL in
-// lib/listings.ts / lib/sold-listings.ts. Compass's CDN serves the same asset
-// as a JPEG when the extension is swapped (…/480x320.webp → …/1200x900.jpg,
-// verified 2026-08-13 against both URL hash shapes Compass emits), so no local
-// copy is needed. Normalising to 1200x900 keeps every photo above Google's
-// 720px minimum and well inside its 10KB–5MB size window.
-function gbpPhotoUrl(imageUrl?: string): string | undefined {
-  if (!imageUrl) return undefined
-  const m = imageUrl.match(
-    /^(https:\/\/(?:www\.)?compass\.com\/m\/[^/?#]+)\/\d+x\d+\.webp$/,
-  )
-  return m ? `${m[1]}/1200x900.jpg` : undefined
-}
+// lib/listings.ts / lib/sold-listings.ts. compassJpegUrl swaps size+ext to
+// 1200x900.jpg (see lib/compass-photo.ts).
 
 // ── Content builders ──────────────────────────────────────────────────
 
@@ -119,7 +112,7 @@ function buildListingPost(): PreparedPost {
       actionType: 'LEARN_MORE',
       url: l.compassUrl || withUtm(`${SITE}/listings`, gbpUtm('listing')),
     },
-    photoUrl: gbpPhotoUrl(l.imageUrl),
+    photoUrl: compassJpegUrl(l.imageUrl),
     kind: 'listing',
     refKey: l.address.toLowerCase().replace(/[^\w]+/g, '-'),
   }
@@ -160,7 +153,7 @@ function buildSoldPost(addressQuery: string): PreparedPost | null {
       actionType: 'LEARN_MORE',
       url: withUtm(`${SITE}/listings`, gbpUtm('just-sold')),
     },
-    photoUrl: gbpPhotoUrl(l.imageUrl),
+    photoUrl: compassJpegUrl(l.imageUrl),
     kind: 'sold',
     refKey: l.address.toLowerCase().replace(/[^\w]+/g, '-'),
   }
@@ -492,6 +485,18 @@ export async function GET(request: Request) {
     })
   }
 
+  if (isMonthly) {
+    const expect = snapshotExpectFromSearchParams(params)
+    if (expect.expectMonth && !snapshotMatchesExpect(currentSnapshot(), expect)) {
+      return NextResponse.json({
+        posted: false,
+        skipped: 'deploy_pending',
+        expectMonth: expect.expectMonth,
+        at: new Date().toISOString(),
+      })
+    }
+  }
+
   if (!post) {
     const reason = isMonthly
       ? `skipped: ${snapshotSkipReason()}`
@@ -520,6 +525,19 @@ export async function GET(request: Request) {
       skipped: isOnDemand ? 'no_match' : isMonthly ? 'no_snapshot' : 'stats_stale',
       week,
       statsAsOf: isMonthly || isOnDemand ? undefined : statsAsOf(BRENTWOOD_SLUG),
+      at: new Date().toISOString(),
+    })
+  }
+
+  if (isMonthly && post && await hasPostedRef({
+    channel: 'gbp',
+    jobName,
+    refKey: post.refKey,
+  })) {
+    return NextResponse.json({
+      posted: false,
+      skipped: 'already_posted',
+      month: post.refKey,
       at: new Date().toISOString(),
     })
   }

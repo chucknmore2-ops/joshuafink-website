@@ -1,0 +1,187 @@
+name: Fetch GNAR market snapshot
+
+# Pulls last month's Greater Nashville REALTORS® statistics and, when they
+# validate, adds them to lib/market-snapshot.ts. lib/blog.ts renders the
+# market post from that entry, so the merge publishes it.
+#
+# main is protected (a direct push fails with GH006 — that is what froze
+# the listings sync in Aug 2026), so this opens an auto-merging PR, the
+# same path as sync-listings. The Monthly Market Update workflow posts
+# Facebook, LinkedIn, and Google Business after that merge deploys.
+#
+# Schedule: 15:00 UTC on the 3rd–12th (10:00am CT during CDT). GNAR usually
+# publishes around the 6th–8th. workflow_dispatch works any day.
+#
+# Before the 10th, "not published yet" is a green no-op. On the 10th and
+# after, a missing or invalid month sends a Pushover alert and fails the
+# run. Invalid numbers are never written.
+
+on:
+  schedule:
+    - cron: '0 15 3-12 * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+concurrency:
+  group: fetch-gnar-snapshot
+  cancel-in-progress: false
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Fetch and validate last month
+        id: fetch
+        env:
+          PUSHOVER_TOKEN: ${{ secrets.PUSHOVER_TOKEN }}
+          PUSHOVER_USER: ${{ secrets.PUSHOVER_USER }}
+        run: |
+          set +e
+          output=$(npx tsx scripts/fetch-gnar.ts)
+          code=$?
+          set -e
+          echo "$output"
+          status=$(printf '%s\n' "$output" | sed -n 's/^STATUS=//p' | tail -n1)
+          month=$(printf '%s\n' "$output" | sed -n 's/^MONTH=//p' | tail -n1)
+          detail=$(printf '%s\n' "$output" | sed -n 's/^DETAIL=//p' | tail -n1)
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          echo "month=$month" >> "$GITHUB_OUTPUT"
+          if [ "$code" -eq 0 ]; then
+            exit 0
+          fi
+          echo "::error::GNAR snapshot for ${month:-unknown} was not written. $detail"
+          if [ -n "$PUSHOVER_TOKEN" ] && [ -n "$PUSHOVER_USER" ]; then
+            curl -sS --fail -m 20 \
+              --form-string "token=$PUSHOVER_TOKEN" \
+              --form-string "user=$PUSHOVER_USER" \
+              --form-string "title=GNAR market snapshot failed" \
+              --form-string "message=No ${month:-new} snapshot was written. ${detail} Nothing partial was committed. Run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              --form-string "priority=1" \
+              --form-string "sound=siren" \
+              https://api.pushover.net/1/messages.json || echo "::warning::Pushover alert failed"
+          else
+            echo "::warning::PUSHOVER_TOKEN or PUSHOVER_USER is not set — phone alert skipped."
+          fi
+          exit 1
+
+      - name: Open auto-merging PR
+        if: steps.fetch.outputs.status == 'written'
+        env:
+          TZ: America/Chicago
+          SYNC_PAT: ${{ secrets.SYNC_PAT }}
+          FALLBACK_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MONTH: ${{ steps.fetch.outputs.month }}
+          PUSHOVER_TOKEN: ${{ secrets.PUSHOVER_TOKEN }}
+          PUSHOVER_USER: ${{ secrets.PUSHOVER_USER }}
+        run: |
+          alert() {
+            echo "::error::$1"
+            if [ -n "${PUSHOVER_TOKEN:-}" ] && [ -n "${PUSHOVER_USER:-}" ]; then
+              curl -sS --fail -m 20 \
+                --form-string "token=$PUSHOVER_TOKEN" \
+                --form-string "user=$PUSHOVER_USER" \
+                --form-string "title=GNAR market snapshot not on main" \
+                --form-string "message=$1" \
+                --form-string "priority=1" \
+                https://api.pushover.net/1/messages.json || true
+            fi
+          }
+
+          if git diff --quiet -- lib/market-snapshot.ts; then
+            echo "Fetcher reported written, but the file is unchanged."
+            exit 0
+          fi
+
+          HAS_PAT=false
+          GH_TOKEN="$FALLBACK_TOKEN"
+          if [ -n "$SYNC_PAT" ]; then
+            pat_status=$(curl -sS -o /dev/null -w '%{http_code}' \
+              -H "Authorization: Bearer $SYNC_PAT" https://api.github.com/rate_limit || echo 000)
+            if [ "$pat_status" = "200" ]; then
+              HAS_PAT=true
+              GH_TOKEN="$SYNC_PAT"
+            else
+              echo "::warning::SYNC_PAT rejected (HTTP $pat_status) — opening the PR with GITHUB_TOKEN, so its build check will wait for manual approval."
+            fi
+          fi
+          export GH_TOKEN
+
+          open=$(gh pr list --state open --json headRefName --jq '.[].headRefName' || true)
+          if printf '%s\n' "$open" | grep -q "^gnar-snapshot/${MONTH}"; then
+            echo "An open PR already exists for ${MONTH}. Leaving it to auto-merge."
+            exit 0
+          fi
+
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          BRANCH="gnar-snapshot/${MONTH}-$(date +%Y%m%d%H%M%S)"
+          TITLE="chore: add ${MONTH} GNAR market snapshot"
+          git checkout -b "$BRANCH"
+          git add lib/market-snapshot.ts
+          git commit -m "$TITLE"
+          git push origin "$BRANCH"
+
+          gh_retry() {
+            local attempt=1
+            until "$@"; do
+              if [ "$attempt" -ge 3 ]; then
+                echo "::error::\`$*\` failed after $attempt attempts." >&2
+                return 1
+              fi
+              echo "\`$*\` failed (attempt $attempt) — retrying in $((attempt * 15))s." >&2
+              sleep $((attempt * 15))
+              attempt=$((attempt + 1))
+            done
+          }
+
+          cleanup_branch() {
+            echo "::error::Failed to open/auto-merge the snapshot PR — deleting $BRANCH."
+            git push origin --delete "$BRANCH" || true
+          }
+          trap cleanup_branch ERR
+
+          if [ "$HAS_PAT" != "true" ]; then
+            gh_retry gh workflow run build-check.yml --ref "$BRANCH"
+          fi
+
+          PR_URL=$(gh_retry gh pr create \
+            --base main \
+            --head "$BRANCH" \
+            --title "$TITLE" \
+            --body "Automated Greater Nashville REALTORS® snapshot for ${MONTH}. Figures were validated by scripts/fetch-gnar.ts. Merges itself once the build check is green, which publishes the market blog post and starts the social posts.")
+          echo "Opened $PR_URL"
+          gh_retry gh pr merge "$PR_URL" --squash --auto --delete-branch
+          trap - ERR
+
+          for i in $(seq 1 40); do
+            state=$(gh pr view "$PR_URL" --json state --jq .state)
+            echo "PR state: $state (check $i)"
+            if [ "$state" = "MERGED" ]; then
+              gh_retry gh workflow run monthly-market-update.yml --ref main
+              echo "Dispatched Monthly Market Update."
+              exit 0
+            fi
+            sleep 30
+          done
+          alert "The ${MONTH} GNAR snapshot PR did not merge within 20 minutes: ${PR_URL}"
+          exit 1
