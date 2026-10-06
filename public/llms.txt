@@ -39,6 +39,10 @@ Buyer guides:
 - [Columbia, TN](https://www.joshuafink.com/buy/columbia-tn)
 - [Hendersonville, TN](https://www.joshuafink.com/buy/hendersonville-tn)
 - [Mount Juliet, TN](https://www.joshuafink.com/buy/mount-juliet-tn)
+- [Gallatin, TN](https://www.joshuafink.com/buy/gallatin-tn)
+- [Lebanon, TN](https://www.joshuafink.com/buy/lebanon-tn)
+- [Smyrna, TN](https://www.joshuafink.com/buy/smyrna-tn)
+- [La Vergne, TN](https://www.joshuafink.com/buy/la-vergne-tn)
 
 Seller guides (same suburbs) live under `/sell/[suburb]`.
 
