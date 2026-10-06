@@ -1,0 +1,112 @@
+name: Listing Video
+
+# When Compass sync adds an Active or Coming Soon home, build a 1080x1920
+# MP4 with ffmpeg (Ken Burns pan/zoom, crossfades, a text plate, silent
+# audio) and publish it.
+#
+#   - YouTube Short, if YOUTUBE_CLIENT_ID / YOUTUBE_CLIENT_SECRET /
+#     YOUTUBE_REFRESH_TOKEN are set and the refresh token includes
+#     https://www.googleapis.com/auth/youtube.upload
+#     (https://www.googleapis.com/auth/youtube is also accepted).
+#     A Google Business Profile token cannot upload.
+#   - Instagram Reel through Buffer (BUFFER_API_KEY, BUFFER_IG_CHANNEL_ID).
+#   - Facebook Reel through Buffer only when BUFFER_FB_CHANNEL_ID is set.
+#
+# The MP4 is committed to public/listing-videos so Buffer can fetch a stable
+# https://www.joshuafink.com URL. The YouTube id is written to
+# lib/listing-tour-videos.json in that same PR. post_log dedupes each channel.
+#
+# Homes in LISTING_VIDEO_SEED_ADDRESSES (the inventory on 2026-10-06) are
+# not auto-published. workflow_dispatch input `address` renders one home
+# anyway, and still will not post a channel that already succeeded.
+#
+# A real failure sends a Pushover alert. Missing YouTube credentials are
+# reported in the job summary and do not fail the social queue.
+
+on:
+  schedule:
+    # After the 08:00 UTC Compass sync. Push and the sync dispatch are the
+    # fast path; this run catches a dispatch that did not start.
+    - cron: '30 9 * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'lib/listings.ts'
+  workflow_dispatch:
+    inputs:
+      address:
+        description: 'One street address to render now, for example 4127 Edwards Ave. Leave empty to process new Active and Coming Soon listings.'
+        required: false
+        type: string
+        default: ''
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: listing-video
+  cancel-in-progress: false
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-dejavu-core
+
+      - name: Render and publish listing videos
+        env:
+          ADDRESS: ${{ github.event.inputs.address }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+          BUFFER_IG_CHANNEL_ID: ${{ secrets.BUFFER_IG_CHANNEL_ID }}
+          BUFFER_FB_CHANNEL_ID: ${{ secrets.BUFFER_FB_CHANNEL_ID }}
+          YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+          PUSHOVER_TOKEN: ${{ secrets.PUSHOVER_TOKEN }}
+          PUSHOVER_USER: ${{ secrets.PUSHOVER_USER }}
+          SYNC_PAT: ${{ secrets.SYNC_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx tsx scripts/listing-video.ts
+
+      - name: Pushover if the script did not already alert
+        if: failure()
+        env:
+          PUSHOVER_TOKEN: ${{ secrets.PUSHOVER_TOKEN }}
+          PUSHOVER_USER: ${{ secrets.PUSHOVER_USER }}
+        run: |
+          if [ -f /tmp/listing-video-alerted ]; then
+            echo "The script already sent a Pushover alert."
+            exit 0
+          fi
+          if [ -n "${PUSHOVER_TOKEN:-}" ] && [ -n "${PUSHOVER_USER:-}" ]; then
+            curl -sS --fail -m 20 \
+              --form-string "token=$PUSHOVER_TOKEN" \
+              --form-string "user=$PUSHOVER_USER" \
+              --form-string "title=Listing video failed" \
+              --form-string "message=Listing video job failed before it could alert. See GitHub Actions run ${{ github.run_id }}." \
+              --form-string "priority=1" \
+              https://api.pushover.net/1/messages.json || echo "::warning::Pushover alert failed"
+          else
+            echo "::warning::PUSHOVER_TOKEN or PUSHOVER_USER is not set."
+          fi

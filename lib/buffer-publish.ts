@@ -134,6 +134,89 @@ export function interpretBufferCreatePost(
   }
 }
 
+export type BufferVideoTarget = 'instagram' | 'facebook'
+
+export function bufferVideoPostVariables(input: {
+  channelId: string
+  text: string
+  videoUrl: string
+  target: BufferVideoTarget
+}): { input: Record<string, unknown> } {
+  // Instagram Reel: type reel. shouldShareToFeed is required on that input.
+  // Facebook 9:16 video: type reel (post | reel | story).
+  // https://developers.buffer.com/examples/create-video-post.html
+  const metadata =
+    input.target === 'instagram'
+      ? { instagram: { type: 'reel', shouldShareToFeed: true } }
+      : { facebook: { type: 'reel' } }
+  return {
+    input: {
+      text: input.text,
+      channelId: input.channelId,
+      schedulingType: 'automatic',
+      mode: 'addToQueue',
+      assets: [
+        {
+          video: {
+            url: input.videoUrl,
+            metadata: { thumbnailOffset: 2000 },
+          },
+        },
+      ],
+      metadata,
+    },
+  }
+}
+
+export async function queueBufferVideoPost(
+  input: {
+    apiKey: string
+    channelId: string
+    text: string
+    videoUrl: string
+    target: BufferVideoTarget
+    missingChannelError: string
+  },
+  fetchImpl: typeof fetch = fetch,
+): Promise<BufferQueueResult> {
+  const apiKey = input.apiKey.trim()
+  const channelId = input.channelId.trim()
+  if (!apiKey) return { ok: false, error: 'BUFFER_API_KEY not set' }
+  if (!channelId) return { ok: false, error: input.missingChannelError }
+  if (!input.text.trim()) return { ok: false, error: 'caption missing' }
+  if (!input.videoUrl.trim()) return { ok: false, error: 'video url missing' }
+
+  let res: Response
+  try {
+    res = await fetchImpl(BUFFER_GRAPHQL_URL, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({
+        query: BUFFER_CREATE_POST_MUTATION,
+        variables: bufferVideoPostVariables({
+          channelId,
+          text: input.text,
+          videoUrl: input.videoUrl,
+          target: input.target,
+        }),
+      }),
+      signal: AbortSignal.timeout(30_000),
+    })
+  } catch (err) {
+    return {
+      ok: false,
+      error: redactBufferSecret(`buffer network: ${(err as Error).message}`, apiKey),
+    }
+  }
+
+  const raw = await res.text().catch(() => '')
+  return interpretBufferCreatePost(res.status, raw, apiKey)
+}
+
 export async function queueInstagramImagePost(
   input: BufferImagePostInput,
   fetchImpl: typeof fetch = fetch,
