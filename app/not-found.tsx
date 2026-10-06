@@ -27,7 +27,7 @@ const destinations = [
   {
     href: '/about',
     label: 'About Joshua',
-    desc: '17+ years of experience, 100+ homes sold annually, Diamond & Titan Award winner.',
+    desc: 'Licensed since 2008, 40+ homes a year in Middle Tennessee, Diamond & Titan Award winner.',
   },
   {
     href: '/contact',

@@ -26,9 +26,9 @@ Educational (10) · Hyperlocal/Neighborhood (6) · Point-of-View (4) · Market U
 ## WEEK 1 — Establish authority + market pulse
 
 ### Post 1 — Day 1 (Mon) · Facebook · POINT-OF-VIEW
-**Asset:** Headshot of Joshua + simple branded text overlay ("17 years. Same phone number.")
+**Asset:** Headshot of Joshua + simple branded text overlay ("Licensed since 2008. Same phone number.")
 **Copy:**
-> 17 years selling homes in Middle Tennessee, and the one thing that hasn't changed: I still pick up my own phone.
+> Licensed since 2008, selling homes in Middle Tennessee, and the one thing that hasn't changed: I still pick up my own phone.
 >
 > No call center, no "I'll have someone get back to you." When you're making the biggest financial decision of your life, you should be able to reach the person actually doing the work.
 >
@@ -77,7 +77,7 @@ Educational (10) · Hyperlocal/Neighborhood (6) · Point-of-View (4) · Market U
 **Copy:**
 > A note to the mortgage brokers and loan officers I work with across Middle Tennessee:
 >
-> When you refer a client to me, here's what you can count on — fast responses, clean files, and a borrower who stays under contract because they understood the process from day one. I close 100+ homes a year, so I know how much a smooth transaction protects your pipeline too.
+> When you refer a client to me, here's what you can count on — fast responses, clean files, and a borrower who stays under contract because they understood the process from day one. I close 40+ homes a year in Middle Tennessee, so I know how much a smooth transaction protects your pipeline too.
 >
 > If you've got a pre-approved buyer who needs an agent who'll actually return calls, send them my way. I'll take great care of them and keep you in the loop.
 >
@@ -165,7 +165,7 @@ Educational (10) · Hyperlocal/Neighborhood (6) · Point-of-View (4) · Market U
 >
 > If you're advising clients relocating into the region — or moving here yourself — I'm happy to break down any of these submarkets. Reach out.
 >
-> Joshua Fink, Affiliate Broker · Compass · 17+ years in this market.
+> Joshua Fink, Affiliate Broker · Compass · Licensed since 2008.
 **CTA / Link:** https://joshuafink.com/neighborhoods
 **Hashtags:** #NashvilleRealEstate #RelocationServices #MiddleTennessee #RealEstateMarket
 
@@ -237,7 +237,7 @@ Educational (10) · Hyperlocal/Neighborhood (6) · Point-of-View (4) · Market U
 **Copy:**
 > Builders and relocation managers — a quick introduction.
 >
-> Middle Tennessee keeps drawing families and companies, and the agent on the ground matters. I've spent 17+ years here and close 100+ homes a year across Franklin, Brentwood, Spring Hill, Nashville, Murfreesboro and beyond. I know the submarkets, the timelines, and how to make a relocating buyer feel handled instead of lost.
+> Middle Tennessee keeps drawing families and companies, and the agent on the ground matters. I've been licensed since 2008 and close 40+ homes a year in Middle Tennessee, including Franklin, Brentwood, Spring Hill, Nashville, Murfreesboro and beyond. I know the submarkets, the timelines, and how to make a relocating buyer feel handled instead of lost.
 >
 > If you build in this region and want a listing partner for your spec inventory, or you manage relocations and need a reliable local agent for inbound employees — let's connect. I treat your client's experience like it's my own reputation, because it is.
 >
@@ -315,7 +315,7 @@ Educational (10) · Hyperlocal/Neighborhood (6) · Point-of-View (4) · Market U
 **Copy:**
 > Unpopular opinion in my industry: the agent who shows you the most houses isn't the one doing the best job.
 >
-> Volume isn't service. After 17+ years and 100+ closings a year, I've learned that the best thing I can do for a buyer is help them rule houses *out* fast — so we spend our energy on the handful that actually fit. Fewer showings, better decisions, less burnout, a cleaner offer when the right one shows up.
+> Volume isn't service. Licensed since 2008 and closing 40+ homes a year in Middle Tennessee, I've learned that the best thing I can do for a buyer is help them rule houses *out* fast — so we spend our energy on the handful that actually fit. Fewer showings, better decisions, less burnout, a cleaner offer when the right one shows up.
 >
 > Honesty saves my clients more time and money than any "hustle" ever could.
 >
@@ -388,7 +388,7 @@ Educational (10) · Hyperlocal/Neighborhood (6) · Point-of-View (4) · Market U
 > ✔️ Protects your inspection and your earnest money
 > ✔️ Treats your timeline like it's the only one that matters
 >
-> 17+ years, 100+ homes a year, one standard. If your agent isn't doing these, you have options.
+> Licensed since 2008, 40+ homes a year in Middle Tennessee, one standard. If your agent isn't doing these, you have options.
 >
 > Ready when you are. DM me or call.
 **CTA / Link:** "Work with me → link in bio" → https://joshuafink.com/contact

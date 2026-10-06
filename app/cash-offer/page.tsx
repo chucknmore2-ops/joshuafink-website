@@ -71,7 +71,7 @@ const faqs = [
   // FAQ #10 below, not new claims.
   {
     q: 'Is there a real estate agent who buys houses for cash in Middle Tennessee?',
-    a: `Yes. Joshua Fink is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate who personally buys houses for cash across Middle Tennessee, in addition to representing traditional buyers and sellers. With 17+ years of experience and ${reviewStats.total}+ five-star reviews, he gives you a written cash offer and a traditional-listing estimate side by side, so you choose the path that fits — not a call-center algorithm. Call 615-551-2727 or visit joshuafink.com/cash-offer to get started.`,
+    a: `Yes. Joshua Fink is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate who personally buys houses for cash across Middle Tennessee, in addition to representing traditional buyers and sellers. Licensed since 2008, with ${reviewStats.total}+ five-star reviews, he gives you a written cash offer and a traditional-listing estimate side by side, so you choose the path that fits — not a call-center algorithm. Call 615-551-2727 or visit joshuafink.com/cash-offer to get started.`,
   },
   {
     q: 'How does selling my house for cash work in Nashville?',
@@ -314,8 +314,8 @@ export default function CashOfferPage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-neutral-200">
             {[
-              { value: '17+', label: 'Years in Middle TN' },
-              { value: '100+', label: 'Homes Sold Annually' },
+              { value: '18', label: 'Years Licensed' },
+              { value: '40+', label: 'Homes a Year in Middle TN' },
               { value: '7 Days', label: 'Fastest Close' },
               { value: '$0', label: 'Fees or Commissions' },
             ].map((s) => (

@@ -210,7 +210,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
       eyebrow: 'Sell My Home Fast · Davidson County',
     },
     differentiator:
-      "Most “sell my house fast Nashville” results are cash-buyer websites. Joshua is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate — 218+ five-star reviews and 17+ years in Middle Tennessee. He can buy your Nashville home for cash or list it for full market value, and he shows you both numbers in writing before you choose.",
+      "Most “sell my house fast Nashville” results are cash-buyer websites. Joshua is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate — 218+ five-star reviews, and he has been licensed since 2008 in Middle Tennessee. He can buy your Nashville home for cash or list it for full market value, and he shows you both numbers in writing before you choose.",
     compareNote:
       "The table is the tradeoff in plain numbers. What it doesn’t show: Joshua runs both paths. If your Nashville home is in good shape and you can wait 30–90 days, listing usually nets more — and he’ll say so. If you need to sell your house fast in Nashville, cash is the certain close. Either way you deal with the same licensed broker, not a call center.",
     situationDetails: [
@@ -417,7 +417,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
       eyebrow: 'Columbia, TN · Cash Offer',
     },
     differentiator:
-      'Search results for a Columbia cash offer are full of out-of-town "we buy houses" sites. Joshua is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate — 218+ five-star reviews and 17+ years in Middle Tennessee. He can buy your Columbia home for cash or list it, and he shows you both numbers in writing before you choose.',
+      'Search results for a Columbia cash offer are full of out-of-town "we buy houses" sites. Joshua is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate — 218+ five-star reviews, and he has been licensed since 2008 in Middle Tennessee. He can buy your Columbia home for cash or list it, and he shows you both numbers in writing before you choose.',
     compareNote:
       'Columbia homes are averaging about 78 days on market, with a citywide median around $368,006 (Redfin, as of October 5, 2026). Listing can still net more on a move-in-ready house if you can wait. If you need to sell your house fast in Columbia — as-is, or on a date you can plan around — cash is the certain close. Same licensed broker either way.',
     situationDetails: [

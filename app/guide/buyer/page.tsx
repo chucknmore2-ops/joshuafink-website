@@ -330,7 +330,7 @@ export default function BuyerGuidePage() {
                   the search narrowed to two or three neighborhoods, Joshua will do that on a call.
                 </p>
                 <p className="text-sm mt-4 leading-relaxed" style={{ color: '#A0A0A0' }}>
-                  Joshua Fink · Affiliate Broker, Compass Real Estate · TN license #351484 · 17 years in Middle Tennessee
+                  Joshua Fink · Affiliate Broker, Compass Real Estate · TN license #351484 · Licensed since 2008
                 </p>
                 <div className="flex flex-col sm:flex-row flex-wrap gap-3 mt-8">
                   <Link
