@@ -17,6 +17,7 @@
  */
 import { listings, type Listing } from './listings'
 import { soldListings } from './sold-listings'
+import tourVideoFile from './listing-tour-videos.json'
 
 export type ListingRef = Pick<Listing, 'address' | 'city'> &
   Partial<Pick<Listing, 'status' | 'compassUrl'>>
@@ -198,18 +199,35 @@ export function hasListingDetail(listing: ListingRef): boolean {
 }
 
 /**
- * Hand-maintained map of listing slug → YouTube video ID for virtual-tour
- * walkthroughs on the Joshua Fink Group channel
- * (youtube.com/channel/UCc6j1NWgJeb00pT5xsenz3g). Lives here rather than in
- * lib/listings.ts so the Compass re-sync that regenerates that file can't
- * wipe it. After uploading a tour, add a line like:
- *   '1901-new-bristol-ln-brentwood': 'dQw4w9WgXcQ',
- * and the listing page embeds the player + emits VideoObject schema.
- * Entries for slugs no longer active are simply never rendered.
+ * Listing-page YouTube ids, keyed by the on-site slug.
+ *
+ * The map lives in lib/listing-tour-videos.json so the Compass sync that
+ * rewrites lib/listings.ts cannot wipe it. The listing-video workflow writes
+ * an id after a Short uploads. A hand edit of that JSON still works; the
+ * value has to be the 11-character YouTube id. Anything else is ignored.
+ * Entries for slugs that are no longer on the site are simply never rendered.
  */
-export const tourVideos: Record<string, string> = {}
+export function sanitizeTourVideoId(id: string): string | undefined {
+  const clean = id.trim()
+  return /^[A-Za-z0-9_-]{11}$/.test(clean) ? clean : undefined
+}
 
-/** YouTube video ID of a listing's virtual tour, if one has been uploaded. */
+export function tourVideosFromRecord(raw: unknown): Record<string, string> {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {}
+  const out: Record<string, string> = {}
+  for (const [slug, id] of Object.entries(raw as Record<string, unknown>)) {
+    if (typeof id !== 'string') continue
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) continue
+    const clean = sanitizeTourVideoId(id)
+    if (!clean) continue
+    out[slug] = clean
+  }
+  return out
+}
+
+export const tourVideos: Record<string, string> = tourVideosFromRecord(tourVideoFile)
+
+/** YouTube video ID for a listing page embed, if one has been recorded. */
 export function getTourVideoId(slug: string): string | undefined {
   return tourVideos[slug]
 }

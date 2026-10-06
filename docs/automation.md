@@ -174,6 +174,20 @@ curl -H "Authorization: Bearer $CRON_SECRET" \
 
 A real failure sends a Pushover alert. It does not send email. A run with nothing new exits green.
 
+### 7. Listing video — Shorts and Reels
+
+When Compass sync adds an **Active** or **Coming Soon** home that is not in the 2026-10-06 seed, [`.github/workflows/listing-video.yml`](../.github/workflows/listing-video.yml) builds a 1080×1920 MP4 with ffmpeg and publishes it.
+
+**What it is.** Ken Burns pan/zoom on the Compass photos, crossfades, a text plate (address, city, beds / baths / sq ft, price), and an end card that reads `Joshua Fink | Compass | joshuafink.com`. Silent audio. No music and no AI motion.
+
+**Where it goes.** YouTube Short when `YOUTUBE_CLIENT_ID`, `YOUTUBE_CLIENT_SECRET`, and `YOUTUBE_REFRESH_TOKEN` are set and the token includes `https://www.googleapis.com/auth/youtube.upload`. Instagram Reel through Buffer. Facebook Reel only when `BUFFER_FB_CHANNEL_ID` is set; otherwise that channel is skipped. The MP4 is committed under `public/listing-videos/` so Buffer can fetch `https://www.joshuafink.com/listing-videos/<slug>.mp4`. The YouTube id is written to `lib/listing-tour-videos.json` in that PR, which fills the listing page embed.
+
+**No flood on launch.** All eight homes in `lib/listings.ts` on 2026-10-06 are listed in `LISTING_VIDEO_SEED_ADDRESSES` and are not auto-published. `post_log` (job `listing-video`) blocks a second post on the same channel. A manual run is `gh workflow run listing-video.yml -f address='4127 Edwards Ave'`. That ignores the seed and still will not post a channel that already succeeded.
+
+**YouTube not configured.** The job still renders and queues Buffer, and the log names the missing secret or scope. It does not fail the run for that alone. A Google Business Profile token cannot upload videos.
+
+A real failure (render, database, or Buffer) sends a Pushover alert.
+
 ---
 
 ## How to verify each job
@@ -186,6 +200,7 @@ A real failure sends a Pushover alert. It does not send email. A run with nothin
 | Monthly market update | github.com/.../actions → "Fetch GNAR market snapshot" green, then "Monthly Market Update" green with each channel posted or `already_posted`; the post is at `/blog/middle-tennessee-market-update-<month>-<year>` |
 | Listings sync | github.com/.../actions → "Sync Compass Listings" green; new commit `chore: daily listing sync from Compass` on main |
 | Just Listed GBP | github.com/.../actions → "GBP Just Listed" green with `posted: true` or `none_pending`. Does not run on Tuesdays as part of Social Autopost. |
+| Listing video | github.com/.../actions → "Listing Video" green. A new home gets a `post_log` row per channel. The 2026-10-06 inventory is seeded and is not published. |
 
 ## What to do if a cron silently fails
 

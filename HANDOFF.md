@@ -153,6 +153,8 @@ Instagram path does not read them.
 SYNC_PAT  CRON_SECRET  DATABASE_URL  ALERT_TO_EMAIL  GMAIL_USER  GMAIL_APP_PASSWORD
 PUSHOVER_TOKEN  PUSHOVER_USER  OPENAI_API_KEY  PERPLEXITY_API_KEY  XAI_API_KEY
 BUFFER_API_KEY  BUFFER_IG_CHANNEL_ID
+YOUTUBE_CLIENT_ID  YOUTUBE_CLIENT_SECRET  YOUTUBE_REFRESH_TOKEN
+BUFFER_FB_CHANNEL_ID
 ```
 
 `BUFFER_API_KEY` and `BUFFER_IG_CHANNEL_ID` are the Instagram live path (Buffer
@@ -160,6 +162,14 @@ Free, channel @joshuafinkgroup). Social Autopost forwards them on the
 instagram-post fire. They are not Vercel env vars. Graph tokens above stay
 unused. `ANTHROPIC_API_KEY` is unused here too — safe to delete from Actions
 secrets. Railway `services/autoposter` never read it.
+
+`YOUTUBE_CLIENT_ID`, `YOUTUBE_CLIENT_SECRET`, and `YOUTUBE_REFRESH_TOKEN` are
+optional until listing Shorts should upload. The refresh token needs the scope
+`https://www.googleapis.com/auth/youtube.upload` (or the broader
+`https://www.googleapis.com/auth/youtube`) for the joshuafinkgroup channel.
+A Google Business Profile token cannot upload. Without them, Listing Video
+still builds the MP4 and queues Instagram. `BUFFER_FB_CHANNEL_ID` is optional;
+when it is unset, Facebook is skipped.
 
 `CRON_SECRET` exists in **both** and they must match, or the healthcheck's test
 lead comes back without per-channel results.
@@ -180,6 +190,7 @@ lead comes back without per-channel results.
 | GEO audit | Mon 13:00 | `geo-audit.yml` | `geo_visibility` rows, /admin GEO card |
 | GNAR market snapshot | 3rd–12th, 15:00 | `fetch-gnar-snapshot.yml` | auto-merged PR adding `lib/market-snapshot.ts` |
 | Monthly market update | when that PR merges | `monthly-market-update.yml` | `post_log`, job `monthly-market-update` |
+| Listing video | when `lib/listings.ts` changes, after the sync merges, and daily 09:30 | `listing-video.yml` | `post_log` rows, job `listing-video`; YouTube id in `lib/listing-tour-videos.json` |
 | IndexNow | daily 02:00 | Vercel cron → `/api/cron/indexnow` | Vercel function logs only |
 
 The Monday 12:00 UTC agent-briefing cron was removed 2026-09-28. The weekly
@@ -360,15 +371,16 @@ Production**. Then revert the commit (`git revert <sha>`) so the code matches.
 | Channels not yet live | `docs/unblock-channels-checklist.md` |
 | Weekly operating checklist | `FIRST_30_DAYS.md` |
 
-**Listing tour videos:** `tourVideos` in `lib/listing-detail.ts` maps a listing
-slug to a YouTube video ID, and the page renders the embed plus VideoObject
-schema automatically. A finished 107 Overlook Trail tour exists but is not
-uploaded. Once it's on YouTube:
+**Listing videos:** `lib/listing-tour-videos.json` maps a listing slug to a
+YouTube video id. `getTourVideoId()` in `lib/listing-detail.ts` reads it, and
+the listing page embeds the player plus VideoObject schema. The Listing Video
+workflow writes an id after a Short uploads. A hand edit of that JSON still
+works: the key is the slug from the listing URL, and the value is the
+11-character YouTube id. Open a PR and the embed appears.
 
-```ts
-export const tourVideos: Record<string, string> = {
-  '107-overlook-trail-<city>': 'YOUTUBE_VIDEO_ID',
-}
+Homes already listed on 2026-10-06 are in `LISTING_VIDEO_SEED_ADDRESSES` and
+are not auto-published. To render one of them (or any later home) on purpose:
+
+```bash
+gh workflow run listing-video.yml -f address='4127 Edwards Ave'
 ```
-
-Use the exact slug from the listing URL, open a PR, and the embed appears.

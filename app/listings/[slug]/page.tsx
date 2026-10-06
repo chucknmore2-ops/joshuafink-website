@@ -259,13 +259,13 @@ export default async function ListingDetailPage({ params }: Props) {
           </span>
         </div>
 
-        {/* Virtual tour — hand-mapped per listing in lib/listing-detail.ts (tourVideos) */}
+        {/* Listing Short. The id comes from lib/listing-tour-videos.json. */}
         {tourVideoId && (
-          <div className="mt-6 aspect-video overflow-hidden rounded-2xl bg-neutral-100">
+          <div className="mt-6 mx-auto aspect-[9/16] w-full max-w-[360px] overflow-hidden rounded-2xl bg-neutral-950">
             <iframe
               src={`https://www.youtube-nocookie.com/embed/${tourVideoId}`}
-              title={`Virtual tour of ${listing.address}, ${city}`}
-              className="w-full h-full"
+              title={`Listing video of ${listing.address}, ${city}`}
+              className="h-full w-full"
               allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
               loading="lazy"
