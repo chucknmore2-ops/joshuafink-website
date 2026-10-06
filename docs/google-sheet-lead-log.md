@@ -98,7 +98,8 @@ var CRM_HEADERS = [
   'last_utm_source', 'last_utm_medium', 'last_utm_campaign', 'last_utm_term', 'last_utm_content',
   'last_gclid', 'last_gbraid', 'last_wbraid', 'last_fbclid',
   'last_referrer', 'last_landing_page',
-  'page_url'
+  'page_url',
+  'alert_opt_in'
 ];
 
 // Blocked tab: column B is blocked_reason instead of status. Every other
@@ -113,7 +114,8 @@ var BLOCKED_HEADERS = [
   'last_utm_source', 'last_utm_medium', 'last_utm_campaign', 'last_utm_term', 'last_utm_content',
   'last_gclid', 'last_gbraid', 'last_wbraid', 'last_fbclid',
   'last_referrer', 'last_landing_page',
-  'page_url'
+  'page_url',
+  'alert_opt_in'
 ];
 
 function ensureHeaders(sheet, desired) {
@@ -185,6 +187,47 @@ function doPost(e) {
   }
 }
 
+// Read CRM email addresses for the one-time listing-alert invite.
+// Refuses to answer unless SECRET is set and matches the request. The site
+// calls this as GET ?action=crm-emails&secret=... and only sends the invite
+// when that route is explicitly taken out of dry-run.
+function doGet(e) {
+  try {
+    var params = (e && e.parameter) || {};
+    if (params.action !== 'crm-emails') {
+      return json({ ok: false, error: 'unknown action' });
+    }
+    if (!SECRET) {
+      return json({ ok: false, error: 'SECRET is empty; refusing to list CRM emails' });
+    }
+    if (params.secret !== SECRET) {
+      return json({ ok: false, error: 'bad secret' });
+    }
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName('CRM');
+    if (!sheet || sheet.getLastRow() < 2) return json({ ok: true, emails: [] });
+    var width = Math.max(sheet.getLastColumn(), 1);
+    var headers = sheet.getRange(1, 1, 1, width).getValues()[0];
+    var emailCol = -1;
+    for (var i = 0; i < headers.length; i++) {
+      if (String(headers[i] || '').trim() === 'email') emailCol = i;
+    }
+    if (emailCol < 0) return json({ ok: false, error: 'email column missing' });
+    var values = sheet.getRange(2, emailCol + 1, sheet.getLastRow() - 1, 1).getValues();
+    var seen = {};
+    var emails = [];
+    values.forEach(function (row) {
+      var email = String(row[0] || '').trim().toLowerCase();
+      if (!email || email.indexOf('@') < 1 || seen[email]) return;
+      seen[email] = true;
+      emails.push(email);
+    });
+    return json({ ok: true, emails: emails });
+  } catch (err) {
+    return json({ ok: false, error: String(err) });
+  }
+}
+
 function json(obj) {
   return ContentService
     .createTextOutput(JSON.stringify(obj))
@@ -205,7 +248,8 @@ Appended after column L, in this order:
 bathrooms · utm_source · utm_medium · utm_campaign · utm_term · utm_content ·
 gclid · gbraid · wbraid · fbclid · last_utm_source · last_utm_medium ·
 last_utm_campaign · last_utm_term · last_utm_content · last_gclid · last_gbraid ·
-last_wbraid · last_fbclid · last_referrer · last_landing_page · page_url`
+last_wbraid · last_fbclid · last_referrer · last_landing_page · page_url ·
+alert_opt_in`
 
 - **status** defaults to `New`. This is your tracking column — change it to
   `Called`, `Showing`, `Under Contract`, `Closed`, `Dead`, etc.
@@ -228,7 +272,10 @@ last_wbraid · last_fbclid · last_referrer · last_landing_page · page_url`
   fired but the lead was still delivered on every channel — judge it yourself.
   Empty for normal leads. It is not how quarantined spam is marked.
 - **budget / bedrooms / bathrooms** come from the buy and sell forms when the
-  visitor filled them in.
+  visitor filled them in. Listing-alert signups put the optional price range
+  in **budget** and the city in **suburb**.
+- **alert_opt_in** is `yes` when the visitor checked the listing-email box.
+  Anything else means they were not added to the email list.
 
 ### Headers on a sheet that already has rows
 

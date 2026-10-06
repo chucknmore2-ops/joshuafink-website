@@ -231,6 +231,11 @@ jobs:
             else
               echo "::warning::Could not dispatch listing video. The 09:30 UTC schedule will retry."
             fi
+            if gh workflow run listing-alerts.yml --ref main; then
+              echo "Dispatched listing alert emails."
+            else
+              echo "::warning::Could not dispatch listing alerts. The 13:30 UTC schedule will retry."
+            fi
           else
-            echo "::warning::Sync PR was not merged within 15 minutes. Auto-merge stays on. GBP Just Listed and listing video will run on their schedules once main updates."
+            echo "::warning::Sync PR was not merged within 15 minutes. Auto-merge stays on. GBP Just Listed, listing video, and listing alerts will run on their schedules once main updates."
           fi

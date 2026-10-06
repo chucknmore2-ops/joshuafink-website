@@ -26,6 +26,8 @@ export interface OutboundEmail {
   /** Display name shown on the From address; the address itself is EMAIL_FROM. */
   fromName: string
   replyTo?: { email: string; name?: string }
+  /** Extra headers. Listing alerts set List-Unsubscribe here. */
+  headers?: Record<string, string>
 }
 
 export interface EmailResult {
@@ -87,6 +89,7 @@ async function sendViaResend(msg: OutboundEmail): Promise<EmailResult> {
       subject: msg.subject,
       html: msg.html,
       ...(msg.replyTo ? { reply_to: msg.replyTo.email } : {}),
+      ...(msg.headers ? { headers: msg.headers } : {}),
     }),
   })
   if (!res.ok) {
