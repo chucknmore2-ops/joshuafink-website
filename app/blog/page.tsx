@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: 'Real Estate Blog',
   description:
     'Insights, tips, and market updates from Joshua Fink — Affiliate Broker at Compass Real Estate in Middle Tennessee. Stay informed about Nashville and Brentwood real estate.',
+  openGraph: { url: 'https://www.joshuafink.com/blog' },
 }
 
 function getArchiveYears(): number[] {
@@ -22,6 +23,9 @@ function getArchiveYears(): number[] {
 
 export default function BlogPage() {
   const archiveYears = getArchiveYears()
+  const postsNewestFirst = [...blogPosts].sort(
+    (a, b) => +new Date(b.date) - +new Date(a.date),
+  )
   const breadcrumb = buildBreadcrumbSchema([
     { name: 'Home', href: '/' },
     { name: 'Blog', href: '/blog' },
@@ -48,7 +52,7 @@ export default function BlogPage() {
       {/* Posts grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {blogPosts.map((post) => (
+          {postsNewestFirst.map((post) => (
             <BlogCard key={post.slug} post={post} />
           ))}
         </div>

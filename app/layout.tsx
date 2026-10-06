@@ -1,27 +1,49 @@
 import type { Metadata } from 'next'
-import { Inter, Playfair_Display } from 'next/font/google'
+import { Suspense } from 'react'
+import localFont from 'next/font/local'
+import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import MobileCallCTA from '@/components/MobileCallCTA'
+import AttributionCapture from '@/components/AttributionCapture'
 import { reviews, reviewStats, reviewDateToIso } from '@/lib/reviews'
 
-// Self-host Google Fonts via next/font — eliminates the render-blocking
-// CSS @import, preloads the required subsets, and exposes CSS variables
-// (--font-inter, --font-display) consumed by tailwind.config.ts.
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800', '900'],
+// Self-hosted latin variable fonts. next/font/google fetches
+// fonts.googleapis.com during `next build` and then assumes every file URL
+// ends in .woff2 (`/\.(woff|woff2|eot|ttf|otf)$/.exec(url)[1]`). When Google
+// returns a URL that does not, the loader throws
+// `Cannot read properties of null (reading '1')` and the required build
+// check fails — which is what blocked the Oct 2 and Oct 3 listing syncs.
+// These files are the same latin subsets that request asked for (Inter
+// wght 300–900, Playfair Display roman + italic wght 400–900), so
+// --font-inter / --font-display and the public type stay the same, with
+// no Google Fonts request at build time.
+const inter = localFont({
+  src: './fonts/inter-latin.woff2',
+  weight: '300 900',
+  style: 'normal',
   variable: '--font-inter',
   display: 'swap',
+  adjustFontFallback: 'Arial',
 })
 
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800', '900'],
-  style: ['normal', 'italic'],
+const playfair = localFont({
+  src: [
+    {
+      path: './fonts/playfair-display-latin.woff2',
+      weight: '400 900',
+      style: 'normal',
+    },
+    {
+      path: './fonts/playfair-display-latin-italic.woff2',
+      weight: '400 900',
+      style: 'italic',
+    },
+  ],
   variable: '--font-display',
   display: 'swap',
+  adjustFontFallback: 'Times New Roman',
 })
 
 export const metadata: Metadata = {
@@ -187,6 +209,7 @@ export default function RootLayout({
                     'https://www.instagram.com/joshuafinkgroup',
                     'https://www.linkedin.com/in/joshuafinkgroup/',
                     'https://x.com/JoshuaFinkGroup',
+                    'https://www.youtube.com/channel/UCc6j1NWgJeb00pT5xsenz3g',
                     'https://www.compass.com/agents/joshua-fink/',
                     'https://www.zillow.com/profile/JoshuaFinkGroup',
                     'https://www.realtor.com/realestateagents/56aa7a5489a68901006bed2d',
@@ -301,6 +324,7 @@ export default function RootLayout({
                     'https://www.instagram.com/joshuafinkgroup',
                     'https://www.linkedin.com/in/joshuafinkgroup/',
                     'https://x.com/JoshuaFinkGroup',
+                    'https://www.youtube.com/channel/UCc6j1NWgJeb00pT5xsenz3g',
                     'https://www.compass.com/agents/joshua-fink/',
                     'https://www.zillow.com/profile/JoshuaFinkGroup',
                     'https://www.realtor.com/realestateagents/56aa7a5489a68901006bed2d',
@@ -334,6 +358,10 @@ export default function RootLayout({
         </main>
         <Footer />
         <MobileCallCTA />
+        <Suspense fallback={null}>
+          <AttributionCapture />
+        </Suspense>
+        <Analytics />
       </body>
     </html>
   )

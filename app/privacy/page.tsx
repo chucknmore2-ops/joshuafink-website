@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import TrackedTelLink from '@/components/TrackedTelLink'
 
 export const metadata: Metadata = {
   alternates: { canonical: 'https://www.joshuafink.com/privacy' },
@@ -14,7 +15,7 @@ export default function PrivacyPage() {
         <div className="max-w-7xl mx-auto">
           <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">Legal</p>
           <h1 className="text-5xl font-black tracking-tight">Privacy Policy</h1>
-          <p className="text-[#A0A0A0] text-lg mt-2">Last updated: March 20, 2026</p>
+          <p className="text-[#A0A0A0] text-lg mt-2">Last updated: September 2, 2026</p>
         </div>
       </div>
 
@@ -36,7 +37,7 @@ export default function PrivacyPage() {
 
         <h2 className="text-xl font-black text-black mt-8 mb-4">Third-Party Services</h2>
         <p className="text-[#444] leading-relaxed mb-4">
-          This site uses Formspree to process contact form submissions. Form data is transmitted securely and subject to Formspree&apos;s privacy policy. Listings are sourced from Compass Real Estate.
+          Contact and inquiry forms on this site are submitted to the site&apos;s own systems, which deliver them by email and to internal lead tools so we can respond to your inquiry. Listings are sourced from Compass Real Estate.
         </p>
 
         <h2 className="text-xl font-black text-black mt-8 mb-4">Contact</h2>
@@ -44,7 +45,7 @@ export default function PrivacyPage() {
           If you have questions about this privacy policy, contact us at:{' '}
           <a href="mailto:joshua@joshuafink.com" className="text-black underline">joshua@joshuafink.com</a>
           {' '}or call{' '}
-          <a href="tel:6155512727" className="text-black underline">615-551-2727</a>.
+          <TrackedTelLink href="tel:6155512727" className="text-black underline" data-cta="privacy-contact-call">615-551-2727</TrackedTelLink>.
         </p>
 
         <h2 className="text-xl font-black text-black mt-8 mb-4">User Data Deletion</h2>

@@ -55,7 +55,7 @@ License:   TN TREC #351484
 ```
 - **Never** use the bogus `(888) 586-2349`.
 - Verified profiles: compass.com/agents/joshua-fink · zillow.com/profile/JoshuaFinkGroup · linkedin.com/in/joshuafinkgroup · instagram.com/joshuafinkgroup · x.com/JoshuaFinkGroup.
-- **No YouTube channel yet** — the `UCc6j1…` channel is a *different* Joshua Fink (Reno/Sparks NV); do not reference it.
+- YouTube: `youtube.com/channel/UCc6j1NWgJeb00pT5xsenz3g` — **Josh's channel** from before the TN move (the NV back catalog is his own earlier market; an earlier note here wrongly called it a different agent's — confirmed by Josh 2026-08-26). Being rebranded to Middle TN per `short-form-video-playbook.md` STEP 0.
 
 ## 5. Core directives (the non-negotiables)
 

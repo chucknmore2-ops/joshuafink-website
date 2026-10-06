@@ -6,8 +6,8 @@ Verifies every background pipeline that writes to the Railway Postgres
 `post_log` table is still producing fresh rows, plus a git freshness
 probe on the daily listings sync, a run-status probe on the scheduled
 GitHub Actions workflows, and an HTTPS probe on the public healthcheck
-endpoint. Emails a per-check failure report via Gmail SMTP when anything
-is stale or errors.
+endpoint. Does not email by default — FAIL still exits non-zero so CI
+goes red. Pass `--always-email` to send the Gmail SMTP report (smoke tests).
 
 ============================================================================
 WHAT THIS MONITOR DOES AND DOES NOT COVER
@@ -15,10 +15,11 @@ WHAT THIS MONITOR DOES AND DOES NOT COVER
 
 COVERED (per `lib/admin-schedule.ts`):
   Railway autoposter (FB channel) — listing-spotlight (M/W/F)
-  Monthly market update (FB channel) — monthly-market-update, fired on the
-    5th by .github/workflows/monthly-market-update.yml, which posts the same
-    lib/market-snapshot.ts figures to Facebook, LinkedIn and GBP. Facebook is
-    the canary for all three. 35-day threshold, so one missed month pages.
+  Monthly market update (FB channel) — monthly-market-update. Fires after
+    fetch-gnar-snapshot.yml merges a new lib/market-snapshot.ts month, which
+    posts the same figures to Facebook, LinkedIn and GBP. Facebook is the
+    canary for all three. 42-day threshold: data can land anywhere from the
+    3rd to the 12th, and one fully missed month still pages.
   LinkedIn + GBP + Instagram — all three routes write to post_log on
     every fire (success and failure) since the lib/admin-db logPost
     wiring. A channel can still show as NEVER_LOGGED if the route has
@@ -28,6 +29,10 @@ COVERED (per `lib/admin-schedule.ts`):
     calendar in docs/content-keyword-strategy.md lives only on paper, so
     nothing else notices when it stalls (weeks 6-12 went unwritten for a
     fortnight in Aug 2026 and every other check stayed green).
+  Market stats freshness — newest hand-refresh date in lib/suburbs.ts +
+    lib/cash-offer-cities.ts. The Redfin figures quoted on 40+ money pages
+    are a rolling 3-month window; when they last rotted (Aug 2026) guide
+    prices drifted up to 91% and 10 pages were hidden from Google.
   GitHub Actions sync-listings — checked via git mtime of lib/listings.ts
   GitHub Actions scheduled workflows — latest completed run of each must
     have concluded 'success' (needs GITHUB_TOKEN; otherwise a GAP). This
@@ -36,13 +41,16 @@ COVERED (per `lib/admin-schedule.ts`):
     auto-merge jammed even though the workflow run itself concluded green.
   Public uptime — GET https://joshuafink.com/api/healthcheck
   Lead delivery channels — POSTs a tagged SYSTEM TEST lead to /api/contact
-    (silent Pushover, lead_type=system-test so the CRM sheet can filter it)
-    and alerts if any configured channel — slack / joshua-email / sheet /
-    pushover — fails. Needs CRON_SECRET; without it this is a GAP.
+    (real Pushover alert, lead_type=system-test so the CRM sheet can filter
+    it, Joshua email send skipped — CI/chat is the alert path) and alerts if
+    any configured channel — joshua-email / sheet / pushover — fails.
+    joshua-email is still required to be configured (RESEND_API_KEY) but the
+    test lead does not deliver a real inbox message. ClickUp lead tasks are
+    off by default (configured:false / unconfigured, not a failure) unless
+    CLICKUP_LEADS_ENABLED=true. Needs CRON_SECRET; without it this is a GAP.
 
 NOT COVERED (documented gaps — listed in every alert email):
   /api/cron/indexnow            no DB write; signal lives in Vercel logs
-  /api/cron/agent-briefing      sends email + ClickUp task, no DB write
   Local content engine          runs on Joshua's Mac via Ollama; out of
                                 GitHub Actions reach
   Holidays                      v1 is holiday-naive — a US federal
@@ -110,10 +118,12 @@ EXPECTED_JOBS: tuple[ExpectedJob, ...] = (
         cadence_ct="Mon/Wed/Fri 9:00am CT",
         max_age_days=4,
     ),
-    # Monthly market update — .github/workflows/monthly-market-update.yml fires
-    # FB + LinkedIn + GBP together on the 5th; Facebook is the canary for all
-    # three. 31d nominal + 4d buffer = 35d, so a single missed month pages but a
-    # report landing a few days late does not.
+    # Monthly market update — fetch-gnar-snapshot.yml merges the month. The
+    # Railway autoposter posts Facebook; monthly-market-update.yml posts
+    # LinkedIn and GBP. Facebook is the canary. The post can land any day
+    # from the 3rd through the 12th, so the
+    # gap from an early month (the 3rd) to a late one (the 12th) is about 40
+    # days. 42d still pages when a whole month is missed.
     #
     # This REPLACES the four Railway `autoposter-*` content jobs (market-stats,
     # testimonial, tips, engagement) that were monitored here for months. Those
@@ -124,8 +134,8 @@ EXPECTED_JOBS: tuple[ExpectedJob, ...] = (
         label="monthly-market-update (FB) — market snapshot",
         channel="facebook",
         job_name="monthly-market-update",
-        cadence_ct="5th of each month, 9:00am CT",
-        max_age_days=35,
+        cadence_ct="when the GNAR month lands (typically the 6th–8th)",
+        max_age_days=42,
     ),
     # Weekly Vercel-side crons. 7d nominal + 2d weekend buffer = 9d. If a
     # channel never appears we surface a gap instead of a failure.
@@ -143,7 +153,9 @@ EXPECTED_JOBS: tuple[ExpectedJob, ...] = (
         cadence_ct="Tue 9:00am CT",
         max_age_days=9,
     ),
-    # Fired weekly by .github/workflows/social-autopost.yml (not Vercel Cron).
+    # Fired weekly by .github/workflows/social-autopost.yml. The route queues
+    # through Buffer Free (IG_AUTOPOST=buffer) and writes post_log on
+    # acceptance. Graph publish stays off. Freshness is the latest posted row.
     ExpectedJob(
         label="github-actions-instagram",
         channel="instagram",
@@ -173,6 +185,35 @@ BLOG_MAX_AGE_DAYS = 14
 # is correctly ignored — it has its own monthly check.
 BLOG_DATE_RE = re.compile(r'^\s*date:\s*"([^"]+)"', re.MULTILINE)
 
+# Hand-refreshed Redfin market stats quoted on 40+ sell/buy/market/cash-offer
+# money pages. Redfin's figures are a rolling 3-month window, so they rot
+# silently — in Aug 2026 nobody noticed until guide prices disagreed with
+# market pages by up to 91% and 10 pages had to be hidden from Google.
+# Measured from the newest of `marketStatsLastUpdated` + per-suburb
+# `dataUpdatedAt` in lib/suburbs.ts plus the mirrored review date in
+# lib/cash-offer-cities.ts. 75d keeps the quoted window mostly inside
+# Redfin's rolling one, with slack for a slow month.
+SUBURBS_FILE = "lib/suburbs.ts"
+CASH_OFFER_FILE = "lib/cash-offer-cities.ts"
+MARKET_STATS_MAX_AGE_DAYS = 75
+# Each source file must match its regex at least once or the check errors —
+# a reformat of the TS source must not silently zero the check out.
+MARKET_STATS_DATE_SOURCES: tuple[tuple[str, re.Pattern], ...] = (
+    # `export const marketStatsLastUpdated = '2026-08-20'` plus the optional
+    # per-suburb `dataUpdatedAt: '2026-08-20'` overrides.
+    (
+        SUBURBS_FILE,
+        re.compile(
+            r"(?:marketStatsLastUpdated\s*=|dataUpdatedAt:)\s*'(\d{4}-\d{2}-\d{2})'"
+        ),
+    ),
+    # `export const cashOfferContentLastUpdated = '2026-07-31'`
+    (
+        CASH_OFFER_FILE,
+        re.compile(r"cashOfferContentLastUpdated\s*=\s*'(\d{4}-\d{2}-\d{2})'"),
+    ),
+)
+
 # Scheduled GitHub Actions workflows. Freshness thresholds are slow by design;
 # a red workflow run is the immediate signal that an automation is broken.
 # (sync-listings failed silently for days in Aug 2026 — main's branch
@@ -186,6 +227,19 @@ MONITORED_WORKFLOWS: tuple[tuple[str, str], ...] = (
     ("social-autopost.yml", "Social Autopost"),
     ("geo-audit.yml", "GEO Audit"),
     ("daily-tasks-pushover.yml", "Daily tasks Pushover"),
+    ("fetch-gnar-snapshot.yml", "Fetch GNAR market snapshot"),
+)
+
+# Social Autopost failures before this instant are Meta Graph Instagram
+# container stalls (and the manual re-runs of them). Buffer Free is the
+# live path after it. Those old reds must not keep the weekday check in
+# ERROR. A failure at or after the cutoff still alerts. 18:20 UTC is after
+# the IG_AUTOPOST=paused soft-skip success (run 35636868490) and before any
+# Buffer queue.
+SOCIAL_AUTOPOST_WORKFLOW = "social-autopost.yml"
+SOCIAL_AUTOPOST_GRAPH_IGNORE_BEFORE = datetime(2026, 9, 21, 18, 20, tzinfo=timezone.utc)
+_WORKFLOW_FAILURES = frozenset(
+    {"failure", "timed_out", "startup_failure", "action_required"}
 )
 
 # Open PRs from the nightly listings sync (branch sync-listings/<timestamp>,
@@ -201,9 +255,12 @@ HEALTHCHECK_TIMEOUT_S = 15
 HEALTHCHECK_RETRIES = 2
 
 # Live test lead through the real lead route (see check_lead_pipeline). The
-# generous timeout is because the route awaits Slack + email + sheet +
-# Pushover before answering.
-CONTACT_URL_DEFAULT = "https://joshuafink.com/api/contact"
+# generous timeout is because the route awaits email + sheet +
+# Pushover (and ClickUp only if CLICKUP_LEADS_ENABLED=true) before answering.
+# Must be the www host: the apex 307-redirects
+# to www (Vercel domain config), and urllib refuses to follow a redirect
+# on a POST with a body — the apex URL fails with HTTP 307 'Redirecting...'.
+CONTACT_URL_DEFAULT = "https://www.joshuafink.com/api/contact"
 CONTACT_TIMEOUT_S = 30
 
 DB_CONNECT_TIMEOUT_S = 10
@@ -261,11 +318,6 @@ DOCUMENTED_GAPS: tuple[tuple[str, str], ...] = (
         "/api/cron/indexnow (daily)",
         "Submits URLs to Bing/Yandex. No DB write — only signal is Vercel "
         "function logs. Not externally checkable from GitHub Actions.",
-    ),
-    (
-        "/api/cron/agent-briefing (Mon)",
-        "Sends SendGrid email + creates a ClickUp task. No DB write. Signal "
-        "is the email landing in Chuck's inbox.",
     ),
     (
         "Holidays / DST",
@@ -694,6 +746,104 @@ def check_blog_freshness(
     )
 
 
+def check_market_stats_freshness(
+    repo_dir: str,
+    *,
+    now: Optional[datetime] = None,
+    read_fn: Optional[Callable[[str], str]] = None,
+) -> CheckResult:
+    """Hand-refreshed market stats — are the quoted Redfin figures still fresh?
+
+    Parses the ISO date literals out of the TS sources rather than asking git,
+    because a prose tweak touches the file without refreshing a single number.
+    Stale means the NEWEST date across both files is past threshold — nothing
+    on the site has been refreshed, so the fix is one Redfin sync, not a hunt.
+    """
+    now = now or datetime.now(timezone.utc)
+    name = f"market stats — {SUBURBS_FILE}"
+    t0 = time.monotonic()
+
+    def _default_read(p: str) -> str:
+        with open(p, "r", encoding="utf-8") as fh:
+            return fh.read()
+
+    newest: Optional[datetime] = None
+    for rel_path, date_re in MARKET_STATS_DATE_SOURCES:
+        try:
+            source = (read_fn or _default_read)(os.path.join(repo_dir, rel_path))
+        except OSError as exc:
+            return CheckResult(
+                name=name,
+                status=STATUS_ERROR,
+                detail=f"could not read {rel_path}: {type(exc).__name__}: {exc}",
+                duration_ms=int((time.monotonic() - t0) * 1000),
+            )
+        found = False
+        for raw in date_re.findall(source):
+            try:
+                parsed = datetime.strptime(raw, "%Y-%m-%d").replace(
+                    tzinfo=timezone.utc
+                )
+            except ValueError:
+                continue  # One malformed date shouldn't blind the whole check.
+            found = True
+            if newest is None or parsed > newest:
+                newest = parsed
+        if not found:
+            return CheckResult(
+                name=name,
+                status=STATUS_ERROR,
+                detail=f"no parsable stats dates found in {rel_path}",
+                duration_ms=int((time.monotonic() - t0) * 1000),
+            )
+
+    assert newest is not None
+    age_days = (now - newest).total_seconds() / 86400.0
+    detail = (
+        f"newest stats refresh {newest.date().isoformat()}, {age_days:.1f}d ago "
+        f"(threshold {MARKET_STATS_MAX_AGE_DAYS}d — Redfin figures are a "
+        f"rolling 3-month window)"
+    )
+    if age_days > MARKET_STATS_MAX_AGE_DAYS:
+        detail += " — re-run the Redfin sync"
+    return CheckResult(
+        name=name,
+        status=STATUS_STALE if age_days > MARKET_STATS_MAX_AGE_DAYS else STATUS_PASS,
+        detail=detail,
+        actual_age_days=age_days,
+        expected_max_age_days=MARKET_STATS_MAX_AGE_DAYS,
+        duration_ms=int((time.monotonic() - t0) * 1000),
+    )
+
+
+def _parse_github_timestamp(value: object) -> Optional[datetime]:
+    if not isinstance(value, str) or not value:
+        return None
+    try:
+        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+
+
+def _is_old_graph_social_failure(workflow_file: str, run: dict) -> bool:
+    """A Social Autopost failure from the Graph Instagram era.
+
+    Those runs stay in Actions history. Buffer is the live path; a red Graph
+    run must not keep the weekday check in ERROR. Failures with no timestamp
+    are not ignored.
+    """
+    if workflow_file != SOCIAL_AUTOPOST_WORKFLOW:
+        return False
+    if run.get("conclusion") not in _WORKFLOW_FAILURES:
+        return False
+    when = _parse_github_timestamp(run.get("created_at")) or _parse_github_timestamp(
+        run.get("updated_at")
+    )
+    if when is None:
+        return False
+    return when < SOCIAL_AUTOPOST_GRAPH_IGNORE_BEFORE
+
+
 def check_workflow_last_run(
     workflow_file: str,
     label: str,
@@ -707,6 +857,10 @@ def check_workflow_last_run(
     Freshness checks are deliberately slow to fire; this is the same-morning
     signal. Without a GITHUB_TOKEN we report a GAP rather than an alert — a
     local run shouldn't page anyone just for lacking credentials.
+
+    Social Autopost looks past Graph-era Instagram failures (before
+    SOCIAL_AUTOPOST_GRAPH_IGNORE_BEFORE). Instagram freshness after Buffer
+    went live is the post_log row, not those old reds.
     """
     name = f"github-actions — {label}"
     t0 = time.monotonic()
@@ -717,9 +871,10 @@ def check_workflow_last_run(
             detail="GITHUB_TOKEN not set — workflow run status not checked",
         )
 
+    per_page = 30 if workflow_file == SOCIAL_AUTOPOST_WORKFLOW else 1
     url = (
         f"{GITHUB_API_ROOT}/repos/{repo}/actions/workflows/{workflow_file}"
-        f"/runs?status=completed&per_page=1"
+        f"/runs?status=completed&per_page={per_page}"
     )
     try:
         req = urllib.request.Request(
@@ -733,7 +888,11 @@ def check_workflow_last_run(
         )
         with opener(req, timeout=GITHUB_API_TIMEOUT_S) as resp:
             http_status = getattr(resp, "status", None) or resp.getcode()
-            body = resp.read(200_000).decode("utf-8", errors="replace")
+            # No read cap: Social Autopost uses per_page=30 to skip Graph-era
+            # Instagram failures, and that payload can exceed 200 KB. A capped
+            # read truncated the JSON mid-string on 2026-09-22 (run 108) and
+            # turned a successful run into a false [ERR].
+            body = resp.read().decode("utf-8", errors="replace")
     except Exception as exc:  # noqa: BLE001 — network/HTTP error is the signal
         return CheckResult(
             name=name,
@@ -768,13 +927,44 @@ def check_workflow_last_run(
             duration_ms=int((time.monotonic() - t0) * 1000),
         )
 
-    run = runs[0]
+    ignored = 0
+    run = None
+    for candidate in runs:
+        if not isinstance(candidate, dict):
+            continue
+        if _is_old_graph_social_failure(workflow_file, candidate):
+            ignored += 1
+            continue
+        run = candidate
+        break
+
+    if run is None:
+        detail = f"no completed runs yet for {workflow_file}"
+        if ignored:
+            detail = (
+                f"ignored {ignored} Social Autopost Graph Instagram "
+                f"failure(s) before "
+                f"{SOCIAL_AUTOPOST_GRAPH_IGNORE_BEFORE.strftime('%Y-%m-%dT%H:%MZ')}; "
+                "Buffer is the live path and Instagram freshness is post_log"
+            )
+        return CheckResult(
+            name=name,
+            status=STATUS_GAP,
+            detail=detail,
+            duration_ms=int((time.monotonic() - t0) * 1000),
+        )
+
     conclusion = run.get("conclusion")
     detail = (
         f"latest completed run concluded {conclusion!r} at "
         f"{run.get('updated_at') or run.get('created_at')} "
         f"({run.get('html_url')})"
     )
+    if ignored:
+        detail += (
+            f"; ignored {ignored} Graph Instagram failure(s) before "
+            f"{SOCIAL_AUTOPOST_GRAPH_IGNORE_BEFORE.strftime('%Y-%m-%dT%H:%MZ')}"
+        )
     if conclusion == "success":
         status = STATUS_PASS
     elif conclusion in ("failure", "timed_out", "startup_failure", "action_required"):
@@ -973,6 +1163,11 @@ def check_site_uptime(
     )
 
 
+# Channels a real lead depends on. ClickUp is intentionally absent: it is off
+# unless CLICKUP_LEADS_ENABLED=true, so "unconfigured" is its normal state.
+LEAD_CRITICAL_CHANNELS: frozenset[str] = frozenset({"joshua-email", "sheet", "pushover"})
+
+
 def check_lead_pipeline(
     url: str,
     secret: Optional[str],
@@ -983,10 +1178,15 @@ def check_lead_pipeline(
     verify every configured delivery channel reports success.
 
     The route's test mode (`x-healthcheck-secret: CRON_SECRET`) returns the
-    per-channel results it already computes internally and sends the Pushover
-    silently, so this costs one filterable CRM row per weekday and no phone
-    buzz. Partial channel death used to be only a console.warn in Vercel logs
-    — SendGrid sat dead from June with every other check green.
+    per-channel results it already computes internally, sends a real
+    Pushover (Josh wants the phone ping; do not silence it), skips the
+    Joshua email send (CI/chat is the alert path; a missing RESEND_API_KEY
+    still pages as unconfigured), and tags the sheet row so it files under
+    a "System" tab — so this costs no ignore-me email in the inbox and no
+    fake CRM row. Partial channel death used to be only a console.warn in
+    Vercel logs — SendGrid sat dead from June with every other check green.
+    Live Resend delivery is proven by real form submissions, not this test
+    lead.
 
     The lead payload must stay classifier-clean: name with a space (no
     random_name), no token >= 25 chars in the body (no gibberish_body), no
@@ -1007,7 +1207,7 @@ def check_lead_pipeline(
         "source": "morning-healthcheck",
         "body": (
             "Automated daily test of the lead delivery channels. "
-            "Safe to ignore — filter lead_type=system-test in the CRM sheet."
+            "Safe to ignore — this row files under the sheet's System tab."
         ),
     }).encode("utf-8")
 
@@ -1123,6 +1323,24 @@ def check_lead_pipeline(
     if unconfigured:
         # Named so a channel silently dropping out of the env is visible.
         detail += f" (not configured: {', '.join(unconfigured)})"
+
+    # A lead-critical channel going unconfigured is a silent env regression: no
+    # error anywhere, just fewer places the lead lands. Deleting RESEND_API_KEY
+    # or PUSHOVER_TOKEN would otherwise leave this check green. ClickUp is
+    # deliberately off (see /api/contact), so it never pages.
+    missing_critical = [c for c in unconfigured if c in LEAD_CRITICAL_CHANNELS]
+    if missing_critical:
+        return CheckResult(
+            name=name,
+            status=STATUS_ERROR,
+            detail=(
+                f"lead channel(s) NOT CONFIGURED: {', '.join(missing_critical)}. "
+                f"Real leads are no longer reaching them. "
+                f"Still delivering: {', '.join(str(c.get('channel')) for c in configured) or 'none'}."
+            ),
+            duration_ms=int((time.monotonic() - t0) * 1000),
+        )
+
     return CheckResult(
         name=name,
         status=STATUS_PASS,
@@ -1187,6 +1405,17 @@ def run_all_checks(
     except Exception as exc:  # noqa: BLE001
         results.append(CheckResult(
             name=f"blog cadence — {BLOG_FILE}",
+            status=STATUS_ERROR,
+            detail=f"uncaught {type(exc).__name__}: {exc}",
+        ))
+
+    # 2c) Market stats freshness — the hand-refreshed Redfin figures quoted
+    #     on 40+ sell/buy/market/cash-offer pages. Same repo-state family.
+    try:
+        results.append(check_market_stats_freshness(repo_dir, now=now))
+    except Exception as exc:  # noqa: BLE001
+        results.append(CheckResult(
+            name=f"market stats — {SUBURBS_FILE}",
             status=STATUS_ERROR,
             detail=f"uncaught {type(exc).__name__}: {exc}",
         ))
@@ -1335,7 +1564,10 @@ def _remediation_for(result: CheckResult) -> Optional[str]:
             "Open the failing run linked in the detail above → read the red "
             "step, fix, then Actions tab → that workflow → Re-run. A red "
             "'Sync Compass Listings' means Compass updates are NOT reaching "
-            "the site even though the scrape itself may have worked."
+            "the site even though the scrape itself may have worked. If the "
+            "red job is 'SYNC_PAT expiry', the sync itself is fine — "
+            "regenerate the token at github.com/settings/personal-access-tokens "
+            "and run `gh secret set SYNC_PAT`."
         )
     if "postgres reachable" in name or "postgres" == name:
         return (
@@ -1354,10 +1586,13 @@ def _remediation_for(result: CheckResult) -> Optional[str]:
     if "lead pipeline" in name:
         return (
             "A live test lead failed on the channel(s) named in the detail. "
-            "Per channel: slack → SLACK_BOT_TOKEN dead/revoked; joshua-email → "
+            "Per channel: joshua-email → "
             "Resend (RESEND_API_KEY / send.joshuafink.com domain verification); "
             "sheet → the Apps Script GOOGLE_SHEET_WEBHOOK_URL deployment; "
-            "pushover → PUSHOVER_TOKEN/PUSHOVER_USER. All live in Vercel → "
+            "pushover → PUSHOVER_TOKEN/PUSHOVER_USER. ClickUp is not a lead "
+            "destination unless CLICKUP_LEADS_ENABLED=true (plus "
+            "CLICKUP_API_TOKEN and a dedicated CLICKUP_LEADS_LIST_ID). "
+            "All live in Vercel → "
             "joshuafink-website → Settings → Environment Variables; redeploy "
             "after changing one. Real leads still deliver via the remaining "
             "channels, but fix this before the last one dies too."
@@ -1387,6 +1622,17 @@ def _remediation_for(result: CheckResult) -> Optional[str]:
             "row. Nothing publishes these automatically — the calendar only "
             "moves when someone writes one."
         )
+    if "market stats" in name:
+        return (
+            "The hand-refreshed Redfin figures on the sell/buy/market/"
+            "cash-offer pages have aged out. Re-run the Redfin sync: pull "
+            "current city stats from the Redfin Data Center, paste them into "
+            "lib/suburbs.ts (bump each suburb's dataUpdatedAt / "
+            "marketStatsLastUpdated per the refresh notes in that file) and "
+            "refresh the mirrored cashOfferContentLastUpdated in "
+            "lib/cash-offer-cities.ts. Last time this drifted, pages "
+            "disagreed by up to 91% and 10 had to be hidden from Google."
+        )
     if "autoposter-listing" in name:
         return (
             "Railway → services/autoposter → Cron Runs → Run Now. If the log "
@@ -1397,11 +1643,13 @@ def _remediation_for(result: CheckResult) -> Optional[str]:
         )
     if "monthly-market-update" in name:
         return (
-            "This month's figures are probably not in lib/market-snapshot.ts — "
-            "paste them from the Greater Nashville REALTORS report (the file "
-            "has a template at the top, ~2 min), commit, then Actions tab → "
-            "Monthly Market Update → Run workflow. A skip is deliberate, not a "
-            "bug: no numbers means no post on any channel."
+            "The monthly Facebook post is stale. Fetch GNAR market snapshot "
+            "should have written lib/market-snapshot.ts (daily on the 3rd–12th). "
+            "Railway services/autoposter publishes that month to Facebook and "
+            "writes this post_log row. LinkedIn and GBP stay on the Vercel "
+            "cron. Re-run Actions → Monthly Market Update after the snapshot "
+            "is on main; it waits for the autoposter and does not re-post a "
+            "month that is already_posted."
         )
     if "vercel-cron-linkedin" in name:
         return (
@@ -1419,10 +1667,13 @@ def _remediation_for(result: CheckResult) -> Optional[str]:
         )
     if "instagram" in name:
         return (
-            "Actions tab → Social Autopost → Run workflow → instagram-post. "
-            "A 400/401 from the Graph API means IG_ACCESS_TOKEN expired or "
-            "lost instagram_content_publish scope — refresh it in Vercel env "
-            "(see docs/IG-SETUP-PLAYBOOK.md)."
+            "Instagram queues through Buffer Free (IG_AUTOPOST=buffer in "
+            "social-autopost.yml). Graph publish stays off. Confirm "
+            "BUFFER_API_KEY and BUFFER_IG_CHANNEL_ID in GitHub Actions "
+            "secrets, then Actions → Social Autopost → Run workflow → "
+            "instagram-post. A posted post_log row (channel instagram) is "
+            "the freshness signal. Old Graph workflow failures before "
+            "2026-09-21 18:20 UTC do not keep Social Autopost red."
         )
     return None  # No tip — generic alert, hand-investigate
 
@@ -1553,7 +1804,10 @@ def _build_parser() -> argparse.ArgumentParser:
     p.add_argument(
         "--always-email",
         action="store_true",
-        help="Send email even when all checks pass. For first-run verification.",
+        help=(
+            "Send the report email (pass or fail). Off by default so schedule "
+            "and default dispatch stay silent. For rare smoke tests."
+        ),
     )
     p.add_argument(
         "--repo-dir",
@@ -1603,10 +1857,9 @@ def main(argv: Optional[list[str]] = None) -> int:
     # stdout — always — so manual runs and CI logs both have it.
     print(report)
 
-    should_email = (
-        not args.no_email
-        and (exit_code != 0 or args.always_email)
-    )
+    # Email is opt-in only. Schedule + default dispatch stay silent; FAIL
+    # still exits non-zero so CI goes red. --no-email wins if both are set.
+    should_email = not args.no_email and args.always_email
     if should_email:
         smtp_user = os.environ.get("GMAIL_USER")
         smtp_password = os.environ.get("GMAIL_APP_PASSWORD")

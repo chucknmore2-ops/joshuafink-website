@@ -1,6 +1,6 @@
 // Pure detection + scoring logic for the GEO visibility tracker.
 //
-// Engine-agnostic on purpose: every answer engine (Perplexity, OpenAI, Claude)
+// Engine-agnostic on purpose: every answer engine (Perplexity, OpenAI, Grok)
 // returns a different JSON shape, so detection works off two normalized inputs —
 // the answer prose and the list of source/citation URLs — both of which the
 // engine adapters extract. No network, no DB; trivially unit-testable.

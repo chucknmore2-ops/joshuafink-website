@@ -3,15 +3,27 @@ import { listings } from '@/lib/listings'
 import { soldListings } from '@/lib/sold-listings'
 import { blogPosts } from '@/lib/blog'
 import { reviews } from '@/lib/reviews'
-import { logPost } from '@/lib/admin-db'
+import { hasPostedRef, logPost } from '@/lib/admin-db'
 import { withUtm } from '@/lib/utm'
 import { suburbs, marketStatsLastUpdated, marketStatsSource } from '@/lib/suburbs'
 import {
   currentSnapshot,
   marketUpdateSlug,
   monthLabel,
+  snapshotExpectFromSearchParams,
+  snapshotMatchesExpect,
   snapshotSkipReason,
+  snapshotStatLines,
 } from '@/lib/market-snapshot'
+import { compassJpegUrl } from '@/lib/compass-photo'
+import {
+  CALL_CTA,
+  ctaLink,
+  gbpCreatePayload,
+  safeGbpPayloadSummary,
+  validateGbpLocalPost,
+  type CTA,
+} from './cta'
 
 export const dynamic = 'force-dynamic'
 
@@ -49,7 +61,6 @@ const GBP_POSTS_API = (location: string) =>
   `https://mybusiness.googleapis.com/v4/${location}/localPosts`
 
 const SITE = 'https://www.joshuafink.com'
-const PHONE = '615-551-2727'
 
 // IMPORTANT — never put PHONE (or the street address) in a post `summary`.
 // Google auto-rejects local posts whose body text contains the business phone
@@ -61,16 +72,15 @@ const PHONE = '615-551-2727'
 //
 // Surface the number through the structured CALL call-to-action below instead —
 // that renders as a tap-to-call button and is the supported channel for it.
-const CALL_CTA: CTA = { actionType: 'CALL', url: `tel:${PHONE.replace(/-/g, '')}` }
-
-type CTA = { actionType: 'LEARN_MORE' | 'CALL' | 'ORDER' | 'BOOK' | 'SIGN_UP'; url: string }
+// Google's CallToAction.url "should be left unset for Call CTA"; a tel: URL
+// is INVALID_ARGUMENT (review-week failure 2026-09-01).
 
 type GbpPayloadKind = 'listing' | 'sold' | 'market-update' | 'tip' | 'review' | 'blog'
 
 interface PreparedPost {
   summary: string
   cta?: CTA
-  // Publicly-fetchable JPEG for the post's single photo (see gbpPhotoUrl).
+  // Publicly-fetchable JPEG for the post's single photo (see compassJpegUrl).
   photoUrl?: string
   // kind + refKey populate post_log columns so the morning healthcheck can
   // see freshness per channel and /admin can dedup across reruns.
@@ -80,18 +90,8 @@ interface PreparedPost {
 
 // Google's local-post API takes exactly ONE photo (`media[0]`), not a gallery,
 // and it rejects WebP — which is the format of every Compass image URL in
-// lib/listings.ts / lib/sold-listings.ts. Compass's CDN serves the same asset
-// as a JPEG when the extension is swapped (…/480x320.webp → …/1200x900.jpg,
-// verified 2026-08-13 against both URL hash shapes Compass emits), so no local
-// copy is needed. Normalising to 1200x900 keeps every photo above Google's
-// 720px minimum and well inside its 10KB–5MB size window.
-function gbpPhotoUrl(imageUrl?: string): string | undefined {
-  if (!imageUrl) return undefined
-  const m = imageUrl.match(
-    /^(https:\/\/(?:www\.)?compass\.com\/m\/[^/?#]+)\/\d+x\d+\.webp$/,
-  )
-  return m ? `${m[1]}/1200x900.jpg` : undefined
-}
+// lib/listings.ts / lib/sold-listings.ts. compassJpegUrl swaps size+ext to
+// 1200x900.jpg (see lib/compass-photo.ts).
 
 // ── Content builders ──────────────────────────────────────────────────
 
@@ -112,7 +112,7 @@ function buildListingPost(): PreparedPost {
       actionType: 'LEARN_MORE',
       url: l.compassUrl || withUtm(`${SITE}/listings`, gbpUtm('listing')),
     },
-    photoUrl: gbpPhotoUrl(l.imageUrl),
+    photoUrl: compassJpegUrl(l.imageUrl),
     kind: 'listing',
     refKey: l.address.toLowerCase().replace(/[^\w]+/g, '-'),
   }
@@ -153,7 +153,7 @@ function buildSoldPost(addressQuery: string): PreparedPost | null {
       actionType: 'LEARN_MORE',
       url: withUtm(`${SITE}/listings`, gbpUtm('just-sold')),
     },
-    photoUrl: gbpPhotoUrl(l.imageUrl),
+    photoUrl: compassJpegUrl(l.imageUrl),
     kind: 'sold',
     refKey: l.address.toLowerCase().replace(/[^\w]+/g, '-'),
   }
@@ -220,15 +220,11 @@ function buildMonthlyMarketPost(): PreparedPost | null {
   const s = currentSnapshot()
   if (!s) return null
   const label = monthLabel(s.month)
-  const n = (v: number) => v.toLocaleString('en-US')
   return {
     summary:
       `📊 Middle Tennessee Market Update — ${label}\n\n` +
-      `• Median sale price: ${s.medianSalePrice} (${s.medianYoyChange} YoY)\n` +
-      `• Avg. days on market: ${s.avgDaysOnMarket}\n` +
-      `• Active listings: ${n(s.activeListings)}\n` +
-      `• Months of supply: ${s.monthsOfInventory}\n\n` +
-      `Source: ${s.source}, ${label} report\n\n` +
+      snapshotStatLines(s).map((line) => `• ${line}`).join('\n') +
+      `\n\nSource: ${s.source}, ${label} nine-county report\n\n` +
       `Read the full ${label} breakdown — what these numbers mean if you're buying or selling.\n\n` +
       `#NashvilleRealEstate #MiddleTennessee #JoshuaFinkGroup`,
     cta: {
@@ -301,11 +297,12 @@ function buildLatestBlogPost(): PreparedPost {
     (a, b) => +new Date(b.date) - +new Date(a.date),
   )
   const p = sorted[0]
+  // Do not put the article URL in summary — Google 400s a local post
+  // whose body contains a raw http(s) link. The LEARN_MORE CTA carries it.
   const summary =
     `📝 Latest from the Joshua Fink Group blog:\n\n` +
     `${p.title}\n\n` +
-    `${p.excerpt.slice(0, 240)}${p.excerpt.length > 240 ? '…' : ''}\n\n` +
-    `Read: ${SITE}/blog/${p.slug}`
+    `${p.excerpt.slice(0, 240)}${p.excerpt.length > 240 ? '…' : ''}`
   return {
     summary,
     cta: {
@@ -473,11 +470,31 @@ export async function GET(request: Request) {
         ? buildSoldPost(params.get('address') ?? '')
         : pickPost(week)
 
+  const validation = post ? validateGbpLocalPost(post) : { ok: true as const }
+
   // ?preview=1 composes the copy (and resolves the photo URL) and hands it back
   // without touching Google, so a draft can be read and approved before
   // anything publishes. Mirrors the same flag on /api/cron/linkedin-post.
   if (params.get('preview') === '1') {
-    return NextResponse.json({ posted: false, preview: true, week, post })
+    return NextResponse.json({
+      posted: false,
+      preview: true,
+      week,
+      post,
+      validation,
+    })
+  }
+
+  if (isMonthly) {
+    const expect = snapshotExpectFromSearchParams(params)
+    if (expect.expectMonth && !snapshotMatchesExpect(currentSnapshot(), expect)) {
+      return NextResponse.json({
+        posted: false,
+        skipped: 'deploy_pending',
+        expectMonth: expect.expectMonth,
+        at: new Date().toISOString(),
+      })
+    }
   }
 
   if (!post) {
@@ -512,6 +529,37 @@ export async function GET(request: Request) {
     })
   }
 
+  if (isMonthly && post && await hasPostedRef({
+    channel: 'gbp',
+    jobName,
+    refKey: post.refKey,
+  })) {
+    return NextResponse.json({
+      posted: false,
+      skipped: 'already_posted',
+      month: post.refKey,
+      at: new Date().toISOString(),
+    })
+  }
+
+  if (!validation.ok) {
+    console.error('[gbp-post] preflight failed', validation.reason, safeGbpPayloadSummary(post))
+    await logPost({
+      channel: 'gbp',
+      jobName,
+      payloadKind: post.kind,
+      refKey: post.refKey,
+      messagePreview: post.summary.slice(0, 200),
+      link: ctaLink(post.cta),
+      status: 'failed',
+      errorMessage: `preflight: ${validation.reason}`.slice(0, 500),
+    })
+    return NextResponse.json(
+      { error: 'gbp payload failed preflight', reason: validation.reason },
+      { status: 422 },
+    )
+  }
+
   let accessToken: string
   try {
     accessToken = await refreshAccessToken()
@@ -534,17 +582,9 @@ export async function GET(request: Request) {
     )
   }
 
-  const payload: Record<string, unknown> = {
-    languageCode: 'en-US',
-    summary: post.summary,
-    topicType: 'STANDARD',
-  }
-  if (post.cta) payload.callToAction = post.cta
   // Exactly one photo: Google's localPost `media` array takes a single PHOTO on
   // a STANDARD post — it is not a gallery, so a second entry is rejected.
-  if (post.photoUrl) {
-    payload.media = [{ mediaFormat: 'PHOTO', sourceUrl: post.photoUrl }]
-  }
+  const payload = gbpCreatePayload(post)
 
   try {
     const res = await fetchWithBackoff(
@@ -568,17 +608,18 @@ export async function GET(request: Request) {
         .text()
         .then((t) => t.slice(0, 100).replace(/[^\w\s.:,\-]/g, ''))
         .catch(() => '')
-      console.error('[gbp-post] upstream error', res.status, bodySnippet)
+      const safePayload = safeGbpPayloadSummary(post)
+      console.error('[gbp-post] upstream error', res.status, bodySnippet, safePayload)
       await logPost({
         channel: 'gbp',
         jobName,
         payloadKind: post.kind,
         refKey: post.refKey,
         messagePreview: post.summary.slice(0, 200),
-        link: post.cta?.url ?? null,
+        link: ctaLink(post.cta),
         externalPostId: null,
         status: 'failed',
-        errorMessage: `upstream ${res.status} ${bodySnippet}`.slice(0, 500),
+        errorMessage: `upstream ${res.status} ${bodySnippet} payload=${JSON.stringify(safePayload)}`.slice(0, 500),
       })
       return NextResponse.json(
         { error: 'gbp upstream returned non-2xx', upstreamStatus: res.status },
@@ -592,7 +633,7 @@ export async function GET(request: Request) {
       payloadKind: post.kind,
       refKey: post.refKey,
       messagePreview: post.summary.slice(0, 200),
-      link: post.cta?.url ?? null,
+      link: ctaLink(post.cta),
       externalPostId: data.name ?? null,
       status: 'posted',
     })
@@ -613,7 +654,7 @@ export async function GET(request: Request) {
       payloadKind: post.kind,
       refKey: post.refKey,
       messagePreview: post.summary.slice(0, 200),
-      link: post.cta?.url ?? null,
+      link: ctaLink(post.cta),
       externalPostId: null,
       status: 'failed',
       errorMessage: `network: ${(err as Error).message}`.slice(0, 500),

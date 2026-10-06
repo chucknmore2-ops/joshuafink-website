@@ -1,6 +1,9 @@
 'use client'
 
 import { useState, useEffect, useRef, FormEvent, ReactNode } from 'react'
+import { captureAttribution, getAttribution } from '@/lib/attribution'
+import LeadFormGuards from '@/components/LeadFormGuards'
+import { MISSING_CONTACT_MESSAGE, missingContact, trackLeadFormError } from '@/lib/lead-form'
 
 type Props = {
   children: ReactNode
@@ -26,14 +29,34 @@ export default function SuburbLeadForm({ children, successTitle, successMessage,
     el.scrollIntoView({ block: 'center' })
   }, [state])
 
+  // 90-day first-touch (and last-touch) attribution, including this page's
+  // URL. AttributionCapture in the root layout records the landing page
+  // before the visitor reaches this form; this call covers a form that is
+  // itself the landing page.
+  useEffect(() => {
+    captureAttribution()
+  }, [])
+
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (state === 'submitting') return
-    setState('submitting')
-    setErrorMsg('')
 
     const form = e.currentTarget
-    const data = Object.fromEntries(new FormData(form).entries())
+    const data: Record<string, FormDataEntryValue | string> = {
+      ...Object.fromEntries(new FormData(form).entries()),
+      ...getAttribution(),
+    }
+    const formLabel = (data.source as string) || (data.suburb as string) || 'suburb_lead_form'
+
+    if (missingContact(form)) {
+      setErrorMsg(MISSING_CONTACT_MESSAGE)
+      setState('error')
+      trackLeadFormError(formLabel, 'missing_contact')
+      return
+    }
+
+    setState('submitting')
+    setErrorMsg('')
 
     try {
       const res = await fetch('/api/contact', {
@@ -49,7 +72,7 @@ export default function SuburbLeadForm({ children, successTitle, successMessage,
         if (typeof window !== 'undefined' && (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag) {
           ;(window as unknown as { gtag: (...args: unknown[]) => void }).gtag('event', 'generate_lead', {
             event_category: 'lead_form',
-            event_label: (data.source as string) || (data.suburb as string) || 'suburb_lead_form',
+            event_label: formLabel,
             value: 1,
           })
         }
@@ -57,10 +80,12 @@ export default function SuburbLeadForm({ children, successTitle, successMessage,
         const json = await res.json().catch(() => ({}))
         setErrorMsg(json.error || 'Something went wrong. Please try again.')
         setState('error')
+        trackLeadFormError(formLabel, `http_${res.status}`)
       }
     } catch {
       setErrorMsg('Network error — please check your connection and try again.')
       setState('error')
+      trackLeadFormError(formLabel, 'network')
     }
   }
 
@@ -87,20 +112,16 @@ export default function SuburbLeadForm({ children, successTitle, successMessage,
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5" aria-busy={state === 'submitting'}>
-      {/* Honeypot — invisible to humans, bots auto-fill it. /api/contact drops
-          any submission where this is non-empty. Living here rather than at
-          each call site means every page using SuburbLeadForm gets bot
-          protection, which is what lets the server-side heuristics stay
-          conservative instead of guessing from name/message shape. */}
-      <input
-        type="text"
-        name="website"
-        autoComplete="off"
-        tabIndex={-1}
-        aria-hidden="true"
-        style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, width: 0 }}
-      />
+    <form
+      method="POST"
+      action="/api/contact"
+      onSubmit={handleSubmit}
+      className="space-y-5"
+      aria-busy={state === 'submitting'}
+    >
+      {/* Honeypot + mount timestamp. Outside the disabled fieldset so a
+          submit still includes them. */}
+      <LeadFormGuards />
       <fieldset disabled={state === 'submitting'} className="space-y-5 border-0 p-0 m-0 min-w-0 disabled:opacity-70">
         {children}
       </fieldset>

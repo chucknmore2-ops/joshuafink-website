@@ -32,19 +32,19 @@ export default function Navbar() {
             alt="Compass Real Estate"
             width={180}
             height={20}
-            sizes="(max-width: 768px) 120px, 180px"
-            className="h-7 w-auto md:h-9"
+            sizes="(max-width: 1279px) 260px, 300px"
+            className="h-7 w-auto min-[1150px]:h-6 xl:h-8"
             priority
           />
         </Link>
 
         {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-7">
+        <div className="hidden min-[1150px]:flex items-center gap-3 xl:gap-4">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className={`text-sm font-medium tracking-wide transition-colors duration-150 hover:text-black ${
+              className={`whitespace-nowrap text-sm font-medium tracking-wide transition-colors duration-150 hover:text-black ${
                 pathname === link.href
                   ? 'text-black border-b-2 border-black pb-0.5'
                   : 'text-neutral-500'
@@ -76,7 +76,7 @@ export default function Navbar() {
 
           {/* Hamburger */}
           <button
-            className="md:hidden p-2 text-black"
+            className="min-[1150px]:hidden p-2 text-black"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle menu"
             aria-expanded={menuOpen}
@@ -105,7 +105,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden bg-white border-t border-neutral-200 px-4 pb-4 pt-2">
+        <div className="min-[1150px]:hidden bg-white border-t border-neutral-200 px-4 pb-4 pt-2">
           {navLinks.map((link) => (
             <Link
               key={link.href}

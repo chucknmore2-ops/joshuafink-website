@@ -8,11 +8,12 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test": "node --import tsx --test lib/*.test.ts app/api/contact/*.test.ts",
+    "test": "node --import tsx --test lib/*.test.ts app/api/contact/*.test.ts app/api/cron/gbp-post/*.test.ts app/api/cron/linkedin-post/*.test.ts app/api/linkedin/*/*.test.ts scripts/*.test.mjs services/autoposter/src/*.test.ts",
     "healthcheck": "python3 scripts/morning_healthcheck.py",
     "setup": "bash scripts/setup-machine.sh"
   },
   "dependencies": {
+    "@vercel/analytics": "^2.0.1",
     "next": "^14.2.35",
     "pg": "^8.20.0",
     "react": "^18.3.1",
