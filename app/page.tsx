@@ -41,7 +41,7 @@ const faqs = [
   },
   {
     q: 'How much real estate experience does Joshua Fink have?',
-    a: 'Over 17 years of experience and 100+ homes sold annually, making Joshua one of Middle Tennessee’s most trusted Affiliate Brokers. Since 2008 he has closed 1,000+ transactions across Davidson, Williamson, Maury, Rutherford, and Sumner counties.',
+    a: 'Joshua has been licensed since 2008 and sells 40+ homes a year in Middle Tennessee, making him one of the area’s most trusted Affiliate Brokers. Since 2008 he has closed 1,000+ transactions across Davidson, Williamson, Maury, Rutherford, and Sumner counties.',
   },
   {
     q: 'Does Joshua Fink work with both buyers and sellers?',
