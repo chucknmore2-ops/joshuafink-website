@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   // append it again would read "About Joshua Fink | Joshua Fink | Compass…".
   title: { absolute: 'About Joshua Fink | Compass Real Estate Agent, Middle Tennessee' },
   description:
-    'Learn about Joshua Fink — Affiliate Broker at Compass Real Estate with 17+ years of experience, 100+ homes sold annually, and multiple top-producer awards in Middle Tennessee.',
+    'Learn about Joshua Fink — Affiliate Broker at Compass Real Estate, licensed since 2008, with 40+ homes a year in Middle Tennessee and multiple top-producer awards.',
   openGraph: { url: 'https://www.joshuafink.com/about' },
 }
 
@@ -34,12 +34,12 @@ const faqEntries: { question: string; answer: string }[] = [
   {
     question: 'Who is Joshua Fink?',
     answer:
-      'Joshua Fink is an Affiliate Broker with Compass Real Estate serving Nashville and Middle Tennessee. He has over 17 years of experience and personally sells 100+ homes per year across Davidson, Williamson, Maury, Rutherford, Sumner, and Wilson counties.',
+      'Joshua Fink is an Affiliate Broker with Compass Real Estate serving Nashville and Middle Tennessee. He has been licensed since 2008 and personally sells 40+ homes a year in Middle Tennessee, across Davidson, Williamson, Maury, Rutherford, Sumner, and Wilson counties.',
   },
   {
     question: 'How long has Joshua Fink been a real estate agent?',
     answer:
-      'Joshua has been a licensed real estate professional in Tennessee for over 17 years, holding TREC license #351484.',
+      'Joshua has been a licensed real estate professional in Tennessee since 2008, holding TREC license #351484.',
   },
   {
     question: 'What awards has Joshua Fink won?',
@@ -215,7 +215,7 @@ export default function AboutPage() {
               <p>
                 Joshua Fink is an Affiliate Broker with Compass Real Estate serving Middle Tennessee,
                 including Nashville, Franklin, Brentwood, Spring Hill, and the surrounding suburbs.
-                He has 17+ years of experience and holds Tennessee Real Estate Commission license
+                He has been licensed since 2008 and holds Tennessee Real Estate Commission license
                 #351484.
               </p>
               <p>
@@ -225,8 +225,8 @@ export default function AboutPage() {
                 to close deals.
               </p>
               <p>
-                Joshua Fink has over 17 years of experience and averages 100+ homes personally sold
-                each year. Joshua has been honored with a multitude of awards including Diamond and
+                Joshua Fink has been licensed since 2008 and averages 40+ homes personally sold
+                each year in Middle Tennessee. Joshua has been honored with a multitude of awards including Diamond and
                 Titan Awards as well as Top Producing Agent of the Year.
               </p>
               <p>
@@ -240,8 +240,8 @@ export default function AboutPage() {
             {/* Stats */}
             <div className="mt-10 grid grid-cols-3 gap-4 border-y border-[#E8E8E8] py-8">
               {[
-                { val: '17+', label: 'Years Experience' },
-                { val: '100+', label: 'Homes / Year' },
+                { val: '18', label: 'Years Licensed' },
+                { val: '40+', label: 'Homes a Year in Middle TN' },
                 { val: '3+', label: 'Major Awards' },
               ].map((s) => (
                 <div key={s.label} className="text-center">

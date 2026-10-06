@@ -2,7 +2,7 @@
 
 **Agent:** Joshua Fink, Affiliate Broker, Compass Real Estate — Middle Tennessee
 **Contact:** Call/text **615-551-2727** · joshua@joshuafink.com · https://joshuafink.com
-**Credentials:** 17+ years · 100+ homes sold annually · Compass Diamond & Titan Award winner · 5.0 stars from 218+ Zillow reviews · TREC #351484 · Proud supporter of Children's Miracle Network / Vanderbilt Children's
+**Credentials:** Licensed since 2008 · 40+ homes a year in Middle Tennessee · Compass Diamond & Titan Award winner · 5.0 stars from 218+ Zillow reviews · TREC #351484 · Proud supporter of Children's Miracle Network / Vanderbilt Children's
 
 > **Fair Housing first.** Never describe a home, buyer, or neighborhood in terms that reference or imply a protected class (race, color, religion, national origin, sex, familial status, disability). No "perfect for families," "safe Christian neighborhood," "great for young professionals," etc. Describe the *property and the deal*, never the *people*.
 >
@@ -42,7 +42,7 @@
 
 Looking to buy in Middle Tennessee in 2026? I help buyers find the right home — on the MLS and through Compass's private exclusive listings you won't see on the public portals.
 
-I'm Joshua Fink, Affiliate Broker with Compass Real Estate. 17+ years in this market, 100+ closings a year, and a 5.0-star rating from 218+ Zillow reviews.
+I'm Joshua Fink, Affiliate Broker with Compass Real Estate. Licensed since 2008, with 40+ closings a year in Middle Tennessee, and a 5.0-star rating from 218+ Zillow reviews.
 
 Here's what working with me looks like:
 - A straight read on what your budget actually buys right now (2026 medians: Spring Hill ~$450K, Nashville ~$425K, Murfreesboro ~$380K, Hendersonville ~$410K, Mount Juliet ~$480K, Franklin ~$650K, Brentwood ~$900K).
@@ -80,7 +80,7 @@ A few 2026 medians for reference:
 
 Your home could be above or below the area median depending on condition, updates, and exact location — that's why a real valuation beats an app.
 
-I'm Joshua Fink, Affiliate Broker with Compass Real Estate — 17+ years here, 100+ homes sold a year, 5.0 stars across 218+ Zillow reviews. The valuation is free and there's zero obligation to list.
+I'm Joshua Fink, Affiliate Broker with Compass Real Estate — licensed since 2008, 40+ homes a year in Middle Tennessee, 5.0 stars across 218+ Zillow reviews. The valuation is free and there's zero obligation to list.
 
 Request yours: https://joshuafink.com/sell
 Or call/text: 615-551-2727
@@ -106,7 +106,7 @@ How it works:
 
 Straight talk on price: cash offers typically come in around **70–85% of the home's after-repair value**. You're trading some top-line price for speed, certainty, and a true as-is sale — no inspections to negotiate, no contingencies, no listing prep. For some sellers (inherited property, relocation, a home that needs work, or just wanting it done) that trade is well worth it. For others, listing on the open market nets more — and I'll tell you honestly which path fits your situation.
 
-I'm Joshua Fink, Affiliate Broker with Compass Real Estate — 17+ years, 100+ closings a year, 5.0 stars from 218+ Zillow reviews. You get an honest comparison of cash-offer vs. listing, not a pressure pitch.
+I'm Joshua Fink, Affiliate Broker with Compass Real Estate — licensed since 2008, 40+ closings a year in Middle Tennessee, 5.0 stars from 218+ Zillow reviews. You get an honest comparison of cash-offer vs. listing, not a pressure pitch.
 
 Get your no-obligation offer: https://joshuafink.com/cash-offer
 Call or text: 615-551-2727
@@ -177,7 +177,7 @@ Medians move with condition, updates, and exact location, so your block can run 
 ### Post 2 — Ask-Me-Anything: Home Values
 **Title:** AMA this week: what's your home actually worth in 2026?
 
-I've been selling homes around Middle Tennessee for 17+ years, and the #1 question I get is "what's my place worth right now?" So let's do a low-key AMA.
+I've been licensed since 2008, selling homes around Middle Tennessee, and the #1 question I get is "what's my place worth right now?" So let's do a low-key AMA.
 
 Drop a comment with your general area and home type (no exact address needed) and I'll share what I'm seeing for comparable sales, plus what tends to add or subtract value in this market. Apps like Zestimate are a starting point, but real comps tell the truth.
 

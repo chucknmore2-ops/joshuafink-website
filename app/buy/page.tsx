@@ -46,7 +46,7 @@ const whyBuy = [
   {
     icon: '🤝',
     title: 'A Negotiator on Your Side',
-    body: '17+ years and 100+ closings a year of local comps and contract experience — working to get you the right home at the right terms, not just any home.',
+    body: 'Licensed since 2008, with 40+ closings a year in Middle Tennessee — local comps and contract experience working to get you the right home at the right terms, not just any home.',
   },
   {
     icon: '💵',

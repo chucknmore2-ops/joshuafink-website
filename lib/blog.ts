@@ -883,7 +883,7 @@ Brentwood is an incredible place to call home, and the right neighborhood depend
     excerpt:
       "Speed and price don't have to be mutually exclusive. With the right preparation, pricing strategy, and marketing, you can sell your Middle Tennessee home quickly — and for top dollar.",
     content: `
-Selling a home quickly without leaving money on the table is one of the most common goals I hear from clients. The good news: in Middle Tennessee's market, it's absolutely achievable with the right approach. After more than 17 years and hundreds of transactions, here's exactly what I've seen work.
+Selling a home quickly without leaving money on the table is one of the most common goals I hear from clients. The good news: in Middle Tennessee's market, it's absolutely achievable with the right approach. I've been licensed since 2008, and after hundreds of transactions, here's exactly what I've seen work.
 
 ## Start with Honest Preparation
 
@@ -1028,7 +1028,7 @@ Franklin is an exceptional place to put down roots. Whether you're relocating fr
     excerpt:
       'Nashville\'s real estate market offers real opportunities for fix-and-flip investors — but success requires knowing the right neighborhoods, running accurate numbers, and moving fast. Here\'s how.',
     content: `
-[Nashville](/buy/nashville-tn) has long been one of the top markets for real estate investors, and fix-and-flip investing remains a viable strategy in 2025 — if you know what you're doing. After more than 17 years in Middle Tennessee real estate, I've worked with investors at every level, from first-time flippers to seasoned operators running multiple projects simultaneously.
+[Nashville](/buy/nashville-tn) has long been one of the top markets for real estate investors, and fix-and-flip investing remains a viable strategy in 2025 — if you know what you're doing. Licensed since 2008, I've worked with investors at every level, from first-time flippers to seasoned operators running multiple projects simultaneously.
 
 ## Why Nashville Still Works for Flippers
 
@@ -1190,7 +1190,7 @@ Tennessee real estate contracts have specific provisions and timelines that diff
 
 An experienced local agent will help you avoid costly mistakes, whether that's missing a contract deadline, accepting terms that put you at risk, or simply leaving money on the table.
 
-I've been helping buyers and sellers in Brentwood and throughout Middle Tennessee for over 17 years. If you're thinking about buying or selling in Brentwood, I'd welcome the conversation. Reach out and let's talk about what you're looking to accomplish.
+I've been licensed since 2008, helping buyers and sellers in Brentwood and throughout Middle Tennessee. If you're thinking about buying or selling in Brentwood, I'd welcome the conversation. Reach out and let's talk about what you're looking to accomplish.
     `.trim(),
   },
   {
@@ -2773,7 +2773,7 @@ Many "cash buyer" companies are actually **wholesalers** — they put your home 
 Joshua Fink is a licensed Affiliate Broker with Compass Real Estate in Tennessee. That means:
 - We're held to legal and ethical standards that unlicensed investors aren't
 - We have access to accurate market data to ensure fair offers
-- We have a reputation to protect — 17+ years in Middle Tennessee, 100+ homes annually
+- We have a reputation to protect — licensed since 2008, with 40+ homes a year in Middle Tennessee
 
 ### We Cover All Closing Costs
 You pay $0 in commissions and $0 in closing costs. The offer you accept is the amount you receive.
@@ -3301,7 +3301,7 @@ Reach out: [615-551-2727](tel:6155512727), [joshua@joshuafink.com](mailto:joshua
       "Every relocating family asks the same question: which Williamson County school zone should I target? Here's an agent-level read on the top high school feeders, the subdivisions inside them, and which zones quietly outperform on resale.",
     category: "For Families",
     content: `
-School zone drives more home-buying decisions in Williamson County than any other single factor. I've watched families pay $50,000–$150,000 premiums for the right address, and I've watched buyers walk away from otherwise-perfect homes because the zoning didn't match their priorities. After 17 years of representing Middle Tennessee families, here's an honest read on the top Williamson County school zones, the subdivisions that feed each one, and how the choice affects resale.
+School zone drives more home-buying decisions in Williamson County than any other single factor. I've watched families pay $50,000–$150,000 premiums for the right address, and I've watched buyers walk away from otherwise-perfect homes because the zoning didn't match their priorities. I've been licensed since 2008. Here's an honest read on the top Williamson County school zones, the subdivisions that feed each one, and how the choice affects resale.
 
 The premise of this guide: **the right zone is the one that fits your family's actual life, not the one that ranks #1 in a magazine listicle**. Below, the zones I'd shortlist depending on your priorities and budget.
 
@@ -3412,10 +3412,10 @@ Reach out: [615-551-2727](tel:6155512727) or [joshua@joshuafink.com](mailto:josh
     date: "May 11, 2026",
     dateModified: "May 11, 2026",
     excerpt:
-      "Where is the Williamson County housing market heading through the back half of 2026? Here's an honest, on-the-ground read from someone closing 100+ transactions a year in Franklin, Brentwood, Spring Hill, and Nolensville.",
+      "Where is the Williamson County housing market heading through the back half of 2026? Here's an honest, on-the-ground read from someone closing 40+ homes a year in Middle Tennessee, including Franklin, Brentwood, Spring Hill, and Nolensville.",
     category: "Market Updates",
     content: `
-Forecasting real estate is a hard business. Most "market forecasts" you read are written by people who don't actually transact in the market they're forecasting. This isn't one of those — I'm closing 100+ transactions a year across Franklin, Brentwood, Spring Hill, Nolensville, and the surrounding Williamson County suburbs, and what I'm seeing on the ground in 2026 is meaningfully different from what the national headlines suggest.
+Forecasting real estate is a hard business. Most "market forecasts" you read are written by people who don't actually transact in the market they're forecasting. This isn't one of those — I've been licensed since 2008 and I close 40+ homes a year in Middle Tennessee, including Franklin, Brentwood, Spring Hill, Nolensville, and the surrounding Williamson County suburbs, and what I'm seeing on the ground in 2026 is meaningfully different from what the national headlines suggest.
 
 Here's an honest, ground-level read on where Williamson County real estate is heading through the back half of 2026 — and what it means for buyers and sellers right now.
 
@@ -3641,7 +3641,7 @@ A few specifics:
 
 ## The Mistakes I See Most Often
 
-After 17 years of representing first-time buyers, the mistakes I see most frequently:
+I've been licensed since 2008. These are the mistakes I see most frequently among first-time buyers:
 
 **Buying at the top of your approval.** Your lender will tell you what you "qualify for." That number is often 20-30% higher than what you'll actually be comfortable paying. House-poor is a real condition.
 
@@ -3677,7 +3677,7 @@ Reach out anytime: [615-551-2727](tel:6155512727) or [joshua@joshuafink.com](mai
       "Every Tennessee home purchase involves an inspection — and how you handle it can save you tens of thousands of dollars or cost you a deal. Here's an agent-level walkthrough of what inspectors actually find in Middle Tennessee homes and how to negotiate the findings.",
     category: "For Buyers",
     content: `
-The home inspection is the part of a Tennessee real estate transaction that surprises buyers most often — both with what it reveals and with how it gets negotiated. After 17 years of representing buyers across Middle Tennessee, I've sat through hundreds of inspections, walked through thousands of findings, and negotiated countless inspection responses with listing agents.
+The home inspection is the part of a Tennessee real estate transaction that surprises buyers most often — both with what it reveals and with how it gets negotiated. I've been licensed since 2008. I've sat through hundreds of inspections, walked through thousands of findings, and negotiated countless inspection responses with listing agents.
 
 This is the guide I give every buyer client before their first inspection. What to expect, what's normal vs concerning, what's actually negotiable, and the specific findings that should make you reconsider the entire purchase.
 

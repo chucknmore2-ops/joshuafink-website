@@ -11,7 +11,7 @@ Write a blog post about "{keyword}" for joshuafink.com — Joshua Fink,
 Affiliate Broker at Compass Real Estate in Middle Tennessee.
 
 Author voice: first-person as Joshua Fink. Confident, experienced, locally
-expert. 17+ years in Nashville-area real estate, 100+ homes closed annually.
+expert. Licensed since 2008 in Nashville-area real estate, 40+ homes a year in Middle Tennessee.
 Avoid braggadocio.
 
 Target audience: {audience}

@@ -31,8 +31,8 @@ actually like to live in Franklin — the historic downtown and Main Street, the
 area, neighborhoods to know, schools, the cost of living, commute times into Nashville, and
 the honest pros and cons so you can decide if Franklin is right for you.
 
-I'm Joshua Fink, an Affiliate Broker with Compass here in Middle Tennessee. I've spent 17+
-years helping people relocate to and around the Nashville area. If you're moving from a
+I'm Joshua Fink, an Affiliate Broker with Compass here in Middle Tennessee. I've been licensed
+since 2008, helping people relocate to and around the Nashville area. If you're moving from a
 higher-cost metro, one thing worth knowing up front: Tennessee has NO state income tax.
 
 📍 Search Franklin homes: https://joshuafink.com/buy/franklin-tn
@@ -56,7 +56,7 @@ Email: joshua@joshuafink.com
 08:15 How I help relocating buyers + how to reach me
 
 Joshua Fink | Affiliate Broker, Compass Real Estate | Middle Tennessee
-17+ years • 100+ homes sold annually • 5.0★ from 218+ Zillow reviews
+Licensed since 2008 • 40+ homes a year in Middle Tennessee • 5.0★ from 218+ Zillow reviews
 TREC #351484 • Compass Diamond & Titan Award winner
 
 This video is general information, not real estate or financial advice. Equal Housing
@@ -72,7 +72,7 @@ middle tennessee real estate, tennessee no state income tax, joshua fink
 ```
 
 ### HOOK (first 15 seconds, word-for-word)
-> "If you're even *thinking* about moving to Franklin, Tennessee — watch this first. I'm going to give you the real picture: the neighborhoods, the schools, what it actually costs in 2026, the commute, and the honest downsides nobody puts in the brochure. I've helped people relocate here for 17 years, and by the end of this you'll know if Franklin is your town. Let's get into it."
+> "If you're even *thinking* about moving to Franklin, Tennessee — watch this first. I'm going to give you the real picture: the neighborhoods, the schools, what it actually costs in 2026, the commute, and the honest downsides nobody puts in the brochure. I've been licensed since 2008, helping people relocate here, and by the end of this you'll know if Franklin is your town. Let's get into it."
 
 ### FULL SCRIPT
 
@@ -101,7 +101,7 @@ middle tennessee real estate, tennessee no state income tax, joshua fink
 "Now the honest cons, because every video should have them. One: **price.** A $650K median means Franklin is not the budget play — if you want more house for the money, Spring Hill or another nearby market may stretch your dollar further, and I'll happily show you those. Two: **growth and traffic.** Franklin and all of Williamson County are popular, and popular means more cars and more building — I-65 at rush hour is real. Three: if you want big-city nightlife at your doorstep, Franklin is more refined-and-quaint than late-night — Nashville is where you'd go for that. So who is Franklin *not* for? If your top priority is lowest possible price, or you want an urban downtown-Nashville lifestyle, you might be happier somewhere else — and that's a totally fine answer. My job is to get you to the *right* town, not just any town."
 
 **[CTA]**
-"If Franklin sounds like your place — or if you're not sure and you want a straight answer — that's literally what I do. I'm Joshua Fink, Affiliate Broker with Compass, 17 years in this market. Call or text me at 615-551-2727, or head to joshuafink.com/contact and I'll help you build a real relocation plan — neighborhoods, schools, budget, the whole thing. Subscribe if these help, and I'll see you in the next one. Take care."
+"If Franklin sounds like your place — or if you're not sure and you want a straight answer — that's literally what I do. I'm Joshua Fink, Affiliate Broker with Compass, licensed since 2008. Call or text me at 615-551-2727, or head to joshuafink.com/contact and I'll help you build a real relocation plan — neighborhoods, schools, budget, the whole thing. Subscribe if these help, and I'll see you in the next one. Take care."
 
 ### SHOT LIST / B-ROLL CHECKLIST
 - Open on **Main Street downtown Franklin** — brick storefronts, the historic streetscape (your strongest establishing shot)
@@ -117,7 +117,7 @@ middle tennessee real estate, tennessee no state income tax, joshua fink
 - On-screen text overlay at cost segment: "Franklin median ~$650K (2026)"
 
 ### PINNED-COMMENT CTA
-> 📍 Relocating to Franklin? I'm Joshua Fink, Affiliate Broker with Compass — 17+ yrs in Middle TN. Browse Franklin homes 👉 https://joshuafink.com/buy/franklin-tn · Want a personalized relocation plan (neighborhoods + schools + budget)? Call/text 615-551-2727 or https://joshuafink.com/contact. What's your #1 question about moving here? Drop it below 👇
+> 📍 Relocating to Franklin? I'm Joshua Fink, Affiliate Broker with Compass — licensed since 2008 in Middle TN. Browse Franklin homes 👉 https://joshuafink.com/buy/franklin-tn · Want a personalized relocation plan (neighborhoods + schools + budget)? Call/text 615-551-2727 or https://joshuafink.com/contact. What's your #1 question about moving here? Drop it below 👇
 
 ### END-SCREEN CTA (spoken + on-screen)
 - Spoken: "Subscribe, and watch my 'Moving to Brentwood' guide next — it's the luxury and top-schools side of Williamson County."
@@ -144,7 +144,7 @@ a lot of relocation. In this guide I walk through where Brentwood is, the neighb
 schools, the 2026 housing market and cost of living, the commute into Nashville, and the honest
 pros and cons so you can decide if Brentwood fits your budget and your life.
 
-I'm Joshua Fink, an Affiliate Broker with Compass in Middle Tennessee, 17+ years helping buyers
+I'm Joshua Fink, an Affiliate Broker with Compass in Middle Tennessee, licensed since 2008, helping buyers
 relocate to the Nashville area. Heads up for out-of-state buyers: Tennessee has NO state income
 tax — worth factoring into the cost-of-living comparison.
 
@@ -169,7 +169,7 @@ Email: joshua@joshuafink.com
 08:10 How I help luxury & relocating buyers + how to reach me
 
 Joshua Fink | Affiliate Broker, Compass Real Estate | Middle Tennessee
-17+ years • 100+ homes sold annually • 5.0★ from 218+ Zillow reviews
+Licensed since 2008 • 40+ homes a year in Middle Tennessee • 5.0★ from 218+ Zillow reviews
 TREC #351484 • Compass Diamond & Titan Award winner
 
 General information, not financial or real estate advice. Equal Housing Opportunity.
@@ -185,7 +185,7 @@ middle tennessee real estate, tennessee no state income tax, joshua fink
 ```
 
 ### HOOK (first 15 seconds, word-for-word)
-> "Brentwood, Tennessee is one of the most sought-after suburbs in the entire Nashville area — and there are two big reasons people move here: the homes and the schools. But it comes at a price, and I'm going to be straight with you about all of it. I'm Joshua Fink, I've sold homes in this market for 17 years, and this is your honest guide to moving to Brentwood. Let's go."
+> "Brentwood, Tennessee is one of the most sought-after suburbs in the entire Nashville area — and there are two big reasons people move here: the homes and the schools. But it comes at a price, and I'm going to be straight with you about all of it. I'm Joshua Fink, licensed since 2008, and this is your honest guide to moving to Brentwood. Let's go."
 
 ### FULL SCRIPT
 
@@ -214,7 +214,7 @@ middle tennessee real estate, tennessee no state income tax, joshua fink
 "Now the cons. One — and it's the obvious one — **price.** A $900K median means Brentwood is simply out of reach or out of preference for a lot of buyers, and that's okay. Two: it's **quiet and residential** — if you want walkable downtown energy, Brentwood isn't that; Franklin's Main Street or Nashville itself would suit you better. Three: **less new-construction value** than a fast-growing market — if your goal is maximum house-per-dollar in a newer build, Spring Hill around $450K is a very different play. So who is Brentwood *not* for? Buyers who want the lowest price, who want walkable nightlife, or who are chasing the most square footage for the money. If that's you, I'll happily steer you to a market that delivers it — no pressure, no judgment."
 
 **[CTA]**
-"If Brentwood is your target — or if you're weighing it against Franklin or Spring Hill and want an honest comparison — let's talk. I'm Joshua Fink, Affiliate Broker with Compass, 17 years in Middle Tennessee real estate. Call or text 615-551-2727, or go to joshuafink.com/contact and I'll build you a real plan around your budget, your schools, and your timeline. Subscribe for more of these, and I'll catch you in the next video."
+"If Brentwood is your target — or if you're weighing it against Franklin or Spring Hill and want an honest comparison — let's talk. I'm Joshua Fink, Affiliate Broker with Compass, licensed since 2008. Call or text 615-551-2727, or go to joshuafink.com/contact and I'll build you a real plan around your budget, your schools, and your timeline. Subscribe for more of these, and I'll catch you in the next video."
 
 ### SHOT LIST / B-ROLL CHECKLIST
 - Establishing b-roll: tree-lined Brentwood roads, larger lots, the green/spacious feel (this is the visual identity)
@@ -228,7 +228,7 @@ middle tennessee real estate, tennessee no state income tax, joshua fink
 - On-screen text at cost segment: "Brentwood median ~$900K (2026)"; comparison overlay "Franklin ~$650K · Spring Hill ~$450K"
 
 ### PINNED-COMMENT CTA
-> 🏡 Eyeing Brentwood? I'm Joshua Fink, Affiliate Broker w/ Compass — 17+ yrs, 100+ homes sold a year, 5.0★ from 218+ Zillow reviews. Browse Brentwood listings 👉 https://joshuafink.com/buy/brentwood-tn · Want me to compare Brentwood vs. Franklin vs. Spring Hill for your budget? Call/text 615-551-2727 or https://joshuafink.com/contact. Questions below 👇
+> 🏡 Eyeing Brentwood? I'm Joshua Fink, Affiliate Broker w/ Compass — licensed since 2008, 40+ homes a year in Middle Tennessee, 5.0★ from 218+ Zillow reviews. Browse Brentwood listings 👉 https://joshuafink.com/buy/brentwood-tn · Want me to compare Brentwood vs. Franklin vs. Spring Hill for your budget? Call/text 615-551-2727 or https://joshuafink.com/contact. Questions below 👇
 
 ### END-SCREEN CTA (spoken + on-screen)
 - Spoken: "If $900K isn't your number, watch my Spring Hill video next — it's the honest pros and cons of a much more affordable, fast-growing market."
@@ -255,7 +255,7 @@ neighborhoods, schools, the 2026 cost of living and housing market, the GM/auto 
 jobs that helped put it on the map, the commute, the growth pains and US-31 traffic, and exactly
 who Spring Hill is — and isn't — right for.
 
-I'm Joshua Fink, an Affiliate Broker with Compass in Middle Tennessee, 17+ years in this market.
+I'm Joshua Fink, an Affiliate Broker with Compass in Middle Tennessee, licensed since 2008.
 Relocation note: Tennessee has NO state income tax, which is a real factor if you're moving from
 a higher-cost, higher-tax metro.
 
@@ -280,7 +280,7 @@ Email: joshua@joshuafink.com
 08:15 How I help + how to reach me
 
 Joshua Fink | Affiliate Broker, Compass Real Estate | Middle Tennessee
-17+ years • 100+ homes sold annually • 5.0★ from 218+ Zillow reviews
+Licensed since 2008 • 40+ homes a year in Middle Tennessee • 5.0★ from 218+ Zillow reviews
 TREC #351484 • Compass Diamond & Titan Award winner
 
 General information, not financial or real estate advice. Equal Housing Opportunity.
@@ -296,7 +296,7 @@ middle tennessee real estate, tennessee no state income tax, joshua fink
 ```
 
 ### HOOK (first 15 seconds, word-for-word)
-> "Spring Hill, Tennessee is exploding — it's one of the fastest-growing towns in the whole Nashville area, and people are moving here for a reason. But there's a catch, and most videos won't tell you about it. I'm Joshua Fink, 17 years selling homes in Middle Tennessee, and I'm going to give you the *honest* pros and cons of living in Spring Hill — including the one nobody warns you about. Let's get into it."
+> "Spring Hill, Tennessee is exploding — it's one of the fastest-growing towns in the whole Nashville area, and people are moving here for a reason. But there's a catch, and most videos won't tell you about it. I'm Joshua Fink, licensed since 2008, and I'm going to give you the *honest* pros and cons of living in Spring Hill — including the one nobody warns you about. Let's get into it."
 
 ### FULL SCRIPT
 
@@ -325,7 +325,7 @@ middle tennessee real estate, tennessee no state income tax, joshua fink
 "Okay, the honest cons — this is the part the brochures skip. Number one, and you'll hear every local say it: **traffic, especially on US-31.** Spring Hill grew faster than the infrastructure, and the main corridors — US-31 in particular — can get congested, especially at peak times. That's the catch I promised you in the intro. Number two: **growth pains in general** — constant construction, road work, and the feeling of a town still catching up to its own size. Number three: **distance from Nashville** — that longer commute is a daily reality if you work in the city. And number four: it's **newer and more suburban** by design — if you want historic charm, that's Franklin, and if you want established luxury with big lots, that's Brentwood. So who is Spring Hill *not* for? Someone who needs a short Nashville commute, who can't stand traffic and construction, or who wants historic or luxury character over value and newness. If that's you, I'll point you to the right town — that's the whole job."
 
 **[CTA]**
-"If Spring Hill's mix of affordability and new construction sounds right — or if you want me to honestly compare it against Franklin and Brentwood for *your* budget and commute — let's talk. I'm Joshua Fink, Affiliate Broker with Compass, 17 years in Middle Tennessee. Call or text 615-551-2727, or visit joshuafink.com/contact and I'll lay out a real plan, including verifying the county, the schools, and the actual commute for any home you're considering. Subscribe for honest local guides like this, and I'll see you next time. Thanks for watching."
+"If Spring Hill's mix of affordability and new construction sounds right — or if you want me to honestly compare it against Franklin and Brentwood for *your* budget and commute — let's talk. I'm Joshua Fink, Affiliate Broker with Compass, licensed since 2008. Call or text 615-551-2727, or visit joshuafink.com/contact and I'll lay out a real plan, including verifying the county, the schools, and the actual commute for any home you're considering. Subscribe for honest local guides like this, and I'll see you next time. Thanks for watching."
 
 ### SHOT LIST / B-ROLL CHECKLIST
 - Establishing b-roll: new subdivisions and active construction (this *is* the Spring Hill story — show the growth)
@@ -341,7 +341,7 @@ middle tennessee real estate, tennessee no state income tax, joshua fink
 - On-screen graphic at schools chapter: "Williamson Co. ⟷ Maury Co. — verify your zone!"
 
 ### PINNED-COMMENT CTA
-> 🚧 Real talk on Spring Hill: more house for your money, but yes — US-31 traffic is real. I'm Joshua Fink, Affiliate Broker w/ Compass, 17+ yrs in Middle TN. Browse Spring Hill homes 👉 https://joshuafink.com/buy/spring-hill-tn · Want me to verify the county, schools & commute on a specific home? Call/text 615-551-2727 or https://joshuafink.com/contact. What's your biggest question or concern about moving here? 👇
+> 🚧 Real talk on Spring Hill: more house for your money, but yes — US-31 traffic is real. I'm Joshua Fink, Affiliate Broker w/ Compass, licensed since 2008 in Middle TN. Browse Spring Hill homes 👉 https://joshuafink.com/buy/spring-hill-tn · Want me to verify the county, schools & commute on a specific home? Call/text 615-551-2727 or https://joshuafink.com/contact. What's your biggest question or concern about moving here? 👇
 
 ### END-SCREEN CTA (spoken + on-screen)
 - Spoken: "Want to compare? Watch my Franklin and Brentwood guides next — same honest breakdown, different price points."

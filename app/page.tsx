@@ -17,13 +17,13 @@ export const metadata: Metadata = {
   // "Joshua Fink" nor "Compass" on the page that has to win brand searches.
   title: { absolute: 'Joshua Fink | Top Realtor in Middle Tennessee | Compass Real Estate' },
   description:
-    'Top-rated Compass agent serving Franklin, Brentwood, Spring Hill, Nashville, and all of Middle Tennessee. 17+ years, 100+ homes sold annually, 5★ rating from 218+ clients. Free valuation and off-market listing access.',
+    'Top-rated Compass agent serving Franklin, Brentwood, Spring Hill, Nashville, and all of Middle Tennessee. Licensed since 2008, 40+ homes a year in Middle Tennessee, 5★ rating from 218+ clients. Free valuation and off-market listing access.',
   openGraph: { url: 'https://www.joshuafink.com' },
 }
 
 const stats = [
-  { value: '17+', label: 'Years Experience' },
-  { value: '100+', label: 'Homes Sold Annually' },
+  { value: '18', label: 'Years Licensed' },
+  { value: '40+', label: 'Homes a Year in Middle TN' },
   { value: '★', label: 'Diamond & Titan Award Winner' },
 ]
 
@@ -239,8 +239,8 @@ export default function HomePage() {
               Committed to <span className="font-display italic font-semibold">Closing Deals</span>
             </h2>
             <p className="text-lg text-neutral-600 leading-relaxed mb-8">
-              With over 17 years of experience and 100+ homes sold annually, Joshua Fink is one of
-              Middle Tennessee&apos;s most trusted Affiliate Brokers. A Diamond &amp; Titan Award winner
+              Licensed since 2008, with 40+ homes sold a year in Middle Tennessee, Joshua Fink is one of
+              the region&apos;s most trusted Affiliate Brokers. A Diamond &amp; Titan Award winner
               who puts every client&apos;s goals first — and donates a portion of every commission to the
               Children&apos;s Miracle Network.
             </p>
@@ -397,11 +397,11 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               {
-                title: '17+ Years Experience',
-                body: 'Since 2008, Joshua has navigated every market cycle Middle Tennessee has thrown at buyers and sellers—from the post-recession recovery through the 2021-2022 bidding war frenzy to today\'s normalized market. That experience means he knows when to push, when to wait, and how to structure offers that win without overpaying. Over 1,000+ transactions closed across Davidson, Williamson, Maury, Rutherford, and Sumner counties. Every deal teaches something, and Joshua has 17+ years of lessons working directly for your outcome.',
+                title: 'Licensed Since 2008',
+                body: 'Since 2008, Joshua has navigated every market cycle Middle Tennessee has thrown at buyers and sellers—from the post-recession recovery through the 2021-2022 bidding war frenzy to today\'s normalized market. That experience means he knows when to push, when to wait, and how to structure offers that win without overpaying. Over 1,000+ transactions closed across Davidson, Williamson, Maury, Rutherford, and Sumner counties. Every deal teaches something, and Joshua has been putting those lessons to work since 2008.',
               },
               {
-                title: '100+ Homes Sold Annually',
+                title: '40+ Homes a Year in Middle Tennessee',
                 body: 'Volume matters because it means Joshua is in the market every single day, not occasionally. He sees new inventory before it hits Zillow, knows which neighborhoods are heating up before broad reports confirm it, and has relationships with listing agents across Middle Tennessee that translate into better access and stronger negotiations for his clients. High volume also means a proven operating system: professional photography, strategic pricing, aggressive marketing distribution, disciplined follow-up, and consistent outcomes for both sellers and buyers.',
               },
               {

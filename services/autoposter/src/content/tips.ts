@@ -32,7 +32,7 @@ Buying your first home in Middle Tennessee? Here's what you need to know:
 5️⃣ Be flexible on closing date
 6️⃣ Work with an agent who has relationships with listing agents 🤝
 
-I've helped buyers win in competitive markets for 13+ years.
+I've been licensed since 2008 and help buyers win in competitive Middle Tennessee markets.
 📲 615-551-2727
 
 #HomeBuying #MultipleOffers #NashvilleRealEstate #JoshuaFinkGroup`,

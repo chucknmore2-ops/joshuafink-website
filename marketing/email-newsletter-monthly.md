@@ -115,7 +115,7 @@ Warm close, full signature with credentials and compliance.
 Joshua Fink
 Affiliate Broker · Compass Real Estate · Middle Tennessee
 Call/Text: 615-551-2727 · joshua@joshuafink.com
-17+ years · 5.0★ from 218+ Zillow reviews · Compass Diamond & Titan Award winner
+Licensed since 2008 · 5.0★ from 218+ Zillow reviews · Compass Diamond & Titan Award winner
 TREC #351484 · joshuafink.com
 Reviews: /reviews · All my links: /links
 ```
@@ -261,7 +261,7 @@ Warmly,
 **Joshua Fink**
 Affiliate Broker · Compass Real Estate · Middle Tennessee
 📱 Call/Text: **615-551-2727** · ✉️ joshua@joshuafink.com
-17+ years · 5.0★ from 218+ Zillow reviews · Compass Diamond & Titan Award winner
+Licensed since 2008 · 5.0★ from 218+ Zillow reviews · Compass Diamond & Titan Award winner
 TREC #351484 · **joshuafink.com**
 ⭐ Read my reviews: **/reviews** · 🔗 All my links: **/links**
 
