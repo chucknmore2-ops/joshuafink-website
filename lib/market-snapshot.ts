@@ -68,7 +68,11 @@ export interface MarketSnapshot {
   source: string
   /** Stable URL for the report, when it has one. */
   sourceUrl?: string
-  /** ISO date (YYYY-MM-DD) the report was published. */
+  /**
+   * ISO date (YYYY-MM-DD) stamped on the blog post, in America/Chicago.
+   * The generator will not use a press-release dateline that is still in
+   * the future on the day the snapshot is written.
+   */
   reportDate: string
   /**
    * 2-4 plain-language lines. The fetcher fills these from the validated
@@ -120,7 +124,7 @@ export const marketSnapshots: MarketSnapshot[] = [
     pendingSales: 2045,
     source: 'Greater Nashville REALTORS®',
     sourceUrl: 'https://www.greaternashvillerealtors.org/news/september-homes-sales-continued-to-show-mixed-results-across-counties-and-price-points',
-    reportDate: '2026-10-07',
+    reportDate: '2026-10-05', // Chicago day this post published; GNAR datelined it 2026-10-07
     takeaways: [
       'September 2026 closed 2,885 nine-county sales: 2,284 residential, 452 condominium, 20 multi-family, and 129 farms, land, and lots.',
       'The residential median was $510,000, +4.1% from $490,000 in September 2025.',

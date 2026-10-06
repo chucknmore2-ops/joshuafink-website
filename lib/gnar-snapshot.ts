@@ -125,6 +125,12 @@ export function chicagoCalendar(now: Date): { year: number; month: number; day: 
   return { year: pick('year'), month: pick('month'), day: pick('day') }
 }
 
+/** `YYYY-MM-DD` civil date in America/Chicago. */
+export function chicagoIsoDate(now: Date): string {
+  const { year, month, day } = chicagoCalendar(now)
+  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+}
+
 /** The month a run on `now` is trying to publish: the previous Chicago month. */
 export function targetMonth(now: Date): string {
   const { year, month } = chicagoCalendar(now)
@@ -297,21 +303,49 @@ function dollars(n: number): string {
   return `$${n.toLocaleString('en-US')}`
 }
 
+function chicagoDateFromTimestamp(iso: string): string | null {
+  const parsed = new Date(iso)
+  if (Number.isNaN(parsed.getTime())) return null
+  return chicagoIsoDate(parsed)
+}
+
+/**
+ * Calendar day stamped on the market post (`YYYY-MM-DD`, America/Chicago).
+ *
+ * Prefer the release dateline, then the CMS `publishDate`, then
+ * `stats.updatedAt` as a Chicago civil day. A UTC date slice of that
+ * timestamp is already the next day after 7pm CT, so it is not used.
+ *
+ * GNAR sometimes schedules the dateline and `publishDate` ahead of the
+ * day the document exists. September 2026 was datelined 2026-10-07 while
+ * the release and this site's post both went out on 2026-10-05. A source
+ * day after the Chicago day of this run is not the publish date — the
+ * post goes live on the run day, and a future `datePublished` is wrong
+ * for readers and for search engines.
+ */
 function reportDateFor(
   stats: GnarMonthlyStats,
   release: GnarRelease | null,
+  now: Date,
 ): string | null {
+  const today = chicagoIsoDate(now)
+  const candidates: string[] = []
   if (release) {
     const dateline = parseDateline(release.text)
-    if (dateline) return dateline
+    if (dateline) candidates.push(dateline)
     if (release.publishDate && /^\d{4}-\d{2}-\d{2}$/.test(release.publishDate)) {
-      return release.publishDate
+      candidates.push(release.publishDate)
     }
   }
-  if (stats.updatedAt && /^\d{4}-\d{2}-\d{2}/.test(stats.updatedAt)) {
-    return stats.updatedAt.slice(0, 10)
+  if (stats.updatedAt) {
+    const updated = chicagoDateFromTimestamp(stats.updatedAt)
+    if (updated) candidates.push(updated)
   }
-  return null
+  if (candidates.length === 0) return null
+  // A scheduled dateline can be later than the day the figures existed.
+  // Use the first source day that is not still in the future. If every
+  // source day is later than this run, the post goes live today.
+  return candidates.find((day) => day <= today) ?? today
 }
 
 function buildTakeaways(
@@ -387,6 +421,8 @@ export function buildSnapshot(input: {
   stats: GnarMonthlyStats
   prior: GnarMonthlyStats | null
   release: GnarRelease | null
+  /** Clock for the publish date. The scheduled fetcher passes the run time. */
+  now: Date
 }): { ok: true; built: BuiltGnarSnapshot } | { ok: false; errors: string[] } {
   const errors = validateMonthlyStats(input.stats, input.isoMonth)
   const closings = categoryClosings(input.stats)
@@ -394,7 +430,7 @@ export function buildSnapshot(input: {
   if (closings == null || inventory == null) {
     errors.push('category totals could not be summed')
   }
-  const reportDate = reportDateFor(input.stats, input.release)
+  const reportDate = reportDateFor(input.stats, input.release, input.now)
   if (!reportDate) errors.push('no report date on the release dateline, publishDate, or stats updatedAt')
   if (errors.length || closings == null || inventory == null || !reportDate) {
     return { ok: false, errors }
@@ -528,6 +564,7 @@ export function planSnapshot(input: {
     stats: input.stats,
     prior: input.prior,
     release,
+    now: input.now,
   })
   if (!built.ok) return { action: 'invalid', errors: built.errors }
   return { action: 'write', built: built.built }
