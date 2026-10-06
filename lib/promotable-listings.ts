@@ -65,3 +65,82 @@ export function pickPromotable(
   const idx = (((epochDay + channelOffset) % pool.length) + pool.length) % pool.length
   return pool[idx]
 }
+
+/**
+ * Same rotation, for channels that post once a week (Instagram Wed, LinkedIn Thu).
+ *
+ * The daily rotator is wrong for them. A weekly job's day number advances by 7
+ * between runs, so when the pool length divides 7 — and today there are exactly
+ * 7 promotable homes — `(epochDay + offset) % 7` is identical every week and the
+ * channel features the same house forever (which is how one Compass image kept
+ * Instagram stuck in September).
+ *
+ * Rotating on the week instead advances exactly one home per run. Weeks start
+ * Monday: epoch day 0 was a Thursday, so a naive `epochDay / 7` would split Wed
+ * and Thu into different weeks and hand Instagram's Wednesday home straight to
+ * LinkedIn the next day. Offset by 3 so the pair share a week and the channel
+ * offset keeps them on different homes.
+ */
+export function pickWeeklyPromotable(
+  channelOffset = 0,
+  now: Date = new Date(),
+  source: readonly Listing[] = listings,
+): Listing | null {
+  const pool = promotableListings(source)
+  if (pool.length === 0) return null
+  const epochDay = Math.floor(now.getTime() / 86_400_000)
+  const week = Math.floor((epochDay + 3) / 7)
+  const idx = (((week + channelOffset) % pool.length) + pool.length) % pool.length
+  return pool[idx]
+}
+
+/**
+ * The next home after `current`, wrapping at the end of the pool.
+ *
+ * Instagram uses this when Meta leaves a container IN_PROGRESS: one particular
+ * photo can stall indefinitely (2026-09-16 burned every retry on the same
+ * asset), and the next listing's photo is a fresh chance at the same slot.
+ * Returns null when the pool has nothing else to offer.
+ */
+export function nextPromotable(
+  current: Listing,
+  source: readonly Listing[] = listings,
+): Listing | null {
+  const pool = promotableListings(source)
+  if (pool.length < 2) return null
+  const i = pool.findIndex(
+    (l) => l.address === current.address && l.compassUrl === current.compassUrl,
+  )
+  if (i < 0) return pool[0] ?? null
+  return pool[(i + 1) % pool.length] ?? null
+}
+
+function listingKey(l: Listing): string {
+  return `${l.address}\n${l.compassUrl}`
+}
+
+/**
+ * The next `count` promotable homes after `current`, wrapping, never repeating.
+ *
+ * Instagram tries more than one alternate when Meta stalls a container: one
+ * extra home was not enough on 2026-09-17 (both Compass JPEGs stayed
+ * IN_PROGRESS). Two alternates (three homes total) still fit inside the
+ * 300s route budget with an 80s poll each.
+ */
+export function fallbackPromotables(
+  current: Listing,
+  count = 2,
+  source: readonly Listing[] = listings,
+): Listing[] {
+  const out: Listing[] = []
+  let cursor = current
+  const seen = new Set([listingKey(current)])
+  while (out.length < count) {
+    const next = nextPromotable(cursor, source)
+    if (!next || seen.has(listingKey(next))) break
+    seen.add(listingKey(next))
+    out.push(next)
+    cursor = next
+  }
+  return out
+}

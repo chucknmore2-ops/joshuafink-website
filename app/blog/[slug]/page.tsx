@@ -6,6 +6,7 @@ import { getPostBySlug, getAllSlugs, getRelatedPosts, getAuditTier, type BlogPos
 import { linkifyLocations } from '@/lib/linkify-neighborhoods'
 import { neighborhoods } from '@/lib/neighborhoods'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
+import TrackedTelLink from '@/components/TrackedTelLink'
 
 interface Props {
   params: { slug: string }
@@ -108,9 +109,9 @@ function parseInlineMarkdown(text: string) {
 
     if (/^\d{3}-\d{3}-\d{4}$/.test(token)) {
       return (
-        <a key={idx} href={`tel:${token.replace(/-/g, '')}`} className="text-black underline hover:no-underline">
+        <TrackedTelLink key={idx} href={`tel:${token.replace(/-/g, '')}`} className="text-black underline hover:no-underline" data-cta="blog-body-call">
           {token}
-        </a>
+        </TrackedTelLink>
       )
     }
 
@@ -201,6 +202,7 @@ function buildJsonLd(post: BlogPost) {
         'https://www.facebook.com/profile.php?id=100064076493905',
         'https://www.instagram.com/joshuafinkgroup',
         'https://x.com/JoshuaFinkGroup',
+        'https://www.youtube.com/channel/UCc6j1NWgJeb00pT5xsenz3g',
       ],
     },
     publisher: {
@@ -385,13 +387,14 @@ export default function BlogPostPage({ params }: Props) {
               >
                 Contact Joshua
               </Link>
-              <a
+              <TrackedTelLink
                 href="tel:6155512727"
                 className="inline-flex items-center justify-center border border-black text-black text-sm font-bold px-6 py-3 rounded-full tracking-wide hover:bg-black hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
                 aria-label="Call Joshua at 615-551-2727"
+                data-cta="blog-author-bio-call"
               >
                 615-551-2727
-              </a>
+              </TrackedTelLink>
             </div>
           </div>
         </div>
@@ -415,7 +418,7 @@ export default function BlogPostPage({ params }: Props) {
               successMessage={
                 <>
                   Joshua will reach out same-day. For anything urgent, call{' '}
-                  <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                  <TrackedTelLink href="tel:6155512727" className="text-black font-semibold underline" data-cta="blog-form-success-call">615-551-2727</TrackedTelLink>.
                 </>
               }
               resetLabel="Send Another"
@@ -427,19 +430,19 @@ export default function BlogPostPage({ params }: Props) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
                   <label htmlFor="name" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Full Name *</label>
-                  <input type="text" id="name" name="name" required placeholder="Jane Smith"
+                  <input type="text" id="name" name="name" required placeholder="Jane Smith" autoComplete="name"
                     className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
                 </div>
                 <div>
                   <label htmlFor="phone" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Phone *</label>
-                  <input type="tel" id="phone" name="phone" required placeholder="615-555-0000"
+                  <input type="tel" id="phone" name="phone" required placeholder="615-555-0000" autoComplete="tel"
                     className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
                 </div>
               </div>
 
               <div>
                 <label htmlFor="email" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Email Address *</label>
-                <input type="email" id="email" name="email" required placeholder="you@example.com"
+                <input type="email" id="email" name="email" required placeholder="you@example.com" autoComplete="email"
                   className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
               </div>
 

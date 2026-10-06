@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { BRAND, GEO_QUERIES } from '@/lib/geo-queries';
-import { askAllEngines, configuredEngines } from '@/lib/geo-engines';
+import { askAllEngines, configuredEngines, GEO_QUERY_CONCURRENCY } from '@/lib/geo-engines';
 import {
   detectBrand,
   computeGeoScore,
@@ -15,7 +15,7 @@ export const maxDuration = 300;
 
 // GEO visibility tracker — the "GEO score" + daily-task engine.
 //
-// Asks each configured answer engine (Perplexity / OpenAI / Claude) the target
+// Asks each configured answer engine (Perplexity / OpenAI / Grok) the target
 // Middle TN questions WITH live web access, detects whether Joshua surfaced
 // (joshuafink.com cited or "Joshua Fink" named), records every result, and
 // returns the score. The questions we lose are the daily to-do list: each one
@@ -24,10 +24,10 @@ export const maxDuration = 300;
 // Required env:
 //   CRON_SECRET     — shared across /api/cron/* (auth)
 // At least one of (engine is skipped if its key is absent):
-//   PERPLEXITY_API_KEY · OPENAI_API_KEY · ANTHROPIC_API_KEY
-// Optional model overrides: GEO_CLAUDE_MODEL · GEO_OPENAI_MODEL · GEO_PERPLEXITY_MODEL
-
-const CONCURRENCY = 3; // queries in flight at once (each fans out to all engines)
+//   PERPLEXITY_API_KEY · OPENAI_API_KEY · XAI_API_KEY
+// Optional model overrides: GEO_OPENAI_MODEL · GEO_PERPLEXITY_MODEL · GEO_GROK_MODEL
+// A missing XAI_API_KEY skips Grok with a warning and does not fail the run.
+// Claude was removed 2026-09-28. ANTHROPIC_API_KEY is ignored.
 
 export async function GET(request: Request) {
   const expected = process.env.CRON_SECRET;
@@ -47,7 +47,7 @@ export async function GET(request: Request) {
     // Not an error — the pipeline is built; it just needs an API key to run.
     return NextResponse.json({
       ran: false,
-      reason: 'no answer-engine API keys configured (set PERPLEXITY_API_KEY, OPENAI_API_KEY, or ANTHROPIC_API_KEY)',
+      reason: 'no answer-engine API keys configured (set PERPLEXITY_API_KEY, OPENAI_API_KEY, or XAI_API_KEY)',
     });
   }
 
@@ -77,7 +77,9 @@ export async function GET(request: Request) {
       }
     }
   }
-  await Promise.all(Array.from({ length: Math.min(CONCURRENCY, GEO_QUERIES.length) }, worker));
+  await Promise.all(
+    Array.from({ length: Math.min(GEO_QUERY_CONCURRENCY, GEO_QUERIES.length) }, worker),
+  );
 
   const score = computeGeoScore(rows);
   const written = await recordGeoRun(rows);

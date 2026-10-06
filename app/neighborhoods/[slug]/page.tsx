@@ -6,7 +6,7 @@ import {
   getAllNeighborhoodSlugs,
   getRelatedNeighborhoods,
 } from '@/lib/neighborhoods'
-import { getSuburb, getSuburbSlugForListing } from '@/lib/suburbs'
+import { getSuburb, getSuburbSlugForListing, citywideStatsCitation } from '@/lib/suburbs'
 import { reviewStats } from '@/lib/reviews'
 import { withUtm } from '@/lib/utm'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
@@ -147,6 +147,7 @@ export default async function NeighborhoodPage({ params }: Props) {
       'https://www.instagram.com/joshuafinkgroup',
       'https://www.linkedin.com/in/joshuafinkgroup/',
       'https://x.com/JoshuaFinkGroup',
+      'https://www.youtube.com/channel/UCc6j1NWgJeb00pT5xsenz3g',
       'https://www.compass.com/agents/joshua-fink/',
       'https://www.zillow.com/profile/JoshuaFinkGroup',
     ],
@@ -176,6 +177,15 @@ export default async function NeighborhoodPage({ params }: Props) {
       addressRegion: 'TN',
       postalCode: '37027',
       addressCountry: 'US',
+    },
+    // Coordinates of the Brentwood office above — NOT the neighborhood's (those
+    // belong on the Place node). A business node whose geo disagrees with its
+    // own postal address reads as a NAP inconsistency. Same point /buy/[suburb]
+    // publishes on its RealEstateAgent node.
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: 36.0234,
+      longitude: -86.7838,
     },
     areaServed: {
       '@type': 'City',
@@ -286,7 +296,7 @@ export default async function NeighborhoodPage({ params }: Props) {
                 successMessage={
                   <>
                     Joshua will text you shortly with {n.name} listings. Or call{' '}
-                    <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                    <TrackedTelLink href="tel:6155512727" className="text-black font-semibold underline" data-cta="neighborhood-success-call">615-551-2727</TrackedTelLink>.
                   </>
                 }
                 resetLabel="Send another"
@@ -348,12 +358,18 @@ export default async function NeighborhoodPage({ params }: Props) {
 
             {parentSuburb && (
               <>
-                <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mt-10 mb-6">
-                  {parentSuburb.name} Market — 2026
+                <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 mt-10 mb-2">
+                  <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase">
+                    {parentSuburb.displayName} Citywide Market — 2026
+                  </p>
+                  <p className="text-xs text-[#A0A0A0]">{citywideStatsCitation(parentSuburb)}</p>
+                </div>
+                <p className="text-sm text-[#6B6B6B] mb-6">
+                  Citywide {parentSuburb.name} figures — not a {n.name} subdivision median. {n.name} sits within this market.
                 </p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                   <div className="bg-white p-6 border border-[#E8E8E8]">
-                    <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mb-2">Median Price</p>
+                    <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mb-2">Citywide Median Price</p>
                     <p className="text-xl font-black text-black">{parentSuburb.medianPrice}</p>
                   </div>
                   <div className="bg-white p-6 border border-[#E8E8E8]">
@@ -369,9 +385,6 @@ export default async function NeighborhoodPage({ params }: Props) {
                     <p className="text-xl font-black text-black">{parentSuburb.yoyChange}</p>
                   </div>
                 </div>
-                <p className="text-xs text-[#7B7B7B] mt-3">
-                  Source: Joshua Fink / Compass market data for {parentSuburb.displayName}. {n.name} sits within this market.
-                </p>
               </>
             )}
           </div>
@@ -620,9 +633,13 @@ export default async function NeighborhoodPage({ params }: Props) {
                 >
                   615-551-2727
                 </TrackedTelLink>
-                <a href="sms:+16155512727" className="block text-sm font-semibold text-black hover:underline mb-1">
+                <TrackedTelLink
+                  href="sms:+16155512727"
+                  className="block text-sm font-semibold text-black hover:underline mb-1"
+                  data-cta="neighborhood-panel-text"
+                >
                   Text 615-551-2727
-                </a>
+                </TrackedTelLink>
                 <a href="mailto:joshua@joshuafink.com" className="block text-sm text-[#444] hover:underline">
                   joshua@joshuafink.com
                 </a>
@@ -687,8 +704,8 @@ export default async function NeighborhoodPage({ params }: Props) {
                     className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
                 </div>
                 <div>
-                  <label htmlFor="phone" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Phone *</label>
-                  <input type="tel" id="phone" name="phone" required placeholder="615-555-0000" autoComplete="tel"
+                  <label htmlFor="phone" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Phone (optional — fastest reply)</label>
+                  <input type="tel" id="phone" name="phone" placeholder="615-555-0000" autoComplete="tel"
                     className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
                 </div>
               </div>
@@ -842,12 +859,13 @@ export default async function NeighborhoodPage({ params }: Props) {
               >
                 Call 615-551-2727
               </TrackedTelLink>
-              <a
+              <TrackedTelLink
                 href="sms:+16155512727"
                 className="inline-block border border-white text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-white hover:text-black transition-colors text-center"
+                data-cta="neighborhood-final-cta-text"
               >
                 Text 615-551-2727
-              </a>
+              </TrackedTelLink>
             </div>
           </div>
         </div>

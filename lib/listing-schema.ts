@@ -8,25 +8,8 @@
  * field — so the markup stays valid and uncontested in Search Console.
  */
 import type { Listing } from './listings'
-
-function parseAddress(streetAddress: string, city: string) {
-  // city looks like "Brentwood, TN 37027" optionally suffixed with " | MLS #…"
-  const cityClean = city.split('|')[0].trim()
-  const match = cityClean.match(/^(.*?),\s*([A-Z]{2})\s+(\d{5}(?:-\d{4})?)$/)
-  const address: Record<string, string> = {
-    '@type': 'PostalAddress',
-    streetAddress,
-    addressCountry: 'US',
-  }
-  if (match) {
-    address.addressLocality = match[1]
-    address.addressRegion = match[2]
-    address.postalCode = match[3]
-  } else {
-    address.addressLocality = cityClean
-  }
-  return address
-}
+import { parseListingPostalAddress } from './listing-address'
+import { listingCanonicalUrl } from './listing-detail'
 
 export function buildListingItemList(items: Listing[], name: string) {
   return {
@@ -40,8 +23,8 @@ export function buildListingItemList(items: Listing[], name: string) {
       item: {
         '@type': 'SingleFamilyResidence',
         name: l.address,
-        address: parseAddress(l.address, l.city),
-        url: l.compassUrl,
+        address: parseListingPostalAddress(l.address, l.city),
+        url: listingCanonicalUrl(l),
         ...(l.imageUrl ? { image: l.imageUrl } : {}),
         ...(l.beds !== undefined ? { numberOfRooms: l.beds } : {}),
         ...(l.baths !== undefined ? { numberOfBathroomsTotal: l.baths } : {}),
@@ -70,6 +53,8 @@ export function buildListingItemList(items: Listing[], name: string) {
  * Search-Console-validity reason noted at the top of this file — it lives on the
  * visible page, not in the markup. `url` should be the on-site detail URL (not
  * the Compass URL) so this page is the canonical entity for the address.
+ * Sold homes emit availability SoldOut and omit datePosted/validThrough unless
+ * a real lastVerified timestamp exists — we never invent a close date.
  */
 // Map Compass listing status → schema.org ItemAvailability so Google can tell
 // sold / under-contract homes apart from active ones in rich results.
@@ -81,11 +66,11 @@ function availabilityFor(status: string): string {
   return 'https://schema.org/InStock'
 }
 
-export function buildListingSchema(listing: Listing, url: string) {
+export function buildListingSchema(listing: Listing, url: string, tourVideoId?: string) {
   const residence: Record<string, unknown> = {
     '@type': 'SingleFamilyResidence',
     name: listing.address,
-    address: parseAddress(listing.address, listing.city),
+    address: parseListingPostalAddress(listing.address, listing.city),
     ...(listing.imageUrl ? { image: listing.imageUrl } : {}),
     ...(listing.beds !== undefined ? { numberOfRooms: listing.beds } : {}),
     ...(listing.baths !== undefined ? { numberOfBathroomsTotal: listing.baths } : {}),
@@ -117,6 +102,21 @@ export function buildListingSchema(listing: Listing, url: string) {
     // Reference the canonical agent entity defined in app/layout.tsx (#agent)
     // so each listing feeds authority back into Joshua's knowledge graph.
     agent: { '@id': 'https://www.joshuafink.com/#agent' },
+    // Virtual-tour walkthrough (lib/listing-detail.ts → tourVideos) as a
+    // VideoObject so the tour is eligible for Google video results.
+    ...(tourVideoId
+      ? {
+          video: {
+            '@type': 'VideoObject',
+            name: `${listing.address} — virtual tour`,
+            description: `Video walkthrough of ${listing.address} with Joshua Fink, Compass Real Estate.`,
+            embedUrl: `https://www.youtube.com/embed/${tourVideoId}`,
+            contentUrl: `https://www.youtube.com/watch?v=${tourVideoId}`,
+            thumbnailUrl: `https://i.ytimg.com/vi/${tourVideoId}/hqdefault.jpg`,
+            ...(datePosted ? { uploadDate: datePosted } : {}),
+          },
+        }
+      : {}),
     about: residence,
   }
 }

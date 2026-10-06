@@ -6,26 +6,33 @@ name: Social Autopost
 # Instagram / GBP crons defined in vercel.json don't reliably fire. GitHub
 # Actions cron is free and uncapped, so we drive the posts from here instead.
 #
-# REQUIRED GitHub repo secret:
+# REQUIRED GitHub repo secrets:
 #   CRON_SECRET — must match the value in the Vercel project env. Already set
-#   (used by indexnow-on-content-change.yml). Manage at:
+#   (used by indexnow-on-content-change.yml).
+#   BUFFER_API_KEY, BUFFER_IG_CHANNEL_ID — Buffer Free. Forwarded only on the
+#   instagram-post fire. Manage at:
 #   github.com/chucknmore2-ops/joshuafink-website/settings/secrets/actions
 #
 # Cadence (9am Central = 14:00 UTC):
-#   Thu — LinkedIn   (token verified 2026-06-26, LIVE)
-#   Wed — Instagram  (token verified 2026-06-26, LIVE — posts real listings;
-#                     confirmed HTTP 200 with a published mediaId on 2026-07-08)
-#   Tue — GBP        (commented out until the GBP token is refreshed)
-# To enable GBP once its token is confirmed, uncomment the matching schedule
-# line below — the routing + manual trigger already support it. NOTE: these
-# social posts run ONLY here, not on Vercel Cron (see vercel.json) — don't add
-# duplicate cron entries there or Instagram will double-post.
+#   Thu — LinkedIn   (LIVE)
+#   Wed — Instagram  LIVE via Buffer Free (IG_AUTOPOST=buffer). Queues one
+#                    feed photo with schedulingType automatic. Graph publish
+#                    stays off — do not set IG_AUTOPOST=live (that value used
+#                    to call Meta and is now a soft-skip).
+#   Tue — GBP        (LIVE)
+# NOTE: these social posts run ONLY here, not on Vercel Cron (see vercel.json)
+# — don't add duplicate cron entries there or Instagram will double-queue.
+#
+# IG_AUTOPOST: buffer | paused.
+#   buffer — live path. Calls /api/cron/instagram-post, which queues via Buffer.
+#   paused — soft-skip (scheduled and manual). Does not call Graph.
+#   Anything else, including live, soft-skips. Graph stays off.
 
 on:
   schedule:
-    - cron: '0 14 * * 4'   # LinkedIn — Thursdays 14:00 UTC  (token verified 2026-06-26)
-    - cron: '0 14 * * 3'   # Instagram — Wednesdays 14:00 UTC (token verified 2026-06-26)
-    - cron: '0 14 * * 2'   # GBP — Tuesdays 14:00 UTC        (token + API verified 2026-08-04)
+    - cron: '0 14 * * 4'   # LinkedIn — Thursdays 14:00 UTC
+    - cron: '0 14 * * 3'   # Instagram — Wednesdays 14:00 UTC (Buffer queue; Graph stays off)
+    - cron: '0 14 * * 2'   # GBP — Tuesdays 14:00 UTC
   workflow_dispatch:
     inputs:
       channel:
@@ -38,6 +45,11 @@ on:
           - instagram-post
           - gbp-post
 
+# buffer = live Buffer queue. paused (or live, or anything else) soft-skips.
+# Graph publish stays off.
+env:
+  IG_AUTOPOST: buffer
+
 jobs:
   autopost:
     runs-on: ubuntu-latest
@@ -47,6 +59,7 @@ jobs:
         env:
           SCHEDULE: ${{ github.event.schedule }}
           MANUAL: ${{ github.event.inputs.channel }}
+          IG_AUTOPOST: ${{ env.IG_AUTOPOST }}
         run: |
           if [ -n "$MANUAL" ]; then
             ENDPOINT="$MANUAL"
@@ -58,12 +71,23 @@ jobs:
               *) echo "::error::Unrecognized schedule '$SCHEDULE'"; exit 1 ;;
             esac
           fi
+          SKIP=false
+          if [ "$ENDPOINT" = "instagram-post" ] && [ "${IG_AUTOPOST}" != "buffer" ]; then
+            echo "IG not on Buffer"
+            echo "Instagram Graph publish stays off (IG_AUTOPOST=${IG_AUTOPOST:-unset}). Not calling Graph and not queuing."
+            echo "The live path is IG_AUTOPOST=buffer in .github/workflows/social-autopost.yml."
+            SKIP=true
+          fi
           echo "endpoint=$ENDPOINT" >> "$GITHUB_OUTPUT"
-          echo "Target endpoint: /api/cron/$ENDPOINT"
+          echo "skip=$SKIP" >> "$GITHUB_OUTPUT"
+          echo "Target endpoint: /api/cron/$ENDPOINT (skip=$SKIP)"
 
       - name: Fire the post
+        if: steps.target.outputs.skip != 'true'
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+          BUFFER_IG_CHANNEL_ID: ${{ secrets.BUFFER_IG_CHANNEL_ID }}
           ENDPOINT: ${{ steps.target.outputs.endpoint }}
         run: |
           if [ -z "$CRON_SECRET" ]; then
@@ -71,29 +95,55 @@ jobs:
             echo "github.com/chucknmore2-ops/joshuafink-website/settings/secrets/actions"
             exit 1
           fi
+          if [ "$ENDPOINT" = "instagram-post" ]; then
+            if [ -z "$BUFFER_API_KEY" ] || [ -z "$BUFFER_IG_CHANNEL_ID" ]; then
+              echo "::error::BUFFER_API_KEY and BUFFER_IG_CHANNEL_ID are required for instagram-post."
+              echo "Add them at github.com/chucknmore2-ops/joshuafink-website/settings/secrets/actions"
+              exit 1
+            fi
+          fi
 
           # Hit the www host directly: an apex->www 307 redirect drops the
           # Authorization header. -L is belt-and-suspenders.
           URL="https://www.joshuafink.com/api/cron/$ENDPOINT"
           echo "Posting via $URL"
 
-          # Retry a few times in case a deploy is mid-flight.
+          # Retry a few times in case a deploy is mid-flight. Instagram does
+          # not resume a Graph container — that path stays off. A non-200
+          # after Buffer already accepted the item can queue a second post.
           for attempt in 1 2 3; do
             echo "Attempt $attempt…"
-            response=$(curl -sSL -w "\n%{http_code}" \
-              -H "Authorization: Bearer $CRON_SECRET" \
-              "$URL")
+            if [ "$ENDPOINT" = "instagram-post" ]; then
+              response=$(curl -sSL -w "\n%{http_code}" \
+                -H "Authorization: Bearer $CRON_SECRET" \
+                -H "X-Buffer-Api-Key: $BUFFER_API_KEY" \
+                -H "X-Buffer-Ig-Channel-Id: $BUFFER_IG_CHANNEL_ID" \
+                "$URL")
+            else
+              response=$(curl -sSL -w "\n%{http_code}" \
+                -H "Authorization: Bearer $CRON_SECRET" \
+                "$URL")
+            fi
             status=$(echo "$response" | tail -n1)
             body=$(echo "$response" | sed '$d')
             echo "HTTP $status"
             echo "$body"
 
+            if [ "$ENDPOINT" = "instagram-post" ]; then
+              echo "Instagram debug: $(printf '%s' "$body" | jq -c '{error, via, refKey, kind, bufferPostId, schedulingType, mode, imageUrl, message}' 2>/dev/null || true)"
+            fi
+
             if [ "$status" = "200" ]; then
               echo "✅ $ENDPOINT posted."
               exit 0
             fi
-            echo "Non-200 (attempt $attempt); retrying in $((attempt * 10))s…"
-            sleep $((attempt * 10))
+
+            if [ "$attempt" -eq 3 ]; then
+              break
+            fi
+            wait_s=$((attempt * 10))
+            echo "Non-200 (attempt $attempt); retrying in ${wait_s}s…"
+            sleep "$wait_s"
           done
 
           echo "::error::$ENDPOINT failed after 3 attempts (last HTTP $status)."

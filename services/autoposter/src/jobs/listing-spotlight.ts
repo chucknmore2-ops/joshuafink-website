@@ -32,6 +32,20 @@ function buildCaption(listing: Listing): string {
   ].filter(Boolean);
   const details = parts.join(" | ");
   const cityTag = listing.city.split(",")[0].replace(/\s+/g, "");
+  // Dedupe: Nashville listings derive "#NashvilleRealEstate" as their city tag,
+  // which collides with the hardcoded one and doubled it in every caption.
+  const hashtags = Array.from(
+    new Set([
+      `#${cityTag}RealEstate`,
+      "#NashvilleRealEstate",
+      "#MiddleTennessee",
+      "#CompassRealEstate",
+      "#JoshuaFinkGroup",
+      "#HomesForSale",
+      "#TennesseeRealEstate",
+      "#JustListed",
+    ]),
+  ).join(" ");
 
   return [
     statusTag(listing.status),
@@ -47,7 +61,7 @@ function buildCaption(listing: Listing): string {
     "🌐 joshuafink.com",
     "✉️ joshua@joshuafink.com",
     "",
-    `#${cityTag}RealEstate #NashvilleRealEstate #MiddleTennessee #CompassRealEstate #JoshuaFinkGroup #HomesForSale #TennesseeRealEstate #JustListed`,
+    hashtags,
   ]
     .filter((line) => line !== "")
     .join("\n")
@@ -91,6 +105,18 @@ export async function runListingSpotlight(): Promise<void> {
 
   log.info(`${eligible.length} listings eligible (not on cooldown)`);
   if (eligible.length === 0) {
+    // Without this row a quiet run (everything on cooldown / under contract)
+    // and a cron that never fired look identical in /admin. payload_kind
+    // "none" keeps it out of the per-listing rotation view.
+    await logPost({
+      channel: CHANNEL,
+      jobName: JOB_NAME,
+      payloadKind: "none",
+      refKey: "no-eligible-listings",
+      messagePreview: "Ran — nothing to post today (no eligible listings off cooldown)",
+      status: "dry_run",
+      dryRun: env.dryRun,
+    });
     log.info("Nothing to post — exiting clean.");
     return;
   }

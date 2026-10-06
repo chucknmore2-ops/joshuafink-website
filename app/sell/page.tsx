@@ -8,11 +8,18 @@ import { reviewStats } from '@/lib/reviews'
 
 export const metadata: Metadata = {
   alternates: { canonical: 'https://www.joshuafink.com/sell' },
-  title: 'Sell Your Home in Nashville',
+  title: 'Sell Your House Fast in Nashville, TN | Joshua Fink Group',
   description:
-    'Ready to sell? Get a free home valuation and expert guidance from Joshua Fink at Compass. Serving Nashville, Franklin, Brentwood, Spring Hill, and all of Middle Tennessee.',
+    'How to sell your house fast in Nashville, TN: a free home valuation and expert guidance from Joshua Fink at Compass — avg. 18 days on market. Serving Nashville, Franklin, Brentwood, Spring Hill, and all of Middle Tennessee.',
+  keywords: [
+    'sell my house fast Nashville TN',
+    'sell house fast Nashville',
+    'how to sell a house fast in Tennessee',
+    'sell my home Nashville',
+    'Nashville real estate agent',
+  ],
   openGraph: {
-    title: 'Sell Your Home | Joshua Fink Group',
+    title: 'Sell Your House Fast in Nashville, TN | Joshua Fink Group',
     description:
       'Get a free, no-obligation home valuation from Joshua Fink — top-rated Compass agent in Middle Tennessee. Fast offers, local expertise, real results.',
     url: 'https://www.joshuafink.com/sell',
@@ -75,6 +82,10 @@ const reasons = [
 ]
 
 const faqs = [
+  {
+    q: 'How do I sell my house fast in Nashville, TN?',
+    a: "Three real paths: (1) List with an agent who prices and markets correctly from day one — Joshua's listings average 18 days on market versus 30+ for the broader Middle Tennessee MLS. (2) Go off-market first through a Compass Private Exclusive, which puts your home in front of vetted buyer agents before it hits the public MLS. (3) Take an investor-direct cash offer and skip showings, repairs, and financing contingencies entirely, closing in as little as 7–14 days. Joshua walks every seller through which path fits their timeline before recommending one — see the cash-offer page for how the investor route works.",
+  },
   {
     q: 'How long does it take to sell a home in Middle Tennessee?',
     a: "It depends on your suburb and price band, but Joshua's listings average 18 days on market versus 30+ for the broader Middle Tennessee MLS. Pricing strategy and Compass-network promotion are the biggest levers.",
@@ -164,6 +175,7 @@ export default function SellPage() {
       'https://www.instagram.com/joshuafinkgroup',
       'https://www.linkedin.com/in/joshuafinkgroup/',
       'https://x.com/JoshuaFinkGroup',
+      'https://www.youtube.com/channel/UCc6j1NWgJeb00pT5xsenz3g',
       'https://www.compass.com/agents/joshua-fink/',
       'https://www.zillow.com/profile/JoshuaFinkGroup',
     ],
@@ -218,12 +230,13 @@ export default function SellPage() {
             >
               Get My Free Valuation
             </a>
-            <a
+            <TrackedTelLink
               href="sms:+16155512727"
               className="inline-flex items-center justify-center border border-neutral-600 text-white text-sm font-bold px-8 py-3 rounded-full tracking-wide transition-all duration-200 hover:border-white hover:bg-white/10 active:scale-[0.98] text-center"
+              data-cta="sell-cta-sms"
             >
               Text 615-551-2727
-            </a>
+            </TrackedTelLink>
             <TrackedTelLink
               href="tel:6155512727"
               className="inline-flex items-center justify-center border border-neutral-600 text-white text-sm font-bold px-8 py-3 rounded-full tracking-wide transition-all duration-200 hover:border-white hover:bg-white/10 active:scale-[0.98] text-center"
@@ -247,6 +260,43 @@ export default function SellPage() {
                 </p>
               </div>
             ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Direct-answer block for "how do I sell my house fast in Nashville" —
+          the literal question AI answer engines get asked (lib/geo-queries.ts,
+          id: sell-fast-nashville). Extractable summary above the fold detail. */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16">
+        <div className="border border-neutral-200 rounded-2xl p-8 sm:p-10 bg-neutral-50">
+          <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
+            Direct Answer
+          </p>
+          <h2 className="text-2xl sm:text-3xl font-black text-black tracking-tight mb-4">
+            How do I sell my house fast in Nashville, TN?
+          </h2>
+          <p className="text-neutral-600 leading-relaxed max-w-3xl">
+            There are three real ways: <strong>list with an agent</strong> who prices and markets
+            correctly from day one (Joshua&apos;s listings average 18 days on market vs. 30+ for the
+            broader Middle Tennessee MLS), go <strong>off-market first</strong> through a Compass
+            Private Exclusive to vetted buyer agents before the public MLS, or take an{' '}
+            <strong>investor-direct cash offer</strong> and skip showings, repairs, and financing
+            contingencies, closing in as little as 7–14 days. Joshua will tell you honestly which
+            path fits your timeline — no pressure toward the one that pays him more.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <a
+              href="#seller-form"
+              className="inline-flex items-center justify-center bg-black text-white text-sm font-bold px-6 py-3 rounded-full tracking-wide transition-all duration-200 hover:bg-neutral-800"
+            >
+              Get My Free Valuation
+            </a>
+            <Link
+              href="/cash-offer"
+              className="inline-flex items-center justify-center border border-neutral-300 text-black text-sm font-bold px-6 py-3 rounded-full tracking-wide transition-all duration-200 hover:border-black"
+            >
+              See the Cash-Offer Path →
+            </Link>
           </div>
         </div>
       </div>

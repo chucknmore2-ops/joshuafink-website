@@ -26,7 +26,7 @@ const config: Config = {
         },
       },
       fontFamily: {
-        // Backed by next/font/google CSS variables declared in app/layout.tsx.
+        // Backed by next/font/local CSS variables declared in app/layout.tsx.
         // The `sans` override makes plain utility classes (font-sans) pick up
         // Inter automatically; `inter` + `display` remain as explicit tokens.
         sans: ['var(--font-inter)', 'Inter', 'system-ui', 'sans-serif'],
