@@ -113,14 +113,14 @@ export function buildListingSchema(listing: Listing, url: string, tourVideoId?: 
     // Reference the canonical agent entity defined in app/layout.tsx (#agent)
     // so each listing feeds authority back into Joshua's knowledge graph.
     agent: { '@id': 'https://www.joshuafink.com/#agent' },
-    // Virtual-tour walkthrough (lib/listing-detail.ts → tourVideos) as a
-    // VideoObject so the tour is eligible for Google video results.
+    // Listing Short (lib/listing-tour-videos.json → tourVideos) as a
+    // VideoObject so the video is eligible for Google video results.
     ...(tourVideoId
       ? {
           video: {
             '@type': 'VideoObject',
-            name: `${listing.address} — virtual tour`,
-            description: `Video walkthrough of ${listing.address} with Joshua Fink, Compass Real Estate.`,
+            name: `${listing.address} — listing video`,
+            description: `Listing video of ${listing.address} with Joshua Fink, Compass.`,
             embedUrl: `https://www.youtube.com/embed/${tourVideoId}`,
             contentUrl: `https://www.youtube.com/watch?v=${tourVideoId}`,
             thumbnailUrl: `https://i.ytimg.com/vi/${tourVideoId}/hqdefault.jpg`,

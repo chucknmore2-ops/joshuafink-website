@@ -206,11 +206,11 @@ jobs:
           trap - ERR
 
           # A merge performed with GITHUB_TOKEN does not start push workflows.
-          # Dispatch Just Listed, listing events, and listing alert emails once
-          # the new lib/listings.ts is on main. Each workflow waits for
-          # production. Failure to dispatch is not a sync failure — the
-          # scheduled runs post the same way.
-          echo "Waiting for the sync PR to merge so Just Listed, listing events, and alert emails can run."
+          # Dispatch Just Listed, listing events, listing videos, and listing
+          # alert emails once the new lib/listings.ts is on main. Each
+          # workflow waits for production. Failure to dispatch is not a sync
+          # failure — the scheduled runs post the same way.
+          echo "Waiting for the sync PR to merge so Just Listed, listing events, videos, and alert emails can run."
           merged=0
           for i in $(seq 1 30); do
             state=$(gh pr view "$PR_URL" --json state --jq .state || echo unknown)
@@ -232,11 +232,16 @@ jobs:
             else
               echo "::warning::Could not dispatch listing events. The 14:20 and 20:20 UTC schedules will retry."
             fi
+            if gh workflow run listing-video.yml --ref main; then
+              echo "Dispatched listing video."
+            else
+              echo "::warning::Could not dispatch listing video. The 09:30 UTC schedule will retry."
+            fi
             if gh workflow run listing-alerts.yml --ref main; then
               echo "Dispatched listing alert emails."
             else
               echo "::warning::Could not dispatch listing alerts. The 13:30 UTC schedule will retry."
             fi
           else
-            echo "::warning::Sync PR was not merged within 15 minutes. Auto-merge stays on. GBP Just Listed, listing events, and alert emails will run on their schedules once main updates."
+            echo "::warning::Sync PR was not merged within 15 minutes. Auto-merge stays on. GBP Just Listed, listing events, listing video, and alert emails will run on their schedules once main updates."
           fi
