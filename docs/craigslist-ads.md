@@ -50,7 +50,7 @@ Median home prices across Middle Tennessee in 2026:
 
 Stop guessing — get a real, data-backed home valuation based on actual recent sales in YOUR neighborhood. Not a Zestimate. Not an algorithm.
 
-I'm Joshua Fink with Compass Real Estate. I've sold 100+ homes a year in this market for 13+ years. I'll give you an honest number, honest advice, and zero pressure.
+I'm Joshua Fink with Compass Real Estate. I've been licensed since 2008 and sell 40+ homes a year in Middle Tennessee. I'll give you an honest number, honest advice, and zero pressure.
 
 **The valuation is FREE. Always.**
 
@@ -110,7 +110,7 @@ If you're planning to sell your home this year, here's what you need to know:
 ❌ Weak marketing = fewer showings = lower final price
 ❌ Waiting for a "better" market often costs more than it gains
 
-I'm Joshua Fink with Compass Real Estate. I've helped 100+ families a year navigate this market. Before you list with anyone — or by owner — get my honest take on your home's value and what it will take to get you top dollar.
+I'm Joshua Fink with Compass Real Estate. I've helped 40+ Middle Tennessee families a year navigate this market. Before you list with anyone — or by owner — get my honest take on your home's value and what it will take to get you top dollar.
 
 **Free. No obligation. No pressure.**
 

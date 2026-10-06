@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { blogPosts } from '@/lib/blog'
+import { blogDateToUtcDate, blogPosts } from '@/lib/blog'
 
 export const dynamic = 'force-static'
 export const revalidate = 3600
@@ -10,8 +10,8 @@ const FEED_DESCRIPTION =
   "Market insights, buyer + seller guides, and neighborhood expertise from Joshua Fink, Affiliate Broker at Compass Real Estate. Nashville, Brentwood, Franklin, Spring Hill, and all of Middle Tennessee."
 
 function toIso(human: string): string | undefined {
-  const d = new Date(human)
-  if (isNaN(d.getTime())) return undefined
+  const d = blogDateToUtcDate(human)
+  if (!d) return undefined
   return d.toISOString()
 }
 

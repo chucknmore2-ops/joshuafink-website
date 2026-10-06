@@ -16,7 +16,7 @@ Written in the third person as instructions to an AI (e.g., *"When writing for J
 - **Name / brand:** Joshua Fink — the team is **Joshua Fink Group**.
 - **Role:** Affiliate Broker with **Compass Real Estate**. (Compass acquired Parks — never reference RE/MAX or Parks; the brokerage is Compass, full stop.)
 - **Market:** Nashville & **Middle Tennessee** — core: **Brentwood, Franklin, Nashville, Spring Hill, Nolensville, Thompson's Station**; also Murfreesboro, Columbia, Mount Juliet, Hendersonville, Gallatin, Lebanon, Smyrna, La Vergne, Arrington. Counties: Williamson, Davidson, Maury, Rutherford, Sumner, Wilson.
-- **Experience / proof:** 17+ years; personally sells **100+ homes/year**; **218 five-star reviews** (5.0 avg); TREC license **#351484**.
+- **Experience / proof:** licensed since 2008 (18 years as of 2026); personally sells **40+ homes a year in Middle Tennessee**; **218 five-star reviews** (5.0 avg); TREC license **#351484**.
 - **Awards:** Diamond Award & Titan Award (Compass top-producer), Top Producing Agent of the Year.
 - **Specialties:** Buyer's Agent, Listing Agent, Relocation, Short Sale, Landlord. High-intent channels: **cash offers** for sellers, luxury enclaves (Witherspoon, The Laurels, Governors Club).
 - **Target clients:** Middle-TN buyers, sellers, and out-of-state relocators — from first-time buyers to luxury; families weighing schools/neighborhoods are a sweet spot.

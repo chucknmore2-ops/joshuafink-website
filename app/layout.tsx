@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     template: '%s | Joshua Fink | Compass Real Estate',
   },
   description:
-    'Top-rated Compass agent in Middle Tennessee — Franklin, Brentwood, Spring Hill, Nashville. 17+ years, 100+ homes sold annually, 5★ from 218+ clients. Diamond & Titan Award winner. Free valuation, off-market access.',
+    'Top-rated Compass agent in Middle Tennessee — Franklin, Brentwood, Spring Hill, Nashville. Licensed since 2008, 40+ homes a year in Middle Tennessee, 5★ from 218+ clients. Diamond & Titan Award winner. Free valuation, off-market access.',
   metadataBase: new URL('https://www.joshuafink.com'),
   keywords: [
     'Joshua Fink',
@@ -132,7 +132,7 @@ export default function RootLayout({
                   '@id': 'https://www.joshuafink.com/#agent',
                   name: 'Joshua Fink Group',
                   description:
-                    'Joshua Fink is a top-producing Affiliate Broker at Compass Real Estate serving Nashville, Brentwood, Franklin, and all of Middle Tennessee. 17+ years of experience, 100+ homes sold annually.',
+                    'Joshua Fink is a top-producing Affiliate Broker at Compass Real Estate serving Nashville, Brentwood, Franklin, and all of Middle Tennessee. Licensed since 2008, with 40+ homes a year in Middle Tennessee.',
                   url: 'https://www.joshuafink.com',
                   telephone: '+1-615-551-2727',
                   email: 'joshua@joshuafink.com',
@@ -260,8 +260,8 @@ export default function RootLayout({
                   },
                   // AggregateRating sourced from Joshua's Zillow review profile
                   // (218 reviews, 5.0 average as of latest sync). The reviewCount
-                  // includes off-site reviews collected on Zillow over 17+ years
-                  // of practice. Update lib/reviews.ts → reviewStats when the
+                  // includes off-site reviews collected on Zillow since he was
+                  // licensed in 2008. Update lib/reviews.ts → reviewStats when the
                   // Zillow total moves.
                   aggregateRating: {
                     '@type': 'AggregateRating',

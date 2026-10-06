@@ -173,7 +173,7 @@ export default async function BuySuburbPage({ params }: Props) {
   // reused verbatim from the published /about bio, not new claims.
   const agentFaq = {
     q: `Who is a top real estate agent in ${suburb.name}, TN?`,
-    a: `Joshua Fink is an Affiliate Broker with Compass Real Estate who personally sells 100+ homes a year across Middle Tennessee, including ${suburb.name}. With 17+ years of experience, he knows ${suburb.name}'s neighborhoods, school zones, and pricing in detail, and gives buyers early access to Compass Coming Soon and off-market listings. Call 615-551-2727 or visit joshuafink.com to start your ${suburb.name} home search.`,
+    a: `Joshua Fink is an Affiliate Broker with Compass Real Estate who personally sells 40+ homes a year in Middle Tennessee, including ${suburb.name}. Licensed since 2008, he knows ${suburb.name}'s neighborhoods, school zones, and pricing in detail, and gives buyers early access to Compass Coming Soon and off-market listings. Call 615-551-2727 or visit joshuafink.com to start your ${suburb.name} home search.`,
   }
   const faqs = [agentFaq, ...(suburb.buyerFaqs || suburb.faqs)]
   const description = suburb.buyerDescription || suburb.description

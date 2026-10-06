@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { Fragment } from 'react'
-import { getPostBySlug, getAllSlugs, getRelatedPosts, getAuditTier, type BlogPost } from '@/lib/blog'
+import { blogDateToIso, getPostBySlug, getAllSlugs, getRelatedPosts, getAuditTier, type BlogPost } from '@/lib/blog'
 import { linkifyLocations } from '@/lib/linkify-neighborhoods'
 import { neighborhoods } from '@/lib/neighborhoods'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
@@ -22,9 +22,7 @@ export async function generateStaticParams() {
 }
 
 function isoDate(human: string): string | undefined {
-  const d = new Date(human)
-  if (isNaN(d.getTime())) return undefined
-  return d.toISOString()
+  return blogDateToIso(human)
 }
 
 function wordCount(content: string): number {
@@ -375,8 +373,8 @@ export default function BlogPostPage({ params }: Props) {
             </p>
             <h3 className="text-xl font-black text-black mb-2">Joshua Fink</h3>
             <p className="text-sm text-[#444] leading-relaxed mb-5">
-              Affiliate Broker at Compass Real Estate with 17+ years of experience and 100+ homes
-              sold annually across Middle Tennessee. Diamond &amp; Titan Award winner. Licensed
+              Affiliate Broker at Compass Real Estate, licensed since 2008, with 40+ homes
+              a year in Middle Tennessee. Diamond &amp; Titan Award winner. Licensed
               with the Tennessee Real Estate Commission. Partner to the Children&apos;s Miracle
               Network supporting Vanderbilt Children&apos;s Hospital.
             </p>

@@ -95,7 +95,7 @@ export default async function Image() {
         >
           <div style={{ display: 'flex', gap: 48 }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: 38, fontWeight: 900 }}>17+</span>
+              <span style={{ fontSize: 38, fontWeight: 900 }}>18</span>
               <span
                 style={{
                   fontSize: 14,
@@ -105,11 +105,11 @@ export default async function Image() {
                   marginTop: 2,
                 }}
               >
-                Years Experience
+                Years Licensed
               </span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: 38, fontWeight: 900 }}>100+</span>
+              <span style={{ fontSize: 38, fontWeight: 900 }}>40+</span>
               <span
                 style={{
                   fontSize: 14,

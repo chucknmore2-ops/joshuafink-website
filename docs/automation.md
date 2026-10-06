@@ -1,17 +1,18 @@
 # Automation — environment variables & setup
 
-Three Vercel Cron jobs + one GitHub Actions job run on a schedule for joshuafink.com. This doc is the one-stop reference for the env vars each needs + the one-time setup for social auth.
+Scheduled automation for joshuafink.com. This doc is the one-stop reference for the env vars each job needs and the one-time setup for social auth.
 
 ## Summary
 
 | Job | Where | Schedule (UTC) | Schedule (CT) | Env vars required |
 |---|---|---|---|---|
 | IndexNow submission | Vercel Cron | `0 2 * * *` (daily) | 9pm daily | `CRON_SECRET` |
-| Google Business Profile post | Vercel Cron | `0 14 * * 2` (Tue) | 9am Tuesdays | `CRON_SECRET`, `GBP_*` (5 vars) |
+| Google Business Profile post | GitHub Actions `social-autopost.yml` | `0 14 * * 2` (Tue) | 9am Tuesdays | `CRON_SECRET`, `GBP_*` (5 vars). Unchanged weekly rotator. Logs `job_name=gbp-post`. |
+| **Just Listed GBP** | GitHub Actions `gbp-just-listed.yml` | when `lib/listings.ts` reaches main, plus `20 14 * * *` and `20 20 * * *` | after the Compass sync deploy, and ~9:20am / ~3:20pm CT | `CRON_SECRET`, `GBP_*`, `DATABASE_URL` (dedupe). Failure alert: `PUSHOVER_TOKEN` / `PUSHOVER_USER`. Logs `job_name=gbp-just-listed`, not `gbp-post`. |
 | LinkedIn post | Vercel Cron | `0 14 * * 4` (Thu) | 9am Thursdays | `CRON_SECRET`, `LINKEDIN_*` (2 vars) |
 | Instagram post | GitHub Actions `social-autopost.yml` | `0 14 * * 3` (Wed) | 9am Wednesdays | `CRON_SECRET`, `BUFFER_API_KEY`, `BUFFER_IG_CHANNEL_ID` (GitHub secrets). Graph stays off (`IG_AUTOPOST=buffer`). |
 | **Monthly market update** (LinkedIn + GBP; Facebook via Railway) | GitHub Actions + Railway autoposter | when the GNAR snapshot merges | typically the 6th–8th | `CRON_SECRET`, `DATABASE_URL` (post_log read), plus the `LINKEDIN_*` / `GBP_*` vars above. Facebook uses the autoposter's Page token, not Vercel. |
-| Compass listings sync | GitHub Actions | `0 8 * * 1` (Mon) | 3am Mondays | None (uses Playwright against public page) |
+| Compass listings sync | GitHub Actions | `0 8 * * *` (daily) | 3am CT | None (uses Playwright against public page) |
 
 ## Vercel env vars
 
@@ -148,7 +149,30 @@ The Facebook URL is the copy the autoposter posts. It does not publish.
 
 Settings → Actions → General → **Workflow permissions** → **Read and write permissions** → **Save**.
 
-No other config needed. Workflow runs every Monday at 08:00 UTC (3am CT). Manual dispatch also available from the **Actions** tab.
+No other config needed. Workflow runs every day at 08:00 UTC (3am CT). Manual dispatch also available from the **Actions** tab.
+
+### 6. Just Listed on Google Business — automatic
+
+When Compass sync adds an **Active** or **Coming Soon** home that was not already on the site, [`.github/workflows/gbp-just-listed.yml`](../.github/workflows/gbp-just-listed.yml) publishes one Google Business post for it. The Tuesday rotator is a different job and is not involved.
+
+**What starts a post.** The workflow runs when `lib/listings.ts` changes on main, when the listings sync dispatches it after the PR merges, and on a backstop schedule at 14:20 and 20:20 UTC. It waits until production `/listings` is serving that sync, then calls `GET /api/cron/gbp-post?kind=new-listings`.
+
+**How soon after Compass.** The site learns about a Compass listing on the next daily sync (08:00 UTC). After that PR merges and Vercel deploys, the post goes out in the same run — usually within a few minutes of the deploy, not on the following Tuesday. A listing that appears on Compass just after 08:00 UTC waits for the next morning's sync. The 14:20 and 20:20 runs catch a merge whose push trigger did not fire.
+
+**Copy.** "Just Listed" for Active, "Coming Soon" when `Listing.status` matches Coming Soon. City, beds / baths / sq ft / price, and Joshua Fink at Compass. The summary does not include the phone number or a raw URL, and the boilerplate does not mention Parks. The button is LEARN_MORE to the on-site listing page (with UTM) when that page exists, otherwise the Compass URL.
+
+**No flood on launch.** The seven homes in `lib/listings.ts` on 2026-10-06 are a baseline in `app/api/cron/gbp-post/just-listed.ts` and are not auto-posted. 261 Paragon Mills is not in that list. Each run posts at most 3 homes, one request at a time, 65 seconds apart. A home is skipped when `post_log` already has a successful `gbp-just-listed` row, or a successful manual `gbp-on-demand` listing row, for that address. If the database cannot be read, the route posts nothing.
+
+**Preview (does not publish):**
+
+```bash
+curl -H "Authorization: Bearer $CRON_SECRET" \
+  'https://www.joshuafink.com/api/cron/gbp-post?kind=new-listings&preview=1'
+curl -H "Authorization: Bearer $CRON_SECRET" \
+  'https://www.joshuafink.com/api/cron/gbp-post?kind=listing&address=4127+Edwards&preview=1'
+```
+
+A real failure sends a Pushover alert. It does not send email. A run with nothing new exits green.
 
 ---
 
@@ -160,7 +184,8 @@ No other config needed. Workflow runs every Monday at 08:00 UTC (3am CT). Manual
 | GBP | google.com/search?q=Joshua+Fink+Group+Compass → Google Business panel shows the latest post within ~15 min; or Vercel Logs filter `gbp-post` |
 | LinkedIn | linkedin.com/in/joshuafinkgroup → latest post visible; or Vercel Logs filter `linkedin-post` |
 | Monthly market update | github.com/.../actions → "Fetch GNAR market snapshot" green, then "Monthly Market Update" green with each channel posted or `already_posted`; the post is at `/blog/middle-tennessee-market-update-<month>-<year>` |
-| Listings sync | github.com/.../actions → "Sync Compass Listings" green; new commit `chore: bi-weekly listing sync from Compass` on main |
+| Listings sync | github.com/.../actions → "Sync Compass Listings" green; new commit `chore: daily listing sync from Compass` on main |
+| Just Listed GBP | github.com/.../actions → "GBP Just Listed" green with `posted: true` or `none_pending`. Does not run on Tuesdays as part of Social Autopost. |
 
 ## What to do if a cron silently fails
 
