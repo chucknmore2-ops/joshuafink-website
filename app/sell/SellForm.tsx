@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef, FormEvent } from 'react'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import { captureAttribution, getAttribution } from '@/lib/attribution'
+import LeadFormGuards from '@/components/LeadFormGuards'
+import { MISSING_CONTACT_MESSAGE, missingContact, trackLeadFormError } from '@/lib/lead-form'
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error'
 
@@ -22,22 +24,33 @@ export default function SellForm() {
     el.scrollIntoView({ block: 'center' })
   }, [state])
 
-  // Stash landing URL / utm params / referrer before the visitor can navigate
-  // away, so the submitted lead can say which channel brought them.
+  // 90-day first-touch (and last-touch) attribution, including this page's
+  // URL. AttributionCapture in the root layout records the landing page
+  // before the visitor reaches this form; this call covers a form that is
+  // itself the landing page.
   useEffect(() => {
     captureAttribution()
   }, [])
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setState('submitting')
-    setErrorMsg('')
 
     const form = e.currentTarget
     const data: Record<string, FormDataEntryValue | string> = {
       ...Object.fromEntries(new FormData(form).entries()),
       ...getAttribution(),
     }
+    const formLabel = (data.source as string) || (data.suburb as string) || 'sell_valuation_form'
+
+    if (missingContact(form)) {
+      setErrorMsg(MISSING_CONTACT_MESSAGE)
+      setState('error')
+      trackLeadFormError(formLabel, 'missing_contact')
+      return
+    }
+
+    setState('submitting')
+    setErrorMsg('')
 
     try {
       const res = await fetch('/api/contact', {
@@ -54,7 +67,7 @@ export default function SellForm() {
         if (typeof window !== 'undefined' && (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag) {
           ;(window as unknown as { gtag: (...args: unknown[]) => void }).gtag('event', 'generate_lead', {
             event_category: 'lead_form',
-            event_label: (data.source as string) || (data.suburb as string) || 'sell_valuation_form',
+            event_label: formLabel,
             value: 1,
           })
         }
@@ -62,10 +75,12 @@ export default function SellForm() {
         const json = await res.json().catch(() => ({}))
         setErrorMsg(json.error || 'Something went wrong. Please try again.')
         setState('error')
+        trackLeadFormError(formLabel, `http_${res.status}`)
       }
     } catch {
       setErrorMsg('Network error — please try again.')
       setState('error')
+      trackLeadFormError(formLabel, 'network')
     }
   }
 
@@ -106,33 +121,32 @@ export default function SellForm() {
   const labelClass = "block text-xs font-semibold text-black tracking-widest uppercase mb-2"
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form method="POST" action="/api/contact" onSubmit={handleSubmit} className="space-y-5">
       <input type="hidden" name="lead_type" value="seller" />
       <input type="hidden" name="subject" value="sell" />
-      {/* Honeypot — invisible to humans, bots auto-fill it. */}
-      <input type="text" name="website" autoComplete="off" tabIndex={-1} aria-hidden="true"
-        style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, width: 0 }} />
+      <LeadFormGuards />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div>
           <label htmlFor="name" className={labelClass}>Full Name *</label>
-          <input type="text" id="name" name="name" required placeholder="Jane Smith" className={inputClass} />
+          <input type="text" id="name" name="name" required placeholder="Jane Smith" autoComplete="name" className={inputClass} />
         </div>
         <div>
-          <label htmlFor="phone" className={labelClass}>Phone *</label>
-          <input type="tel" id="phone" name="phone" required placeholder="615-555-0000" className={inputClass} />
+          <label htmlFor="phone" className={labelClass}>Phone</label>
+          <input type="tel" id="phone" name="phone" placeholder="615-555-0000" autoComplete="tel" className={inputClass} />
         </div>
       </div>
 
       <div>
-        <label htmlFor="email" className={labelClass}>Email Address *</label>
-        <input type="email" id="email" name="email" required placeholder="you@example.com" className={inputClass} />
+        <label htmlFor="email" className={labelClass}>Email Address</label>
+        <input type="email" id="email" name="email" placeholder="you@example.com" autoComplete="email" className={inputClass} />
+        <p className="mt-2 text-xs text-neutral-400">Phone or email — whichever you prefer.</p>
       </div>
 
       <div>
         <label htmlFor="property_address" className={labelClass}>Property Address *</label>
         <input
-          type="text" id="property_address" name="property_address" required
+          type="text" id="property_address" name="property_address" required autoComplete="street-address"
           placeholder="123 Main St, Nashville, TN 37201"
           className={inputClass}
         />

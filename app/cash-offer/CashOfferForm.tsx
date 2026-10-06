@@ -2,6 +2,9 @@
 
 import { useState, useEffect, useRef, FormEvent } from 'react'
 import { captureAttribution, getAttribution } from '@/lib/attribution'
+import LeadFormGuards from '@/components/LeadFormGuards'
+import { trackLeadFormError } from '@/lib/lead-form'
+import TrackedTelLink from '@/components/TrackedTelLink'
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error'
 
@@ -28,8 +31,10 @@ export default function CashOfferForm({ source = 'cash-offer', cityName }: CashO
     el.scrollIntoView({ block: 'center' })
   }, [state])
 
-  // Stash landing URL / utm params / referrer before the visitor can navigate
-  // away, so the submitted lead can say which channel brought them.
+  // 90-day first-touch (and last-touch) attribution, including this page's
+  // URL. AttributionCapture in the root layout records the landing page
+  // before the visitor reaches this form; this call covers a form that is
+  // itself the landing page.
   useEffect(() => {
     captureAttribution()
   }, [])
@@ -55,11 +60,12 @@ export default function CashOfferForm({ source = 'cash-offer', cityName }: CashO
       if (res.ok) {
         setState('success')
         form.reset()
-        // Fire Google Ads + GA4 conversion event
+        // Fire Google Ads + GA4 conversion event. Never send the seller's
+        // street address — GA4 event_label is not a PII-safe field.
         if (typeof window !== 'undefined' && (window as any).gtag) {
           ;(window as any).gtag('event', 'generate_lead', {
             event_category: 'cash_offer',
-            event_label: data.property_address || 'unknown',
+            event_label: 'cash_offer',
             value: 1,
           })
         }
@@ -67,10 +73,12 @@ export default function CashOfferForm({ source = 'cash-offer', cityName }: CashO
         const json = await res.json().catch(() => ({}))
         setErrorMsg(json.error || 'Something went wrong. Please try again.')
         setState('error')
+        trackLeadFormError('cash_offer', `http_${res.status}`)
       }
     } catch {
       setErrorMsg('Network error — please try again.')
       setState('error')
+      trackLeadFormError('cash_offer', 'network')
     }
   }
 
@@ -87,9 +95,9 @@ export default function CashOfferForm({ source = 'cash-offer', cityName }: CashO
         <h2 className="text-2xl font-black text-black mb-3">We Got It!</h2>
         <p className="text-neutral-500 text-sm leading-relaxed mb-6">
           Joshua will call you within 24 hours with your cash offer. For faster response, call him directly at{' '}
-          <a href="tel:6155512727" className="text-black font-semibold underline">
+          <TrackedTelLink href="tel:6155512727" className="text-black font-semibold underline" data-cta="cash-offer-form-success-call">
             615-551-2727
-          </a>
+          </TrackedTelLink>
           .
         </p>
         <button
@@ -111,14 +119,12 @@ export default function CashOfferForm({ source = 'cash-offer', cityName }: CashO
         Free. No Obligation. 24 Hours.
       </h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form method="POST" action="/api/contact" onSubmit={handleSubmit} className="space-y-4">
         <input type="hidden" name="lead_type" value="sell" />
         <input type="hidden" name="subject" value="sell" />
         <input type="hidden" name="source" value={source} />
         {cityName && <input type="hidden" name="suburb" value={cityName} />}
-        {/* Honeypot — invisible to humans, bots auto-fill it */}
-        <input type="text" name="website" autoComplete="off" tabIndex={-1} aria-hidden="true"
-          style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, width: 0 }} />
+        <LeadFormGuards />
 
         <div>
           <input

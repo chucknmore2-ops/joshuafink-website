@@ -6,6 +6,7 @@ import {
   recentPosts,
 } from "@/lib/admin-db";
 import { upcomingSchedule } from "@/lib/admin-schedule";
+import { geoScoreTrend, type GeoTrendPoint } from "@/lib/geo-db";
 import { listings } from "@/lib/listings";
 import RecentActivity from "./components/RecentActivity";
 import ListingsTable from "./components/ListingsTable";
@@ -31,6 +32,8 @@ export default async function AdminDashboard() {
     : [[], [], { posted_7d: 0, failed_7d: 0, dry_run_7d: 0 }];
 
   const upcoming = upcomingSchedule().slice(0, 7);
+  // Newest first from the query; returns [] when the GEO table is unreachable.
+  const geoTrend = await geoScoreTrend(8);
 
   return (
     <div className="space-y-8">
@@ -78,6 +81,40 @@ export default async function AdminDashboard() {
         </h2>
         <ChannelHealth />
       </section>
+
+      <section>
+        <h2 className="mb-3 text-base font-semibold text-slate-900">
+          GEO visibility (share of AI-engine answers citing Joshua)
+        </h2>
+        <GeoTrend points={geoTrend} />
+      </section>
+    </div>
+  );
+}
+
+function GeoTrend({ points }: { points: GeoTrendPoint[] }) {
+  if (points.length === 0) {
+    return (
+      <p className="text-sm text-slate-500">
+        No GEO audit runs recorded yet — the audit runs Mondays.
+      </p>
+    );
+  }
+  // Oldest → newest, left to right.
+  return (
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
+      {[...points].reverse().map((p) => (
+        <div key={p.run_id} className="rounded-lg border border-slate-200 bg-white p-3">
+          {/* checked_at is Postgres ::text ("2026-09-14 13:05:12+00"); the date part is enough. */}
+          <div className="text-xs text-slate-500">{p.checked_at.slice(0, 10)}</div>
+          <div className="mt-1 text-xl font-semibold text-slate-900">
+            {p.total ? `${p.score}%` : "—"}
+          </div>
+          <div className="text-xs text-slate-500">
+            {p.cited}/{p.total} cited
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

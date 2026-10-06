@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import ListingCard from '@/components/ListingCard'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
+import TrackedTelLink from '@/components/TrackedTelLink'
 import { listings, listingsSyncedAt } from '@/lib/listings'
 import { soldListings } from '@/lib/sold-listings'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
@@ -24,7 +25,7 @@ const faqs = [
   },
   {
     q: 'What does “Recently Sold” show?',
-    a: 'These are homes Joshua has closed across Middle Tennessee. They’re a snapshot of the price points, neighborhoods, and home styles he works in every day — useful comps if you’re trying to understand what your own home might be worth.',
+    a: 'These are sold-property records currently shown on this site, synced from Joshua’s Compass profile. Each card opens an on-site page with the address, recorded sold price, and property details we have — not a complete sales history, and not a claim about which side of the transaction Joshua represented. Useful as first-party comps if you’re trying to understand what your own home might be worth.',
   },
 ]
 
@@ -33,6 +34,7 @@ export const metadata: Metadata = {
   title: 'Listings — Active & Recently Sold',
   description:
     "Active listings and recently sold homes from Joshua Fink at Compass Real Estate — Nashville, Brentwood, Franklin, Spring Hill, Columbia, and across Middle Tennessee. See what's on the market and what's actually closing.",
+  openGraph: { url: 'https://www.joshuafink.com/listings' },
 }
 
 // Statuses that mean the home is genuinely available to a new buyer.
@@ -208,7 +210,7 @@ export default function ListingsPage() {
             <p className="text-sm leading-relaxed">
               <span className="font-semibold">Re-verifying availability.</span>{' '}
               Our Compass sync last refreshed {syncAgeDays} days ago, so a home below may have changed status. For the most current inventory — including off-market and Coming Soon homes — text Joshua at{' '}
-              <a href="tel:6155512727" className="font-semibold underline">615-551-2727</a>.
+              <TrackedTelLink href="tel:6155512727" className="font-semibold underline" data-cta="listings-stale-notice-call">615-551-2727</TrackedTelLink>.
             </p>
           </div>
         )}
@@ -236,7 +238,7 @@ export default function ListingsPage() {
               successMessage={
                 <>
                   Joshua will reach out same-day with matching homes. For anything urgent, call{' '}
-                  <a href="tel:6155512727" className="text-black font-semibold underline">615-551-2727</a>.
+                  <TrackedTelLink href="tel:6155512727" className="text-black font-semibold underline" data-cta="listings-form-success-call">615-551-2727</TrackedTelLink>.
                 </>
               }
               resetLabel="Submit Another"
@@ -247,19 +249,19 @@ export default function ListingsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
                   <label htmlFor="name" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Full Name *</label>
-                  <input type="text" id="name" name="name" required placeholder="Jane Smith"
+                  <input type="text" id="name" name="name" required placeholder="Jane Smith" autoComplete="name"
                     className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
                 </div>
                 <div>
                   <label htmlFor="phone" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Phone *</label>
-                  <input type="tel" id="phone" name="phone" required placeholder="615-555-0000"
+                  <input type="tel" id="phone" name="phone" required placeholder="615-555-0000" autoComplete="tel"
                     className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
                 </div>
               </div>
 
               <div>
                 <label htmlFor="email" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Email Address *</label>
-                <input type="email" id="email" name="email" required placeholder="you@example.com"
+                <input type="email" id="email" name="email" required placeholder="you@example.com" autoComplete="email"
                   className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
               </div>
 
@@ -281,12 +283,13 @@ export default function ListingsPage() {
                   className="w-full sm:w-auto inline-flex items-center justify-center bg-black text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-[#222] transition-colors">
                   Send to Joshua →
                 </button>
-                <a
+                <TrackedTelLink
                   href="tel:6155512727"
                   className="w-full sm:w-auto inline-flex items-center justify-center border-2 border-black text-black text-sm font-bold px-8 py-4 tracking-wide hover:bg-black hover:text-white transition-colors"
+                  data-cta="listings-form-inline-call"
                 >
                   Or Call 615-551-2727
-                </a>
+                </TrackedTelLink>
               </div>
             </SuburbLeadForm>
           </div>

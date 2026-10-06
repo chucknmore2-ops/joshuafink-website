@@ -1,10 +1,14 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated, suburbs } from '@/lib/suburbs'
+import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated, suburbs, yoyColor, yoyMovement, yoyValue } from '@/lib/suburbs'
+import { cashOfferPath } from '@/lib/cash-offer-cities'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import ReviewStrip from '@/components/ReviewStrip'
+import TrustBadges from '@/components/TrustBadges'
+import SoldPropertyExperience from '@/components/SoldPropertyExperience'
+import { soldListingsForSuburb } from '@/lib/sold-proof'
 
 const SITE = 'https://www.joshuafink.com'
 
@@ -35,7 +39,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ],
     openGraph: {
       title: `${s.displayName} Housing Market 2026 — ${s.yoyChange} YoY`,
-      description: `Median ${s.medianPrice}, ${s.avgDaysOnMarket} days on market, ${s.yoyChange} appreciation. Read the full 2026 ${s.displayName} market report.`,
+      description: `Median ${s.medianPrice}, ${s.avgDaysOnMarket} days on market, ${s.yoyChange} year-over-year price change. Read the full 2026 ${s.displayName} market report.`,
       url: `${SITE}/market/${slug}`,
       type: 'article',
     },
@@ -72,13 +76,14 @@ export default async function MarketSuburbPage({ params }: Props) {
 
   const lean = marketLean(s)
   const neighbors = neighborSuburbs(slug)
+  const soldInSuburb = soldListingsForSuburb(slug)
 
   const reportSchema = {
     '@context': 'https://schema.org',
     '@type': 'Report',
     name: `${s.displayName} Real Estate Market Report — 2026`,
     headline: `${s.displayName} housing market in 2026: median ${s.medianPrice}, ${s.yoyChange} YoY`,
-    description: `2026 housing market report for ${s.displayName}: median sale price ${s.medianPrice}, ${s.avgDaysOnMarket} avg days on market, ${s.yoyChange} year-over-year appreciation. Market lean: ${lean.lean}.`,
+    description: `2026 housing market report for ${s.displayName}: median sale price ${s.medianPrice}, ${s.avgDaysOnMarket} avg days on market, median sale price ${yoyMovement(s.yoyChange)} year over year. Market lean: ${lean.lean}.`,
     datePublished: '2026-01-15',
     dateModified: s.dataUpdatedAt ?? marketStatsLastUpdated,
     inLanguage: 'en-US',
@@ -111,7 +116,7 @@ export default async function MarketSuburbPage({ params }: Props) {
   const faqs = [
     {
       q: `Is ${s.name}, TN a buyer's or seller's market in 2026?`,
-      a: `${s.displayName} is currently ${lean.lean.toLowerCase()}. Homes are averaging ${s.avgDaysOnMarket} days on market with ${s.yoyChange} year-over-year appreciation. ${s.avgDaysOnMarket <= 25 ? 'Tight inventory and rapid turnover favor sellers — well-priced homes move quickly.' : 'Buyers have meaningful selection and time to be deliberate, while sellers should price competitively from launch.'} Talk to Joshua for a read on your specific block — citywide averages don't price a specific home.`,
+      a: `${s.displayName} is currently ${lean.lean.toLowerCase()}. Homes are averaging ${s.avgDaysOnMarket} days on market, and the median sale price is ${yoyMovement(s.yoyChange)} year over year. ${s.avgDaysOnMarket <= 25 ? 'Tight inventory and rapid turnover favor sellers — well-priced homes move quickly.' : 'Buyers have meaningful selection and time to be deliberate, while sellers should price competitively from launch.'} Talk to Joshua for a read on your specific block — citywide averages don't price a specific home.`,
     },
     {
       q: `What is the median home price in ${s.displayName} right now?`,
@@ -119,7 +124,9 @@ export default async function MarketSuburbPage({ params }: Props) {
     },
     {
       q: `Is ${s.name} appreciating in 2026?`,
-      a: `Yes. ${s.displayName} is showing ${s.yoyChange} year-over-year price appreciation. ${parseFloat(s.yoyChange.replace(/[+%]/g, '')) >= 4 ? 'That places it among the stronger-performing submarkets in Middle Tennessee.' : 'That tracks with a normalized, healthy market — not the 2021–2022 frenzy, but consistent gain.'}`,
+      a: yoyValue(s.yoyChange) > 0
+        ? `Yes. ${s.displayName} is showing ${s.yoyChange} year-over-year price appreciation. ${yoyValue(s.yoyChange) >= 4 ? 'That places it among the stronger-performing submarkets in Middle Tennessee.' : 'That tracks with a normalized, healthy market — not the 2021–2022 frenzy, but a gain.'}`
+        : `No. ${s.displayName}'s median sale price is ${s.yoyChange} year over year. A citywide decline is not a forecast for one address — Joshua prices off recent comps on the block.`,
     },
     {
       q: `How fast do homes sell in ${s.name}?`,
@@ -233,7 +240,7 @@ export default async function MarketSuburbPage({ params }: Props) {
               Median sale price in {s.displayName} is{' '}
               <strong className="text-white">{s.medianPrice}</strong> with homes averaging{' '}
               <strong className="text-white">{s.avgDaysOnMarket} days on market</strong> and{' '}
-              <strong className="text-white">{s.yoyChange}</strong> year-over-year appreciation.
+              <strong className="text-white">{yoyMovement(s.yoyChange)}</strong> year-over-year.
               Here&apos;s what those numbers actually mean for buyers and sellers right now.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-4">
@@ -251,6 +258,11 @@ export default async function MarketSuburbPage({ params }: Props) {
               >
                 Buy a Home in {s.name} →
               </Link>
+            </div>
+
+            {/* Trust signals — credentials and rating in view before the stats */}
+            <div className="mt-8">
+              <TrustBadges variant="dark" />
             </div>
           </div>
         </div>
@@ -275,8 +287,8 @@ export default async function MarketSuburbPage({ params }: Props) {
                 <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">Price Per Sq Ft</p>
               </div>
               <div className="bg-white p-6 border border-[#E8E8E8]">
-                <p className="text-3xl font-black" style={{ color: '#16a34a' }}>{s.yoyChange}</p>
-                <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">YoY Appreciation</p>
+                <p className="text-3xl font-black" style={{ color: yoyColor(s.yoyChange) }}>{s.yoyChange}</p>
+                <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">YoY Price Change</p>
               </div>
             </div>
           </div>
@@ -322,8 +334,8 @@ export default async function MarketSuburbPage({ params }: Props) {
                         className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
                     </div>
                     <div>
-                      <label htmlFor="mid-phone" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Phone *</label>
-                      <input type="tel" id="mid-phone" name="phone" required placeholder="615-555-0000" autoComplete="tel"
+                      <label htmlFor="mid-phone" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Phone (optional — fastest reply)</label>
+                      <input type="tel" id="mid-phone" name="phone" placeholder="615-555-0000" autoComplete="tel"
                         className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
                     </div>
                   </div>
@@ -354,7 +366,7 @@ export default async function MarketSuburbPage({ params }: Props) {
             </p>
             <h2 className="text-3xl font-black text-black tracking-tight mb-3">{lean.lean}</h2>
             <p className="text-[#444] text-base leading-relaxed max-w-3xl">
-              With {s.avgDaysOnMarket} days on market and {s.yoyChange} appreciation,{' '}
+              With {s.avgDaysOnMarket} days on market and the median sale price {yoyMovement(s.yoyChange)} year over year,{' '}
               {s.displayName} is{' '}
               {s.avgDaysOnMarket <= 22
                 ? `moving fast — inventory turns over before many buyers get a second weekend to decide. Sellers who price correctly are seeing competitive offers, often above list. Buyers need pre-approval in hand and an agent with off-market access to compete.`
@@ -396,12 +408,22 @@ export default async function MarketSuburbPage({ params }: Props) {
                 </Link>{' '}
                 before you commit to a number.
               </p>
+              {s.slug === 'columbia-tn' ? (
+                <p className="text-[#444] text-base leading-relaxed mb-4">
+                  Homes in Columbia are averaging about {s.avgDaysOnMarket} days on market. If you need a firmer date than that — repairs, an estate, a divorce, or a move you cannot put off —{' '}
+                  <Link href={cashOfferPath(s.slug)} className="text-black underline hover:no-underline">
+                    get a cash offer on your Columbia home
+                  </Link>
+                  . As-is, no showings, close in as little as 7 days.
+                </p>
+              ) : null}
 
               <h3 className="text-xl font-black text-black mt-10 mb-4">For Buyers in {s.name}</h3>
               <p className="text-[#444] text-base leading-relaxed mb-4">
-                With {s.yoyChange} year-over-year appreciation in {s.displayName}, buyers who hold
-                for 3–5 years are likely to see meaningful equity build assuming current trends
-                continue. The market doesn&apos;t reward panic-buying, but it does reward decisive
+                {yoyValue(s.yoyChange) > 0
+                  ? `With ${s.yoyChange} year-over-year appreciation in ${s.displayName}, buyers who hold for 3–5 years are likely to see meaningful equity build assuming current trends continue.`
+                  : `The latest citywide median in ${s.displayName} is ${s.yoyChange} year over year. That print is not a forecast for one house.`}
+                {' '}The market doesn&apos;t reward panic-buying, but it does reward decisive
                 action on the right home — pre-approval in hand, must-haves clearly defined,
                 ability to write inside 24 hours when a fit appears.
               </p>
@@ -478,7 +500,7 @@ export default async function MarketSuburbPage({ params }: Props) {
                   </div>
                   <div className="flex justify-between items-center">
                     <dt className="text-sm" style={{ color: '#A0A0A0' }}>YoY</dt>
-                    <dd className="text-sm font-bold" style={{ color: '#4ade80' }}>{s.yoyChange}</dd>
+                    <dd className="text-sm font-bold" style={{ color: yoyColor(s.yoyChange, true) }}>{s.yoyChange}</dd>
                   </div>
                 </dl>
               </div>
@@ -517,6 +539,14 @@ export default async function MarketSuburbPage({ params }: Props) {
             </div>
           </div>
         </div>
+
+        {soldInSuburb.length > 0 && (
+          <div className="bg-white border-t border-[#E8E8E8] py-16 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+              <SoldPropertyExperience listings={soldInSuburb} placeName={s.displayName} />
+            </div>
+          </div>
+        )}
 
         {/* FAQ */}
         <div className="bg-[#F5F5F5] py-16 px-4 sm:px-6 lg:px-8">
@@ -568,7 +598,7 @@ export default async function MarketSuburbPage({ params }: Props) {
                       </div>
                       <div>
                         <p className="text-[#A0A0A0] uppercase tracking-widest font-semibold">YoY</p>
-                        <p className="text-base font-black" style={{ color: '#16a34a' }}>{n.yoyChange}</p>
+                        <p className="text-base font-black" style={{ color: yoyColor(n.yoyChange) }}>{n.yoyChange}</p>
                       </div>
                     </div>
                   </Link>
@@ -636,8 +666,8 @@ export default async function MarketSuburbPage({ params }: Props) {
                     className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
                 </div>
                 <div>
-                  <label htmlFor="phone" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Phone *</label>
-                  <input type="tel" id="phone" name="phone" required placeholder="615-555-0000" autoComplete="tel"
+                  <label htmlFor="phone" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Phone (optional — fastest reply)</label>
+                  <input type="tel" id="phone" name="phone" placeholder="615-555-0000" autoComplete="tel"
                     className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
                 </div>
               </div>

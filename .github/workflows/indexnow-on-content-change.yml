@@ -14,6 +14,7 @@ on:
     branches: [main]
     paths:
       - 'lib/blog.ts'
+      - 'lib/market-snapshot.ts'
       - 'lib/listings.ts'
       - 'lib/suburbs.ts'
       - 'lib/sold-listings.ts'

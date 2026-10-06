@@ -2,8 +2,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { Listing } from '@/lib/listings'
 import { getSuburb, getSuburbSlugForListing } from '@/lib/suburbs'
-import { hasListingDetail, listingSlug } from '@/lib/listing-detail'
+import { listingDetailPath } from '@/lib/listing-detail'
 import { withUtm } from '@/lib/utm'
+import TrackedTelLink from '@/components/TrackedTelLink'
 
 function formatPrice(price: number): string {
   if (price >= 1000000) {
@@ -43,9 +44,10 @@ interface Props {
 export default function ListingCard({ listing, featured }: Props) {
   const suburbSlug = getSuburbSlugForListing(listing.city)
   const suburbName = suburbSlug ? getSuburb(suburbSlug)?.name : undefined
-  // Active listings have an on-site detail page; sold homes don't, so their card
-  // keeps handing straight off to Compass.
-  const detailHref = hasListingDetail(listing) ? `/listings/${listingSlug(listing)}` : null
+  // Active and indexable sold homes share /listings/[slug]. resolveListingDetailSlug
+  // (via listingDetailPath) handles active-vs-sold collisions so a live listing
+  // never silently shares a sold home's URL.
+  const detailHref = listingDetailPath(listing)
   const cityDisplay = listing.city.replace(/\s*\|\s*MLS\s*#\S+$/i, '')
   const addressDisplay =
     listing.address === 'Undisclosed Address' ? 'Address on request' : listing.address
@@ -80,12 +82,14 @@ export default function ListingCard({ listing, featured }: Props) {
               />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 21V12h6v9" />
             </svg>
-            <span className="text-xs tracking-wide">View on Compass</span>
+            <span className="text-xs tracking-wide">
+              {detailHref ? 'Photo on request' : 'View on Compass'}
+            </span>
           </div>
         )}
 
         {/* Primary click target — cover the image with a link to the on-site
-            detail page (active listings only). */}
+            detail page (active + indexable sold). */}
         {detailHref && (
           <Link
             href={detailHref}
@@ -171,8 +175,8 @@ export default function ListingCard({ listing, featured }: Props) {
         )}
 
         <div className={`${suburbSlug ? '' : 'mt-auto '}flex flex-col gap-2`}>
-          {/* Active listings: keep the buyer on-site first. Sold homes have no
-              detail page, so their primary CTA stays the tap-to-text. */}
+          {/* On-site detail page when one exists. Otherwise SMS is the primary
+              CTA so we do not leak the visitor off-site. */}
           {detailHref ? (
             <Link
               href={detailHref}
@@ -182,7 +186,7 @@ export default function ListingCard({ listing, featured }: Props) {
               View Details →
             </Link>
           ) : (
-            <a
+            <TrackedTelLink
               href={`sms:+16155512727?body=${encodeURIComponent(
                 `Hi Joshua — I'm interested in ${addressDisplay}. Can you tell me more?`
               )}`}
@@ -191,11 +195,11 @@ export default function ListingCard({ listing, featured }: Props) {
               aria-label={`Text Joshua about ${listing.address}`}
             >
               Ask Joshua about this home
-            </a>
+            </TrackedTelLink>
           )}
 
           {detailHref && (
-            <a
+            <TrackedTelLink
               href={`sms:+16155512727?body=${encodeURIComponent(
                 `Hi Joshua — I'm interested in ${addressDisplay}. Can you tell me more?`
               )}`}
@@ -204,26 +208,27 @@ export default function ListingCard({ listing, featured }: Props) {
               aria-label={`Text Joshua about ${listing.address}`}
             >
               Ask Joshua about this home
-            </a>
+            </TrackedTelLink>
           )}
 
-          <a
-            href={withUtm(listing.compassUrl, {
-              source: 'joshuafink',
-              medium: 'referral',
-              campaign: 'listing-card',
-              content: listing.address.toLowerCase().replace(/[^\w]+/g, '-'),
-            })}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={
-              detailHref
-                ? 'text-center text-xs font-semibold text-neutral-500 py-1 underline-offset-4 hover:text-black hover:underline'
-                : 'text-center text-sm font-semibold border border-black text-black py-2.5 rounded-full tracking-wide transition-all duration-200 hover:bg-black hover:text-white'
-            }
-          >
-            View on Compass ↗
-          </a>
+          {/* No on-site page (thin / undisclosed sold records): Compass is the
+              remaining destination. Cards with a detail page already have
+              View Details + SMS — don't leak visitors off-site from the footer. */}
+          {!detailHref && (
+            <a
+              href={withUtm(listing.compassUrl, {
+                source: 'joshuafink',
+                medium: 'referral',
+                campaign: 'listing-card',
+                content: listing.address.toLowerCase().replace(/[^\w]+/g, '-'),
+              })}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-center text-sm font-semibold border border-black text-black py-2.5 rounded-full tracking-wide transition-all duration-200 hover:bg-black hover:text-white"
+            >
+              View on Compass ↗
+            </a>
+          )}
         </div>
       </div>
     </article>

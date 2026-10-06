@@ -92,6 +92,73 @@ export const neighborhoods: Record<string, Neighborhood> = {
     longitude: -86.9557,
   },
 
+  'cool-springs-franklin-tn': {
+    slug: 'cool-springs-franklin-tn',
+    name: 'Cool Springs',
+    city: 'Franklin',
+    citySlug: 'franklin-tn',
+    county: 'Williamson County',
+    metaTitle: 'Cool Springs Neighborhood Guide — Franklin, TN',
+    metaDescription:
+      'Cool Springs in Franklin, TN explained: condos, townhomes, and single-family near I-65, offices, and the Galleria. Schools, HOA, and honest price context from Compass agent Joshua Fink.',
+    intro:
+      'Cool Springs is not a single HOA subdivision — it is Franklin’s mixed residential, employment, and retail corridor along I-65, Cool Springs Boulevard, and the Mack Hatcher / Carothers Parkway loop. Buyers searching “Cool Springs” are usually looking at condos and townhomes near the Galleria and office campuses, plus single-family streets in the surrounding Centennial High corridor — not one gated community with a shared amenity package.',
+    about:
+      'Cool Springs grew up around the interstate interchange, Cool Springs Galleria, and the corporate office parks that make north-central Franklin a daily commute destination as much as a place to live. Housing is mixed on purpose: stacked condos and attached townhomes sit closest to the mall, hotels, and office buildings; traditional single-family subdivisions fan out from there toward Fieldstone Farms, Sullivan Farms, and other established Williamson County streets. Architecture and finish levels vary by pocket — 1980s–1990s attached product, 1990s–2000s brick-front family homes, and newer infill — so two “Cool Springs” listings a mile apart can feel like different neighborhoods. Daily life is car-oriented but convenient: shopping, restaurants, healthcare, and I-65 toward Nashville or Spring Hill are minutes away. Treat Cool Springs as a corridor you shop by address, school zone, and housing type, not as one master-planned community like Westhaven.',
+    vibe: 'Mixed residential, office, and retail corridor — not a single HOA subdivision.',
+    priceBand: '$400K – $1.2M+',
+    buildYears: '1980s–present (condos and townhomes near the commercial core; 1990s–2000s single-family and newer infill)',
+    hoa: 'No single Cool Springs HOA. Condo and townhome buildings typically have monthly associations; many nearby single-family streets have their own HOA or none at all. Confirm dues, reserves, and rental rules for the specific address.',
+    schoolNotes:
+      'Most Cool Springs addresses sit in Williamson County Schools and are commonly discussed as part of the Centennial High School corridor. Elementary and middle assignments change by street — and some nearby Franklin pockets feed other high schools — so always confirm the current Williamson County Schools zoning map for the exact address before you write an offer.',
+    amenities: [
+      'Cool Springs Galleria and surrounding retail',
+      'Corporate office campuses and daily employment base',
+      'Restaurants and services along Cool Springs Blvd, Mallory Lane, and Carothers Pkwy',
+      'Direct I-65 access toward Nashville, Brentwood, and Spring Hill',
+      'Healthcare and professional services clustered on the corridor',
+      'Mix of attached and single-family housing within a short drive',
+    ],
+    homeStyles: [
+      'Condos near the Galleria and office parks',
+      'Townhomes and attached products',
+      'Traditional brick-front single-family in nearby subdivisions',
+      '1990s–2000s family two-stories',
+      'Selected newer infill and rebuilt homes',
+    ],
+    whyBullets: [
+      'Commute and convenience are the product: Cool Springs buyers are usually optimizing for I-65, a Cool Springs job, and daily retail — not a walkable town-center HOA. Joshua helps you decide whether that tradeoff is worth it versus Westhaven or Fieldstone Farms.',
+      'Housing type changes the number: A Galleria-area condo, a townhome, and a nearby single-family home are not one market. Joshua prices the specific product and street against recent closed comps, not a citywide Franklin median.',
+      'School and HOA homework is address-level: The corridor spans multiple associations and feeder patterns. Confirming Centennial (or another) zoning and the right dues structure before you tour saves wasted offers.',
+    ],
+    faqs: [
+      {
+        q: 'Is Cool Springs a neighborhood or a corridor?',
+        a: 'A corridor. Unlike Westhaven or Fieldstone Farms, Cool Springs is not one master-planned HOA community. It is the mixed residential, office, and retail area around I-65, Cool Springs Boulevard, and the Galleria — condos, townhomes, and single-family in several adjacent subdivisions. Shop by address, not by the Cool Springs label alone.',
+      },
+      {
+        q: 'How much do homes in Cool Springs cost in 2026?',
+        a: 'There is no single Cool Springs median — the corridor mixes product types. Condos and townhomes typically enter below Franklin’s citywide median and below typical Westhaven or Fieldstone Farms single-family pricing. Nearby single-family often overlaps the published Fieldstone Farms ($650K–$1.1M) and McKay’s Mill ($650K–$1.2M) bands, with some homes above that. Joshua pulls closed comps for the specific building or street rather than quoting a corridor-wide average.',
+      },
+      {
+        q: 'What schools are zoned to Cool Springs?',
+        a: 'Most of the Cool Springs residential pockets sit in Williamson County Schools and are commonly part of the Centennial High School corridor. Elementary and middle schools vary by street, and a few nearby Franklin addresses feed other high schools. Always verify the current WCS zoning map for the exact property before you write.',
+      },
+      {
+        q: 'Does Cool Springs have an HOA?',
+        a: 'Not one shared HOA. Condos and many townhomes have monthly associations that cover buildings, exteriors, or amenities. Single-family streets may have a neighborhood HOA, a lighter covenant, or none. Joshua confirms dues, what they cover, and any rental or pet rules for the specific address.',
+      },
+      {
+        q: 'How does Cool Springs compare to Westhaven or Fieldstone Farms?',
+        a: 'Westhaven is a walkable master-planned community with a town center, golf, and a single amenity HOA. Fieldstone Farms is an established family subdivision with larger lots, mature trees, and a traditional pool/clubhouse HOA — close to Cool Springs employment but not the commercial core itself. Cool Springs is the employment and retail corridor: shorter office and I-65 commutes, more condos and townhomes, and more variation street to street. Joshua matches the tradeoff to your commute, school zone, and housing type.',
+      },
+    ],
+    schemaCity: 'Franklin',
+    schemaState: 'TN',
+    latitude: 35.9565,
+    longitude: -86.8180,
+  },
+
   'east-nashville-tn': {
     slug: 'east-nashville-tn',
     name: 'East Nashville',
@@ -1208,6 +1275,147 @@ export const neighborhoods: Record<string, Neighborhood> = {
     schemaState: 'TN',
     latitude: 35.9430,
     longitude: -86.6740,
+  },
+
+  // Scales Farmstead + Benington: the two highest-intent Nolensville
+  // subdivisions already named on /buy/nolensville-tn (topNeighborhoods,
+  // buyer copy, FAQs) that previously 404'd under /neighborhoods/...
+  // Price bands are approximate from public listing/brokerage ranges — not
+  // a Redfin or GNAR subdivision median. Confirm HOA dues and WCS zoning
+  // for the specific address. Lat/long are community-centroid estimates.
+  'scales-farmstead-nolensville-tn': {
+    slug: 'scales-farmstead-nolensville-tn',
+    name: 'Scales Farmstead',
+    city: 'Nolensville',
+    citySlug: 'nolensville-tn',
+    county: 'Williamson County',
+    metaTitle: 'Scales Farmstead Neighborhood Guide — Nolensville, TN',
+    metaDescription:
+      'Scales Farmstead in Nolensville, TN: newer brick homes off Clovercroft Road, a clubhouse-and-pool HOA, and Williamson County Schools. Local insight from Compass agent Joshua Fink.',
+    intro:
+      'Scales Farmstead is the newer brick community off Clovercroft Road that Nolensville buyers keep asking about — current-vintage family homes, a used clubhouse-and-pool amenity package, and Williamson County Schools without the older-build trade-offs of Bent Creek. It is built out now, so you are shopping resale, not a model-home trail.',
+    about:
+      'Scales Farmstead sits along Clovercroft Road in the 37135 ZIP, a short drive from historic downtown Nolensville (Publix, Mill Creek Brewing, the seasonal farmers market) and the Nolensville Road corridor toward Cool Springs and I-65. Homes were built in phases from about 2017 through 2021. Drees Homes built most of the streetscape, with Patterson Homes, Hidden Valley Homes, and Turnberry Homes adding custom and semi-custom product — so elevations vary more than a single-builder subdivision. Stock is predominantly brick or brick-and-stone traditional and contemporary, typically about 2,600–4,500 square feet with three to five bedrooms; main-level primary suites and bonus rooms over the garage are common. Lots generally run from about a seventh of an acre up toward a half acre, with some backing to woods or open space. Scales Farmstead Estates is the larger-lot, more custom pocket inside the same community. Amenities center on a zero-entry pool and a clubhouse with a commercial kitchen that actually gets used for neighborhood events, plus a playground, walking trails, sidewalks, and underground utilities. The community is professionally managed; the developer-era HOA (Starwood Land Advisory / Metropolitan Properties) is the operational side, separate from the resident community site.',
+    vibe: 'Newer Clovercroft Road brick community with an active pool-and-clubhouse HOA.',
+    priceBand: '$800K – $1.5M (approx.)',
+    buildYears: '2017–2021 (built out; resale only)',
+    hoa: 'Active, professionally managed HOA. Most phases are commonly quoted in the $100–$150/month range; the Estates section is often billed annually instead. Dues typically cover the pool, clubhouse, playground, trails, and common-area landscaping. Confirm current dues, transfer fees, and architectural rules with the HOA before you write.',
+    schoolNotes:
+      'Scales Farmstead is generally zoned to Williamson County Schools — commonly Jordan Elementary, Sunset Middle, and Nolensville High School. WCS rezones periodically, so always verify the assignment for the specific address against the current district zoning map.',
+    amenities: [
+      'Zero-entry community pool',
+      'Clubhouse with commercial kitchen and resident events',
+      'Playground and picnic areas',
+      'Walking trails and sidewalks throughout',
+      'Underground utilities and HOA-maintained medians on select streets',
+      'Quick access to Clovercroft Road, downtown Nolensville, and Cool Springs',
+    ],
+    homeStyles: [
+      'Brick and brick-and-stone traditional and contemporary',
+      'Selected Tudor and hardboard-accent elevations',
+      'Family-sized 3–5 bedroom plans, often 2,600–4,500 sq ft',
+      'Main-level primary suites on many Drees plans',
+      'Bonus rooms, home offices, and two- or three-car garages',
+    ],
+    whyBullets: [
+      'Newer stock, finished community: Built-out 2017–2021 construction means current floor plans and a settled streetscape — you are not waiting on a builder phase, and you are not buying 2000s inventory.',
+      'Jordan / Sunset / Nolensville High is the usual ask: Families targeting that feeder typically start here and at nearby Clovercroft-corridor streets. Confirm the exact address; Joshua will pull the current WCS map before you tour.',
+      'Amenities are the premium vs Bent Creek: The zero-entry pool and used clubhouse are why Scales often prices above older Nolensville family subdivisions of similar square footage. Joshua prices the specific lot and finish level, not a citywide median.',
+    ],
+    faqs: [
+      {
+        q: 'How much do homes in Scales Farmstead cost in 2026?',
+        a: 'There is no published Redfin or GNAR median for Scales Farmstead alone. Public listing and brokerage activity in recent years has generally clustered from the high $700s into the mid-$1Ms, with larger Estates and custom lots higher. Joshua pulls current closed comps for the specific street and finish level rather than quoting a subdivision-wide average.',
+      },
+      {
+        q: 'What schools are zoned to Scales Farmstead?',
+        a: 'Most addresses are commonly assigned to Jordan Elementary, Sunset Middle, and Nolensville High School in Williamson County Schools. Always verify the current district map for the exact property before you write an offer.',
+      },
+      {
+        q: 'Does Scales Farmstead have an HOA and a pool?',
+        a: 'Yes. An active HOA maintains a zero-entry pool, a clubhouse with a commercial kitchen, a playground, walking trails, and common areas. Most phases are monthly; the Estates section is often annual. Confirm the current amount and what it covers with the HOA.',
+      },
+      {
+        q: 'Is Scales Farmstead still building new homes?',
+        a: 'No — phases wrapped around 2021. Inventory is resale. If you want a brand-new builder home in Nolensville, Joshua will point you to whatever is still delivering elsewhere in the 37135 corridor rather than implying Scales still has a model row.',
+      },
+      {
+        q: 'How does Scales Farmstead compare to Bent Creek or Burberry Glen?',
+        a: 'Bent Creek is larger, older (2000s–early 2010s), and usually the play for mature trees and multiple pools at a lower entry. Burberry Glen is another newer family subdivision with current-vintage finishes. Scales sits on Clovercroft with a more compact, brick streetscape and a single well-used pool/clubhouse package. Pricing overlaps; lot backing, finish level, and the elementary feeder are what actually move the number.',
+      },
+    ],
+    schemaCity: 'Nolensville',
+    schemaState: 'TN',
+    latitude: 35.933,
+    longitude: -86.686,
+  },
+
+  'benington-nolensville-tn': {
+    slug: 'benington-nolensville-tn',
+    name: 'Benington',
+    city: 'Nolensville',
+    citySlug: 'nolensville-tn',
+    county: 'Williamson County',
+    metaTitle: 'Benington Neighborhood Guide — Nolensville, TN',
+    metaDescription:
+      'Benington in Nolensville, TN: custom homes on half-acre lots off Sunset Road, shared amenities with Winterset Woods, and Sunset school-campus access. Local insight from Compass agent Joshua Fink.',
+    intro:
+      'Benington is Nolensville’s custom, half-acre community off Sunset Road — roughly 190 homes across multiple sections, no two elevations the same, and walking or short-drive access to the Sunset Elementary / Sunset Middle campus. It is the premium ask versus Bent Creek or Scales Farmstead, and it is not a single-builder tract.',
+    about:
+      'Benington runs off Sunset Road in the 37135 ZIP, with a second entrance via Briarcliff Drive through neighboring Winterset Woods. Development started around 2006 on the Sunset Road end and continued into the early 2020s on later sections (Belgian Road / Oldenburg Road), so the same subdivision mixes mature landscaping with newer custom plans. Builders have included Barlow Builders, Grove Park Construction, DAC New Homes, Tennessee Valley Homes, and Defatta Custom Home — which is why the streetscape reads custom rather than repeated elevations. Homes are predominantly all-brick, typically four or five bedrooms and roughly 3,700–5,000 square feet, on lots of about 0.46–0.56 acre; many back to woods or common open space. Amenities — community pool and kiddie pool, clubhouse, playground, soccer field, tennis courts, and trails that connect into the Nolensville path system — are shared with Winterset Woods under a joint HOA board. That shared pool is the detail buyers miss if they only tour Benington streets. Sidewalks and underground utilities run through the community. Cool Springs is roughly a 20-minute drive; downtown Nashville is in the same 25-minute band as the rest of Nolensville when traffic cooperates.',
+    vibe: 'Custom half-acre homes off Sunset Road; amenities shared with Winterset Woods.',
+    priceBand: '$1.1M – $1.7M+ (approx.)',
+    buildYears: '2006 through early 2020s (phased; later sections newest)',
+    hoa: 'Active HOA, commonly quoted around $220 per quarter (~$880/year), covering shared pool and amenity upkeep, common grounds, and trail maintenance with Winterset Woods. Confirm current dues and architectural rules with the association before you write.',
+    schoolNotes:
+      'Benington is generally zoned to Williamson County Schools — commonly Sunset Elementary, Sunset Middle, and Nolensville High School. Homes nearer Sunset Road are about a mile from the Sunset campus (trail and sidewalk access); later sections are farther and typically use the bus. Always verify the current WCS map for the exact address.',
+    amenities: [
+      'Community pool and kiddie pool (shared with Winterset Woods)',
+      'Clubhouse',
+      'Playground and soccer field',
+      'Tennis courts',
+      'Walking trails connecting to the Nolensville trail system',
+      'Sidewalks and underground utilities',
+      'Half-acre lots; many wooded or common-area backs',
+    ],
+    homeStyles: [
+      'Custom all-brick traditional (dominant)',
+      'Brick with stone or hardboard accents',
+      'Four- and five-bedroom plans, often 3,700–5,000 sq ft',
+      'Selected 1.5-story and basement homes',
+      'Three-car and side-entry garages on many lots',
+    ],
+    whyBullets: [
+      'Lot size is the product: Half-acre minimums are rare in newer Nolensville inventory. Buyers who want yard, trees, and custom elevations — not a 0.15-acre Drees lot — start here.',
+      'Sunset campus proximity: Front-of-community streets are the walk-or-bike play for Sunset Elementary and Sunset Middle. Back sections trade that for newer construction and more privacy. Joshua will map the actual walk before you write.',
+      'Shared amenities are not a footnote: The pool and clubhouse serve Benington and Winterset Woods together. That keeps dues reasonable for the package; it also means a busier pool than a Benington-only HOA would. Know that before you tour.',
+    ],
+    faqs: [
+      {
+        q: 'How much do homes in Benington cost in 2026?',
+        a: 'There is no published Redfin or GNAR median for Benington alone. Public listing and brokerage activity has generally started around $1.1M and run into the mid-to-high $1Ms for larger or newer-section custom homes. Older Sunset Road sections and later Belgian / Oldenburg sections are not one market. Joshua pulls closed comps for the specific section, builder, and lot — not a citywide Nolensville median.',
+      },
+      {
+        q: 'What schools are zoned to Benington?',
+        a: 'Most addresses are commonly assigned to Sunset Elementary, Sunset Middle, and Nolensville High School. The Sunset campus is close to the Sunset Road entrance; Nolensville High is not on the trail system, and the district runs buses. Verify the current Williamson County Schools map for the exact address.',
+      },
+      {
+        q: 'Does Benington share amenities with Winterset Woods?',
+        a: 'Yes. The pool, kiddie pool, clubhouse, playground, and related facilities are shared under a joint HOA board. Benington is its own subdivision — two entrances, half-acre custom lots — but the amenity load is the combined community. That is the main “gotcha” relocating agents miss.',
+      },
+      {
+        q: 'Does Benington have an HOA, and what does it cost?',
+        a: 'Yes. Dues are commonly quoted around $220 per quarter and cover shared amenities, common grounds, and trails. Confirm the current amount, what it includes, and architectural review rules with the HOA before you write.',
+      },
+      {
+        q: 'How does Benington compare to Bent Creek or Scales Farmstead?',
+        a: 'Bent Creek is a large 2000s family subdivision with smaller lots, multiple pools, and a lower typical entry. Scales Farmstead is newer Clovercroft brick (2017–2021) with a single-community pool/clubhouse and usually a lower band than Benington custom. Benington is the half-acre, multi-builder custom ask on the Sunset corridor. Joshua matches the tradeoff to lot size, school walk, and budget — not a single “best Nolensville neighborhood” label.',
+      },
+    ],
+    schemaCity: 'Nolensville',
+    schemaState: 'TN',
+    latitude: 35.954,
+    longitude: -86.652,
   },
 
   // ───────────────────────────────────────────────────────────────────────
@@ -2503,6 +2711,72 @@ export const neighborhoods: Record<string, Neighborhood> = {
     schemaState: 'TN',
     latitude: 35.68,
     longitude: -87,
+  },
+  'downtown-columbia-historic-district-tn': {
+    slug: 'downtown-columbia-historic-district-tn',
+    name: 'Downtown Columbia Historic District',
+    city: 'Columbia',
+    citySlug: 'columbia-tn',
+    county: 'Maury County',
+    metaTitle: 'Downtown Columbia Historic District Neighborhood Guide | Columbia, TN',
+    metaDescription:
+      "Downtown Columbia's historic district in Columbia, TN: home prices, architecture, schools, and what to know before you buy a historic home near the Square. Local insight from Compass agent Joshua Fink.",
+    intro:
+      "Downtown Columbia is the original city — a walkable grid of 19th- and early-20th-century homes wrapped around the Maury County Courthouse square and the Duck River. If you've stood on the Square for First Fridays or walked Riverwalk Park at sunset, you've felt what draws buyers here: a real small-town Main Street, not a subdivision built to look like one.",
+    about:
+      "Columbia's historic district grew up around the Square in the decades after the city was chartered in 1817, and the housing stock still shows it: Victorian and Queen Anne homes with wraparound porches, Folk Victorian cottages, Greek Revival and Federal-style houses, and Craftsman bungalows filling in through the 1920s and '30s, all on a walkable grid of tree-lined streets a few blocks from the courthouse. The neighborhood is anchored by the Square itself — restaurants, boutiques, and the monthly First Fridays Art Walk — plus Riverwalk Park along the Duck River and the James K. Polk Home & Museum, the boyhood home of the 11th U.S. President. Columbia calls itself the 'Mule Town' and hosts Mule Day every April, one of Maury County's biggest annual draws. Because it's the original historic core rather than a planned community, home condition varies block to block: some houses have been fully restored with modern systems behind period detail, others are original and priced for a buyer ready to renovate. Exterior work inside the locally designated historic overlay may require design review from the city, so confirm the specific parcel's status before planning major changes.",
+    vibe: "Columbia's walkable historic core — courthouse square, Duck River, and 19th-century homes with real small-town character, not a subdivision imitation of one.",
+    priceBand: '$250K – $700K+ (wide range — original-condition cottages to fully restored Victorians)',
+    buildYears: "Mostly 1880s–1930s, with restorations, additions, and scattered infill throughout",
+    hoa: "No HOA — this is Columbia's original city grid, not a planned subdivision. Some parcels fall within a locally designated historic overlay district, which can require city design review for exterior changes — verify status for the specific address before buying with renovation plans.",
+    schoolNotes:
+      "Downtown Columbia addresses are in Maury County Public Schools and are commonly associated with Highland Park Elementary, Whitthorne Middle, and Columbia Central High School. Attendance zones can shift, so verify current zoning for the specific address with Maury County Public Schools before writing an offer.",
+    amenities: [
+      'The Square — the Maury County Courthouse, restaurants, coffee shops, and local boutiques',
+      "Riverwalk Park along the Duck River",
+      "First Fridays Art Walk on the Square",
+      "James K. Polk Home & Museum (boyhood home of the 11th U.S. President)",
+      "Mule Day festival every April, a signature Columbia tradition",
+      "Walkable street grid connecting directly to downtown dining and shopping",
+    ],
+    homeStyles: [
+      'Victorian and Queen Anne with wraparound porches',
+      'Folk Victorian cottages',
+      'Greek Revival and Federal-style houses',
+      'Craftsman bungalows (1910s–1930s)',
+      'Fully restored homes alongside original-condition fixer-uppers',
+    ],
+    whyBullets: [
+      "Character that can't be built new: original millwork, high ceilings, and mature trees on a walkable grid a planned subdivision can't replicate — that scarcity supports long-term value for well-maintained homes.",
+      'Growth-market tailwind: Maury County was Tennessee\'s #2 fastest-growing county by percentage from 2024 to 2025 (Maury Alliance), and downtown Columbia is the walkable, amenity-rich core that growth is filling in around.',
+      "Wide entry range: from move-in-ready restorations to original-condition homes priced for a renovation budget, Joshua can match the property to your timeline and appetite for a project.",
+    ],
+    faqs: [
+      {
+        q: 'How much do historic homes cost in downtown Columbia, TN?',
+        a: "Pricing swings widely by condition and lot — original-condition cottages can start in the $250Ks, while fully restored Victorians and larger homes near the Square can run $500K–$700K or more. Joshua can pull recent comps for the specific block and walk through what renovation costs typically look like for a given house.",
+      },
+      {
+        q: 'Is downtown Columbia a designated historic district?',
+        a: "The area includes a locally designated historic overlay, which can mean design review from the city for exterior changes on covered parcels. Not every downtown-adjacent home falls inside the overlay — confirm the specific address's status with the City of Columbia before buying with renovation plans.",
+      },
+      {
+        q: 'What schools serve downtown Columbia?',
+        a: 'Downtown Columbia is in Maury County Public Schools and is commonly associated with Highland Park Elementary, Whitthorne Middle, and Columbia Central High School. Verify current zoning for the specific address, since attendance boundaries can change.',
+      },
+      {
+        q: 'Is there an HOA in downtown Columbia?',
+        a: "No — this is Columbia's original city grid, not a planned community, so there's no neighborhood HOA. Any exterior restrictions come from the city's historic overlay design-review rules where they apply, not from a homeowners association.",
+      },
+      {
+        q: 'Why buy downtown instead of a newer Columbia subdivision?',
+        a: "Downtown buyers are choosing walkability and character over the amenities of a newer HOA community — you're minutes from the Square's restaurants and shops on foot, in a home with architectural detail new construction doesn't replicate. It suits buyers who want a renovation project or an already-restored historic home over a builder floor plan.",
+      },
+    ],
+    schemaCity: 'Columbia',
+    schemaState: 'TN',
+    latitude: 35.6151,
+    longitude: -87.0353,
   },
   'bridgemore-village-thompsons-station-tn': {
     slug: 'bridgemore-village-thompsons-station-tn',

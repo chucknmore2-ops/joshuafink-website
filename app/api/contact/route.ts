@@ -1,17 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { classifyLead } from '@/lib/classify-lead'
+import { botChallengeMode } from '@/lib/bot-challenge'
+import { ensureLeadAttribution, LEAD_ATTRIBUTION_FIELDS } from '@/lib/attribution'
 import { sendEmail, activeEmailProvider, fetchWithTimeout } from '@/lib/send-email'
 
-// ClickUp — one task per lead (replaced Slack after its account went
-// inactive). Same pk_... personal token the weekly agent-briefing cron uses.
-const CLICKUP_TOKEN = process.env.CLICKUP_API_TOKEN
-// Defaults to the JFG agent-briefing list (workspace 90141200625); set
-// CLICKUP_LEADS_LIST_ID in Vercel to route leads to a dedicated Leads list.
-const CLICKUP_LIST_ID = process.env.CLICKUP_LEADS_LIST_ID || '901415978281'
+// Lead notifiers use fetchWithTimeout (LEAD_CHANNEL_TIMEOUT_MS, default 6s)
+// in parallel. 30s leaves room for the emergency Pushover fallback without
+// sitting until the platform default.
+export const maxDuration = 30
+
+// ClickUp lead tasks are OFF by default. Josh does not want website /
+// cash-offer / sell leads in ClickUp (that board is for agent briefings).
+// Opt in only with an explicit CLICKUP_LEADS_ENABLED=true plus token and
+// CLICKUP_LEADS_LIST_ID — never fall back to the research/briefing list
+// 901415978281. The weekly agent-briefing cron was retired 2026-09-28; this
+// route is the only ClickUp caller left, and it stays off unless enabled.
 const TO_EMAIL = 'joshua@joshuafink.com'
-const N8N_BASE = process.env.N8N_WEBHOOK_BASE || 'http://localhost:5678/webhook'
-const CASH_OFFER_BASE = process.env.CASH_OFFER_WEBHOOK_BASE || 'http://localhost:5679/webhook'
-const BUYER_LEAD_WEBHOOK_BASE = process.env.BUYER_LEAD_WEBHOOK_BASE || 'http://localhost:5680'
+// Read per request so a deploy that sets the env mid-process, and the
+// contact-route tests, see the current base. Loopback defaults stay skipped.
+function webhookBase(envKey: string, fallback: string): string {
+  return process.env[envKey] || fallback
+}
+
+const ATTRIBUTION_FIELD_SET = new Set<string>(LEAD_ATTRIBUTION_FIELDS)
 // Free lead tracker: a Google Apps Script Web App that appends each lead as a
 // row in a Google Sheet. Set GOOGLE_SHEET_WEBHOOK_URL in Vercel to the /exec
 // deployment URL. No-ops safely until then. (Replaces the retired Monday.com CRM.)
@@ -25,9 +36,12 @@ const PUSHOVER_USER = process.env.PUSHOVER_USER || ''
 // Healthcheck test mode — scripts/morning_healthcheck.py POSTs a tagged
 // SYSTEM TEST lead daily carrying this secret (the same CRON_SECRET the
 // /api/cron/* routes use) in an `x-healthcheck-secret` header. In that mode
-// the response includes the per-channel delivery results and the Pushover
-// goes out silently, so a channel dying pages the next morning instead of
-// rotting in a console.warn nobody reads (how SendGrid sat dead from June).
+// the response includes the per-channel delivery results, Pushover still
+// fires as a normal lead alert (Josh wants the phone ping), and the Joshua
+// email send is skipped (CI/chat is the alert path — no "ignore me" Resend
+// message in the inbox). A channel dying still reds the weekday healthcheck
+// instead of rotting in a console.warn nobody reads (how SendGrid sat dead
+// from June).
 const CRON_SECRET = process.env.CRON_SECRET || ''
 
 // ---------------------------------------------------------------------------
@@ -45,14 +59,72 @@ type ChannelResult = {
   detail?: string
 }
 
-const skip = (channel: string): ChannelResult => ({ channel, configured: false, ok: false })
+const skip = (channel: string, detail?: string): ChannelResult => ({
+  channel,
+  configured: false,
+  ok: false,
+  ...(detail ? { detail } : {}),
+})
+
+function clickupLeadsEnabled(): boolean {
+  return process.env.CLICKUP_LEADS_ENABLED === 'true'
+}
+
+function clickupLeadsConfigured(): boolean {
+  return clickupLeadsEnabled() && !!process.env.CLICKUP_API_TOKEN && !!process.env.CLICKUP_LEADS_LIST_ID
+}
+
+/** Lines for the ClickUp task. Empty parameters are omitted. */
+function attributionNotes(lead: Record<string, string>): string[] {
+  const lines: string[] = []
+  if (lead.traffic_source) lines.push(`**Traffic source:** ${lead.traffic_source}`)
+  const utm = [lead.utm_source, lead.utm_medium, lead.utm_campaign].filter(Boolean).join(' / ')
+  if (utm) lines.push(`**UTM:** ${utm}`)
+  const lastUtm = [lead.last_utm_source, lead.last_utm_medium, lead.last_utm_campaign].filter(Boolean).join(' / ')
+  if (lastUtm && lastUtm !== utm) lines.push(`**Last UTM:** ${lastUtm}`)
+  const click = [
+    lead.gclid ? `gclid ${lead.gclid}` : '',
+    lead.gbraid ? `gbraid ${lead.gbraid}` : '',
+    lead.wbraid ? `wbraid ${lead.wbraid}` : '',
+    lead.fbclid ? `fbclid ${lead.fbclid}` : '',
+  ].filter(Boolean).join(', ')
+  if (click) lines.push(`**Click ID:** ${click}`)
+  if (lead.landing_page) lines.push(`**Landing page:** ${lead.landing_page}`)
+  if (lead.page_url) lines.push(`**Submitted from:** ${lead.page_url}`)
+  return lines
+}
+
+/**
+ * Localhost / loopback webhook bases are for FlipIntel/n8n on a laptop.
+ * The env defaults point there; awaiting them from Vercel burns the
+ * function budget on a connection that can never succeed. Do not invent
+ * a production URL — just skip until a real non-loopback base is set.
+ */
+function isLoopbackWebhookBase(base: string): boolean {
+  try {
+    const host = new URL(base).hostname.toLowerCase()
+    return host === 'localhost' || host === '127.0.0.1' || host === '::1' || host.endsWith('.localhost')
+  } catch {
+    return true
+  }
+}
 
 // ---------------------------------------------------------------------------
-// ClickUp notification — one task per lead
+// ClickUp notification — opt-in only (CLICKUP_LEADS_ENABLED=true)
 // ---------------------------------------------------------------------------
 
 async function sendClickUp(lead: Record<string, string>, testMode = false): Promise<ChannelResult> {
-  if (!CLICKUP_TOKEN) return skip('clickup')
+  // Default OFF — healthcheck treats configured:false as an expected no-op,
+  // not a failed channel.
+  if (!clickupLeadsEnabled()) {
+    return skip('clickup', 'disabled unless CLICKUP_LEADS_ENABLED=true')
+  }
+  const token = process.env.CLICKUP_API_TOKEN
+  const listId = process.env.CLICKUP_LEADS_LIST_ID
+  if (!token || !listId) {
+    console.log('ClickUp leads: skipping — CLICKUP_LEADS_ENABLED=true but CLICKUP_API_TOKEN or CLICKUP_LEADS_LIST_ID is unset')
+    return skip('clickup', 'CLICKUP_API_TOKEN or CLICKUP_LEADS_LIST_ID unset')
+  }
 
   const typeEmoji: Record<string, string> = {
     buy: '🏠', sell: '💰', both: '🔄', invest: '📈', rent: '🏢', other: '💬',
@@ -77,14 +149,15 @@ async function sendClickUp(lead: Record<string, string>, testMode = false): Prom
     lead.situation ? `**Situation:** ${lead.situation}` : null,
     lead.timeline ? `**Timeline:** ${lead.timeline}` : null,
     lead.body ? `**Message:**\n${lead.body}` : null,
+    ...attributionNotes(lead),
   ].filter(Boolean).join('\n')
 
   try {
-    // Like the agent-briefing route: markdown_content renders in the ClickUp
-    // UI, plain description is the API-side fallback.
-    const res = await fetchWithTimeout(`https://api.clickup.com/api/v2/list/${CLICKUP_LIST_ID}/task`, {
+    // markdown_content renders in the ClickUp UI; plain description is the
+    // API-side fallback.
+    const res = await fetchWithTimeout(`https://api.clickup.com/api/v2/list/${listId}/task`, {
       method: 'POST',
-      headers: { Authorization: CLICKUP_TOKEN, 'Content-Type': 'application/json' },
+      headers: { Authorization: token, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name: `${flag}${emoji} New Lead — ${lead.name || 'Unknown'}${suburb}`,
         markdown_content: description,
@@ -107,11 +180,11 @@ async function sendClickUp(lead: Record<string, string>, testMode = false): Prom
     }
     // The daily healthcheck test lead has proven the token + list are live by
     // this point — delete its task again (best-effort) so SYSTEM TEST tasks
-    // don't pile up in the list the way a silent Pushover doesn't buzz.
+    // don't pile up in the list.
     if (testMode) {
       await fetchWithTimeout(`https://api.clickup.com/api/v2/task/${data.id}`, {
         method: 'DELETE',
-        headers: { Authorization: CLICKUP_TOKEN },
+        headers: { Authorization: token },
       }).catch(() => undefined)
     }
     return { channel: 'clickup', configured: true, ok: true }
@@ -191,7 +264,6 @@ async function sendAutoReply(lead: Record<string, string>): Promise<ChannelResul
 
   const sent = await sendEmail({
     to: lead.email,
-    toName: lead.name,
     fromName: 'Joshua Fink',
     replyTo: { email: TO_EMAIL, name: 'Joshua Fink' },
     subject: `Got your message, ${firstName} — Joshua Fink Group`,
@@ -208,17 +280,32 @@ async function sendAutoReply(lead: Record<string, string>): Promise<ChannelResul
 // Email: forward lead details to Joshua
 // ---------------------------------------------------------------------------
 
-async function forwardToJoshua(lead: Record<string, string>): Promise<ChannelResult> {
+async function forwardToJoshua(lead: Record<string, string>, testMode = false): Promise<ChannelResult> {
   if (activeEmailProvider() === 'none') return skip('joshua-email')
 
+  // Healthcheck test lead: do not deliver a real "ignore me" email. CI going
+  // red is the alert path. We still report the channel as configured so a
+  // missing RESEND_API_KEY pages, but we do not call Resend — a live send is
+  // reserved for real form submissions.
+  if (testMode) {
+    return {
+      channel: 'joshua-email',
+      configured: true,
+      ok: true,
+      detail: 'send skipped (healthcheck)',
+    }
+  }
+
   const lines = Object.entries(lead)
-    .filter(([k]) => !k.startsWith('_') && k !== 'website')
+    // Empty attribution cells (a direct visitor has no gclid) would add a
+    // couple dozen blank rows. Non-empty values still render. Other fields
+    // keep their previous "show even if blank" behavior.
+    .filter(([k, v]) => !k.startsWith('_') && k !== 'website' && !(ATTRIBUTION_FIELD_SET.has(k) && v.trim() === ''))
     .map(([k, v]) => `<tr><td style="padding:6px 12px;color:#666;font-size:13px;width:140px;vertical-align:top;">${escapeHtml(k)}</td><td style="padding:6px 12px;font-size:13px;">${escapeHtml(v)}</td></tr>`)
     .join('')
 
   const sent = await sendEmail({
     to: TO_EMAIL,
-    toName: 'Joshua Fink',
     fromName: 'joshuafink.com Lead',
     ...(lead.email ? { replyTo: { email: lead.email, name: lead.name } } : {}),
     subject: `🏡 New Lead: ${lead.name || 'Unknown'} — ${lead.suburb || lead.subject || 'joshuafink.com'}`,
@@ -243,13 +330,20 @@ async function pushToSheet(
   // When set, the Apps Script files this row into a separate "Blocked" tab
   // (with the reason in its own column) instead of the CRM tab.
   blockedReason?: string,
+  // Daily healthcheck lead — tagged so the Apps Script files it into a
+  // "System" tab (same mechanism as Blocked) instead of the real CRM tab.
+  testMode = false,
 ): Promise<ChannelResult> {
   if (!GOOGLE_SHEET_WEBHOOK_URL) {
     console.log('Google Sheet: skipping — GOOGLE_SHEET_WEBHOOK_URL not set')
     return skip('sheet')
   }
 
-  // Drop internal fields (honeypot + timing) before logging.
+  // Drop internal fields (honeypot + timing) before logging. Attribution
+  // keys are ordinary lead fields — utm_*, click ids, first/last touch,
+  // landing_page, referrer, page_url — and must stay in the payload. The
+  // Apps Script appends any of them that the CRM tab doesn't have yet;
+  // it does not depend on key order.
   const clean = Object.fromEntries(
     Object.entries(lead).filter(([k]) => !k.startsWith('_') && k !== 'website')
   )
@@ -259,7 +353,11 @@ async function pushToSheet(
     // Normalize the lead type across the different forms into one column.
     lead_type: lead.subject || lead.lead_type || '',
     received_at: new Date().toISOString(),
-    ...(blockedReason ? { blocked_reason: blockedReason } : {}),
+    // blocked_reason is what the deployed Apps Script already routes to the
+    // Blocked tab. status: spam is a marker for a script that only writes the
+    // CRM tab and copies whatever status it is sent.
+    ...(blockedReason ? { blocked_reason: blockedReason, status: 'spam' } : {}),
+    ...(testMode ? { system_test: 'true' } : {}),
     ...(SHEET_WEBHOOK_SECRET ? { secret: SHEET_WEBHOOK_SECRET } : {}),
   }
 
@@ -299,8 +397,12 @@ async function pushToSheet(
 // High priority (1) so it bypasses quiet hours. No-ops until creds are set.
 // ---------------------------------------------------------------------------
 
-async function sendPushover(lead: Record<string, string>, silent = false): Promise<ChannelResult> {
-  if (!PUSHOVER_TOKEN || !PUSHOVER_USER) {
+async function sendPushover(lead: Record<string, string>): Promise<ChannelResult> {
+  // Read env per call so tests (and a mid-deploy env fix) see current creds.
+  // Module-level PUSHOVER_* still gates anyChannelConfigured at request start.
+  const token = process.env.PUSHOVER_TOKEN || PUSHOVER_TOKEN
+  const user = process.env.PUSHOVER_USER || PUSHOVER_USER
+  if (!token || !user) {
     console.log('Pushover: skipping — PUSHOVER_TOKEN or PUSHOVER_USER not set')
     return skip('pushover')
   }
@@ -309,6 +411,7 @@ async function sendPushover(lead: Record<string, string>, silent = false): Promi
   const source = lead.source ? ` · ${lead.source}` : ''
   const message = [
     lead.suspected_spam ? `⚠️ flagged: ${lead.suspected_spam} — check it` : null,
+    lead.traffic_source ? `↗ ${lead.traffic_source}` : null,
     lead.phone ? `📞 ${lead.phone}` : null,
     lead.email ? `✉️ ${lead.email}` : null,
     lead.property_address ? `🏠 ${lead.property_address}` : null,
@@ -317,15 +420,14 @@ async function sendPushover(lead: Record<string, string>, silent = false): Promi
   ].filter(Boolean).join('\n') || 'New lead from joshuafink.com'
 
   const params = new URLSearchParams({
-    token: PUSHOVER_TOKEN,
-    user: PUSHOVER_USER,
+    token,
+    user,
     title: `${lead.suspected_spam ? '⚠️ ' : '🏡 '}New Lead — ${lead.name || 'Unknown'} (${type})${source}`,
     message,
-    // Silent (-2, no alert at all) for healthcheck test leads — the API call
-    // still proves the channel works. High (1) for real leads — bypasses
-    // quiet hours.
-    priority: silent ? '-2' : '1',
-    sound: silent ? 'none' : 'cashregister',
+    // Always a real alert — including the weekday SYSTEM TEST lead. Josh
+    // wants the phone ping; only the Resend inbox email is skipped.
+    priority: '1',
+    sound: 'cashregister',
   })
 
   // Tap the notification to call the lead directly.
@@ -368,6 +470,7 @@ async function sendEmergencyPushover(
 
   const message = [
     '⚠️ A LEAD DID NOT DELIVER. Contact them now:',
+    lead.traffic_source ? `↗ ${lead.traffic_source}` : null,
     lead.name ? `👤 ${lead.name}` : null,
     lead.phone ? `📞 ${lead.phone}` : null,
     lead.email ? `✉️ ${lead.email}` : null,
@@ -434,6 +537,11 @@ async function sendEmergencyPushover(
 // single-source case that is actually easy to pull off.
 const FLOOD_MAX_PER_WINDOW = 12
 const FLOOD_WINDOW_MS = 60_000
+// Longer window than the hard flood cap. Five or more in ten minutes adds a
+// scoring signal (see classifyLead). It does not, by itself, quarantine a
+// normal lead — a household submitting a few forms still gets through, tagged
+// at most. In-memory, so it is per serverless instance, same as the flood cap.
+const RATE_WINDOW_MS = 10 * 60_000
 const submissionTimes = new Map<string, number[]>()
 
 function clientIp(req: NextRequest): string {
@@ -442,14 +550,18 @@ function clientIp(req: NextRequest): string {
   return req.headers.get('x-real-ip') ?? 'unknown'
 }
 
-/** Records this hit and reports whether the caller has now exceeded the window. */
-function exceedsFloodLimit(ip: string, now: number = Date.now()): boolean {
+/**
+ * Records this hit. `flooded` is the hard cap (more than 12 in 60 seconds).
+ * `recent` is how many hits this IP has in the last 10 minutes, including
+ * this one, and is passed to the scorer.
+ */
+function recordSubmission(ip: string, now: number = Date.now()): { flooded: boolean; recent: number } {
   // Prune every caller, not just this one, so the map cannot grow without bound
   // across a long-lived instance. forEach rather than for-of: this tsconfig
   // targets below ES2015, so iterating a Map directly needs downlevelIteration.
   const stale: string[] = []
   submissionTimes.forEach((times, key) => {
-    const live = times.filter((t: number) => now - t < FLOOD_WINDOW_MS)
+    const live = times.filter((t: number) => now - t < RATE_WINDOW_MS)
     if (live.length === 0) stale.push(key)
     else submissionTimes.set(key, live)
   })
@@ -457,16 +569,31 @@ function exceedsFloodLimit(ip: string, now: number = Date.now()): boolean {
   const hits = submissionTimes.get(ip) ?? []
   hits.push(now)
   submissionTimes.set(ip, hits)
-  return hits.length > FLOOD_MAX_PER_WINDOW
+  const inFloodWindow = hits.filter((t: number) => now - t < FLOOD_WINDOW_MS).length
+  return { flooded: inFloodWindow > FLOOD_MAX_PER_WINDOW, recent: hits.length }
+}
+
+let botChallengeWarned = false
+function noteBotChallengeConfig(): void {
+  const mode = botChallengeMode()
+  if (mode === 'off' || botChallengeWarned) return
+  botChallengeWarned = true
+  // The flag is recognized so a later change can enforce Turnstile or BotID.
+  // There is no widget on the forms, so this must not drop or challenge anyone.
+  console.warn(`LEAD_BOT_CHALLENGE=${mode} is not enforced (no widget on the forms). Spam scoring still applies.`)
 }
 
 export async function POST(req: NextRequest) {
-  // A lead reaches Joshua through ClickUp, the lead email, Pushover, or the
-  // Google Sheet log. As long as at least ONE of those is configured we can
-  // accept the submission; only fail closed when nothing is wired up.
+  // A lead reaches Joshua through the lead email, Pushover, or the Google
+  // Sheet log (ClickUp only if CLICKUP_LEADS_ENABLED=true). As long as at
+  // least ONE of those is configured we can accept the submission; only fail
+  // closed when nothing is wired up.
+
+  noteBotChallengeConfig()
 
   const ip = clientIp(req)
-  if (exceedsFloodLimit(ip)) {
+  const pace = recordSubmission(ip)
+  if (pace.flooded) {
     console.warn(`Contact API: flood limit hit by ${ip} — rejecting without notifying`)
     return NextResponse.json(
       { error: 'Too many submissions — please call or text 615-551-2727 directly' },
@@ -475,7 +602,7 @@ export async function POST(req: NextRequest) {
   }
 
   const anyChannelConfigured =
-    !!CLICKUP_TOKEN || activeEmailProvider() !== 'none' || (!!PUSHOVER_TOKEN && !!PUSHOVER_USER) || !!GOOGLE_SHEET_WEBHOOK_URL
+    clickupLeadsConfigured() || activeEmailProvider() !== 'none' || (!!PUSHOVER_TOKEN && !!PUSHOVER_USER) || !!GOOGLE_SHEET_WEBHOOK_URL
   if (!anyChannelConfigured) {
     console.error('Contact API misconfigured: no lead-delivery channel is set')
     return NextResponse.json(
@@ -485,8 +612,21 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const body = await req.json().catch(() => null)
-    const form = body || Object.fromEntries((await req.formData()).entries())
+    // JS forms POST JSON. Native <form method="POST"> (progressive
+    // enhancement) posts urlencoded / multipart. Reading json() first on a
+    // form body consumes it and then formData() throws "Body is unusable".
+    const contentType = req.headers.get('content-type') || ''
+    let form: Record<string, unknown>
+    if (contentType.includes('application/json')) {
+      const body = await req.json().catch(() => null)
+      form = body && typeof body === 'object' && !Array.isArray(body) ? body : {}
+    } else {
+      try {
+        form = Object.fromEntries((await req.formData()).entries())
+      } catch {
+        form = {}
+      }
+    }
     const lead = Object.fromEntries(
       Object.entries(form).map(([k, v]) => [k, String(v)])
     ) as Record<string, string>
@@ -498,20 +638,35 @@ export async function POST(req: NextRequest) {
       lead.email = ''
     }
 
-    // ---------- Classify ----------
-    const verdict = classifyLead(lead)
+    // No-JS submits don't carry the stashed first touch. Copy campaign
+    // parameters off the form-page Referer when the body left them blank,
+    // and never overwrite a value the browser already captured.
+    ensureLeadAttribution(lead, req.headers.get('referer'))
 
-    if (verdict.kind === 'bot') {
-      // Honeypot only. Log the WHOLE submission, not just the contact fields —
-      // if this ever fires on a real person (browsers can autofill the hidden
-      // field), the message text is the only way to identify and recover them.
-      console.log(`BOT blocked (${verdict.reason}): ${JSON.stringify(lead)}`)
-      // Durable copy in the sheet's "Blocked" tab, which Josh can skim for
-      // humans — sheet only, so real bots never make noise on ClickUp/Pushover/
-      // email. Awaited: Vercel freezes the function once the response is sent,
-      // so a fire-and-forget write here could silently never happen.
-      await pushToSheet(lead, verdict.reason)
-      // Return success so bots don't retry.
+    // ---------- Classify ----------
+    // No address to key on (some test clients, a stripped proxy header) must
+    // not share one bucket for the soft rate signal. The hard 12/minute cap
+    // above still applies to "unknown".
+    const verdict = classifyLead(lead, {
+      recentSubmissions: ip === 'unknown' ? 1 : pace.recent,
+    })
+
+    if (verdict.kind === 'bot' || verdict.kind === 'spam') {
+      // Honeypot, too-fast, or a high content score. Log the WHOLE submission —
+      // if this ever fires on a real person (a browser can autofill the hidden
+      // field, or someone pastes a weird message), the text is how Josh
+      // recovers them from the Blocked tab.
+      console.log(`Lead quarantined (${verdict.kind}/${verdict.reason}): ${JSON.stringify(lead)}`)
+      // Durable copy in the sheet's "Blocked" tab (blocked_reason is the
+      // existing Apps Script switch). Sheet only: no ClickUp, Pushover, email,
+      // auto-reply, or downstream webhooks. Awaited: Vercel freezes the
+      // function once the response is sent, so a fire-and-forget write here
+      // could silently never happen.
+      const quarantined = await pushToSheet(lead, verdict.reason)
+      if (quarantined.configured && !quarantined.ok) {
+        console.error(`Quarantine sheet write failed (${verdict.reason}): ${quarantined.detail}`)
+      }
+      // Success either way, so the bot cannot tell it was stopped.
       return NextResponse.json({ ok: true })
     }
 
@@ -540,59 +695,63 @@ export async function POST(req: NextRequest) {
     // Each of these resolves to a ChannelResult and never throws, so we can
     // inspect exactly what got through and react when nothing did.
     const [clickupRes, joshuaEmailRes, sheetRes, pushoverRes, autoReplyRes] = await Promise.all([
-      sendClickUp(lead, isHealthcheck), // test-lead task is deleted after it proves delivery
-      forwardToJoshua(lead),
-      pushToSheet(lead),
-      sendPushover(lead, isHealthcheck), // silent — a test lead must not buzz the phone
+      sendClickUp(lead, isHealthcheck), // no-op unless CLICKUP_LEADS_ENABLED=true; test-lead task is deleted after it proves delivery
+      forwardToJoshua(lead, isHealthcheck), // test mode skips Resend; real leads still email
+      pushToSheet(lead, undefined, isHealthcheck), // tagged → sheet's "System" tab, not the CRM tab
+      sendPushover(lead), // real alert even for the SYSTEM TEST — only email is skipped
       sendAutoReply(lead), // no-ops when no email; courtesy to the lead, not a Joshua channel
     ])
 
     // ---------- Best-effort local integrations (n8n / webhooks) ----------
-    // These target localhost by default and usually aren't reachable from
-    // Vercel; they're fire-and-forget and never count toward delivery.
+    // These never count toward delivery. Env defaults are localhost (FlipIntel /
+    // n8n on a laptop); skip loopback bases so they cannot hang the function
+    // on Vercel. A real non-loopback base is still awaited under
+    // fetchWithTimeout (LEAD_CHANNEL_TIMEOUT_MS).
     const leadType = (lead.subject || lead.lead_type || '').toLowerCase()
     const isCashOffer = lead.source === 'cash-offer' || ['sell', 'seller'].includes(leadType)
     const isBuyerLead = ['buy', 'both', 'invest', 'rent', 'other', 'buyer'].includes(leadType)
     const bestEffort: Promise<unknown>[] = []
 
-    const isSeller = ['sell', 'seller'].includes(leadType)
-    const drip = isSeller ? 'seller-lead' : 'buyer-lead'
-    bestEffort.push(
-      fetchWithTimeout(`${N8N_BASE}/${drip}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(lead),
-      }).then(() => undefined).catch(() => undefined)
-    )
-
-    if (isCashOffer) {
+    const enqueueWebhook = (base: string, url: string, payload: unknown) => {
+      if (isLoopbackWebhookBase(base)) return
       bestEffort.push(
-        fetchWithTimeout(`${CASH_OFFER_BASE}/cash-offer`, {
+        fetchWithTimeout(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(lead),
+          body: JSON.stringify(payload),
         }).then(() => undefined).catch(() => undefined)
       )
+    }
+
+    const n8nBase = webhookBase('N8N_WEBHOOK_BASE', 'http://localhost:5678/webhook')
+    const cashOfferBase = webhookBase('CASH_OFFER_WEBHOOK_BASE', 'http://localhost:5679/webhook')
+    const buyerBase = webhookBase('BUYER_LEAD_WEBHOOK_BASE', 'http://localhost:5680')
+
+    const isSeller = ['sell', 'seller'].includes(leadType)
+    const drip = isSeller ? 'seller-lead' : 'buyer-lead'
+    enqueueWebhook(n8nBase, `${n8nBase}/${drip}`, lead)
+
+    if (isCashOffer) {
+      enqueueWebhook(cashOfferBase, `${cashOfferBase}/cash-offer`, lead)
     }
 
     if (isBuyerLead) {
-      bestEffort.push(
-        fetchWithTimeout(`${BUYER_LEAD_WEBHOOK_BASE}/buyer-lead`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: lead.name || '',
-            phone: lead.phone || '',
-            email: lead.email || '',
-            subject: lead.subject || lead.lead_type || '',
-            body: lead.body || '',
-            source: lead.source || 'joshuafink.com',
-          }),
-        }).then(() => undefined).catch(() => undefined)
-      )
+      const attribution: Record<string, string> = {}
+      for (const key of LEAD_ATTRIBUTION_FIELDS) attribution[key] = lead[key] || ''
+      enqueueWebhook(buyerBase, `${buyerBase}/buyer-lead`, {
+        name: lead.name || '',
+        phone: lead.phone || '',
+        email: lead.email || '',
+        subject: lead.subject || lead.lead_type || '',
+        body: lead.body || '',
+        source: lead.source || 'joshuafink.com',
+        ...attribution,
+      })
     }
 
-    await Promise.allSettled(bestEffort)
+    if (bestEffort.length > 0) {
+      await Promise.allSettled(bestEffort)
+    }
 
     // ---------- Delivery detection ----------
     // A lead "reached Joshua" if any Joshua-facing channel succeeded.
@@ -609,9 +768,9 @@ export async function POST(req: NextRequest) {
         'CRITICAL: lead not delivered to any Joshua channel',
         JSON.stringify({ lead, failedChannels })
       )
-      // A test lead must never fire the priority-2 siren — the healthcheck's
-      // alert email is the paging path for it, and the 502 below still carries
-      // the per-channel results.
+      // A test lead must never fire the priority-2 siren — the healthcheck
+      // going red (CI/chat) is the paging path, and the 502 below still
+      // carries the per-channel results.
       const rescued = isHealthcheck ? false : await sendEmergencyPushover(lead, failedChannels)
 
       if (!rescued) {

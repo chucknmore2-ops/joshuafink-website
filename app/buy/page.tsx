@@ -19,11 +19,15 @@ export const metadata: Metadata = {
     canonical: 'https://www.joshuafink.com/buy',
   },
   openGraph: {
-    title: "Homes for Sale in Middle Tennessee — Buyer's Agent Joshua Fink",
+    // Title omits the brand so og:site_name does not render as
+    // "…Joshua Fink | Joshua Fink | Compass Real Estate" on unfurl.
+    // siteName must be set here: Next replaces the whole openGraph object
+    // when a page defines one, so the root-layout value is not inherited.
+    title: "Homes for Sale in Middle Tennessee — Buyer's Agent",
     description:
       "Insider access to every Middle Tennessee market — including off-market and Compass Coming Soon homes. Free buyer consultation with Joshua Fink at Compass.",
     url: 'https://www.joshuafink.com/buy',
-    siteName: 'Joshua Fink Group',
+    siteName: 'Joshua Fink | Compass Real Estate',
     type: 'website',
   },
 }
@@ -187,15 +191,6 @@ export default function BuyHubPage() {
               >
                 <input type="hidden" name="lead_type" value="buyer" />
                 <input type="hidden" name="source" value="buy-hub" />
-                {/* Honeypot — real users never see or fill this */}
-                <input
-                  type="text"
-                  name="website"
-                  tabIndex={-1}
-                  autoComplete="off"
-                  aria-hidden="true"
-                  className="absolute left-[-9999px] h-0 w-0 opacity-0"
-                />
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
@@ -204,16 +199,17 @@ export default function BuyHubPage() {
                       className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
                   </div>
                   <div>
-                    <label htmlFor="phone" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Phone *</label>
-                    <input type="tel" id="phone" name="phone" required placeholder="(615) 555-0123" autoComplete="tel"
+                    <label htmlFor="phone" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Phone</label>
+                    <input type="tel" id="phone" name="phone" placeholder="(615) 555-0123" autoComplete="tel"
                       className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Email Address *</label>
-                  <input type="email" id="email" name="email" required placeholder="you@example.com" autoComplete="email"
+                  <label htmlFor="email" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Email Address</label>
+                  <input type="email" id="email" name="email" placeholder="you@example.com" autoComplete="email"
                     className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                  <p className="mt-2 text-xs text-[#A0A0A0]">Phone or email — whichever you prefer.</p>
                 </div>
 
                 <div>

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import TrackedTelLink from '@/components/TrackedTelLink'
 
 export default function Footer() {
   const year = new Date().getFullYear()
@@ -19,12 +20,13 @@ export default function Footer() {
               TN License #351484
             </p>
             <div className="mt-5 space-y-2 text-sm">
-              <a
+              <TrackedTelLink
                 href="tel:6155512727"
                 className="block text-[#A0A0A0] hover:text-white transition-colors"
+                data-cta="footer-call"
               >
                 615-551-2727
-              </a>
+              </TrackedTelLink>
               <a
                 href="mailto:joshua@joshuafink.com"
                 className="block text-[#A0A0A0] hover:text-white transition-colors"
@@ -142,6 +144,7 @@ export default function Footer() {
               {[
                 { href: '/sell', label: 'Free Home Valuation' },
                 { href: '/cash-offer', label: 'Cash Offer in 24h' },
+                { href: '/cash-offer/nashville-tn', label: 'Sell My Home Fast Nashville' },
                 { href: '/sell/franklin-tn', label: 'Sell in Franklin' },
                 { href: '/sell/brentwood-tn', label: 'Sell in Brentwood' },
                 { href: '/sell/spring-hill-tn', label: 'Sell in Spring Hill' },
