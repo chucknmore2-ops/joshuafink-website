@@ -1,0 +1,90 @@
+name: Listing alert emails
+
+# After the Compass sync is on production, send one digest to opted-in
+# subscribers whose city or price filters match a new listing or a price drop.
+# The route baselines on its first successful run and will not email the
+# homes already in lib/listings.ts. post_log stops a second run of the same
+# sync from sending again.
+#
+# Triggers match GBP Just Listed: push to main that changes lib/listings.ts,
+# a dispatch from sync-listings.yml (GITHUB_TOKEN merges do not start the
+# push), and a 13:30 UTC backup. Vercel cron hits the same route at 13:30 UTC.
+
+on:
+  schedule:
+    - cron: '30 13 * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'lib/listings.ts'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: listing-alerts
+  cancel-in-progress: false
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Send listing alerts once production is serving this sync
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$CRON_SECRET" ]; then
+            echo "::error::CRON_SECRET is not set in repo secrets."
+            exit 1
+          fi
+
+          synced=$(sed -n 's/^export const listingsSyncedAt = "\([^"]*\)";/\1/p' lib/listings.ts)
+          if [ -z "$synced" ]; then
+            echo "::error::Could not read listingsSyncedAt from lib/listings.ts."
+            exit 1
+          fi
+          echo "Waiting until production listings are synced at $synced"
+
+          ready=0
+          for attempt in $(seq 1 16); do
+            html=$(curl -fsSL --max-time 25 "https://www.joshuafink.com/listings" || true)
+            if printf '%s' "$html" | grep -F "$synced" >/dev/null; then
+              ready=1
+              echo "Production is serving this listing sync."
+              break
+            fi
+            echo "Attempt $attempt: production does not have $synced yet."
+            if [ "$attempt" -lt 16 ]; then
+              sleep 30
+            fi
+          done
+
+          if [ "$ready" != "1" ]; then
+            echo "::notice::Production is not serving listingsSyncedAt ${synced} yet. Not sending."
+            exit 0
+          fi
+
+          response=$(curl -sS --max-time 120 -w "\n%{http_code}" \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            "https://www.joshuafink.com/api/cron/listing-alerts" || true)
+          status=$(printf '%s\n' "$response" | tail -n1)
+          body=$(printf '%s\n' "$response" | sed '$d')
+          echo "HTTP $status"
+          echo "$body"
+
+          if [ "$status" = "404" ]; then
+            echo "::notice::Listing alert route is not deployed yet. The daily schedule will retry."
+            exit 0
+          fi
+          if [ "$status" != "200" ]; then
+            echo "::error::Listing alert call failed with HTTP ${status}."
+            exit 1
+          fi

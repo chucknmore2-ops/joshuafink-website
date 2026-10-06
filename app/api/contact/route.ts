@@ -3,6 +3,7 @@ import { classifyLead } from '@/lib/classify-lead'
 import { botChallengeMode } from '@/lib/bot-challenge'
 import { ensureLeadAttribution, LEAD_ATTRIBUTION_FIELDS } from '@/lib/attribution'
 import { sendEmail, activeEmailProvider, fetchWithTimeout } from '@/lib/send-email'
+import { applyAlertFields, listingAlertOptIn } from '@/lib/listing-alerts'
 
 // Lead notifiers use fetchWithTimeout (LEAD_CHANNEL_TIMEOUT_MS, default 6s)
 // in parallel. 30s leaves room for the emergency Pushover fallback without
@@ -573,6 +574,20 @@ function recordSubmission(ip: string, now: number = Date.now()): { flooded: bool
   return { flooded: inFloodWindow > FLOOD_MAX_PER_WINDOW, recent: hits.length }
 }
 
+async function maybeSubscribeListingAlert(
+  lead: Record<string, string>,
+  testMode: boolean,
+): Promise<void> {
+  if (testMode || !listingAlertOptIn(lead)) return
+  try {
+    const { subscribeFromLead } = await import('@/lib/listing-alert-store')
+    const result = await subscribeFromLead(lead)
+    if (!result.ok) console.warn(`Listing alert opt-in not saved: ${result.detail}`)
+  } catch (err) {
+    console.warn('Listing alert opt-in failed:', err)
+  }
+}
+
 let botChallengeWarned = false
 function noteBotChallengeConfig(): void {
   const mode = botChallengeMode()
@@ -631,11 +646,17 @@ export async function POST(req: NextRequest) {
       Object.entries(form).map(([k, v]) => [k, String(v)])
     ) as Record<string, string>
 
-    if (!lead.name) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
-    }
     if (!lead.email) {
       lead.email = ''
+    }
+    applyAlertFields(lead)
+    // Alert signups ask for an email, not a name. The sheet and Pushover
+    // still need a name cell, and classifyLead rejects a blank one.
+    if (!(lead.name || '').trim() && (lead.source === 'listing-alerts' || lead.source === 'alerts') && lead.email.trim()) {
+      lead.name = 'Alert subscriber'
+    }
+    if (!(lead.name || '').trim()) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
     // No-JS submits don't carry the stashed first touch. Copy campaign
@@ -700,6 +721,7 @@ export async function POST(req: NextRequest) {
       pushToSheet(lead, undefined, isHealthcheck), // tagged → sheet's "System" tab, not the CRM tab
       sendPushover(lead), // real alert even for the SYSTEM TEST — only email is skipped
       sendAutoReply(lead), // no-ops when no email; courtesy to the lead, not a Joshua channel
+      maybeSubscribeListingAlert(lead, isHealthcheck),
     ])
 
     // ---------- Best-effort local integrations (n8n / webhooks) ----------

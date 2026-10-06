@@ -37,7 +37,7 @@ export default function PrivacyPage() {
 
         <h2 className="text-xl font-black text-black mt-8 mb-4">Third-Party Services</h2>
         <p className="text-[#444] leading-relaxed mb-4">
-          Contact and inquiry forms on this site are submitted to the site&apos;s own systems, which deliver them by email and to internal lead tools so we can respond to your inquiry. Listings are sourced from Compass Real Estate.
+          Contact and inquiry forms on this site are submitted to the site&apos;s own systems, which deliver them by email and to internal lead tools so we can respond to your inquiry. Listings are sourced from Compass Real Estate. If you check the listing-alert box, we email you about new Compass listings and price drops. Every one of those emails has a one-click unsubscribe. We do not add you to that list unless the box is checked, or you click yes on a permission email.
         </p>
 
         <h2 className="text-xl font-black text-black mt-8 mb-4">Contact</h2>

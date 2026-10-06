@@ -49,10 +49,10 @@ export function buildListingItemList(items: Listing[], name: string) {
  * Emits a RealEstateListing whose `about` is a SingleFamilyResidence built with
  * the SAME address / room-count / floor-size shape as buildListingItemList
  * above, so the detail page and the /listings grid describe each home
- * identically to Google. Price is intentionally omitted for the same
- * Search-Console-validity reason noted at the top of this file — it lives on the
- * visible page, not in the markup. `url` should be the on-site detail URL (not
- * the Compass URL) so this page is the canonical entity for the address.
+ * identically to Google. `url` should be the on-site detail URL (not the
+ * Compass URL) so this page is the canonical entity for the address.
+ * `offers` is an Offer for the synced list price only — no estimated value,
+ * no price history, no close date.
  * Sold homes emit availability SoldOut and omit datePosted/validThrough unless
  * a real lastVerified timestamp exists — we never invent a close date.
  */
@@ -90,15 +90,26 @@ export function buildListingSchema(listing: Listing, url: string, tourVideoId?: 
     ? new Date(new Date(datePosted).getTime() + 60 * 24 * 60 * 60 * 1000).toISOString()
     : undefined
 
+  const images = (listing.photoUrls?.filter(Boolean) ?? []).slice(0, 30)
+  const image = images.length ? images : listing.imageUrl ? [listing.imageUrl] : []
+  const availability = availabilityFor(listing.status)
+
   return {
     '@context': 'https://schema.org',
     '@type': 'RealEstateListing',
     url,
     name: listing.address,
-    ...(listing.imageUrl ? { image: listing.imageUrl } : {}),
+    ...(image.length ? { image } : {}),
     ...(datePosted ? { datePosted } : {}),
     ...(validThrough ? { validThrough } : {}),
-    availability: availabilityFor(listing.status),
+    availability,
+    offers: {
+      '@type': 'Offer',
+      price: listing.price,
+      priceCurrency: 'USD',
+      availability,
+      url,
+    },
     // Reference the canonical agent entity defined in app/layout.tsx (#agent)
     // so each listing feeds authority back into Joshua's knowledge graph.
     agent: { '@id': 'https://www.joshuafink.com/#agent' },

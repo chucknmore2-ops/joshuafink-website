@@ -85,3 +85,66 @@ export function decideFetchImagesWrite({ resolvedCount, unresolvedCount }) {
   }
   return { write: true, exitCode: 0, reason: 'ok' };
 }
+
+/** Safety cap mirrored in scripts/compass-gallery.mjs. */
+const PHOTO_URL_CAP = 30;
+
+/**
+ * Render lib/listings.ts. photoUrls is optional and capped. lastVerified stays
+ * a reference to listingsSyncedAt so every row shares the file's sync time.
+ */
+export function renderActiveListingsFile(listings, timestamp, sourceUrl) {
+  const listingsCode = listings.map((l) => {
+    const parts = [];
+    parts.push(`    address: ${JSON.stringify(l.address)}`);
+    parts.push(`    city: ${JSON.stringify(l.city)}`);
+    parts.push(`    price: ${l.price}`);
+    if (l.beds) parts.push(`    beds: ${l.beds}`);
+    if (l.baths) parts.push(`    baths: ${l.baths}`);
+    if (l.sqft) parts.push(`    sqft: ${l.sqft}`);
+    if (l.acres) parts.push(`    acres: ${l.acres}`);
+    parts.push(`    status: ${JSON.stringify(l.status)}`);
+    if (l.note) parts.push(`    note: ${JSON.stringify(l.note)}`);
+    parts.push(`    compassUrl: ${JSON.stringify(l.compassUrl)}`);
+    if (l.imageUrl) parts.push(`    imageUrl: ${JSON.stringify(l.imageUrl)}`);
+    if (Array.isArray(l.photoUrls) && l.photoUrls.length) {
+      const lines = l.photoUrls.slice(0, PHOTO_URL_CAP).map((url) => `      ${JSON.stringify(url)}`);
+      parts.push(`    photoUrls: [\n${lines.join(',\n')},\n    ]`);
+    }
+    parts.push(`    lastVerified: listingsSyncedAt`);
+    return `  {\n${parts.join(',\n')},\n  }`;
+  }).join(',\n');
+
+  return `// AUTO-GENERATED — Last synced: ${timestamp}
+// Source: ${sourceUrl}
+// Do not edit manually — run: node scripts/fetch-images.mjs
+
+export interface Listing {
+  address: string;
+  city: string;
+  price: number;
+  beds?: number;
+  baths?: number;
+  sqft?: number;
+  acres?: number;
+  status: string;
+  note?: string;
+  compassUrl: string;
+  imageUrl?: string;
+  // Compass photo gallery for this listing, largest first. Capped at 30.
+  // Absent when the sync could only confirm the hero image (imageUrl).
+  photoUrls?: string[];
+  // ISO timestamp of the last Compass sync that confirmed this listing.
+  // Used by /listings to flag the grid as 'Verifying…' if the file goes stale.
+  lastVerified?: string;
+}
+
+// Mirrors the header timestamp so server components can compute sync staleness
+// without parsing comments. Updated by scripts/fetch-images.mjs each sync.
+export const listingsSyncedAt = ${JSON.stringify(timestamp)};
+
+export const listings: Listing[] = [
+${listingsCode}
+];
+`;
+}

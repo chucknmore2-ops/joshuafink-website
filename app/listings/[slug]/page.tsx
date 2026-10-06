@@ -1,11 +1,15 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrustBadges from '@/components/TrustBadges'
 import ReviewStrip from '@/components/ReviewStrip'
 import TrackedTelLink from '@/components/TrackedTelLink'
+import ListingCard from '@/components/ListingCard'
+import ListingGallery from '@/components/ListingGallery'
+import ListingShowingForm from '@/components/ListingShowingForm'
+import ListingAlertsSignup from '@/components/ListingAlertsSignup'
+import ComingSoonNotifyForm from '@/components/ComingSoonNotifyForm'
 import {
   getListingBySlug,
   getTourVideoId,
@@ -16,6 +20,9 @@ import { buildListingSchema } from '@/lib/listing-schema'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 import { getSuburb, getSuburbSlugForListing } from '@/lib/suburbs'
 import { withUtm } from '@/lib/utm'
+import { listings } from '@/lib/listings'
+import { listingCityName, similarListings, suggestedPriceBand } from '@/lib/similar-listings'
+import { listingCtaKind, listingStatusBadgeClass, listingStatusLabel } from '@/lib/listing-cta'
 
 const SITE = 'https://www.joshuafink.com'
 
@@ -29,8 +36,6 @@ function formatPrice(price: number): string {
   }).format(price)
 }
 
-// `city` can look like "Brentwood, TN 37027 | MLS #3245826" — drop the MLS
-// suffix for display so headings and metadata stay clean.
 function cityDisplay(city: string): string {
   return city.split('|')[0].trim()
 }
@@ -51,9 +56,13 @@ function specString(listing: {
     .join(' · ')
 }
 
+function galleryPhotos(listing: { imageUrl?: string; photoUrls?: string[] }): string[] {
+  const extra = (listing.photoUrls ?? []).filter(Boolean).slice(0, 30)
+  if (extra.length) return extra
+  return listing.imageUrl ? [listing.imageUrl] : []
+}
+
 export async function generateStaticParams() {
-  // Set already de-dupes, so every generated route is unique. Includes
-  // indexable sold homes; colliding slugs are resolved in listing-detail.ts.
   return Array.from(listingDetailSlugs).map((slug) => ({ slug }))
 }
 
@@ -66,21 +75,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const specs = specString(listing)
   const url = `${SITE}/listings/${slug}`
   const sold = isSoldStatus(listing.status)
+  const photos = galleryPhotos(listing)
 
   const title = sold
-    ? `${listing.address}, ${city} — Sold ${formatPrice(listing.price)}${
-        specs ? ` · ${specs}` : ''
-      }`
-    : `${listing.address}, ${city} — ${formatPrice(listing.price)}${
-        specs ? ` · ${specs}` : ''
-      }`
+    ? `${listing.address}, ${city} — Sold ${formatPrice(listing.price)}${specs ? ` · ${specs}` : ''}`
+    : `${listing.address}, ${city} — ${formatPrice(listing.price)}${specs ? ` · ${specs}` : ''}`
   const description = sold
     ? `Sold-property record from Joshua Fink Group's Compass inventory: ${listing.address} in ${city} — ${formatPrice(listing.price)}${
         specs ? `, ${specs}` : ''
       }. Closing date, days on market, and representation side are not published on this page. Ask Joshua about similar homes or a valuation.`
     : `${listing.address} in ${city} — ${formatPrice(listing.price)}${
         specs ? `, ${specs}` : ''
-      }. ${listing.status} listing represented by Joshua Fink at Compass Real Estate. Request full details or a private showing.`
+      }. ${listingStatusLabel(listing.status)} listing represented by Joshua Fink at Compass Real Estate. Request full details or a private showing.`
 
   return {
     title,
@@ -94,7 +100,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url,
       siteName: 'Joshua Fink Group',
       type: 'website',
-      ...(listing.imageUrl ? { images: [{ url: listing.imageUrl }] } : {}),
+      ...(photos[0] ? { images: [{ url: photos[0] }] } : {}),
     },
   }
 }
@@ -108,6 +114,12 @@ export default async function ListingDetailPage({ params }: Props) {
   const url = `${SITE}/listings/${slug}`
   const specs = specString(listing)
   const sold = isSoldStatus(listing.status)
+  const cta = listingCtaKind(listing.status)
+  const photos = galleryPhotos(listing)
+  const propertyAddress = `${listing.address}, ${city}`
+  const cityName = listingCityName(listing.city)
+  const band = suggestedPriceBand(listing.price)
+  const similar = similarListings(listing, listings)
 
   const suburbSlug = getSuburbSlugForListing(listing.city)
   const suburbName = suburbSlug ? getSuburb(suburbSlug)?.name : undefined
@@ -127,8 +139,6 @@ export default async function ListingDetailPage({ params }: Props) {
     { name: `${listing.address}, ${city}`, href: `/listings/${slug}` },
   ])
 
-  // Secondary hand-off to Compass — tagged so the joshuafink.com → Compass
-  // funnel is attributable, mirroring ListingCard's UTM convention.
   const compassHref = withUtm(listing.compassUrl, {
     source: 'joshuafink',
     medium: 'referral',
@@ -136,58 +146,43 @@ export default async function ListingDetailPage({ params }: Props) {
     content: slug,
   })
 
-  // Seed the lead form's message with the property so Joshua sees intent
-  // immediately and the visitor can edit before sending.
   const prefilledMessage = sold
     ? `I'm looking for a home like ${listing.address}, ${city} (sold record). Please send similar homes or a valuation.`
     : `I'm interested in ${listing.address}, ${city}. Please send me more details and let me know about a showing.`
 
   const detailRows: { label: string; value: string }[] = [
     { label: sold ? 'Sold price' : 'Price', value: formatPrice(listing.price) },
-    ...(listing.beds !== undefined
-      ? [{ label: 'Bedrooms', value: String(listing.beds) }]
-      : []),
-    ...(listing.baths !== undefined
-      ? [{ label: 'Bathrooms', value: String(listing.baths) }]
-      : []),
-    ...(listing.sqft !== undefined
-      ? [{ label: 'Square Feet', value: listing.sqft.toLocaleString() }]
-      : []),
-    ...(listing.acres !== undefined
-      ? [{ label: 'Acres', value: String(listing.acres) }]
-      : []),
-    { label: 'Status', value: listing.status },
+    ...(listing.beds !== undefined ? [{ label: 'Bedrooms', value: String(listing.beds) }] : []),
+    ...(listing.baths !== undefined ? [{ label: 'Bathrooms', value: String(listing.baths) }] : []),
+    ...(listing.sqft !== undefined ? [{ label: 'Square Feet', value: listing.sqft.toLocaleString() }] : []),
+    ...(listing.acres !== undefined ? [{ label: 'Acres', value: String(listing.acres) }] : []),
+    { label: 'Status', value: listingStatusLabel(listing.status) },
     { label: 'City', value: city },
   ]
 
+  const primaryHref = cta === 'coming-soon' ? '#notify' : cta === 'under-contract' ? '#similar' : cta === 'sold' ? '#lead' : '#showing'
+  const primaryLabel = cta === 'coming-soon'
+    ? "Get notified when it's live"
+    : cta === 'under-contract'
+      ? 'See similar homes'
+      : cta === 'sold'
+        ? 'Ask about similar homes'
+        : 'Schedule a showing'
+
   return (
     <div className="bg-white">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(listingLd) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(listingLd) }} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
-        {/* Breadcrumb / back link */}
         <nav aria-label="Breadcrumb" className="mb-6">
           <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-neutral-500">
             <li>
-              <Link href="/" className="hover:text-black underline-offset-4 hover:underline">
-                Home
-              </Link>
+              <Link href="/" className="hover:text-black underline-offset-4 hover:underline">Home</Link>
             </li>
             <li aria-hidden className="text-neutral-300">/</li>
             <li>
-              <Link
-                href="/listings"
-                className="hover:text-black underline-offset-4 hover:underline"
-              >
-                Listings
-              </Link>
+              <Link href="/listings" className="hover:text-black underline-offset-4 hover:underline">Listings</Link>
             </li>
             <li aria-hidden className="text-neutral-300">/</li>
             {suburbSlug && suburbName && (
@@ -207,59 +202,13 @@ export default async function ListingDetailPage({ params }: Props) {
           </ol>
         </nav>
 
-        {/* Listing image */}
-        <div className="relative bg-neutral-100 aspect-[16/10] sm:aspect-[16/9] overflow-hidden rounded-2xl flex items-center justify-center">
-          {listing.imageUrl ? (
-            <Image
-              src={listing.imageUrl}
-              alt={`${listing.address}, ${city}`}
-              fill
-              priority
-              className="object-cover"
-              sizes="(max-width: 1024px) 100vw, 1024px"
-            />
-          ) : (
-            <div className="text-center text-neutral-400 px-4">
-              <svg
-                className="w-12 h-12 mx-auto mb-2 text-neutral-300"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M3 9.75L12 3l9 6.75V21H3V9.75z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M9 21V12h6v9"
-                />
-              </svg>
-              <span className="text-xs tracking-wide">
-                {sold ? 'Photo on request' : 'Photo available on Compass'}
-              </span>
-            </div>
-          )}
-          <span
-            className={`absolute top-4 left-4 text-xs font-semibold px-3 py-1 rounded-full tracking-wide ${
-              sold
-                ? 'bg-red-600 text-white'
-                : listing.status === 'Active'
-                  ? 'bg-black text-white'
-                  : listing.status.startsWith('Open')
-                    ? 'bg-neutral-900 text-white'
-                    : 'bg-neutral-100 text-neutral-600'
-            }`}
-          >
-            {listing.status}
-          </span>
-        </div>
+        <ListingGallery
+          photos={photos}
+          alt={`${listing.address}, ${city}`}
+          statusLabel={listingStatusLabel(listing.status)}
+          statusClassName={listingStatusBadgeClass(listing.status)}
+        />
 
-        {/* Virtual tour — hand-mapped per listing in lib/listing-detail.ts (tourVideos) */}
         {tourVideoId && (
           <div className="mt-6 aspect-video overflow-hidden rounded-2xl bg-neutral-100">
             <iframe
@@ -274,70 +223,73 @@ export default async function ListingDetailPage({ params }: Props) {
           </div>
         )}
 
-        {/* Trust signals — credentials and rating in view before the lead form */}
         <div className="mt-6">
           <TrustBadges variant="light" />
         </div>
 
-        {/* Header + two-column body */}
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-14">
-          {/* Left: property info */}
           <div className="lg:col-span-2">
-            <p className="text-4xl font-black text-black tracking-tight">
-              {formatPrice(listing.price)}
-            </p>
-            <h1 className="text-2xl sm:text-3xl font-black text-black tracking-tight mt-2">
-              {listing.address}
-            </h1>
+            <p className="text-4xl font-black text-black tracking-tight">{formatPrice(listing.price)}</p>
+            <h1 className="text-2xl sm:text-3xl font-black text-black tracking-tight mt-2">{listing.address}</h1>
             <p className="text-neutral-500 mt-1">{city}</p>
+
+            <div className="mt-5 flex flex-wrap gap-3">
+              <a
+                href={primaryHref}
+                className="inline-flex items-center justify-center bg-black text-white text-sm font-bold px-6 py-3 rounded-full"
+              >
+                {primaryLabel}
+              </a>
+              {cta === 'under-contract' && (
+                <a
+                  href="#alerts"
+                  className="inline-flex items-center justify-center border border-black text-black text-sm font-bold px-6 py-3 rounded-full"
+                >
+                  Get alerts for homes like this
+                </a>
+              )}
+            </div>
 
             {specs && (
               <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-neutral-600">
                 {listing.beds !== undefined && (
-                  <span>
-                    <strong className="text-black font-semibold">{listing.beds}</strong> beds
-                  </span>
+                  <span><strong className="text-black font-semibold">{listing.beds}</strong> beds</span>
                 )}
                 {listing.baths !== undefined && (
-                  <span>
-                    <strong className="text-black font-semibold">{listing.baths}</strong> baths
-                  </span>
+                  <span><strong className="text-black font-semibold">{listing.baths}</strong> baths</span>
                 )}
                 {listing.sqft !== undefined && (
                   <span>
-                    <strong className="text-black font-semibold">
-                      {listing.sqft.toLocaleString()}
-                    </strong>{' '}
-                    sqft
+                    <strong className="text-black font-semibold">{listing.sqft.toLocaleString()}</strong> sqft
                   </span>
                 )}
                 {listing.acres !== undefined && (
-                  <span>
-                    <strong className="text-black font-semibold">{listing.acres}</strong> acres
-                  </span>
+                  <span><strong className="text-black font-semibold">{listing.acres}</strong> acres</span>
                 )}
               </div>
             )}
 
-            {listing.note && (
-              <p className="mt-5 text-sm text-neutral-600 leading-relaxed">{listing.note}</p>
-            )}
+            {listing.note && <p className="mt-5 text-sm text-neutral-600 leading-relaxed">{listing.note}</p>}
 
             {sold && (
               <p className="mt-5 text-sm text-neutral-600 leading-relaxed">
-                This page republishes a sold-property record from Joshua Fink Group&apos;s
-                Compass inventory. The price and property details below are the fields stored
-                on this site. Closing date, days on market, and which side of the transaction
-                Joshua represented are not in the site data, so they are omitted. If you want
-                a similar home or a valuation, use the form — Joshua answers at 615-551-2727.
+                This page republishes a sold-property record from Joshua Fink Group&apos;s Compass inventory.
+                The price and property details below are the fields stored on this site. Closing date, days
+                on market, and which side of the transaction Joshua represented are not in the site data, so
+                they are omitted. If you want a similar home or a valuation, use the form — Joshua answers
+                at 615-551-2727.
               </p>
             )}
 
-            {/* Details table */}
+            {cta === 'under-contract' && (
+              <p className="mt-5 text-sm text-neutral-600 leading-relaxed">
+                This Compass listing is under contract. The homes below are other listings in the same city
+                or a similar price, and you can get an email when a new one is listed.
+              </p>
+            )}
+
             <div className="mt-8">
-              <h2 className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
-                Property Details
-              </h2>
+              <h2 className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">Property Details</h2>
               <dl className="divide-y divide-neutral-200 border-t border-neutral-200">
                 {detailRows.map((row) => (
                   <div key={row.label} className="flex justify-between py-3 text-sm">
@@ -348,7 +300,6 @@ export default async function ListingDetailPage({ params }: Props) {
               </dl>
             </div>
 
-            {/* Secondary hand-off — capture first, Compass second */}
             <div className="mt-8">
               <a
                 href={compassHref}
@@ -362,184 +313,159 @@ export default async function ListingDetailPage({ params }: Props) {
               <p className="mt-3 text-xs text-neutral-400">
                 {sold
                   ? 'Compass is the source listing for this sold record. Closing date, days on market, and representation side are not in the site data and are not shown here.'
-                  : 'Full photo gallery and MLS documents are hosted on Compass with Joshua as your attributed agent.'}
+                  : 'MLS documents are hosted on Compass with Joshua as your attributed agent. Photos on this page are not behind a form.'}
               </p>
             </div>
 
             <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm">
               {suburbSlug && suburbName && (
                 <>
-                  <Link
-                    href={`/buy/${suburbSlug}`}
-                    className="text-black font-semibold underline-offset-4 hover:underline"
-                  >
+                  <Link href={`/buy/${suburbSlug}`} className="text-black font-semibold underline-offset-4 hover:underline">
                     Browse {suburbName} homes for sale →
                   </Link>
-                  <Link
-                    href={`/market/${suburbSlug}`}
-                    className="text-black font-semibold underline-offset-4 hover:underline"
-                  >
+                  <Link href={`/market/${suburbSlug}`} className="text-black font-semibold underline-offset-4 hover:underline">
                     {suburbName} market report →
                   </Link>
-                  <Link
-                    href={`/cash-offer/${suburbSlug}`}
-                    className="text-neutral-500 underline-offset-4 hover:underline hover:text-black"
-                  >
+                  <Link href={`/cash-offer/${suburbSlug}`} className="text-neutral-500 underline-offset-4 hover:underline hover:text-black">
                     Selling first? Get a cash offer →
                   </Link>
                 </>
               )}
-              <Link
-                href="/neighborhoods"
-                className="text-neutral-500 underline-offset-4 hover:underline hover:text-black"
-              >
+              <Link href="/neighborhoods" className="text-neutral-500 underline-offset-4 hover:underline hover:text-black">
                 Neighborhood guides →
               </Link>
-              <Link
-                href="/listings"
-                className="text-neutral-500 underline-offset-4 hover:underline hover:text-black"
-              >
+              <Link href="/listings" className="text-neutral-500 underline-offset-4 hover:underline hover:text-black">
                 All listings →
+              </Link>
+              <Link href="/alerts" className="text-neutral-500 underline-offset-4 hover:underline hover:text-black">
+                New listing alerts →
               </Link>
             </div>
           </div>
 
-          {/* Right: lead capture — last in the mobile stack so price and specs land before the ask;
-              the sticky "Ask Joshua" bar anchors to #lead, so the form stays one tap away */}
           <div className="lg:col-span-1 lg:order-last">
-            <div id="lead" className="lg:sticky lg:top-24 border border-[#E8E8E8] rounded-2xl p-6 sm:p-8 scroll-mt-24">
-              <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-2">
-                {sold ? 'This home has sold' : 'Interested in this home?'}
-              </p>
-              <h2 className="text-2xl font-black text-black tracking-tight mb-2">
-                {sold ? 'Ask about similar homes' : 'Ask Joshua for details'}
-              </h2>
-              <p className="text-sm text-[#6B6B6B] leading-relaxed mb-6">
-                {sold
-                  ? `Looking for something like ${listing.address}, or want a valuation on your address? Joshua responds same-day.`
-                  : `Get pricing history, disclosures, and a private showing for ${listing.address}. Joshua responds same-day.`}
-              </p>
-
-              <SuburbLeadForm
-                successTitle="Request Sent!"
-                successMessage={
-                  <>
-                    Joshua will reach out same-day
-                    {sold ? ` about homes like ${listing.address}` : ` about ${listing.address}`}. For
-                    anything urgent,
-                    call{' '}
-                    <TrackedTelLink
-                      href="tel:6155512727"
-                      className="text-black font-semibold underline"
-                      data-cta="listing-detail-success-call"
-                    >
-                      615-551-2727
-                    </TrackedTelLink>
-                    .
-                  </>
-                }
-                resetLabel="Send Another"
-              >
-                <input type="hidden" name="lead_type" value="buyer" />
-                <input type="hidden" name="source" value={sold ? 'listing-detail-sold' : 'listing-detail'} />
-                {/* property_address tells Joshua which home the lead is about —
-                    it lands in the lead email and the sheet's property_address column. */}
-                <input type="hidden" name="property_address" value={`${listing.address}, ${city}`} />
-                {suburbName && <input type="hidden" name="suburb" value={suburbName} />}
-
+            <div id="lead" className="border border-[#E8E8E8] rounded-2xl p-6 sm:p-8 scroll-mt-24 space-y-10">
+              {cta === 'showing' && (
+                <ListingShowingForm
+                  address={listing.address}
+                  city={city}
+                  propertyAddress={propertyAddress}
+                  suburb={suburbName}
+                />
+              )}
+              {cta === 'coming-soon' && (
+                <ComingSoonNotifyForm
+                  address={listing.address}
+                  propertyAddress={propertyAddress}
+                  suburb={suburbName}
+                />
+              )}
+              {cta === 'under-contract' && (
                 <div>
-                  <label
-                    htmlFor="name"
-                    className="block text-xs font-semibold text-black tracking-widest uppercase mb-2"
-                  >
-                    Full Name *
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    required
-                    placeholder="Jane Smith"
-                    autoComplete="name"
-                    className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors"
-                  />
+                  <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-2">Under contract</p>
+                  <h2 className="text-2xl font-black text-black tracking-tight mb-2">See similar homes</h2>
+                  <p className="text-sm text-[#6B6B6B] leading-relaxed mb-4">
+                    {listing.address} is under contract. Look at other Compass listings nearby, or get an email when one like it is listed.
+                  </p>
+                  <a href="#similar" className="inline-flex items-center justify-center bg-black text-white text-sm font-bold px-6 py-3 rounded-full">
+                    See similar homes
+                  </a>
                 </div>
+              )}
+              {cta === 'sold' && (
                 <div>
-                  <label
-                    htmlFor="phone"
-                    className="block text-xs font-semibold text-black tracking-widest uppercase mb-2"
+                  <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-2">This home has sold</p>
+                  <h2 className="text-2xl font-black text-black tracking-tight mb-2">Ask about similar homes</h2>
+                  <p className="text-sm text-[#6B6B6B] leading-relaxed mb-6">
+                    Looking for something like {listing.address}, or want a valuation on your address? Joshua responds same-day.
+                  </p>
+                  <SuburbLeadForm
+                    successTitle="Request Sent!"
+                    successMessage={
+                      <>
+                        Joshua will reach out same-day about homes like {listing.address}. For anything urgent, call{' '}
+                        <TrackedTelLink href="tel:6155512727" className="text-black font-semibold underline" data-cta="listing-detail-success-call">
+                          615-551-2727
+                        </TrackedTelLink>
+                        .
+                      </>
+                    }
+                    resetLabel="Send Another"
                   >
-                    Phone (optional — fastest reply)
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    placeholder="615-555-0000"
-                    autoComplete="tel"
-                    className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors"
-                  />
+                    <input type="hidden" name="lead_type" value="buyer" />
+                    <input type="hidden" name="source" value="listing-detail-sold" />
+                    <input type="hidden" name="property_address" value={propertyAddress} />
+                    {suburbName && <input type="hidden" name="suburb" value={suburbName} />}
+                    <div>
+                      <label htmlFor="sold-name" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Full Name *</label>
+                      <input type="text" id="sold-name" name="name" required placeholder="Jane Smith" autoComplete="name" className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                    </div>
+                    <div>
+                      <label htmlFor="sold-phone" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Phone (optional — fastest reply)</label>
+                      <input type="tel" id="sold-phone" name="phone" placeholder="615-555-0000" autoComplete="tel" className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                    </div>
+                    <div>
+                      <label htmlFor="sold-email" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Email Address (optional)</label>
+                      <input type="email" id="sold-email" name="email" placeholder="you@example.com" autoComplete="email" className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                    </div>
+                    <div>
+                      <label htmlFor="sold-body" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Message</label>
+                      <textarea id="sold-body" name="body" rows={3} defaultValue={prefilledMessage} className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors resize-y" />
+                    </div>
+                    <button type="submit" className="w-full inline-flex items-center justify-center bg-black text-white text-sm font-bold px-8 py-4 tracking-wide rounded-full hover:bg-neutral-800 transition-colors">
+                      Send to Joshua →
+                    </button>
+                  </SuburbLeadForm>
                 </div>
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-xs font-semibold text-black tracking-widest uppercase mb-2"
-                  >
-                    Email Address (optional)
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder="you@example.com"
-                    autoComplete="email"
-                    className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="body"
-                    className="block text-xs font-semibold text-black tracking-widest uppercase mb-2"
-                  >
-                    Message
-                  </label>
-                  <textarea
-                    id="body"
-                    name="body"
-                    rows={3}
-                    defaultValue={prefilledMessage}
-                    className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors resize-y"
-                  />
-                </div>
+              )}
 
-                <button
-                  type="submit"
-                  className="w-full inline-flex items-center justify-center bg-black text-white text-sm font-bold px-8 py-4 tracking-wide rounded-full hover:bg-neutral-800 transition-colors"
-                >
-                  Send to Joshua →
-                </button>
-
-                <TrackedTelLink
-                  href={`sms:+16155512727?&body=${encodeURIComponent(
-                    `Hi Joshua, I'm interested in ${listing.address}, ${city}`,
-                  )}`}
-                  className="w-full inline-flex items-center justify-center border-2 border-black text-black text-sm font-bold px-8 py-4 tracking-wide rounded-full hover:bg-black hover:text-white transition-colors"
-                  data-cta="listing-detail-sms"
-                  aria-label={`Text Joshua about ${listing.address}`}
-                >
-                  Or text Joshua
-                </TrackedTelLink>
-
-                <p className="text-xs text-[#A0A0A0]">
-                  * Joshua responds same-day. No spam, no pressure.
-                </p>
-              </SuburbLeadForm>
+              {cta !== 'sold' && (
+                <ListingAlertsSignup
+                  source="listing-alerts"
+                  city={cityName}
+                  priceMin={band.min}
+                  priceMax={band.max}
+                  propertyAddress={propertyAddress}
+                />
+              )}
+              {cta === 'sold' && (
+                <ListingAlertsSignup
+                  source="listing-alerts"
+                  city={cityName}
+                  priceMin={band.min}
+                  priceMax={band.max}
+                  propertyAddress={propertyAddress}
+                  heading="Get alerts for homes like this"
+                  intro="This home has sold. Leave your email if you want a note when Joshua lists something in a similar price or city."
+                />
+              )}
             </div>
           </div>
         </div>
+
+        {similar.length > 0 && (
+          <section id="similar" className="mt-16 scroll-mt-24">
+            <h2 className="text-2xl font-black text-black tracking-tight">Similar homes</h2>
+            <p className="mt-2 text-sm text-neutral-500">
+              Other Compass listings in {cityName || 'the same city'} or a similar price.
+              {suburbSlug && suburbName ? (
+                <>
+                  {' '}
+                  <Link href={`/buy/${suburbSlug}`} className="text-black font-semibold underline-offset-4 hover:underline">
+                    Browse {suburbName} homes
+                  </Link>
+                </>
+              ) : null}
+            </p>
+            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {similar.map((home) => (
+                <ListingCard key={home.compassUrl} listing={home} />
+              ))}
+            </div>
+          </section>
+        )}
       </div>
 
-      {/* Social proof — same strip used on /buy, /sell and /cash-offer */}
       <ReviewStrip variant="light" limit={3} />
     </div>
   )
