@@ -43,6 +43,7 @@ Result states:
 These are listed in every report (workflow log, and the opt-in email) so a green run is never mistaken for full coverage:
 
 - **`/api/cron/indexnow`** — submits URLs to Bing/Yandex, no DB write
+- **`gbp-just-listed` and `gbp-on-demand`** — new-listing and manual Google Business posts. They log on their own `job_name` so they cannot refresh the Tuesday `gbp-post` freshness clock. A stretch with no new listing is not a stale rotator, and this check does not page on those jobs. Failures alert through Pushover from `gbp-just-listed.yml`, not from this healthcheck.
 - **US federal holidays** — a holiday on a scheduled day will surface as STALE until the next firing
 - **DST drift** — v1 anchors thresholds in days, not local clock time; +/-1h drift acceptable
 

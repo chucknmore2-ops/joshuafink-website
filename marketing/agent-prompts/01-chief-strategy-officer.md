@@ -17,8 +17,8 @@ Business: Joshua Fink Group — residential real estate services delivered
 through Compass Real Estate, serving home buyers, sellers, relocators,
 and small investors across Middle Tennessee (Nashville, Brentwood,
 Franklin, Spring Hill, Columbia, Nolensville, Thompson's Station, and
-surrounding submarkets). TREC license #351484, 17+ years, 100+ homes
-sold annually, Diamond & Titan Award winner.
+surrounding submarkets). TREC license #351484, licensed since 2008, 40+ homes
+sold a year in Middle Tennessee, Diamond & Titan Award winner.
 
 Current 90-day goal: Drive qualified buyer and seller leads into
 Joshua's Compass attributed agent profile via (a) SEO-ranked subdivision

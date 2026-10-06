@@ -330,7 +330,7 @@ export default function BuyerGuidePage() {
                   the search narrowed to two or three neighborhoods, Joshua will do that on a call.
                 </p>
                 <p className="text-sm mt-4 leading-relaxed" style={{ color: '#A0A0A0' }}>
-                  Joshua Fink · Affiliate Broker, Compass Real Estate · TN license #351484 · 17 years in Middle Tennessee
+                  Joshua Fink · Affiliate Broker, Compass Real Estate · TN license #351484 · Licensed since 2008
                 </p>
                 <div className="flex flex-col sm:flex-row flex-wrap gap-3 mt-8">
                   <Link
@@ -700,6 +700,7 @@ export default function BuyerGuidePage() {
                       id="bg-name"
                       name="name"
                       required
+                      autoComplete="name"
                       placeholder="Jane Smith"
                       className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors"
                     />
@@ -713,6 +714,7 @@ export default function BuyerGuidePage() {
                       id="bg-email"
                       name="email"
                       required
+                      autoComplete="email"
                       placeholder="you@example.com"
                       className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors"
                     />
@@ -728,6 +730,7 @@ export default function BuyerGuidePage() {
                       type="tel"
                       id="bg-phone"
                       name="phone"
+                      autoComplete="tel"
                       placeholder="615-555-0000"
                       className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors"
                     />

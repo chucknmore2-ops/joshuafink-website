@@ -229,12 +229,12 @@ Consistency > volume: 8 accurate citations beat 50 sloppy ones.
 
 ### Business description — ~740 characters (Apple, Bing, Yelp, Data Axle, directories)
 ```
-Joshua Fink Group is a Middle Tennessee real estate team led by Joshua Fink, an Affiliate Broker with Compass Real Estate based in Brentwood, TN. With 17+ years of experience and 100+ homes sold each year, Joshua helps buyers and sellers across Williamson, Davidson, Rutherford, Sumner, Maury and Wilson counties — including Franklin, Brentwood, Spring Hill, Nolensville, Thompson's Station, Nashville, Murfreesboro, Gallatin, Hendersonville, Mount Juliet, Columbia, Lebanon and Smyrna. He pairs on-the-ground neighborhood expertise with Compass market data and tools like Coming Soon and Concierge to price sharply, negotiate hard, and move fast. Call 615-551-2727 or visit joshuafink.com to start your move.
+Joshua Fink Group is a Middle Tennessee real estate team led by Joshua Fink, an Affiliate Broker with Compass Real Estate based in Brentwood, TN. Licensed since 2008, with 40+ homes a year in Middle Tennessee, Joshua helps buyers and sellers across Williamson, Davidson, Rutherford, Sumner, Maury and Wilson counties — including Franklin, Brentwood, Spring Hill, Nolensville, Thompson's Station, Nashville, Murfreesboro, Gallatin, Hendersonville, Mount Juliet, Columbia, Lebanon and Smyrna. He pairs on-the-ground neighborhood expertise with Compass market data and tools like Coming Soon and Concierge to price sharply, negotiate hard, and move fast. Call 615-551-2727 or visit joshuafink.com to start your move.
 ```
 
 ### Short description — ~250 characters (tight-limit fields)
 ```
-Joshua Fink Group — Joshua Fink, Affiliate Broker at Compass Real Estate in Brentwood, TN. 17+ years, 100+ homes sold/year across Franklin, Brentwood, Nashville & all of Middle Tennessee. Buy or sell with confidence. Call 615-551-2727 or visit joshuafink.com.
+Joshua Fink Group — Joshua Fink, Affiliate Broker at Compass Real Estate in Brentwood, TN. Licensed since 2008, 40+ homes a year in Middle Tennessee across Franklin, Brentwood, Nashville and beyond. Buy or sell with confidence. Call 615-551-2727 or visit joshuafink.com.
 ```
 
 ### Reporter-query / local-media outreach template
@@ -251,7 +251,7 @@ seller advice. No fluff, no sales pitch.]
 
 Attribution:
 Joshua Fink, Affiliate Broker, Compass Real Estate (Joshua Fink Group), Brentwood, TN
-17+ years in Middle Tennessee real estate, 100+ homes sold annually
+Licensed since 2008, 40+ homes a year in Middle Tennessee
 Website: https://www.joshuafink.com  ·  615-551-2727
 
 Happy to expand or provide additional data on Franklin, Brentwood, Nashville,

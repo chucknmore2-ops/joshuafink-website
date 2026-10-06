@@ -6,6 +6,7 @@ import {
   buildSnapshot,
   categoryClosings,
   categoryInventory,
+  chicagoIsoDate,
   formatSnapshotBlock,
   insertSnapshotBlock,
   matchRelease,
@@ -72,6 +73,8 @@ const augustRelease: GnarRelease = {
     'Currently, there are 5.8 months of available inventory in the Greater Nashville region.',
 }
 
+const onTheAugustDateline = new Date('2026-09-08T15:00:00Z')
+
 describe('GNAR snapshot builder', () => {
   it('sums August 2026 categories to the published totals', () => {
     assert.equal(categoryClosings(august2026), 2928)
@@ -98,6 +101,7 @@ describe('GNAR snapshot builder', () => {
       stats: august2026,
       prior: august2025,
       release: augustRelease,
+      now: onTheAugustDateline,
     })
     assert.equal(built.ok, true)
     if (!built.ok) return
@@ -114,6 +118,7 @@ describe('GNAR snapshot builder', () => {
       stats: august2026,
       prior: null,
       release: { ...augustRelease, text: 'NASHVILLE, Tenn. (Sept. 8, 2026) August closings were 2,928.' },
+      now: onTheAugustDateline,
     })
     assert.equal(built.ok, true)
     if (!built.ok) return
@@ -136,6 +141,7 @@ describe('GNAR snapshot builder', () => {
       stats: broken,
       prior: august2025,
       release: augustRelease,
+      now: onTheAugustDateline,
     })
     assert.equal(built.ok, false)
   })
@@ -197,6 +203,112 @@ describe('GNAR snapshot builder', () => {
     assert.equal(plan.built.snapshot.reportDate, '2026-10-09')
   })
 
+  it('keeps a dateline that is already on or before the Chicago run day', () => {
+    const built = buildSnapshot({
+      isoMonth: '2026-08',
+      stats: august2026,
+      prior: august2025,
+      release: augustRelease,
+      now: new Date('2026-09-11T15:00:00Z'),
+    })
+    assert.equal(built.ok, true)
+    if (!built.ok) return
+    assert.equal(built.built.snapshot.reportDate, '2026-09-08')
+  })
+
+  it('does not future-date a post from a scheduled GNAR dateline', () => {
+    // September 2026: GNAR datelined the release Oct 7 and set CMS publishDate
+    // to 2026-10-07, but the document existed on Oct 5 and PR #538 merged
+    // 2026-10-05T22:22:47Z (5:22pm CT). The branch was cut at 4:45pm CT.
+    const now = new Date('2026-10-05T21:45:19Z')
+    assert.equal(chicagoIsoDate(now), '2026-10-05')
+    assert.equal(parseDateline('NASHVILLE, Tenn. (Oct. 7, 2026) – September.'), '2026-10-07')
+    const release: GnarRelease = {
+      title: 'September Homes Sales Continued to Show Mixed Results',
+      slug: 'september-homes-sales-continued-to-show-mixed-results-across-counties-and-price-points',
+      publishDate: '2026-10-07',
+      text:
+        'NASHVILLE, Tenn. (Oct. 7, 2026) – Data for the month of September showed 2,928 home closings. ' +
+        'Currently, there are 5.7 months of available inventory.',
+    }
+    const stats: GnarMonthlyStats = {
+      ...august2026,
+      year: 2026,
+      month: '09',
+      updatedAt: '2026-10-05T18:08:03Z',
+    }
+    const built = buildSnapshot({
+      isoMonth: '2026-09',
+      stats,
+      prior: null,
+      release,
+      now,
+    })
+    assert.equal(built.ok, true)
+    if (!built.ok) return
+    assert.equal(built.built.snapshot.reportDate, '2026-10-05')
+
+    const plan = planSnapshot({
+      now,
+      isoMonth: '2026-09',
+      stats,
+      prior: null,
+      releases: [release],
+    })
+    assert.equal(plan.action, 'write')
+    if (plan.action !== 'write') return
+    assert.equal(plan.built.snapshot.reportDate, '2026-10-05')
+  })
+
+  it('reads stats updatedAt in America/Chicago, not as a UTC date slice', () => {
+    // 03:30 UTC on Oct 6 is 10:30pm CT on Oct 5. Slicing the UTC timestamp
+    // would stamp Oct 6, which is still in the future at an evening run
+    // and is the wrong Chicago day the next morning too.
+    const evening = new Date('2026-10-06T01:00:00Z') // 8:00pm CT Oct 5
+    assert.equal(chicagoIsoDate(evening), '2026-10-05')
+    const built = buildSnapshot({
+      isoMonth: '2026-09',
+      stats: {
+        ...august2026,
+        year: 2026,
+        month: '09',
+        updatedAt: '2026-10-06T03:30:00Z',
+      },
+      prior: null,
+      release: {
+        title: 'September note',
+        slug: 'september-note',
+        publishDate: null,
+        text: 'Data for the month of September showed 2,928 home closings.',
+      },
+      now: evening,
+    })
+    assert.equal(built.ok, true)
+    if (!built.ok) return
+    assert.equal(built.built.snapshot.reportDate, '2026-10-05')
+
+    const nextMorning = buildSnapshot({
+      isoMonth: '2026-09',
+      stats: {
+        ...august2026,
+        year: 2026,
+        month: '09',
+        updatedAt: '2026-10-06T03:30:00Z',
+      },
+      prior: null,
+      release: {
+        title: 'September note',
+        slug: 'september-note',
+        publishDate: null,
+        text: 'Data for the month of September showed 2,928 home closings.',
+      },
+      now: new Date('2026-10-06T15:00:00Z'), // 10:00am CT, the daily cron
+    })
+    assert.equal(nextMorning.ok, true)
+    if (!nextMorning.ok) return
+    assert.equal(nextMorning.built.snapshot.reportDate, '2026-10-05')
+  })
+
   it('inserts once and refuses a second copy of the same month', () => {
     const source = 'export const marketSnapshots: MarketSnapshot[] = [\n]\n'
     const built = buildSnapshot({
@@ -204,6 +316,7 @@ describe('GNAR snapshot builder', () => {
       stats: august2026,
       prior: august2025,
       release: augustRelease,
+      now: onTheAugustDateline,
     })
     assert.equal(built.ok, true)
     if (!built.ok) return

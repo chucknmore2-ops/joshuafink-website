@@ -3,7 +3,7 @@ import { listings } from '@/lib/listings'
 import { soldListings } from '@/lib/sold-listings'
 import { blogPosts } from '@/lib/blog'
 import { reviews } from '@/lib/reviews'
-import { hasPostedRef, logPost } from '@/lib/admin-db'
+import { gbpJustListedAnnounced, hasPostedRef, logPost } from '@/lib/admin-db'
 import { withUtm } from '@/lib/utm'
 import { suburbs, marketStatsLastUpdated, marketStatsSource } from '@/lib/suburbs'
 import {
@@ -24,6 +24,14 @@ import {
   validateGbpLocalPost,
   type CTA,
 } from './cta'
+import {
+  GBP_JUST_LISTED_JOB,
+  JUST_LISTED_GAP_MS,
+  JUST_LISTED_PER_RUN,
+  draftForAddress,
+  planJustListedPosts,
+  type JustListedDraft,
+} from './just-listed'
 
 export const dynamic = 'force-dynamic'
 
@@ -115,6 +123,17 @@ function buildListingPost(): PreparedPost {
     photoUrl: compassJpegUrl(l.imageUrl),
     kind: 'listing',
     refKey: l.address.toLowerCase().replace(/[^\w]+/g, '-'),
+  }
+}
+
+function preparedFromJustListed(draft: JustListedDraft | null): PreparedPost | null {
+  if (!draft) return null
+  return {
+    summary: draft.summary,
+    cta: draft.cta,
+    photoUrl: draft.photoUrl,
+    kind: 'listing',
+    refKey: draft.refKey,
   }
 }
 
@@ -428,11 +447,18 @@ export async function GET(request: Request) {
   //
   // ?kind=listing and ?kind=sold&address=… are the on-demand "Just Listed" /
   // "Just Sold" posts, fired by hand when Joshua has news rather than on a
-  // schedule. Same reasoning: they log under their own job name so a manual
-  // post can't mask a dead weekly cron. Pair either with ?preview=1 to read
-  // the copy back without publishing.
+  // schedule. ?kind=listing with no address keeps the featured-listing
+  // picker. With &address=, it posts that home (Just Listed, or Coming Soon
+  // when Listing.status says so). ?kind=new-listings announces homes that
+  // are not in the launch baseline and have no successful just-listed row.
+  // All of these log under their own job names so they can't mask a dead
+  // weekly cron. Pair any of them with ?preview=1 to read the copy back
+  // without publishing.
   const params = new URL(request.url).searchParams
   const kind = params.get('kind')
+  if (kind === 'new-listings') {
+    return handleNewListings(params)
+  }
   const isMonthly = kind === 'market'
   const isOnDemand = kind === 'listing' || kind === 'sold'
   const jobName = isMonthly
@@ -462,12 +488,15 @@ export async function GET(request: Request) {
   // Decide what to post before spending an OAuth round-trip, so a skipped week
   // never touches Google at all.
   const week = isoWeekNumber()
+  const addressQuery = params.get('address')?.trim() ?? ''
   const post = isMonthly
     ? buildMonthlyMarketPost()
     : kind === 'listing'
-      ? buildListingPost()
+      ? addressQuery
+        ? preparedFromJustListed(draftForAddress(addressQuery))
+        : buildListingPost()
       : kind === 'sold'
-        ? buildSoldPost(params.get('address') ?? '')
+        ? buildSoldPost(addressQuery)
         : pickPost(week)
 
   const validation = post ? validateGbpLocalPost(post) : { ok: true as const }
@@ -542,6 +571,21 @@ export async function GET(request: Request) {
     })
   }
 
+  return sendGbpPost({ post, jobName, week, locationId })
+}
+
+// One Google local-post create. Shared by the weekly rotator, the monthly
+// market post, on-demand listing/sold posts, and a single Just Listed
+// announcement. The caller has already decided this post should go out.
+async function sendGbpPost(opts: {
+  post: PreparedPost
+  jobName: string
+  week: number
+  locationId: string
+  extra?: Record<string, unknown>
+}): Promise<NextResponse> {
+  const { post, jobName, week, locationId } = opts
+  const validation = validateGbpLocalPost(post)
   if (!validation.ok) {
     console.error('[gbp-post] preflight failed', validation.reason, safeGbpPayloadSummary(post))
     await logPost({
@@ -645,6 +689,7 @@ export async function GET(request: Request) {
       summaryPreview: post.summary.slice(0, 100),
       name: data.name,
       at: new Date().toISOString(),
+      ...opts.extra,
     })
   } catch (err) {
     console.error('[gbp-post] network error', err)
@@ -661,4 +706,131 @@ export async function GET(request: Request) {
     })
     return NextResponse.json({ error: 'gbp post failed' }, { status: 502 })
   }
+}
+
+// Automatic Just Listed / Coming Soon. One listing per HTTP call so the
+// function stays inside the existing timeout. .github/workflows/gbp-just-listed.yml
+// calls this at most JUST_LISTED_PER_RUN times and sleeps JUST_LISTED_GAP_MS
+// between creates (GBP's per-minute quota). Idempotent: the launch baseline
+// plus a successful post_log row (this job, or a manual listing post) skips
+// the home. A database we cannot read is a hard stop — never assume "not posted".
+async function handleNewListings(params: URLSearchParams): Promise<NextResponse> {
+  const preview = params.get('preview') === '1'
+  const plan = planJustListedPosts(listings)
+  let postLogReadable = true
+  const pending: JustListedDraft[] = []
+
+  for (const draft of plan.eligible) {
+    const announced = await gbpJustListedAnnounced(draft.refKey)
+    if (announced === null) {
+      postLogReadable = false
+      break
+    }
+    if (!announced) pending.push(draft)
+  }
+
+  if (preview) {
+    const next = postLogReadable ? pending[0] ?? null : null
+    return NextResponse.json({
+      posted: false,
+      preview: true,
+      mode: 'new-listings',
+      perRun: JUST_LISTED_PER_RUN,
+      gapSeconds: JUST_LISTED_GAP_MS / 1000,
+      postLogReadable,
+      baseline: plan.baselined.map((draft) => draft.refKey),
+      pending: postLogReadable
+        ? pending.map((draft) => ({
+            refKey: draft.refKey,
+            headline: draft.headline,
+            address: draft.address,
+            summary: draft.summary,
+            cta: draft.cta,
+            photoUrl: draft.photoUrl ?? null,
+            validation: validateGbpLocalPost(draft),
+          }))
+        : [],
+      next: next
+        ? { refKey: next.refKey, headline: next.headline, summary: next.summary }
+        : null,
+      remaining: postLogReadable ? pending.length : null,
+    })
+  }
+
+  if (!postLogReadable) {
+    console.error('[gbp-post] new-listings refused: post_log unreadable')
+    return NextResponse.json(
+      { posted: false, error: 'post_log_unreadable', mode: 'new-listings' },
+      { status: 503 },
+    )
+  }
+
+  if (pending.length === 0) {
+    return NextResponse.json({
+      posted: false,
+      skipped: 'none_pending',
+      mode: 'new-listings',
+      remaining: 0,
+      at: new Date().toISOString(),
+    })
+  }
+
+  const draft = pending[0]
+  const again = await gbpJustListedAnnounced(draft.refKey)
+  if (again === null) {
+    return NextResponse.json(
+      { posted: false, error: 'post_log_unreadable', mode: 'new-listings' },
+      { status: 503 },
+    )
+  }
+  if (again) {
+    return NextResponse.json({
+      posted: false,
+      skipped: 'already_posted',
+      mode: 'new-listings',
+      refKey: draft.refKey,
+      remaining: Math.max(0, pending.length - 1),
+      at: new Date().toISOString(),
+    })
+  }
+
+  const locationId = process.env.GBP_LOCATION_ID
+  if (!locationId) {
+    await logPost({
+      channel: 'gbp',
+      jobName: GBP_JUST_LISTED_JOB,
+      payloadKind: 'listing',
+      refKey: draft.refKey,
+      status: 'failed',
+      errorMessage: 'GBP_LOCATION_ID not set',
+    })
+    return NextResponse.json(
+      { error: 'GBP_LOCATION_ID not set' },
+      { status: 500 },
+    )
+  }
+
+  const post = preparedFromJustListed(draft)
+  if (!post) {
+    return NextResponse.json({
+      posted: false,
+      skipped: 'none_pending',
+      mode: 'new-listings',
+      remaining: 0,
+      at: new Date().toISOString(),
+    })
+  }
+
+  return sendGbpPost({
+    post,
+    jobName: GBP_JUST_LISTED_JOB,
+    week: isoWeekNumber(),
+    locationId,
+    extra: {
+      mode: 'new-listings',
+      refKey: draft.refKey,
+      headline: draft.headline,
+      remaining: Math.max(0, pending.length - 1),
+    },
+  })
 }
