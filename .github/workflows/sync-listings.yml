@@ -69,7 +69,10 @@ jobs:
 
   sync:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # Includes a wait for the sync PR to merge so GBP Just Listed can be
+    # dispatched against the new commit. Auto-merge itself is enabled first;
+    # a timeout here does not roll that back.
+    timeout-minutes: 30
 
     steps:
       - name: Checkout
@@ -201,3 +204,28 @@ jobs:
           echo "Opened $PR_URL"
           gh_retry gh pr merge "$PR_URL" --squash --auto --delete-branch
           trap - ERR
+
+          # A merge performed with GITHUB_TOKEN does not start push workflows.
+          # Dispatch Just Listed once the new lib/listings.ts is on main. The
+          # workflow itself waits for production. Failure to dispatch is not a
+          # sync failure — the 14:20 and 20:20 UTC schedule posts the same way.
+          echo "Waiting for the sync PR to merge so Just Listed can run."
+          merged=0
+          for i in $(seq 1 30); do
+            state=$(gh pr view "$PR_URL" --json state --jq .state || echo unknown)
+            echo "PR state: $state (check $i)"
+            if [ "$state" = "MERGED" ]; then
+              merged=1
+              break
+            fi
+            sleep 30
+          done
+          if [ "$merged" = "1" ]; then
+            if gh workflow run gbp-just-listed.yml --ref main; then
+              echo "Dispatched GBP Just Listed."
+            else
+              echo "::warning::Could not dispatch GBP Just Listed. The 14:20 and 20:20 UTC schedules will retry."
+            fi
+          else
+            echo "::warning::Sync PR was not merged within 15 minutes. Auto-merge stays on. GBP Just Listed will run on its schedule once main updates."
+          fi
