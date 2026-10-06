@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { reviews, reviewStats, reviewDateToIso } from '@/lib/reviews'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 import GoogleReviewCTA from '@/components/GoogleReviewCTA'
+import TrackedTelLink from '@/components/TrackedTelLink'
 
 export const metadata: Metadata = {
   alternates: { canonical: 'https://www.joshuafink.com/about' },
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
   title: { absolute: 'About Joshua Fink | Compass Real Estate Agent, Middle Tennessee' },
   description:
     'Learn about Joshua Fink — Affiliate Broker at Compass Real Estate with 17+ years of experience, 100+ homes sold annually, and multiple top-producer awards in Middle Tennessee.',
+  openGraph: { url: 'https://www.joshuafink.com/about' },
 }
 
 const specialties = [
@@ -104,18 +106,13 @@ function buildProfileSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'ProfilePage',
-    mainEntity: {
-      '@type': 'Person',
-      '@id': 'https://www.joshuafink.com/#joshua-fink',
-      aggregateRating: {
-        '@type': 'AggregateRating',
-        ratingValue: reviewStats.rating.toFixed(1),
-        reviewCount: reviewStats.total,
-        bestRating: 5,
-        worstRating: 1,
-      },
-      review: reviewNodes,
-    },
+    // Reference only. app/layout.tsx already defines #joshua-fink in full and
+    // attaches the rating + reviews to #agent, on every page. Repeating the
+    // same 10 reviews and the same AggregateRating here asserted one review
+    // corpus about TWO distinct entities (a Person and a RealEstateAgent) in a
+    // single document — a documented cause of review rich-result
+    // ineligibility. One entity owns the reviews: #agent.
+    mainEntity: { '@id': 'https://www.joshuafink.com/#joshua-fink' },
   }
 }
 
@@ -175,13 +172,14 @@ export default function AboutPage() {
                 Get In Touch
               </p>
               <div className="space-y-3 text-sm">
-                <a
+                <TrackedTelLink
                   href="tel:6155512727"
                   className="flex items-center gap-3 text-black hover:underline font-medium"
+                  data-cta="about-contact-call"
                 >
                   <span className="text-[#A0A0A0]">📞</span>
                   615-551-2727
-                </a>
+                </TrackedTelLink>
                 <a
                   href="mailto:joshua@joshuafink.com"
                   className="flex items-center gap-3 text-black hover:underline font-medium"
@@ -214,6 +212,12 @@ export default function AboutPage() {
               Biography
             </p>
             <div className="text-[#333] leading-relaxed space-y-4 text-base">
+              <p>
+                Joshua Fink is an Affiliate Broker with Compass Real Estate serving Middle Tennessee,
+                including Nashville, Franklin, Brentwood, Spring Hill, and the surrounding suburbs.
+                He has 17+ years of experience and holds Tennessee Real Estate Commission license
+                #351484.
+              </p>
               <p>
                 Joshua Fink is a leading realtor in Middle Tennessee. Josh is an experienced and
                 knowledgeable professional with in-depth knowledge of the market, strong negotiation

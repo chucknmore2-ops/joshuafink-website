@@ -1,16 +1,21 @@
 import { NextResponse } from 'next/server'
 import { blogPosts } from '@/lib/blog'
-import { listings } from '@/lib/listings'
+import { pickWeeklyPromotable } from '@/lib/promotable-listings'
 import { soldListings } from '@/lib/sold-listings'
 import { listingSlug } from '@/lib/listing-detail'
 import { reviews, reviewStats } from '@/lib/reviews'
-import { logPost } from '@/lib/admin-db'
+import { hasPostedRef, lastSuccessfulPost, logPost } from '@/lib/admin-db'
+import { pickWeeklyLinkedIn } from './rotate'
 import { withUtm } from '@/lib/utm'
 import {
   currentSnapshot,
   marketUpdateSlug,
   monthLabel,
+  snapshotDaysStat,
+  snapshotExpectFromSearchParams,
+  snapshotMatchesExpect,
   snapshotSkipReason,
+  snapshotStatLines,
 } from '@/lib/market-snapshot'
 
 export const dynamic = 'force-dynamic'
@@ -19,12 +24,21 @@ export const dynamic = 'force-dynamic'
 //
 // Runs on Vercel Cron; posts to the authenticated LinkedIn member URN using a
 // long-lived access token. Rotates weekly between (a) latest blog post and
-// (b) featured listing so LinkedIn feed stays varied.
+// (b) featured listing. The next slot is the opposite of the last *successful*
+// weekly post_log row (see rotate.ts) — ISO-week parity used to re-fire the
+// same latest blog twice in one week when a retry or manual dispatch landed
+// in the same even week.
 //
 // Required env vars:
 //   CRON_SECRET             — shared across /api/cron/* routes
 //   LINKEDIN_ACCESS_TOKEN   — from the one-time /api/linkedin/auth + /callback flow
 //   LINKEDIN_AUTHOR_URN     — e.g. urn:li:person:XXXXX (returned by /callback)
+//
+// Optional:
+//   LINKEDIN_TOKEN_EXPIRES_AT_MS — Unix ms timestamp of the token's expiry
+//   (issue time + expires_in from the /callback response). When set, runs
+//   within 7 days of expiry abort with an actionable post_log row instead of
+//   posting until the channel silently goes dark on a 401.
 //
 // NOTE: LinkedIn access tokens expire ~60 days after issue. When a run returns
 // 401 Unauthorized from LinkedIn, re-run the OAuth flow:
@@ -62,12 +76,13 @@ function isoWeekNumber(d: Date = new Date()): number {
   return Math.ceil(((+date - +yearStart) / 86400000 + 1) / 7)
 }
 
-function buildFromLatestBlog(): PostPayload | null {
+function buildFromLatestBlog(excludeSlug?: string): PostPayload | null {
   if (!blogPosts.length) return null
   const sorted = [...blogPosts].sort(
     (a, b) => +new Date(b.date) - +new Date(a.date),
   )
-  const p = sorted[0]
+  const p = sorted.find((x) => x.slug !== excludeSlug)
+  if (!p) return null
   const url = withUtm(`${SITE}/blog/${p.slug}`, {
     source: 'linkedin',
     medium: 'auto',
@@ -92,7 +107,11 @@ function buildFromLatestBlog(): PostPayload | null {
 }
 
 function buildFromListing(): PostPayload | null {
-  const l = listings.find((x) => x.imageUrl && x.price && x.compassUrl)
+  // Rotates weekly (this cron runs Thursdays only) and skips anything not
+  // positively Active — the old `.find()` returned the array head every run,
+  // and the head was "Active Under Contract", so this caption announced an
+  // unavailable home. See lib/promotable-listings.ts.
+  const l = pickWeeklyPromotable(0)
   if (!l) return null
   // Locality only (strip ", TN 37027 | MLS #…") so the caption reads
   // "in Brentwood, TN", not "in Brentwood, TN 37027, TN".
@@ -120,7 +139,7 @@ function buildFromListing(): PostPayload | null {
   // search). Semantic-triple phrasing (entity → predicate → object). No
   // hashtags on LinkedIn.
   const text =
-    `Joshua Fink Group just listed a home in ${locality}, TN — ${l.address}, ${price}.\n\n` +
+    `Joshua Fink Group has a home for sale in ${locality}, TN — ${l.address}, ${price}.\n\n` +
     `${description}\n\n` +
     `Joshua Fink Group helps buyers and sellers across ${locality} and Middle Tennessee. ` +
     `Call or text Joshua Fink at 615-551-2727 for a private showing, or see the full listing at joshuafink.com.`
@@ -228,6 +247,7 @@ function buildFromMarketSnapshot(): PostPayload | null {
   const s = currentSnapshot()
   if (!s) return null
   const label = monthLabel(s.month)
+  const days = snapshotDaysStat(s)
   const slug = marketUpdateSlug(s.month)
   const url = withUtm(`${SITE}/blog/${slug}`, {
     source: 'linkedin',
@@ -240,29 +260,33 @@ function buildFromMarketSnapshot(): PostPayload | null {
   // becomes the post's title tag. No hashtags on LinkedIn.
   const text =
     `Middle Tennessee real estate market update — ${label}. ` +
-    `Median sale price ${s.medianSalePrice}, ${s.medianYoyChange} year over year.\n\n` +
-    `• Average days on market: ${s.avgDaysOnMarket}\n` +
-    `• Closed sales: ${n(s.closedSales)}\n` +
-    `• Active listings: ${n(s.activeListings)}\n` +
-    `• Months of supply: ${s.monthsOfInventory}\n\n` +
-    `Source: ${s.source}, ${label} report.\n\n` +
+    `Median sale price ${s.medianSalePrice}.\n\n` +
+    snapshotStatLines(s).map((line) => `• ${line}`).join('\n') +
+    `\n\nSource: ${s.source}, ${label} nine-county report.\n\n` +
     `Joshua Fink Group — Compass Real Estate, serving Nashville & Middle Tennessee. ` +
     `The full ${label} breakdown, and what it means if you're buying or selling: ${url}`
   return {
     text,
     url,
     title: `Middle Tennessee Real Estate Market Update — ${label}`,
-    description: `Median ${s.medianSalePrice} · ${s.avgDaysOnMarket} days on market · ${n(s.activeListings)} active listings`,
+    description: `Median ${s.medianSalePrice} · ${days.label}: ${days.value} · ${n(s.activeListings)} active listings`,
     kind: 'market',
     refKey: s.month,
   }
 }
 
-function pickPayload(): PostPayload | null {
-  // Even weeks → latest blog. Odd weeks → featured listing.
-  return isoWeekNumber() % 2 === 0
-    ? buildFromLatestBlog() || buildFromListing()
-    : buildFromListing() || buildFromLatestBlog()
+async function pickPayload(): Promise<PostPayload | null> {
+  const last = await lastSuccessfulPost({
+    channel: 'linkedin',
+    jobName: WEEKLY_JOB,
+    payloadKinds: ['blog', 'listing'],
+  })
+  return pickWeeklyLinkedIn({
+    last: last ? { kind: last.payload_kind, refKey: last.ref_key } : null,
+    weekNumber: isoWeekNumber(),
+    buildBlog: buildFromLatestBlog,
+    buildListing: buildFromListing,
+  })
 }
 
 export async function GET(request: Request) {
@@ -290,12 +314,24 @@ export async function GET(request: Request) {
       ? buildFromSale(params.get('address') ?? '')
       : kind === 'testimonial'
         ? buildFromTestimonial(params.get('reviewer') ?? '')
-        : pickPayload()
+        : await pickPayload()
 
   // ?preview=1 composes the copy and hands it back without touching LinkedIn,
   // so a draft can be read and approved before anything is published.
   if (params.get('preview') === '1') {
     return NextResponse.json({ posted: false, preview: true, payload })
+  }
+
+  if (isMonthly) {
+    const expect = snapshotExpectFromSearchParams(params)
+    if (expect.expectMonth && !snapshotMatchesExpect(currentSnapshot(), expect)) {
+      return NextResponse.json({
+        posted: false,
+        skipped: 'deploy_pending',
+        expectMonth: expect.expectMonth,
+        at: new Date().toISOString(),
+      })
+    }
   }
 
   // Monthly run with no numbers entered for the month → post nothing at all
@@ -321,6 +357,19 @@ export async function GET(request: Request) {
     })
   }
 
+  if (isMonthly && payload && await hasPostedRef({
+    channel: 'linkedin',
+    jobName,
+    refKey: payload.refKey,
+  })) {
+    return NextResponse.json({
+      posted: false,
+      skipped: 'already_posted',
+      month: payload.refKey,
+      at: new Date().toISOString(),
+    })
+  }
+
   const accessToken = process.env.LINKEDIN_ACCESS_TOKEN
   const authorUrn = process.env.LINKEDIN_AUTHOR_URN
   if (!accessToken || !authorUrn) {
@@ -337,6 +386,35 @@ export async function GET(request: Request) {
     return NextResponse.json(
       { error: 'LINKEDIN_ACCESS_TOKEN or LINKEDIN_AUTHOR_URN not set' },
       { status: 500 },
+    )
+  }
+
+  // Expiry guardrail: LinkedIn tokens live ~60 days and the only built-in
+  // signal is a 401 at post time — by which point the channel is already dark
+  // (three straight EXPIRED_ACCESS_TOKEN failures the week of 2026-08-24).
+  // When the expiry timestamp is in the env, fail loudly a week early so the
+  // post_log row / healthcheck prompt a re-auth while posts are still going out.
+  const tokenExpiresAtMs = Number(process.env.LINKEDIN_TOKEN_EXPIRES_AT_MS ?? 0)
+  const sevenDaysMs = 7 * 24 * 60 * 60 * 1000
+  if (tokenExpiresAtMs && Date.now() > tokenExpiresAtMs - sevenDaysMs) {
+    const expired = Date.now() > tokenExpiresAtMs
+    const errorMessage =
+      `LINKEDIN_ACCESS_TOKEN ${expired ? 'has expired' : 'expires within 7 days'} ` +
+      `(LINKEDIN_TOKEN_EXPIRES_AT_MS=${tokenExpiresAtMs}) — posting aborted. ` +
+      `Re-run https://www.joshuafink.com/api/linkedin/auth, then update ` +
+      `LINKEDIN_ACCESS_TOKEN and LINKEDIN_TOKEN_EXPIRES_AT_MS in Vercel env and redeploy.`
+    console.error('[linkedin-post]', errorMessage)
+    await logPost({
+      channel: 'linkedin',
+      jobName,
+      payloadKind: payload?.kind ?? 'none',
+      refKey: 'token-expiry',
+      status: 'failed',
+      errorMessage: errorMessage.slice(0, 500),
+    })
+    return NextResponse.json(
+      { error: 'linkedin token expired or expiring', expiresAtMs: tokenExpiresAtMs },
+      { status: 503 },
     )
   }
 

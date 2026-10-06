@@ -4,10 +4,6 @@
     {
       "path": "/api/cron/indexnow",
       "schedule": "0 2 * * *"
-    },
-    {
-      "path": "/api/cron/agent-briefing",
-      "schedule": "0 12 * * 1"
     }
   ]
 }

@@ -26,6 +26,47 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
+  # SYNC_PAT is a fine-grained PAT with an expiry date, and nothing used to watch
+  # it. `secrets.SYNC_PAT || secrets.GITHUB_TOKEN` only falls back when the secret
+  # is EMPTY — an expired PAT is still a non-empty string, so the sync would just
+  # start failing, and the weekday-only healthcheck would not say so until Monday.
+  # This job turns the run red two weeks ahead, which the healthcheck's
+  # "github-actions — Sync Compass Listings" check pages on. It runs alongside
+  # the sync and never blocks it.
+  sync-pat-expiry:
+    name: SYNC_PAT expiry
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Fail two weeks before SYNC_PAT expires
+        env:
+          SYNC_PAT: ${{ secrets.SYNC_PAT }}
+          WARN_DAYS: '14'
+        run: |
+          if [ -z "$SYNC_PAT" ]; then
+            echo '::notice::SYNC_PAT is not set — the sync falls back to GITHUB_TOKEN (PRs will wait on the approval gate).'
+            exit 0
+          fi
+          status=$(curl -sS -o /dev/null -D headers.txt -w '%{http_code}' \
+            -H "Authorization: Bearer $SYNC_PAT" https://api.github.com/rate_limit)
+          if [ "$status" != "200" ]; then
+            echo "::error::SYNC_PAT was rejected (HTTP $status) — it has expired or been revoked. Regenerate it at https://github.com/settings/personal-access-tokens and run: gh secret set SYNC_PAT"
+            exit 1
+          fi
+          # GitHub reports a PAT's expiry in this response header; a token with
+          # no expiry simply omits it.
+          expires=$(grep -i '^github-authentication-token-expiration:' headers.txt | cut -d' ' -f2- | tr -d '\r')
+          if [ -z "$expires" ]; then
+            echo 'SYNC_PAT has no expiry date.'
+            exit 0
+          fi
+          days_left=$(( ($(date -d "$expires" +%s) - $(date +%s)) / 86400 ))
+          echo "SYNC_PAT expires $expires ($days_left days left)."
+          if [ "$days_left" -le "$WARN_DAYS" ]; then
+            echo "::error::SYNC_PAT expires $expires ($days_left days left). Regenerate it at https://github.com/settings/personal-access-tokens and run: gh secret set SYNC_PAT"
+            exit 1
+          fi
+
   sync:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -52,8 +93,41 @@ jobs:
       - name: Open auto-merging PR with updated listing files
         env:
           TZ: America/Chicago
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Prefer a PAT, because the PR's AUTHOR decides whether its checks are
+          # gated. Opened with GITHUB_TOKEN the author is `app/github-actions`,
+          # which Settings → Actions → General → "Require approval for first-time
+          # contributors" treats as an unproven contributor: the pull_request
+          # build-check run is created in `action_required` and waits for a manual
+          # Approve-and-run click. On 2026-08-18 that held the required `build`
+          # check for 17 hours (run 32117725100, attempt 1 `action_required`,
+          # attempt 2 passed in 74s once approved) and the site served ~6-day-old
+          # listings. PRs authored by chucknmore2-ops build in ~2 minutes.
+          #
+          # Loosening that repo setting is NOT the fix: this repo is public, so it
+          # would let a stranger's first PR run workflows automatically, and
+          # build-check runs `npm ci` on their code.
+          #
+          # Falls back to GITHUB_TOKEN when SYNC_PAT is unset OR no longer
+          # accepted (expired/revoked) — checked live below, because a stale
+          # secret is non-empty and a `||` expression would never fall back.
+          # Needs a fine-grained PAT with contents:write + pull_requests:write.
+          SYNC_PAT: ${{ secrets.SYNC_PAT }}
+          FALLBACK_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          HAS_PAT=false
+          GH_TOKEN="$FALLBACK_TOKEN"
+          if [ -n "$SYNC_PAT" ]; then
+            pat_status=$(curl -sS -o /dev/null -w '%{http_code}' \
+              -H "Authorization: Bearer $SYNC_PAT" https://api.github.com/rate_limit || echo 000)
+            if [ "$pat_status" = "200" ]; then
+              HAS_PAT=true
+              GH_TOKEN="$SYNC_PAT"
+            else
+              echo "::warning::SYNC_PAT rejected (HTTP $pat_status) — opening the PR with GITHUB_TOKEN, so its build check will wait for manual approval."
+            fi
+          fi
+          export GH_TOKEN
+
           git config user.name  'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
           git add lib/listings.ts lib/sold-listings.ts
@@ -103,12 +177,21 @@ jobs:
           }
           trap cleanup_branch ERR
 
-          # GitHub deliberately does NOT fire push/pull_request workflows for
-          # refs pushed with GITHUB_TOKEN (recursion guard), so build-check
-          # would never report and auto-merge would hang forever. workflow_dispatch
-          # is the documented exception — dispatch it explicitly against the
-          # branch so the required "build" check lands on this SHA.
-          gh_retry gh workflow run build-check.yml --ref "$BRANCH"
+          # Fallback for when there is no SYNC_PAT and the PR is therefore opened
+          # by the bot. Dispatch build-check explicitly so a green `build` exists
+          # on this SHA — push events from GITHUB_TOKEN never fire it themselves.
+          #
+          # Be clear about what this does and does not buy you. It is NOT a fix:
+          # the bot-authored PR still gets its own gated `pull_request` build-check
+          # run, and that second check run — same name, same SHA, sitting in
+          # `action_required` — is what branch protection reads, so the PR stays
+          # BLOCKED regardless of this green one. That is exactly what happened on
+          # 2026-08-18. It is kept only so the check is already green the moment
+          # someone approves, and it is skipped under a PAT, where the normal
+          # pull_request run reports on its own and a duplicate would just race it.
+          if [ "$HAS_PAT" != "true" ]; then
+            gh_retry gh workflow run build-check.yml --ref "$BRANCH"
+          fi
 
           PR_URL=$(gh_retry gh pr create \
             --base main \

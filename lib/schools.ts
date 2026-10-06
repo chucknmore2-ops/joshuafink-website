@@ -24,14 +24,18 @@ export const schools: Record<string, School> = {
     level: 'High',
     district: 'Williamson County Schools',
     suburbSlug: 'brentwood-tn',
-    ratingNote: 'Consistently ranks among the top public high schools in Tennessee.',
+    ratingNote: 'Ranked #3 among Tennessee public high schools by Niche for 2026, with a 4.06/5 rating from 564 reviews.',
     blurb:
-      "Ravenwood High School is one of the most academically distinguished public high schools in the Southeast, drawing families to south Brentwood specifically for its school zone. Strong AP participation, competitive athletics, and a long track record of college placement at top universities make Ravenwood-zoned homes a meaningful resale-value driver in Brentwood — buyers actively filter by 'Ravenwood zone' when searching.",
+      "Ravenwood High School is one of the most academically distinguished public high schools in the Southeast, drawing families to south Brentwood specifically for its school zone. Niche ranks it #3 among all Tennessee public high schools for 2026 (and 216th nationally out of over 20,000 public high schools). Strong AP participation, competitive athletics, and a long track record of college placement at top universities make Ravenwood-zoned homes a meaningful resale-value driver in Brentwood — buyers actively filter by 'Ravenwood zone' when searching.",
     neighborhoods: ['Governors Club', 'Annandale', 'Raintree Forest', 'Taramore'],
     faqs: [
       {
         q: 'What neighborhoods are zoned to Ravenwood High School?',
         a: 'Ravenwood draws from much of southern Brentwood including Governors Club, Annandale, Raintree Forest, Taramore, and surrounding subdivisions. Zoning can change at the district level, so always confirm with Williamson County Schools for any specific address before writing an offer.',
+      },
+      {
+        q: 'What is Ravenwood High School ranked?',
+        a: "Niche ranks Ravenwood #3 among Tennessee's public high schools for 2026, with an overall 4.06/5 rating from 564 reviews, and 216th nationally out of more than 20,000 public high schools (source: Niche.com). Rankings shift year to year, so confirm the current figures directly with Niche before citing them to a client.",
       },
       {
         q: 'How much do homes in the Ravenwood High zone cost?',
@@ -76,22 +80,35 @@ export const schools: Record<string, School> = {
     level: 'High',
     district: 'Williamson County Schools',
     suburbSlug: 'franklin-tn',
-    ratingNote: 'A well-regarded Williamson County public high school.',
+    ratingNote: 'Ranked 19th of 389 Tennessee high schools by SchoolDigger, plus a Niche A- grade (#30 statewide, 3.89/5 from 328 reviews) for 2026.',
     blurb:
-      "Page High School serves a large family-residential portion of east Franklin and Thompson's Station, including some of the most popular family subdivisions in Williamson County — McKay's Mill, Brixworth, and Berry Farms among them. Strong academics, established athletics, and consistent college placement make the Page zone a high-demand pocket for relocating families targeting Williamson County schools at a more accessible Franklin price point.",
+      "Page High School serves a large family-residential portion of east Franklin and Thompson's Station, including some of the most popular family subdivisions in Williamson County — McKay's Mill, Brixworth, and Berry Farms among them. SchoolDigger ranks it 19th out of 389 Tennessee high schools, inside the Williamson County Schools district it separately rates 5 stars; Niche grades Page an A- and ranks it #30 among Tennessee public high schools for 2026 (3.89/5 from 328 reviews). Strong academics, established athletics, and consistent college placement make the Page zone a high-demand pocket for relocating families targeting Williamson County schools at a more accessible Franklin price point.",
     neighborhoods: ["McKay's Mill", 'Brixworth', 'Berry Farms', 'Cottonwood'],
     faqs: [
+      {
+        // Literal, extractable answer to the exact phrasing AI answer engines
+        // get asked (see lib/geo-queries.ts: school-page-franklin). Facts
+        // reused verbatim from the Franklin suburb data and the "more
+        // accessible than Westhaven/Independence" framing already published
+        // in this same school's FAQs below — no new market claims.
+        q: 'What are homes near Page High School in Franklin, TN worth?',
+        a: "Homes zoned to Page High School sit within the broader Franklin, TN market, where the 2026 median sale price is $862,929. Page-zoned subdivisions — McKay's Mill, Brixworth, Berry Farms, and Cottonwood — typically enter at a slightly more accessible price point than the Westhaven/Independence corridor on Franklin's west side, while still carrying the resale premium that comes with Williamson County Schools. Joshua Fink, a Compass Affiliate Broker, can pull current comps for any specific Page-zoned subdivision or street. Call or text 615-551-2727.",
+      },
       {
         q: 'What Franklin neighborhoods feed Page High School?',
         a: "Page draws from a broad eastern-Franklin and Thompson's Station footprint including McKay's Mill, Brixworth, Berry Farms, and Cottonwood among others. Zoning varies by section within larger subdivisions — confirm with Williamson County Schools for any specific address.",
       },
       {
+        q: 'Is Page High School a good school?',
+        a: "Yes. SchoolDigger ranks Page 19th out of 389 Tennessee high schools, and it sits inside a Williamson County Schools district SchoolDigger separately rates 5 stars. Niche independently grades Page an A- and ranks it #30 among Tennessee public high schools for 2026, with an overall rating of 3.89/5 from 328 reviews (source: Niche.com, SchoolDigger.com). Rankings shift year to year, so confirm current figures directly with those sites before citing them to a client.",
+      },
+      {
         q: 'How do Page-zoned home prices compare to Independence-zoned?',
-        a: 'Page-zoned homes generally enter at a slightly more accessible price point than the Westhaven/Independence corridor on the west side of Franklin. The school is well-regarded, the inventory is family-functional, and buyers focused on value within Williamson County often shortlist Page-zoned subdivisions first.',
+        a: 'Page-zoned homes generally enter at a slightly more accessible price point than the Westhaven/Independence corridor on the west side of Franklin. The school ranks well on both SchoolDigger and Niche, the inventory is family-functional, and buyers focused on value within Williamson County often shortlist Page-zoned subdivisions first.',
       },
       {
         q: 'Is the Page zone a good long-term family bet?',
-        a: 'Yes. Williamson County school zoning consistently drives resale demand, and Page is a stable, well-rated school in a built-out part of east Franklin and Thompson&apos;s Station with limited future inventory growth — supportive of long-term value.',
+        a: 'Yes. Williamson County school zoning consistently drives resale demand, and Page is a stable, top-30-in-Tennessee school in a built-out part of east Franklin and Thompson&apos;s Station with limited future inventory growth — supportive of long-term value.',
       },
     ],
   },
@@ -128,9 +145,9 @@ export const schools: Record<string, School> = {
     level: 'High',
     district: 'Williamson County Schools',
     suburbSlug: 'nolensville-tn',
-    ratingNote: 'A newer Williamson County high school with strong community engagement and rising academic performance.',
+    ratingNote: 'A 5-star SchoolDigger school, A-graded on Niche, ranked among the top 20 public high schools in Tennessee.',
     blurb:
-      "Nolensville High School opened to consolidate Nolensville's rapidly growing student population and quickly became a defining piece of the Nolensville identity. The school draws from the entire Nolensville footprint plus parts of southeast Brentwood and central southern Williamson County — Bent Creek, Burberry Glen, Scales Farmstead, and Benington all feed in. Strong academics, growing AP programs, and a tight community atmosphere make the Nolensville zone increasingly competitive for relocating families.",
+      "Nolensville High School opened to consolidate Nolensville's rapidly growing student population and quickly became a defining piece of the Nolensville identity. The school draws from the entire Nolensville footprint plus parts of southeast Brentwood and central southern Williamson County — Bent Creek, Burberry Glen, Scales Farmstead, and Benington all feed in. SchoolDigger gives it a 5-star rating and ranks it among Tennessee's top 20 public high schools; Niche grades it an A and ranks it #18 statewide. Strong academics, growing AP programs, and a tight community atmosphere make the Nolensville zone increasingly competitive for relocating families.",
     neighborhoods: ['Bent Creek', 'Burberry Glen', 'Scales Farmstead', 'Benington'],
     faqs: [
       {
@@ -138,8 +155,8 @@ export const schools: Record<string, School> = {
         a: 'Most of Nolensville including Bent Creek, Burberry Glen, Scales Farmstead, Benington, and Winterset Woods, plus selected southeast Brentwood addresses. Zoning is confirmed at the district level — Joshua verifies for every home before tour.',
       },
       {
-        q: 'How does Nolensville High compare to other Williamson County high schools?',
-        a: 'Nolensville is newer than Brentwood, Ravenwood, or Page but is in the same district and has rapidly built academic and athletic credibility. The school is a major reason Nolensville has emerged as one of the fastest-growing family destinations in Middle Tennessee.',
+        q: 'Is Nolensville High School a good school?',
+        a: "Yes. SchoolDigger rates Nolensville High School 5 stars and ranks it among the top 20 public high schools in Tennessee (4th of 11 ranked Williamson County high schools). Niche gives it an overall A grade and ranks it #18 in the state. It's a newer school than Brentwood, Ravenwood, or Page, but it's in the same district and has quickly built comparable academic credibility.",
       },
       {
         q: 'How much do homes in the Nolensville High zone cost?',
@@ -366,9 +383,9 @@ export const schools: Record<string, School> = {
     level: 'High',
     district: 'Williamson County Schools',
     suburbSlug: 'spring-hill-tn',
-    ratingNote: 'A top-tier Williamson County Schools high school serving the fast-growing Williamson-County side of Spring Hill.',
+    ratingNote: 'Ranked 24th of 392 Tennessee public high schools by SchoolDigger (5-star rating), inside a Williamson County Schools district ranked 5th of 139 — plus a Niche A- grade (#54 statewide).',
     blurb:
-      'Summit High School serves the Williamson County side of Spring Hill, one of the fastest-growing cities in Tennessee. It carries the same Williamson County Schools reputation that draws families to Franklin and Brentwood, but at Spring Hill\'s more accessible price point — which is why the Summit zone is a frequent shortlist item for value-focused relocating families who still want WCS on the school report. Buyers should note Spring Hill straddles the Williamson/Maury County line, so confirming the exact zone for a specific address matters more here than almost anywhere else Joshua works.',
+      'Summit High School serves the Williamson County side of Spring Hill, one of the fastest-growing cities in Tennessee. It carries the same Williamson County Schools reputation that draws families to Franklin and Brentwood, but at Spring Hill\'s more accessible price point — which is why the Summit zone is a frequent shortlist item for value-focused relocating families who still want WCS on the school report. SchoolDigger ranks Summit 24th out of 392 Tennessee public high schools with a 5-star rating, and Niche grades it an A- (#54 statewide). Buyers should note Spring Hill straddles the Williamson/Maury County line, so confirming the exact zone for a specific address matters more here than almost anywhere else Joshua works.',
     neighborhoods: ['Autumn Ridge', 'Campbell Station', 'Cherry Grove', 'Copper Ridge'],
     faqs: [
       {
@@ -376,12 +393,16 @@ export const schools: Record<string, School> = {
         a: 'Summit draws from the Williamson County side of Spring Hill, including communities like Autumn Ridge, Campbell Station, Cherry Grove, and Copper Ridge. Spring Hill straddles the Williamson/Maury County line, so always confirm the current zone assignment with Williamson County Schools for any specific address before writing an offer.',
       },
       {
+        q: 'Is Summit High School a good school?',
+        a: 'Yes. SchoolDigger ranks Summit 24th out of 392 Tennessee public high schools with a 5-star rating, and it sits inside a Williamson County Schools district that SchoolDigger ranks 5th of 139 Tennessee districts, also 5-star. Niche independently grades Summit an A- and ranks it #54 among Tennessee public high schools statewide.',
+      },
+      {
         q: 'How much do homes in the Summit High zone cost?',
         a: 'Summit-zoned homes are part of the broader Spring Hill market — see the current Spring Hill market report for up-to-date medians and price-per-square-foot. Joshua can pull exact, current comps for any specific street.',
       },
       {
         q: 'Does being zoned to Summit High School affect resale value?',
-        a: 'Yes. Williamson County school zoning is one of the most consistently quoted reasons buyers pay a premium in Spring Hill over comparable homes on the Maury County side. Confirming a Williamson County assignment — Summit or otherwise — before you buy is one of the highest-leverage checks Joshua runs for clients targeting Spring Hill.',
+        a: 'Yes. Williamson County school zoning is one of the most consistently quoted reasons buyers pay a premium in Spring Hill over comparable homes on the Maury County side, and Summit\'s 5-star SchoolDigger rating and A- Niche grade back that reputation up with numbers. Confirming a Williamson County assignment — Summit or otherwise — before you buy is one of the highest-leverage checks Joshua runs for clients targeting Spring Hill.',
       },
     ],
   },
@@ -472,6 +493,36 @@ export const schools: Record<string, School> = {
     ],
   },
 
+  'gallatin-high-school-gallatin-tn': {
+    slug: 'gallatin-high-school-gallatin-tn',
+    name: 'Gallatin High School',
+    level: 'High',
+    district: 'Sumner County Schools',
+    suburbSlug: 'gallatin-tn',
+    ratingNote: 'Niche rates it 3.87/5 from 321 reviews and ranks it #122 among Tennessee public high schools (#9 of 10 in Sumner County); SchoolDigger’s 2024–2025 rankings place it 152nd of 389 statewide — solidly above average, a tier below Station Camp’s top-30 ranking.',
+    blurb:
+      'Gallatin High School sits at 700 Dan P. Herron Drive and is Sumner County’s original comprehensive high school, serving the older, established core of town — downtown Gallatin and the Wynbrooke area — as distinct from the newer Station Camp zone that covers the Station Camp, Sanders Ferry, and Lakeside growth corridor. Niche rates it 3.87/5 from 321 reviews and ranks it #122 among Tennessee’s public high schools; SchoolDigger’s 2024–2025 rankings put it 152nd of 389 statewide. Both put it solidly above average, though a notch behind Station Camp’s top-30 ranking — SchoolDigger also flags a 25.3% chronic-absenteeism rate, more than double the district average, which is worth asking about directly if it matters to your family. For buyers, the honest read: Gallatin High serves the more walkable, established part of town, and is worth comparing directly against Station Camp rather than assumed to be the default zone.',
+    neighborhoods: ['Downtown Gallatin', 'Wynbrooke', 'Central/West Gallatin'],
+    faqs: [
+      {
+        q: 'What neighborhoods are zoned to Gallatin High School?',
+        a: 'The Gallatin High zone covers the older, established core of town — downtown Gallatin, Wynbrooke, and the surrounding central and west Gallatin neighborhoods — as opposed to the newer Station Camp zone on the town’s growth corridor. Sumner County has redrawn attendance lines before as the area has grown, so always confirm the current zone assignment with Sumner County Schools for a specific address before writing an offer.',
+      },
+      {
+        q: 'Is Gallatin High School a good school?',
+        a: 'It’s a solid, above-average option. Niche rates it 3.87/5 from 321 reviews and ranks it #122 among Tennessee’s public high schools; SchoolDigger’s 2024–2025 rankings place it 152nd of 389 statewide. Both put it a notch behind Station Camp’s top-30 SchoolDigger ranking. SchoolDigger also reports a 25.3% chronic-absenteeism rate, more than double the district average — a fair question to ask the school directly if attendance culture matters to your decision.',
+      },
+      {
+        q: 'How much do homes near Gallatin High School cost?',
+        a: 'Gallatin High-zoned homes are part of the broader Gallatin market — see the current Gallatin market report for up-to-date medians and price-per-square-foot. Downtown-adjacent and Wynbrooke-area homes tend to be older housing stock than the newer construction common in the Station Camp zone. Joshua can pull exact, current comps for any specific street.',
+      },
+      {
+        q: 'How does Gallatin High School compare to Station Camp High School?',
+        a: 'Both serve Gallatin under Sumner County Schools, but they draw from different parts of town and rank differently: Station Camp is 3rd among Sumner County’s high schools per SchoolDigger (30th of 389 statewide) and covers the newer Station Camp/Sanders Ferry/Lakeside growth corridor, while Gallatin High ranks 152nd of 389 statewide and serves the older, established downtown core. Neither is a wrong choice — the right one comes down to which side of the attendance line a specific address falls on, plus whether newer construction or an established, walkable neighborhood matters more to you.',
+      },
+    ],
+  },
+
   'julia-green-elementary-nashville-tn': {
     slug: 'julia-green-elementary-nashville-tn',
     name: 'Julia Green Elementary School',
@@ -532,6 +583,66 @@ export const schools: Record<string, School> = {
     ],
   },
 
+  'stewarts-creek-high-school-smyrna-tn': {
+    slug: 'stewarts-creek-high-school-smyrna-tn',
+    name: 'Stewarts Creek High School',
+    level: 'High',
+    district: 'Rutherford County Schools',
+    suburbSlug: 'smyrna-tn',
+    ratingNote: 'An 8/10 GreatSchools-rated Rutherford County high school with a 98% graduation rate — one of the newer, top-performing options in Smyrna.',
+    blurb:
+      'Stewarts Creek High School opened in 2013 on Red Hawk Boulevard on the east side of Smyrna and has quickly become one of Rutherford County\'s stronger public high schools — an 8/10 GreatSchools rating, a 98% graduation rate, and average SAT/ACT scores (1180 / 24) that run well ahead of the district norm. It serves the newer subdivisions built along the Stewarts Creek corridor east of downtown Smyrna, including Bankside and Preserve at Stewart Creek, and feeds from Stewarts Creek Elementary and Stewarts Creek Middle. For buyers comparing Smyrna to pricier Williamson County suburbs, the Stewarts Creek zone is a frequent shortlist pick — newer construction paired with a top-performing Rutherford County public school.',
+    neighborhoods: ['Bankside', 'Preserve at Stewart Creek', 'Stewarts Creek area'],
+    faqs: [
+      {
+        q: 'What neighborhoods are zoned to Stewarts Creek High School?',
+        a: 'Stewarts Creek draws primarily from the newer subdivisions built along the Stewarts Creek corridor on the east side of Smyrna, including Bankside and Preserve at Stewart Creek. Rutherford County attendance zones can shift as new sections are built out, so always confirm the current assignment with Rutherford County Schools for the specific address before writing an offer.',
+      },
+      {
+        q: 'Is Stewarts Creek High School a good school?',
+        a: 'Yes. Stewarts Creek carries an 8/10 GreatSchools rating, a 98% graduation rate, and average SAT/ACT scores (1180 / 24) — all ahead of the district average at nearby Smyrna High School. It opened in 2013 as one of Rutherford County\'s newer high schools and has built a strong academic track record since.',
+      },
+      {
+        q: 'How much do homes near Stewarts Creek High School cost?',
+        a: 'Stewarts Creek-zoned homes are part of the broader Smyrna market — see the current Smyrna market report for up-to-date medians and price-per-square-foot. Newer construction in Bankside and Preserve at Stewart Creek tends to sit at or above the citywide Smyrna median given the school zone and build age. Joshua can pull exact, current comps for any specific street.',
+      },
+      {
+        q: 'How does Stewarts Creek compare to Smyrna High School?',
+        a: 'Both are Rutherford County Schools, but Stewarts Creek is the newer of the two (opened 2013) and currently carries a higher GreatSchools rating and graduation rate. Smyrna High serves the older, more established core of town; Stewarts Creek serves the newer subdivisions on the east side. Which zone fits depends on whether a buyer prioritizes newer construction or an established, closer-in address — Joshua can walk through the tradeoffs for a specific budget.',
+      },
+    ],
+  },
+
+  'la-vergne-high-school-la-vergne-tn': {
+    slug: 'la-vergne-high-school-la-vergne-tn',
+    name: 'La Vergne High School',
+    level: 'High',
+    district: 'Rutherford County Schools',
+    suburbSlug: 'la-vergne-tn',
+    ratingNote: 'Rated B- on Niche with an 88% graduation rate, serving as La Vergne\'s public high school in Rutherford County Schools.',
+    blurb:
+      'La Vergne High School is the city\'s public high school, drawing from most of La Vergne — a fast-growing Rutherford County market at the I-24/I-40/I-65 interchange with a 2026 median home price around $373,000. Niche gives the school a B- overall grade, with 2,116 students, a 16:1 student-teacher ratio, an 88% graduation rate, and average SAT/ACT scores of 780 and 22 (Niche.com, 2026 data). For buyers prioritizing La Vergne\'s affordability and commute access over a top-tier school rating, it\'s the trade-off worth understanding up front — Joshua can walk through how it compares to Smyrna and Murfreesboro zones at similar price points.',
+    neighborhoods: ['Lake Forest', 'Woodland Hills', 'Amsterdam', 'Central La Vergne'],
+    faqs: [
+      {
+        q: 'What neighborhoods are zoned to La Vergne High School?',
+        a: 'La Vergne High serves most of the city, including established areas like Lake Forest, Woodland Hills, Amsterdam, and central La Vergne. Rutherford County sets attendance zones by address, not subdivision, so always confirm the current zone with Rutherford County Schools before writing an offer.',
+      },
+      {
+        q: 'Is La Vergne High School a good school?',
+        a: 'It carries a B- overall grade on Niche, with an 88% graduation rate, a 3.48 average GPA, and average SAT/ACT scores of 780 and 22 (Niche.com). That puts it below top-tier Williamson County schools, which is part of why La Vergne trades at a meaningfully lower price point — buyers should weigh the school rating against the affordability and commute access La Vergne offers.',
+      },
+      {
+        q: 'How much do homes cost in the La Vergne High School zone?',
+        a: 'Pricing generally tracks La Vergne\'s citywide market — a 2026 median of approximately $373,000 — rather than commanding a standalone school-zone premium. Joshua can pull recent closed comps for any specific street in Lake Forest, Woodland Hills, Amsterdam, or central La Vergne.',
+      },
+      {
+        q: 'How does La Vergne High School compare to schools in Smyrna or Murfreesboro?',
+        a: 'Neighboring Rutherford County high schools like Stewarts Creek (Smyrna) and Blackman (Murfreesboro) currently carry higher GreatSchools and Niche ratings than La Vergne High. Buyers focused primarily on school ratings often shortlist those zones instead, while buyers prioritizing La Vergne\'s lower price point and I-24/I-40/I-65 access weigh that trade-off against the school rating. Joshua can walk through comps and school data across all three to help match the decision to what matters most for the family.',
+      },
+    ],
+  },
+
   'la-vergne-middle-school-la-vergne-tn': {
     slug: 'la-vergne-middle-school-la-vergne-tn',
     name: 'La Vergne Middle School',
@@ -540,7 +651,7 @@ export const schools: Record<string, School> = {
     suburbSlug: 'la-vergne-tn',
     ratingNote: "Rated a 'B' overall by Niche (3.67/5) and ranked #220 among Tennessee's public middle schools — an above-average, actively-improving option in Rutherford County Schools.",
     blurb:
-      "La Vergne Middle School serves grades 6-8 for most of the city's residential footprint and is currently La Vergne's strongest publicly rated school: Niche grades it a 'B' overall (3.67 out of 5), ranking #220 among Tennessee's public middle schools and #53 of 98 in the Nashville metro area, with an 'A' in Diversity and a 'B+' in Teachers. With roughly 1,117 students and a 15:1 student-teacher ratio, it draws from the same neighborhoods — Lake Forest, Woodland Hills, the Stones River Road corridor, and central La Vergne — that make the city's sub-$350K entry point one of the most accessible in Rutherford County.",
+      "La Vergne Middle School serves grades 6-8 for most of the city's residential footprint and is currently La Vergne's strongest publicly rated school: Niche grades it a 'B' overall (3.67 out of 5), ranking #220 among Tennessee's public middle schools and #53 of 98 in the Nashville metro area, with an 'A' in Diversity and a 'B+' in Teachers. With roughly 1,117 students and a 15:1 student-teacher ratio, it draws from Lake Forest, Woodland Hills, the Stones River Road corridor, and central La Vergne. Pricing tracks the broader La Vergne market — see the current La Vergne market report for the citywide median rather than treating it as a middle-school zone figure.",
     neighborhoods: ['Lake Forest', 'Woodland Hills', 'Stones River Road corridor', 'Central La Vergne'],
     faqs: [
       {
@@ -549,7 +660,7 @@ export const schools: Record<string, School> = {
       },
       {
         q: 'Is La Vergne Middle School a good school?',
-        a: "Niche grades it a 'B' overall (3.67 out of 5), ranking it #220 among Tennessee's public middle schools and #53 of 98 in the Nashville metro area — an above-average option, with an 'A' in Diversity and a 'B+' in Teachers. It's currently the highest-rated public school serving La Vergne.",
+        a: "Niche grades it a 'B' overall (3.67 out of 5), ranking it #220 among Tennessee's public middle schools and #53 of 98 in the Nashville metro area — an above-average option, with an 'A' in Diversity and a 'B+' in Teachers. That 'B' is currently higher than La Vergne High School's B- on Niche.",
       },
       {
         q: 'What do homes cost near La Vergne Middle School?',
@@ -569,4 +680,98 @@ export function getAllSchoolSlugs(): string[] {
 
 export function getSchoolSuburb(s: School): Suburb | undefined {
   return getSuburb(s.suburbSlug)
+}
+
+function stripNeighborhoodQualifier(name: string): string {
+  return name.replace(/\s*\([^)]*\)/g, '').trim()
+}
+
+function neighborhoodMatchKeys(s: School): string[] {
+  return s.neighborhoods
+    .map(stripNeighborhoodQualifier)
+    .filter((n) => n.length >= 4 && !/subdivisions|corridor|\barea\b|adjacent/i.test(n))
+}
+
+// Distinctive names used to detect "this page already mentions that school"
+// in existing blurbs / FAQs. City-name-only tokens (e.g. "Brentwood") are
+// skipped so we don't false-match every Brentwood page to Brentwood High.
+function mentionTokens(s: School): string[] {
+  const tokens = new Set<string>([s.name])
+  const stripped = s.name
+    .replace(/\s+(Senior High|Elementary|Middle|High) School$/i, '')
+    .replace(/\s+(Elementary|Middle|High)$/i, '')
+    .trim()
+  const cityName = getSchoolSuburb(s)?.name
+  const isCityName = !!cityName && stripped.toLowerCase() === cityName.toLowerCase()
+  if (stripped.length >= 5 && !isCityName) tokens.add(stripped)
+  if (s.level === 'High') tokens.add(`${stripped} High`)
+  if (s.level === 'Middle') tokens.add(`${stripped} Middle`)
+  if (s.level === 'Elementary') tokens.add(`${stripped} Elementary`)
+  return Array.from(tokens)
+}
+
+function schoolHaystack(s: School): string {
+  return [s.blurb, s.ratingNote, ...s.faqs.map((f) => `${f.q} ${f.a}`)].join('\n')
+}
+
+function haystackMentions(haystack: string, token: string): boolean {
+  const escaped = token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  return new RegExp(`\\b${escaped}\\b`, 'i').test(haystack)
+}
+
+const LEVEL_ORDER: Record<School['level'], number> = {
+  Elementary: 0,
+  Middle: 1,
+  High: 2,
+}
+
+// Other /homes-near pages that already mention this school (or vice versa)
+// in editorial copy, or that share a named feeder neighborhood. No new
+// relationships are invented — only fields already on School are read.
+export function getRelatedSchools(s: School): School[] {
+  const selfTokens = mentionTokens(s)
+  const selfHaystack = schoolHaystack(s)
+  const selfHoods = new Set(neighborhoodMatchKeys(s).map((n) => n.toLowerCase()))
+
+  return Object.values(schools)
+    .filter((other) => {
+      if (other.slug === s.slug) return false
+      const otherHaystack = schoolHaystack(other)
+      const mentioned =
+        selfTokens.some((t) => haystackMentions(otherHaystack, t)) ||
+        mentionTokens(other).some((t) => haystackMentions(selfHaystack, t))
+      const sharedHood = neighborhoodMatchKeys(other).some((n) => selfHoods.has(n.toLowerCase()))
+      return mentioned || sharedHood
+    })
+    .sort((a, b) => LEVEL_ORDER[a.level] - LEVEL_ORDER[b.level] || a.name.localeCompare(b.name))
+}
+
+export function schoolPageTitle(s: School, suburb?: Suburb): string {
+  const city = suburb?.name ?? s.district
+  const a = s.neighborhoods[0] ? stripNeighborhoodQualifier(s.neighborhoods[0]) : ''
+  const b = s.neighborhoods[1] ? stripNeighborhoodQualifier(s.neighborhoods[1]) : ''
+  const hoods = a && b ? `${a} & ${b}` : a
+  return hoods ? `Homes Near ${s.name} in ${city} — ${hoods}` : `Homes Near ${s.name} in ${city}`
+}
+
+export function schoolPageDescription(s: School, suburb?: Suburb): string {
+  const lead = s.ratingNote.replace(/\.$/, '')
+  const hoods = s.neighborhoods.slice(0, 3).join(', ')
+  const citywide = suburb
+    ? ` Citywide ${suburb.name} median (${suburb.medianPrice}) is shown for context, not a ${s.name} attendance-zone median.`
+    : ''
+  return `${lead}. Feeder neighborhoods include ${hoods}.${citywide}`
+}
+
+export function schoolHeroLine(s: School, suburb?: Suburb): string {
+  const hoods = s.neighborhoods.slice(0, 3).join(', ')
+  const extra = s.neighborhoods.length > 3 ? ` and other ${s.level.toLowerCase()} feeders` : ''
+  const where = suburb ? ` in ${suburb.displayName}` : ''
+  return `${s.ratingNote} Typical search areas include ${hoods}${extra}${where}.`
+}
+
+export function schoolHeroKicker(s: School, suburb?: Suburb): string {
+  const hoods = s.neighborhoods.slice(0, 2).map(stripNeighborhoodQualifier).join(' · ')
+  const city = suburb?.name ?? s.district
+  return hoods ? `${s.district} · ${s.level} · ${city} · ${hoods}` : `${s.district} · ${s.level} School Zone`
 }

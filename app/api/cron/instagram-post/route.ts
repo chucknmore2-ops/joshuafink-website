@@ -1,35 +1,43 @@
 import { NextResponse } from 'next/server'
 import { blogPosts } from '@/lib/blog'
-import { listings } from '@/lib/listings'
+import {
+  pickWeeklyPromotable,
+  fallbackPromotables,
+  promotableListings,
+} from '@/lib/promotable-listings'
+import type { Listing } from '@/lib/listings'
 import { listingSlug } from '@/lib/listing-detail'
 import { logPost } from '@/lib/admin-db'
+import { instagramImageUrl } from '@/lib/compass-photo'
 import { withUtm } from '@/lib/utm'
+import { queueInstagramImagePost } from '@/lib/buffer-publish'
+import {
+  IG_ALTERNATE_LISTINGS,
+  preflightPublicJpeg,
+} from '@/lib/instagram-publish'
 
 export const dynamic = 'force-dynamic'
+// One public JPEG preflight plus a Buffer createPost. No Graph poll.
+export const maxDuration = 60
 
 // Instagram auto-poster for Joshua Fink Group.
 //
-// Runs on Vercel Cron; posts to the linked IG Business account via the Meta
-// Graph API. IG requires media on every post (no text-only), so the rotator
-// favors listings (always have imageUrl). Blog posts only post if they have a
-// coverImage — otherwise we fall through to a listing.
+// Social Autopost (IG_AUTOPOST=buffer) calls this route. The live path queues
+// one feed photo through Buffer Free — caption + a public image URL — with
+// schedulingType automatic and mode addToQueue. Meta Graph media create /
+// poll / publish stays off (containers sat IN_PROGRESS; Tech Provider was
+// declined). Do not reintroduce a Meta media call here.
 //
-// Required env vars:
-//   CRON_SECRET             — shared across /api/cron/* routes
-//   IG_BUSINESS_ACCOUNT_ID  — 17-digit Instagram Business account ID, found in
-//                             Meta Business Suite → Business settings → Accounts
-//                             → Instagram accounts. Requires the IG account to
-//                             be Business/Creator and linked to the FB Page.
-//   IG_ACCESS_TOKEN         — Page access token with instagram_basic +
-//                             instagram_content_publish + pages_read_engagement
-//                             scopes. Often the same token used for FB Page
-//                             posting if linked.
+// Required:
+//   CRON_SECRET              — shared across /api/cron/* routes
+//   BUFFER_API_KEY           — Buffer Free API key. GitHub Actions secret,
+//                              forwarded on X-Buffer-Api-Key. Env is a fallback.
+//   BUFFER_IG_CHANNEL_ID     — Buffer channel id for @joshuafinkgroup.
+//                              Forwarded on X-Buffer-Ig-Channel-Id.
 //
-// Two-step Graph API flow:
-//   1. POST /{ig-user-id}/media with image_url + caption → returns container ID
-//   2. POST /{ig-user-id}/media_publish with creation_id → returns media ID
+// A Buffer PostActionSuccess is a successful queue, not a Graph publish.
+// post_log status `posted` means Buffer accepted the item.
 
-const GRAPH_API = 'https://graph.facebook.com/v19.0'
 const SITE = 'https://www.joshuafink.com'
 const MAX_CAPTION = 2200 // IG hard limit
 
@@ -65,6 +73,12 @@ function logIg(
   })
 }
 
+function headerOrEnv(request: Request, header: string, envName: string): string {
+  const fromHeader = request.headers.get(header)?.trim() ?? ''
+  if (fromHeader) return fromHeader
+  return process.env[envName]?.trim() ?? ''
+}
+
 function isoWeekNumber(d: Date = new Date()): number {
   const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()))
   date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay() || 7))
@@ -72,8 +86,13 @@ function isoWeekNumber(d: Date = new Date()): number {
   return Math.ceil(((+date - +yearStart) / 86400000 + 1) / 7)
 }
 
-function buildFromListing(): PostPayload | null {
-  const l = listings.find((x) => x.imageUrl && x.price && x.compassUrl)
+function buildFromListing(listing?: Listing | null): PostPayload | null {
+  // Rotates weekly (this cron runs Wednesdays only) and skips anything not
+  // positively Active — the old `.find()` returned the array head every run,
+  // and the head was "Active Under Contract", so this caption announced an
+  // unavailable home. See lib/promotable-listings.ts. An explicit `listing` is
+  // the preflight fallback in GET, which needs a different photo.
+  const l = listing ?? pickWeeklyPromotable(1)
   if (!l) return null
   // Locality only ("Brentwood"), not "Brentwood, TN 37027", so the caption
   // reads "in Brentwood, TN".
@@ -98,13 +117,15 @@ function buildFromListing(): PostPayload | null {
   // Entity-first + location keyword up front so the post indexes/seeds AI for
   // the right terms. Hashtags are fine on Instagram (unlike LinkedIn).
   const caption =
-    `Joshua Fink Group just listed a home in ${locality}, TN — ${l.address}.\n\n` +
+    `Joshua Fink Group has a home for sale in ${locality}, TN — ${l.address}.\n\n` +
     `${features}\n${price}\n\n` +
     `Call or text Joshua Fink at 615-551-2727 for a private showing. Full details at joshuafink.com — link in bio.\n\n` +
     `#${cityHashtag} #JustListed #JoshuaFinkGroup #Compass #NashvilleRealEstate #MiddleTennessee #TennesseeRealEstate`
   return {
     caption: caption.slice(0, MAX_CAPTION),
-    imageUrl: l.imageUrl!,
+    // Hosted JPEG on joshuafink.com — never the Compass CDN. See
+    // app/ig-photo/[id]/route.ts.
+    imageUrl: instagramImageUrl(l.imageUrl!),
     url,
     kind: 'listing',
     refKey: slug,
@@ -134,7 +155,7 @@ function buildFromBlog(): PostPayload | null {
     `#NashvilleRealEstate #MiddleTennessee #JoshuaFinkGroup #Compass`
   return {
     caption: caption.slice(0, MAX_CAPTION),
-    imageUrl: cover,
+    imageUrl: instagramImageUrl(cover),
     url,
     kind: 'blog',
     refKey: p.slug,
@@ -147,6 +168,18 @@ function pickPayload(): PostPayload | null {
   return isoWeekNumber() % 2 === 0
     ? buildFromBlog() || buildFromListing()
     : buildFromListing() || buildFromBlog()
+}
+
+function payloadsToTry(first: PostPayload): PostPayload[] {
+  const out: PostPayload[] = [first]
+  if (first.kind !== 'listing') return out
+  const current = promotableListings().find((l) => listingSlug(l) === first.refKey)
+  if (!current) return out
+  for (const alt of fallbackPromotables(current, IG_ALTERNATE_LISTINGS)) {
+    const payload = buildFromListing(alt)
+    if (payload && payload.refKey !== first.refKey) out.push(payload)
+  }
+  return out
 }
 
 export async function GET(request: Request) {
@@ -162,14 +195,23 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 
-  const igUserId = process.env.IG_BUSINESS_ACCOUNT_ID
-  const accessToken = process.env.IG_ACCESS_TOKEN
-  if (!igUserId || !accessToken) {
+  // Graph stays off even when these are missing. Social Autopost forwards
+  // the GitHub secrets; process.env covers a Vercel env if one is added later.
+  const apiKey = headerOrEnv(request, 'x-buffer-api-key', 'BUFFER_API_KEY')
+  const channelId = headerOrEnv(
+    request,
+    'x-buffer-ig-channel-id',
+    'BUFFER_IG_CHANNEL_ID',
+  )
+  if (!apiKey || !channelId) {
     await logIg('failed', null, {
-      errorMessage: 'IG_BUSINESS_ACCOUNT_ID or IG_ACCESS_TOKEN not set',
+      errorMessage: 'BUFFER_API_KEY or BUFFER_IG_CHANNEL_ID not set',
     })
     return NextResponse.json(
-      { error: 'IG_BUSINESS_ACCOUNT_ID or IG_ACCESS_TOKEN not set' },
+      {
+        error: 'BUFFER_API_KEY or BUFFER_IG_CHANNEL_ID not set',
+        via: 'buffer',
+      },
       { status: 500 },
     )
   }
@@ -180,88 +222,86 @@ export async function GET(request: Request) {
       errorMessage: 'no content available to post (no listings or blog covers)',
     })
     return NextResponse.json(
-      { error: 'no content available to post (no listings or blog covers)' },
+      { error: 'no content available to post (no listings or blog covers)', via: 'buffer' },
       { status: 422 },
     )
   }
 
-  const sanitize = (t: string) => t.slice(0, 100).replace(/[^\w\s.:,\-]/g, '')
-
-  try {
-    const containerParams = new URLSearchParams({
-      image_url: payload.imageUrl,
-      caption: payload.caption,
-      access_token: accessToken,
-    })
-    const containerRes = await fetch(
-      `${GRAPH_API}/${igUserId}/media?${containerParams.toString()}`,
-      { method: 'POST' },
+  const queue = payloadsToTry(payload)
+  const preflightErrors: string[] = []
+  let posted: PostPayload | null = null
+  for (const candidate of queue) {
+    const preflight = await preflightPublicJpeg(candidate.imageUrl)
+    if (!preflight.ok) {
+      console.warn('[instagram-post] image preflight failed', candidate.refKey, preflight.reason)
+      preflightErrors.push(`${candidate.refKey}: ${preflight.reason}`)
+      continue
+    }
+    posted = candidate
+    console.info(
+      '[instagram-post] queuing via buffer',
+      JSON.stringify({
+        refKey: candidate.refKey,
+        kind: candidate.kind,
+        imageUrl: candidate.imageUrl,
+        bytes: preflight.bytes,
+        schedulingType: 'automatic',
+        mode: 'addToQueue',
+      }),
     )
-    if (!containerRes.ok) {
-      const snippet = await containerRes.text().then(sanitize).catch(() => '')
-      console.error('[instagram-post] container error', containerRes.status, snippet)
-      await logIg('failed', payload, {
-        errorMessage: `container ${containerRes.status} ${snippet}`,
-      })
-      return NextResponse.json(
-        {
-          error: 'instagram container creation failed',
-          upstreamStatus: containerRes.status,
-          hint:
-            containerRes.status === 401 || containerRes.status === 400
-              ? 'IG_ACCESS_TOKEN may have expired or lacks instagram_content_publish scope.'
-              : undefined,
-        },
-        { status: 502 },
-      )
-    }
-    const containerData = (await containerRes.json()) as { id?: string }
-    const creationId = containerData.id
-    if (!creationId) {
-      await logIg('failed', payload, {
-        errorMessage: 'instagram container returned no id',
-      })
-      return NextResponse.json(
-        { error: 'instagram container returned no id' },
-        { status: 502 },
-      )
-    }
-
-    const publishParams = new URLSearchParams({
-      creation_id: creationId,
-      access_token: accessToken,
-    })
-    const publishRes = await fetch(
-      `${GRAPH_API}/${igUserId}/media_publish?${publishParams.toString()}`,
-      { method: 'POST' },
-    )
-    if (!publishRes.ok) {
-      const snippet = await publishRes.text().then(sanitize).catch(() => '')
-      console.error('[instagram-post] publish error', publishRes.status, snippet)
-      await logIg('failed', payload, {
-        errorMessage: `publish ${publishRes.status} ${snippet}`,
-      })
-      return NextResponse.json(
-        { error: 'instagram publish failed', upstreamStatus: publishRes.status },
-        { status: 502 },
-      )
-    }
-    const publishData = (await publishRes.json()) as { id?: string }
-
-    await logIg('posted', payload, { externalPostId: publishData.id ?? null })
-    return NextResponse.json({
-      posted: true,
-      mediaId: publishData.id,
-      creationId,
-      preview: payload.caption.slice(0, 120),
-      url: payload.url,
-      at: new Date().toISOString(),
-    })
-  } catch (err) {
-    console.error('[instagram-post] network error', err)
-    await logIg('failed', payload, {
-      errorMessage: `network: ${(err as Error).message}`,
-    })
-    return NextResponse.json({ error: 'instagram post failed' }, { status: 502 })
+    break
   }
+
+  if (!posted) {
+    const errorMessage = `preflight failed: ${preflightErrors.join('; ') || 'no image'}`
+    await logIg('failed', queue[0] ?? null, { errorMessage })
+    return NextResponse.json(
+      {
+        error: 'instagram image_url not ready',
+        via: 'buffer',
+        refKey: queue[0]?.refKey ?? null,
+        kind: queue[0]?.kind ?? null,
+        imageUrl: queue[0]?.imageUrl ?? null,
+        preflight: preflightErrors,
+      },
+      { status: 502 },
+    )
+  }
+
+  const queued = await queueInstagramImagePost({
+    apiKey,
+    channelId,
+    text: posted.caption,
+    imageUrl: posted.imageUrl,
+  })
+  if (!queued.ok) {
+    console.error('[instagram-post] buffer error', queued.error)
+    await logIg('failed', posted, { errorMessage: queued.error })
+    return NextResponse.json(
+      {
+        error: 'buffer queue failed',
+        via: 'buffer',
+        refKey: posted.refKey,
+        kind: posted.kind,
+        imageUrl: posted.imageUrl,
+        message: queued.error,
+      },
+      { status: 502 },
+    )
+  }
+
+  await logIg('posted', posted, { externalPostId: queued.postId })
+  return NextResponse.json({
+    posted: true,
+    via: 'buffer',
+    bufferPostId: queued.postId,
+    schedulingType: 'automatic',
+    mode: 'addToQueue',
+    refKey: posted.refKey,
+    kind: posted.kind,
+    imageUrl: posted.imageUrl,
+    preview: posted.caption.slice(0, 120),
+    url: posted.url,
+    at: new Date().toISOString(),
+  })
 }

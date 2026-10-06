@@ -10,6 +10,38 @@ export const pool = new Pool({
     : undefined,
 });
 
+export async function hasPostedRef(opts: {
+  channel: string;
+  jobName: string;
+  refKey: string;
+}): Promise<boolean> {
+  const r = await pool.query<{ exists: boolean }>(
+    `SELECT EXISTS (
+       SELECT 1 FROM post_log
+       WHERE channel = $1
+         AND job_name = $2
+         AND ref_key = $3
+         AND status = 'posted'
+     ) AS exists`,
+    [opts.channel, opts.jobName, opts.refKey]
+  );
+  return r.rows[0]?.exists ?? false;
+}
+
+export async function listingRanThisWindow(withinHours: number): Promise<boolean> {
+  const r = await pool.query<{ exists: boolean }>(
+    `SELECT EXISTS (
+       SELECT 1 FROM post_log
+       WHERE channel = 'facebook'
+         AND job_name = 'listing-spotlight'
+         AND status IN ('posted', 'dry_run')
+         AND posted_at > NOW() - ($1 || ' hours')::interval
+     ) AS exists`,
+    [withinHours]
+  );
+  return r.rows[0]?.exists ?? false;
+}
+
 export async function recentlyPosted(opts: {
   channel: string;
   payloadKind: string;

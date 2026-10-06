@@ -1,11 +1,10 @@
-import { blogPosts } from '@/lib/blog'
+import { blogPosts, getAuditTier } from '@/lib/blog'
 import { getAllSuburbSlugs } from '@/lib/suburbs'
 import { getAllCashOfferCitySlugs } from '@/lib/cash-offer-cities'
 import { getAllNeighborhoodSlugs } from '@/lib/neighborhoods'
 import { allFeaturedPairSlugs } from '@/lib/compare'
 import { getAllSchoolSlugs } from '@/lib/schools'
-import { listings } from '@/lib/listings'
-import { listingSlug } from '@/lib/listing-detail'
+import { getListingBySlug, isSoldStatus, listingDetailSlugs } from '@/lib/listing-detail'
 
 export const SITE_ORIGIN = 'https://www.joshuafink.com'
 
@@ -67,7 +66,11 @@ export function getSiteUrlCatalog(): SiteUrlEntry[] {
   ]
 
   // ── Blog posts — parse date strings with a defensive fallback ─────
-  const blog: SiteUrlEntry[] = blogPosts.map((post) => {
+  // Rewrite-tier posts are noindexed (see app/blog/[slug]/page.tsx), so listing
+  // them here would ask Google to crawl a page we are telling it not to index.
+  const blog: SiteUrlEntry[] = blogPosts
+    .filter((post) => getAuditTier(post.slug) !== 'rewrite')
+    .map((post) => {
     const dateStr = post.dateModified || post.date
     const parsed = new Date(dateStr)
     return {
@@ -125,14 +128,19 @@ export function getSiteUrlCatalog(): SiteUrlEntry[] {
     changeFrequency: 'monthly',
   }))
 
-  // ── On-site listing detail pages (one per active listing) ─────────
+  // ── On-site listing detail pages (active + indexable sold) ────────
   // These capture address-level search intent on joshuafink.com instead of
-  // ceding it to compass.com. Inventory turns over fast, so ping daily.
-  const listingDetailPages: SiteUrlEntry[] = listings.map((l) => ({
-    path: `/listings/${listingSlug(l)}`,
-    priority: 0.7,
-    changeFrequency: 'daily',
-  }))
+  // ceding it to compass.com. Active inventory turns over fast (daily);
+  // sold proof pages change only when the Compass sold sync rewrites the file.
+  const listingDetailPages: SiteUrlEntry[] = Array.from(listingDetailSlugs).map((slug) => {
+    const listing = getListingBySlug(slug)
+    const sold = listing ? isSoldStatus(listing.status) : false
+    return {
+      path: `/listings/${slug}`,
+      priority: sold ? 0.65 : 0.7,
+      changeFrequency: sold ? 'monthly' : 'daily',
+    }
+  })
 
   return [
     ...core,

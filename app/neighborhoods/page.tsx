@@ -4,6 +4,8 @@ import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import { neighborhoods } from '@/lib/neighborhoods'
 import { reviewStats } from '@/lib/reviews'
+import SoldPropertyExperience from '@/components/SoldPropertyExperience'
+import { publishedSoldListings } from '@/lib/sold-proof'
 
 export const metadata: Metadata = {
   title: 'Middle Tennessee Neighborhood Guides',
@@ -15,6 +17,10 @@ export const metadata: Metadata = {
 }
 
 const faqs = [
+  {
+    q: 'What are the best neighborhoods in Franklin, TN for families?',
+    a: 'For families, the strongest Franklin, TN subdivisions are Westhaven (walkable master-planned community with a golf course and town center, $650K–$2.5M+), McKay\'s Mill (large, established family subdivision with multiple pools, $650K–$1.2M), Fieldstone Farms (mature trees and bigger lots than newer builds, $650K–$1.1M), Berry Farms (newer walkable town center on the south side, $550K–$1.8M), and The Highlands at Ladd Park (newer construction on larger-than-builder lots, $900K–$2M). All five are zoned to Williamson County Schools, one of the top-rated districts in Tennessee. Each has its own dedicated guide below with exact school assignments, HOA details, and current pricing.',
+  },
   {
     q: 'What is the best Middle Tennessee neighborhood for families?',
     a: 'Family-first searches usually start with Brentwood, Franklin, and Nolensville — all anchored by top-rated Williamson County Schools, low crime, and strong long-term appreciation. Spring Hill and Thompson’s Station offer similar schools at a lower price band. Open any neighborhood guide for the specific school zones, HOA, and price range.',
@@ -39,6 +45,7 @@ const faqs = [
 
 export default function NeighborhoodsIndexPage() {
   const all = Object.values(neighborhoods)
+  const soldRecords = publishedSoldListings()
 
   const byCity = all.reduce<Record<string, typeof all>>((acc, n) => {
     const key = `${n.city}, ${n.schemaState}`
@@ -62,13 +69,6 @@ export default function NeighborhoodsIndexPage() {
       {
         '@type': 'RealEstateAgent',
         '@id': 'https://www.joshuafink.com/#agent',
-        name: 'Joshua Fink — Compass Real Estate',
-        url: 'https://www.joshuafink.com/neighborhoods',
-        telephone: '+16155512727',
-        email: 'joshua@joshuafink.com',
-        image: 'https://www.joshuafink.com/headshot.webp',
-        description:
-          'Joshua Fink is a Compass Real Estate agent covering Middle Tennessee neighborhoods across Franklin, Brentwood, Spring Hill, Nolensville, Nashville, and surrounding markets.',
         address: {
           '@type': 'PostalAddress',
           streetAddress: '8119 Isabella Lane, Suite 105',
@@ -93,6 +93,7 @@ export default function NeighborhoodsIndexPage() {
           'https://www.instagram.com/joshuafinkgroup',
           'https://www.linkedin.com/in/joshuafinkgroup/',
           'https://x.com/JoshuaFinkGroup',
+          'https://www.youtube.com/channel/UCc6j1NWgJeb00pT5xsenz3g',
           'https://www.compass.com/agents/joshua-fink/',
           'https://www.zillow.com/profile/JoshuaFinkGroup',
         ],
@@ -126,8 +127,6 @@ export default function NeighborhoodsIndexPage() {
           addressCountry: 'US',
         },
         priceRange: '$$$',
-        description:
-          'Real estate agent serving Middle Tennessee neighborhoods — Franklin, Brentwood, Spring Hill, Nolensville, Nashville, and surrounding markets.',
       },
     ],
   }
@@ -200,15 +199,6 @@ export default function NeighborhoodsIndexPage() {
                 >
                   <input type="hidden" name="lead_type" value="buyer" />
                   <input type="hidden" name="source" value="neighborhoods-index" />
-                  {/* Honeypot — real users never see or fill this */}
-                  <input
-                    type="text"
-                    name="website"
-                    tabIndex={-1}
-                    autoComplete="off"
-                    aria-hidden="true"
-                    className="absolute left-[-9999px] h-0 w-0 opacity-0"
-                  />
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
@@ -297,6 +287,12 @@ export default function NeighborhoodsIndexPage() {
               </div>
             </div>
           ))}
+
+          {soldRecords.length > 0 && (
+            <div className="mt-16 mb-16 border border-[#E8E8E8] p-8 sm:p-10">
+              <SoldPropertyExperience listings={soldRecords} />
+            </div>
+          )}
 
           <div className="mt-16 bg-[#F5F5F5] p-10 text-center">
             <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">

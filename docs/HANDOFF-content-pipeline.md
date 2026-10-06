@@ -110,14 +110,9 @@ GBP **is** the highest-leverage local-SEO signal. The existing `scripts/gbp_post
 
 Go with A. One service, one runtime, one log stream.
 
-### Phase 2A — Switch content engine to Anthropic Sonnet 4.6 (half day)
+### Phase 2A — Switch content engine to Anthropic — cancelled 2026-09-28
 
-Current state: `content_engine/main.py` calls Ollama (`http://localhost:11434`) — won't work on Railway, quality is mediocre anyway.
-
-1. In `content_engine/engine/writer.py`, swap `ollama.chat()` → `anthropic.messages.create()` using Sonnet 4.6
-2. Prompts already exist in `content_engine/prompts/`, just need the API call shape changed
-3. Add `ANTHROPIC_API_KEY` to env (already set on `services/autoposter`, just reference)
-4. Test locally with `python content_engine/main.py --stats` then `--batch 1`
+`content_engine/main.py` still calls local Ollama (`http://localhost:11434`). The planned Anthropic swap was never shipped and is not coming back. Do not add `ANTHROPIC_API_KEY` to Railway `services/autoposter` or anywhere else for this. The autoposter service does not read that key.
 
 ### Phase 2B — Move keyword queue to Postgres (half day)
 

@@ -27,7 +27,7 @@ function buildMessage(kind: ContentKind): { message: string; link?: string; refK
 
 "${t.text}"
 
-— ${t.reviewer}, ${t.location}
+— ${t.reviewer}${t.location ? `, ${t.location}` : ""}
 
 Join 218+ satisfied clients across Middle Tennessee. Ready to work together?
 
