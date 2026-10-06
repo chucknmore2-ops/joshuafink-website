@@ -6,7 +6,7 @@
 ### Script 1: "The 24-Hour Offer" (30 sec)
 **Hook (first 3 sec):** "I can make you a cash offer on your Nashville home in 24 hours."
 
-**Body:** "No repairs. No commissions. No showings. I'm Joshua Fink — a licensed Compass agent who also buys houses direct. I've been doing this for 13 years across Middle Tennessee. If you need to sell fast, I'll give you a fair cash offer and we can close in as little as 7 days."
+**Body:** "No repairs. No commissions. No showings. I'm Joshua Fink — a licensed Compass agent who also buys houses direct. I've been licensed since 2008, working across Middle Tennessee. If you need to sell fast, I'll give you a fair cash offer and we can close in as little as 7 days."
 
 **CTA:** "Call me at 615-551-2727 or visit joshuafink.com/cash-offer."
 
@@ -52,11 +52,11 @@
 ### Script 5: "I'm Not a Random LLC" (20 sec)
 **Hook:** "You've seen those 'We Buy Houses' signs. Here's why I'm different."
 
-**Body:** "I'm a licensed Compass agent with 13 years in Middle Tennessee. I answer my own phone. I show up personally. And I'll give you a fair offer — not a lowball from some out-of-state investor."
+**Body:** "I'm a Compass agent, licensed since 2008, working in Middle Tennessee. I answer my own phone. I show up personally. And I'll give you a fair offer — not a lowball from some out-of-state investor."
 
 **CTA:** "615-551-2727. Joshua Fink. Call me."
 
-**On-screen text:** Licensed Compass Agent · 13+ Years · 100+ Homes/Year · 615-551-2727
+**On-screen text:** Compass Affiliate Broker · Licensed since 2008 · 40+ Homes/Year · 615-551-2727
 
 ---
 

@@ -642,6 +642,92 @@ export const schools: Record<string, School> = {
       },
     ],
   },
+
+  'smyrna-high-school-smyrna-tn': {
+    slug: 'smyrna-high-school-smyrna-tn',
+    name: 'Smyrna High School',
+    level: 'High',
+    district: 'Rutherford County Schools',
+    suburbSlug: 'smyrna-tn',
+    ratingNote: 'Niche grades Smyrna High School a B (3.7/5 from 417 reviews) — #9 among Rutherford County public high schools and #63 statewide.',
+    blurb:
+      "Smyrna High School serves central and east Smyrna, the largest town in Tennessee and home to the Nissan Smyrna Vehicle Assembly Plant — the largest single-site auto plant in North America and the town's largest employer at roughly 8,000 workers. Niche grades the school a B (3.7 out of 5 from 417 reviews), ranking it #9 among Rutherford County's public high schools and #63 statewide, across 2,254 students at a 17:1 student-teacher ratio. For buyers targeting Smyrna's $413,476 citywide median, the Smyrna High zone offers an employment-anchored market with a solidly rated public school and easy I-24 access to both Nashville and Murfreesboro. Newer subdivisions on the east side are often zoned to Stewarts Creek High instead.",
+    neighborhoods: ['Central Smyrna', 'Downtown Smyrna', 'Sam Ridley Parkway corridor', 'East Smyrna'],
+    faqs: [
+      {
+        q: 'Is Smyrna High School a good school?',
+        a: 'Niche grades Smyrna High School a B, with a 3.7-out-of-5 rating from 417 reviews. It ranks #9 among Rutherford County public high schools and #63 among all Tennessee public high schools, with 2,254 students and a 17-to-1 student-teacher ratio. Stewarts Creek High, which serves newer east-side subdivisions, currently carries a higher GreatSchools rating.',
+      },
+      {
+        q: 'What neighborhoods are zoned to Smyrna High School?',
+        a: "Smyrna High draws from central and east Smyrna within Rutherford County Schools; some newer south-Smyrna subdivisions along the Stewarts Creek corridor are zoned to Stewarts Creek High School instead. Rutherford County has adjusted school zone lines in recent years, so always confirm the current attendance assignment with Rutherford County Schools for a specific address before writing an offer.",
+      },
+      {
+        q: 'How much do homes near Smyrna High School cost?',
+        a: "Smyrna's citywide 2026 median is $413,476, with homes averaging about $217.85 per square foot and roughly 61 days on market. That citywide figure is not a Smyrna High attendance-zone median. Joshua can pull exact, current comps for any specific street in the Smyrna High zone.",
+      },
+      {
+        q: 'Why do buyers consider Smyrna for schools and value?',
+        a: "Smyrna pairs a solidly rated public high school with one of Middle Tennessee's more accessible median prices, backed by steady, employment-driven demand from the Nissan Smyrna plant's roughly 8,000 jobs. For buyers priced out of Williamson County but who still want a strong I-24 commute to Nashville or Murfreesboro, the Smyrna High zone is a frequently shortlisted alternative.",
+      },
+    ],
+  },
+
+  'columbia-central-high-school-columbia-tn': {
+    slug: 'columbia-central-high-school-columbia-tn',
+    name: 'Columbia Central High School',
+    level: 'High',
+    district: 'Maury County Public Schools',
+    suburbSlug: 'columbia-tn',
+    ratingNote: 'Niche grades Columbia Central a C+ (4/10 on GreatSchools) — the draw for most buyers here is Columbia\'s affordability and growth, not the school ranking.',
+    blurb:
+      "Columbia Central High School is the comprehensive public high school serving the city of Columbia, seat of Maury County — Tennessee's #2 fastest-growing county by percentage from 2024 to 2025. Niche grades the school a C+ and GreatSchools rates it 4/10, putting it in the bottom half of Tennessee public high schools by US News' ranking; it isn't a Williamson County-caliber school zone, and buyers shouldn't be told otherwise. What Columbia does offer is real: a $368,006 median home price — the most attainable in Joshua's Middle Tennessee coverage area — backed by genuine employment growth from Maury Regional Health (3,000+ jobs) and continued spillover from GM's Ultium Cells plant in neighboring Spring Hill. For buyers prioritizing space and price over school ranking, or willing to trade school quality for affordability while Maury County's rapid growth plays out, Columbia is worth a serious look.",
+    neighborhoods: ['Downtown Columbia', 'Sunnyside', 'North Columbia', 'The Crossings'],
+    faqs: [
+      {
+        q: 'Is Columbia Central High School a good school?',
+        a: 'Honestly, its ratings are middling: Niche grades it a C+ (3.55/5 from 179 reviews), GreatSchools rates it 4/10, and US News ranks it in the bottom half of Tennessee public high schools. Families who need a top-ranked zone typically look toward Williamson County (Franklin, Brentwood, Nolensville) instead. Columbia\'s draw is affordability and growth, not school rankings — Joshua gives you the honest trade-off, not just the pitch that helps a sale.',
+      },
+      {
+        q: 'What neighborhoods are zoned to Columbia Central High School?',
+        a: 'Columbia Central serves the core of the city, including Downtown Columbia, Sunnyside, North Columbia, and The Crossings. Maury County Public Schools sets zones by address, and boundaries can shift as the district adds capacity for a fast-growing population — confirm the current assignment with the district for any specific address before writing an offer.',
+      },
+      {
+        q: 'How much do homes near Columbia Central High School cost?',
+        a: 'Columbia Central-zoned homes are part of the broader Columbia market — see the current Columbia market report for up-to-date medians ($368,006 citywide) and price-per-square-foot. That citywide figure is not a Columbia Central attendance-zone median. Joshua can pull exact, current comps for any specific street in Downtown Columbia, Sunnyside, or North Columbia.',
+      },
+      {
+        q: 'Should I buy in Columbia if school rating is a top priority?',
+        a: 'If a top-ranked school zone is a hard requirement, Columbia Central\'s current ratings (C+ on Niche, 4/10 on GreatSchools) likely won\'t fit — Williamson County zones like Page, Independence, or Nolensville rank far higher. But Maury County is one of the fastest-growing counties in Tennessee, and Columbia\'s population is up roughly 17% since the 2020 Census, so school investment and options are likely to keep evolving. Joshua will walk through the full trade-off, not just the upside, before you commit.',
+      },
+    ],
+  },
+
+  'la-vergne-middle-school-la-vergne-tn': {
+    slug: 'la-vergne-middle-school-la-vergne-tn',
+    name: 'La Vergne Middle School',
+    level: 'Middle',
+    district: 'Rutherford County Schools',
+    suburbSlug: 'la-vergne-tn',
+    ratingNote: "Rated a 'B' overall by Niche (3.67/5) and ranked #220 among Tennessee's public middle schools — an above-average, actively-improving option in Rutherford County Schools.",
+    blurb:
+      "La Vergne Middle School serves grades 6-8 for most of the city's residential footprint and is currently La Vergne's strongest publicly rated school: Niche grades it a 'B' overall (3.67 out of 5), ranking #220 among Tennessee's public middle schools and #53 of 98 in the Nashville metro area, with an 'A' in Diversity and a 'B+' in Teachers. With roughly 1,117 students and a 15:1 student-teacher ratio, it draws from Lake Forest, Woodland Hills, the Stones River Road corridor, and central La Vergne. Pricing tracks the broader La Vergne market — see the current La Vergne market report for the citywide median rather than treating it as a middle-school zone figure.",
+    neighborhoods: ['Lake Forest', 'Woodland Hills', 'Stones River Road corridor', 'Central La Vergne'],
+    faqs: [
+      {
+        q: 'What neighborhoods feed La Vergne Middle School?',
+        a: "La Vergne Middle draws from most of the city's residential footprint, including Lake Forest, Woodland Hills, the Stones River Road corridor, and central La Vergne. Zoning is confirmed at the Rutherford County Schools level — Joshua verifies the current assignment before every tour.",
+      },
+      {
+        q: 'Is La Vergne Middle School a good school?',
+        a: "Niche grades it a 'B' overall (3.67 out of 5), ranking it #220 among Tennessee's public middle schools and #53 of 98 in the Nashville metro area — an above-average option, with an 'A' in Diversity and a 'B+' in Teachers. That 'B' is currently higher than La Vergne High School's B- on Niche.",
+      },
+      {
+        q: 'What do homes cost near La Vergne Middle School?',
+        a: "These homes are part of the broader La Vergne market — see the current La Vergne market report for up-to-date medians and price-per-square-foot. Joshua can pull exact, current comps for any specific street in Lake Forest, Woodland Hills, or the Stones River Road corridor.",
+      },
+    ],
+  },
 }
 
 export function getSchool(slug: string): School | undefined {

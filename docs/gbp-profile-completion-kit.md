@@ -35,7 +35,7 @@ Franklin TN · Brentwood TN · Spring Hill TN · Nolensville TN · Thompson's St
 
 ## 4. Description (~740 chars — paste as-is)
 ```
-Joshua Fink Group is a Middle Tennessee real estate team led by Joshua Fink, an Affiliate Broker with Compass Real Estate based in Brentwood, TN. With 17+ years of experience and 100+ homes sold each year, Joshua helps buyers and sellers across Williamson, Davidson, Rutherford, Sumner, Maury and Wilson counties — including Franklin, Brentwood, Spring Hill, Nolensville, Thompson's Station, Nashville, Murfreesboro, Gallatin, Hendersonville, Mount Juliet, Columbia, Lebanon and Smyrna. He pairs on-the-ground neighborhood expertise with Compass market data and tools like Coming Soon and Concierge to price sharply, negotiate hard, and move fast. Call 615-551-2727 or visit joshuafink.com to start your move.
+Joshua Fink Group is a Middle Tennessee real estate team led by Joshua Fink, an Affiliate Broker with Compass Real Estate based in Brentwood, TN. Licensed since 2008, with 40+ homes a year in Middle Tennessee, Joshua helps buyers and sellers across Williamson, Davidson, Rutherford, Sumner, Maury and Wilson counties — including Franklin, Brentwood, Spring Hill, Nolensville, Thompson's Station, Nashville, Murfreesboro, Gallatin, Hendersonville, Mount Juliet, Columbia, Lebanon and Smyrna. He pairs on-the-ground neighborhood expertise with Compass market data and tools like Coming Soon and Concierge to price sharply, negotiate hard, and move fast. Call 615-551-2727 or visit joshuafink.com to start your move.
 ```
 
 ## 5. Services (add under your category, with these short blurbs)
