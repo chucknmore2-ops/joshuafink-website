@@ -146,6 +146,11 @@ EXPECTED_JOBS: tuple[ExpectedJob, ...] = (
         cadence_ct="Thu 9:00am CT",
         max_age_days=9,
     ),
+    # Weekly rotator only. gbp-just-listed (new Compass listings) and
+    # gbp-on-demand (manual ?kind=listing / ?kind=sold) log under their own
+    # job names on purpose: a Just Listed post must not refresh this clock
+    # and hide a dead Tuesday run. A quiet stretch with no new listings is
+    # not a stale rotator, so those jobs are not in EXPECTED_JOBS.
     ExpectedJob(
         label="vercel-cron-gbp",
         channel="gbp",

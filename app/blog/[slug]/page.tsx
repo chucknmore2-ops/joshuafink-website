@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { Fragment } from 'react'
-import { getPostBySlug, getAllSlugs, getRelatedPosts, getAuditTier, type BlogPost } from '@/lib/blog'
+import { blogDateToIso, getPostBySlug, getAllSlugs, getRelatedPosts, getAuditTier, type BlogPost } from '@/lib/blog'
 import { linkifyLocations } from '@/lib/linkify-neighborhoods'
 import { neighborhoods } from '@/lib/neighborhoods'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
@@ -22,9 +22,7 @@ export async function generateStaticParams() {
 }
 
 function isoDate(human: string): string | undefined {
-  const d = new Date(human)
-  if (isNaN(d.getTime())) return undefined
-  return d.toISOString()
+  return blogDateToIso(human)
 }
 
 function wordCount(content: string): number {

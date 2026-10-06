@@ -1,4 +1,4 @@
-import { blogPosts, getAuditTier } from '@/lib/blog'
+import { blogDateToUtcDate, blogPosts, getAuditTier } from '@/lib/blog'
 import { getAllSuburbSlugs } from '@/lib/suburbs'
 import { getAllCashOfferCitySlugs } from '@/lib/cash-offer-cities'
 import { getAllNeighborhoodSlugs } from '@/lib/neighborhoods'
@@ -72,12 +72,11 @@ export function getSiteUrlCatalog(): SiteUrlEntry[] {
     .filter((post) => getAuditTier(post.slug) !== 'rewrite')
     .map((post) => {
     const dateStr = post.dateModified || post.date
-    const parsed = new Date(dateStr)
     return {
       path: `/blog/${post.slug}`,
       priority: 0.75,
       changeFrequency: 'monthly',
-      lastModified: isNaN(parsed.getTime()) ? undefined : parsed,
+      lastModified: blogDateToUtcDate(dateStr),
     }
   })
 

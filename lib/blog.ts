@@ -8,6 +8,52 @@ import {
   type MarketSnapshot,
 } from '@/lib/market-snapshot'
 
+const BLOG_DATE = /^([A-Za-z]+)\s+(\d{1,2}),\s*(\d{4})$/
+const BLOG_MONTHS: Record<string, number> = {
+  january: 1,
+  february: 2,
+  march: 3,
+  april: 4,
+  may: 5,
+  june: 6,
+  july: 7,
+  august: 8,
+  september: 9,
+  october: 10,
+  november: 11,
+  december: 12,
+}
+
+/**
+ * "October 5, 2026" → "2026-10-05".
+ * The calendar day is taken from the string. `new Date(human)` parses as
+ * local midnight and can shift the day in JSON-LD and the sitemap.
+ */
+export function blogDateToIso(human: string): string | undefined {
+  const match = BLOG_DATE.exec(human.trim())
+  if (!match) return undefined
+  const month = BLOG_MONTHS[match[1].toLowerCase()]
+  const day = Number(match[2])
+  const year = Number(match[3])
+  if (!month || day < 1 || day > 31) return undefined
+  const utc = new Date(Date.UTC(year, month - 1, day))
+  if (
+    utc.getUTCFullYear() !== year ||
+    utc.getUTCMonth() !== month - 1 ||
+    utc.getUTCDate() !== day
+  ) {
+    return undefined
+  }
+  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+}
+
+/** Noon UTC on that calendar day, so a sitemap or RSS timestamp stays on it. */
+export function blogDateToUtcDate(human: string): Date | undefined {
+  const iso = blogDateToIso(human)
+  if (!iso) return undefined
+  return new Date(`${iso}T12:00:00.000Z`)
+}
+
 export interface BlogPost {
   slug: string
   title: string

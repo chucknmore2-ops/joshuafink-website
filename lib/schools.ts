@@ -80,9 +80,9 @@ export const schools: Record<string, School> = {
     level: 'High',
     district: 'Williamson County Schools',
     suburbSlug: 'franklin-tn',
-    ratingNote: 'A well-regarded Williamson County public high school.',
+    ratingNote: 'Ranked 19th of 389 Tennessee high schools by SchoolDigger, plus a Niche A- grade (#30 statewide, 3.89/5 from 328 reviews) for 2026.',
     blurb:
-      "Page High School serves a large family-residential portion of east Franklin and Thompson's Station, including some of the most popular family subdivisions in Williamson County — McKay's Mill, Brixworth, and Berry Farms among them. Strong academics, established athletics, and consistent college placement make the Page zone a high-demand pocket for relocating families targeting Williamson County schools at a more accessible Franklin price point.",
+      "Page High School serves a large family-residential portion of east Franklin and Thompson's Station, including some of the most popular family subdivisions in Williamson County — McKay's Mill, Brixworth, and Berry Farms among them. SchoolDigger ranks it 19th out of 389 Tennessee high schools, inside the Williamson County Schools district it separately rates 5 stars; Niche grades Page an A- and ranks it #30 among Tennessee public high schools for 2026 (3.89/5 from 328 reviews). Strong academics, established athletics, and consistent college placement make the Page zone a high-demand pocket for relocating families targeting Williamson County schools at a more accessible Franklin price point.",
     neighborhoods: ["McKay's Mill", 'Brixworth', 'Berry Farms', 'Cottonwood'],
     faqs: [
       {
@@ -99,12 +99,16 @@ export const schools: Record<string, School> = {
         a: "Page draws from a broad eastern-Franklin and Thompson's Station footprint including McKay's Mill, Brixworth, Berry Farms, and Cottonwood among others. Zoning varies by section within larger subdivisions — confirm with Williamson County Schools for any specific address.",
       },
       {
+        q: 'Is Page High School a good school?',
+        a: "Yes. SchoolDigger ranks Page 19th out of 389 Tennessee high schools, and it sits inside a Williamson County Schools district SchoolDigger separately rates 5 stars. Niche independently grades Page an A- and ranks it #30 among Tennessee public high schools for 2026, with an overall rating of 3.89/5 from 328 reviews (source: Niche.com, SchoolDigger.com). Rankings shift year to year, so confirm current figures directly with those sites before citing them to a client.",
+      },
+      {
         q: 'How do Page-zoned home prices compare to Independence-zoned?',
-        a: 'Page-zoned homes generally enter at a slightly more accessible price point than the Westhaven/Independence corridor on the west side of Franklin. The school is well-regarded, the inventory is family-functional, and buyers focused on value within Williamson County often shortlist Page-zoned subdivisions first.',
+        a: 'Page-zoned homes generally enter at a slightly more accessible price point than the Westhaven/Independence corridor on the west side of Franklin. The school ranks well on both SchoolDigger and Niche, the inventory is family-functional, and buyers focused on value within Williamson County often shortlist Page-zoned subdivisions first.',
       },
       {
         q: 'Is the Page zone a good long-term family bet?',
-        a: 'Yes. Williamson County school zoning consistently drives resale demand, and Page is a stable, well-rated school in a built-out part of east Franklin and Thompson&apos;s Station with limited future inventory growth — supportive of long-term value.',
+        a: 'Yes. Williamson County school zoning consistently drives resale demand, and Page is a stable, top-30-in-Tennessee school in a built-out part of east Franklin and Thompson&apos;s Station with limited future inventory growth — supportive of long-term value.',
       },
     ],
   },
@@ -489,6 +493,36 @@ export const schools: Record<string, School> = {
     ],
   },
 
+  'gallatin-high-school-gallatin-tn': {
+    slug: 'gallatin-high-school-gallatin-tn',
+    name: 'Gallatin High School',
+    level: 'High',
+    district: 'Sumner County Schools',
+    suburbSlug: 'gallatin-tn',
+    ratingNote: 'Niche rates it 3.87/5 from 321 reviews and ranks it #122 among Tennessee public high schools (#9 of 10 in Sumner County); SchoolDigger’s 2024–2025 rankings place it 152nd of 389 statewide — solidly above average, a tier below Station Camp’s top-30 ranking.',
+    blurb:
+      'Gallatin High School sits at 700 Dan P. Herron Drive and is Sumner County’s original comprehensive high school, serving the older, established core of town — downtown Gallatin and the Wynbrooke area — as distinct from the newer Station Camp zone that covers the Station Camp, Sanders Ferry, and Lakeside growth corridor. Niche rates it 3.87/5 from 321 reviews and ranks it #122 among Tennessee’s public high schools; SchoolDigger’s 2024–2025 rankings put it 152nd of 389 statewide. Both put it solidly above average, though a notch behind Station Camp’s top-30 ranking — SchoolDigger also flags a 25.3% chronic-absenteeism rate, more than double the district average, which is worth asking about directly if it matters to your family. For buyers, the honest read: Gallatin High serves the more walkable, established part of town, and is worth comparing directly against Station Camp rather than assumed to be the default zone.',
+    neighborhoods: ['Downtown Gallatin', 'Wynbrooke', 'Central/West Gallatin'],
+    faqs: [
+      {
+        q: 'What neighborhoods are zoned to Gallatin High School?',
+        a: 'The Gallatin High zone covers the older, established core of town — downtown Gallatin, Wynbrooke, and the surrounding central and west Gallatin neighborhoods — as opposed to the newer Station Camp zone on the town’s growth corridor. Sumner County has redrawn attendance lines before as the area has grown, so always confirm the current zone assignment with Sumner County Schools for a specific address before writing an offer.',
+      },
+      {
+        q: 'Is Gallatin High School a good school?',
+        a: 'It’s a solid, above-average option. Niche rates it 3.87/5 from 321 reviews and ranks it #122 among Tennessee’s public high schools; SchoolDigger’s 2024–2025 rankings place it 152nd of 389 statewide. Both put it a notch behind Station Camp’s top-30 SchoolDigger ranking. SchoolDigger also reports a 25.3% chronic-absenteeism rate, more than double the district average — a fair question to ask the school directly if attendance culture matters to your decision.',
+      },
+      {
+        q: 'How much do homes near Gallatin High School cost?',
+        a: 'Gallatin High-zoned homes are part of the broader Gallatin market — see the current Gallatin market report for up-to-date medians and price-per-square-foot. Downtown-adjacent and Wynbrooke-area homes tend to be older housing stock than the newer construction common in the Station Camp zone. Joshua can pull exact, current comps for any specific street.',
+      },
+      {
+        q: 'How does Gallatin High School compare to Station Camp High School?',
+        a: 'Both serve Gallatin under Sumner County Schools, but they draw from different parts of town and rank differently: Station Camp is 3rd among Sumner County’s high schools per SchoolDigger (30th of 389 statewide) and covers the newer Station Camp/Sanders Ferry/Lakeside growth corridor, while Gallatin High ranks 152nd of 389 statewide and serves the older, established downtown core. Neither is a wrong choice — the right one comes down to which side of the attendance line a specific address falls on, plus whether newer construction or an established, walkable neighborhood matters more to you.',
+      },
+    ],
+  },
+
   'julia-green-elementary-nashville-tn': {
     slug: 'julia-green-elementary-nashville-tn',
     name: 'Julia Green Elementary School',
@@ -575,6 +609,62 @@ export const schools: Record<string, School> = {
       {
         q: 'How does Stewarts Creek compare to Smyrna High School?',
         a: 'Both are Rutherford County Schools, but Stewarts Creek is the newer of the two (opened 2013) and currently carries a higher GreatSchools rating and graduation rate. Smyrna High serves the older, more established core of town; Stewarts Creek serves the newer subdivisions on the east side. Which zone fits depends on whether a buyer prioritizes newer construction or an established, closer-in address — Joshua can walk through the tradeoffs for a specific budget.',
+      },
+    ],
+  },
+
+  'la-vergne-high-school-la-vergne-tn': {
+    slug: 'la-vergne-high-school-la-vergne-tn',
+    name: 'La Vergne High School',
+    level: 'High',
+    district: 'Rutherford County Schools',
+    suburbSlug: 'la-vergne-tn',
+    ratingNote: 'Rated B- on Niche with an 88% graduation rate, serving as La Vergne\'s public high school in Rutherford County Schools.',
+    blurb:
+      'La Vergne High School is the city\'s public high school, drawing from most of La Vergne — a fast-growing Rutherford County market at the I-24/I-40/I-65 interchange with a 2026 median home price around $373,000. Niche gives the school a B- overall grade, with 2,116 students, a 16:1 student-teacher ratio, an 88% graduation rate, and average SAT/ACT scores of 780 and 22 (Niche.com, 2026 data). For buyers prioritizing La Vergne\'s affordability and commute access over a top-tier school rating, it\'s the trade-off worth understanding up front — Joshua can walk through how it compares to Smyrna and Murfreesboro zones at similar price points.',
+    neighborhoods: ['Lake Forest', 'Woodland Hills', 'Amsterdam', 'Central La Vergne'],
+    faqs: [
+      {
+        q: 'What neighborhoods are zoned to La Vergne High School?',
+        a: 'La Vergne High serves most of the city, including established areas like Lake Forest, Woodland Hills, Amsterdam, and central La Vergne. Rutherford County sets attendance zones by address, not subdivision, so always confirm the current zone with Rutherford County Schools before writing an offer.',
+      },
+      {
+        q: 'Is La Vergne High School a good school?',
+        a: 'It carries a B- overall grade on Niche, with an 88% graduation rate, a 3.48 average GPA, and average SAT/ACT scores of 780 and 22 (Niche.com). That puts it below top-tier Williamson County schools, which is part of why La Vergne trades at a meaningfully lower price point — buyers should weigh the school rating against the affordability and commute access La Vergne offers.',
+      },
+      {
+        q: 'How much do homes cost in the La Vergne High School zone?',
+        a: 'Pricing generally tracks La Vergne\'s citywide market — a 2026 median of approximately $373,000 — rather than commanding a standalone school-zone premium. Joshua can pull recent closed comps for any specific street in Lake Forest, Woodland Hills, Amsterdam, or central La Vergne.',
+      },
+      {
+        q: 'How does La Vergne High School compare to schools in Smyrna or Murfreesboro?',
+        a: 'Neighboring Rutherford County high schools like Stewarts Creek (Smyrna) and Blackman (Murfreesboro) currently carry higher GreatSchools and Niche ratings than La Vergne High. Buyers focused primarily on school ratings often shortlist those zones instead, while buyers prioritizing La Vergne\'s lower price point and I-24/I-40/I-65 access weigh that trade-off against the school rating. Joshua can walk through comps and school data across all three to help match the decision to what matters most for the family.',
+      },
+    ],
+  },
+
+  'la-vergne-middle-school-la-vergne-tn': {
+    slug: 'la-vergne-middle-school-la-vergne-tn',
+    name: 'La Vergne Middle School',
+    level: 'Middle',
+    district: 'Rutherford County Schools',
+    suburbSlug: 'la-vergne-tn',
+    ratingNote: "Rated a 'B' overall by Niche (3.67/5) and ranked #220 among Tennessee's public middle schools — an above-average, actively-improving option in Rutherford County Schools.",
+    blurb:
+      "La Vergne Middle School serves grades 6-8 for most of the city's residential footprint and is currently La Vergne's strongest publicly rated school: Niche grades it a 'B' overall (3.67 out of 5), ranking #220 among Tennessee's public middle schools and #53 of 98 in the Nashville metro area, with an 'A' in Diversity and a 'B+' in Teachers. With roughly 1,117 students and a 15:1 student-teacher ratio, it draws from Lake Forest, Woodland Hills, the Stones River Road corridor, and central La Vergne. Pricing tracks the broader La Vergne market — see the current La Vergne market report for the citywide median rather than treating it as a middle-school zone figure.",
+    neighborhoods: ['Lake Forest', 'Woodland Hills', 'Stones River Road corridor', 'Central La Vergne'],
+    faqs: [
+      {
+        q: 'What neighborhoods feed La Vergne Middle School?',
+        a: "La Vergne Middle draws from most of the city's residential footprint, including Lake Forest, Woodland Hills, the Stones River Road corridor, and central La Vergne. Zoning is confirmed at the Rutherford County Schools level — Joshua verifies the current assignment before every tour.",
+      },
+      {
+        q: 'Is La Vergne Middle School a good school?',
+        a: "Niche grades it a 'B' overall (3.67 out of 5), ranking it #220 among Tennessee's public middle schools and #53 of 98 in the Nashville metro area — an above-average option, with an 'A' in Diversity and a 'B+' in Teachers. That 'B' is currently higher than La Vergne High School's B- on Niche.",
+      },
+      {
+        q: 'What do homes cost near La Vergne Middle School?',
+        a: "These homes are part of the broader La Vergne market — see the current La Vergne market report for up-to-date medians and price-per-square-foot. Joshua can pull exact, current comps for any specific street in Lake Forest, Woodland Hills, or the Stones River Road corridor.",
       },
     ],
   },

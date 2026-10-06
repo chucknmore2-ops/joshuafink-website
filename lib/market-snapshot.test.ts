@@ -1,6 +1,8 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
-import { blogPosts } from './blog.ts'
+import { blogDateToIso, blogDateToUtcDate, blogPosts } from './blog.ts'
+import { chicagoIsoDate } from './gnar-snapshot.ts'
+import { getSiteUrlCatalog } from './site-urls.ts'
 import {
   currentSnapshot,
   gnarRegionalBuySlugs,
@@ -179,6 +181,52 @@ describe('newest checked-in GNAR snapshot', () => {
     }
     if (latest.medianYoyChange && latest.monthsOfInventory != null) {
       assert.doesNotMatch(post.content, /did not publish year-over-year or months-of-supply/)
+    }
+  })
+
+  it('stamps September 2026 on 2026-10-05 everywhere the date is published', () => {
+    const september = snapshotFor('2026-09')
+    assert.equal(september.reportDate, '2026-10-05')
+    const post = blogPosts.find((p) => p.slug === 'middle-tennessee-market-update-september-2026')
+    assert.ok(post)
+    assert.equal(post.date, 'October 5, 2026')
+    assert.equal(post.dateModified, 'October 5, 2026')
+    assert.ok(post.content.includes('published October 5, 2026'))
+    // JSON-LD datePublished / dateModified use blogDateToIso (calendar day, no timezone shift).
+    assert.equal(blogDateToIso(post.date), '2026-10-05')
+    assert.equal(blogDateToIso(post.dateModified), '2026-10-05')
+    const listed = getSiteUrlCatalog().find(
+      (entry) => entry.path === '/blog/middle-tennessee-market-update-september-2026',
+    )
+    assert.ok(listed?.lastModified)
+    assert.equal(listed.lastModified.toISOString(), '2026-10-05T12:00:00.000Z')
+    assert.equal(blogDateToUtcDate(post.date)?.toISOString().slice(0, 10), '2026-10-05')
+  })
+})
+
+describe('blog publish dates', () => {
+  it('parses the visible date as that calendar day', () => {
+    assert.equal(blogDateToIso('October 5, 2026'), '2026-10-05')
+    assert.equal(blogDateToIso('March 15, 2026'), '2026-03-15')
+    assert.equal(blogDateToIso('February 31, 2026'), undefined)
+  })
+
+  it('has no post dated after today in America/Chicago', () => {
+    const today = chicagoIsoDate(new Date())
+    for (const post of blogPosts) {
+      const published = blogDateToIso(post.date)
+      assert.ok(published, `${post.slug} date ${JSON.stringify(post.date)} did not parse`)
+      assert.ok(
+        published <= today,
+        `${post.slug} is dated ${published}, after ${today} America/Chicago`,
+      )
+      if (!post.dateModified) continue
+      const modified = blogDateToIso(post.dateModified)
+      assert.ok(modified, `${post.slug} dateModified ${JSON.stringify(post.dateModified)} did not parse`)
+      assert.ok(
+        modified <= today,
+        `${post.slug} was modified ${modified}, after ${today} America/Chicago`,
+      )
     }
   })
 })
