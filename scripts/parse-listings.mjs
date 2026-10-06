@@ -157,6 +157,8 @@ export interface Listing {
   status: string;
   note?: string;
   compassUrl: string;
+  imageUrl?: string;
+  photoUrls?: string[];
 }
 
 export const listings: Listing[] = [

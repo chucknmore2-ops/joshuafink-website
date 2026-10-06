@@ -35,6 +35,32 @@ test('active detail schema stays InStock (or PreOrder) and is not SoldOut', () =
   assert.equal(schema.url, url)
 })
 
+test('RealEstateListing Offer uses the synced list price', () => {
+  const active = listings.find((l) => l.status === 'Active')
+  const underContract = listings.find((l) => /under contract/i.test(l.status))
+  assert.ok(active)
+  assert.ok(underContract)
+  const activeSchema = buildListingSchema(active, listingCanonicalUrl(active))
+  const offer = activeSchema.offers as { '@type': string; price: number; priceCurrency: string; url: string }
+  assert.equal(activeSchema['@type'], 'RealEstateListing')
+  assert.equal(offer['@type'], 'Offer')
+  assert.equal(offer.price, active.price)
+  assert.equal(offer.priceCurrency, 'USD')
+  assert.equal(offer.url, listingCanonicalUrl(active))
+  const pending = buildListingSchema(underContract, listingCanonicalUrl(underContract))
+  assert.equal(pending.availability, 'https://schema.org/PreOrder')
+  assert.equal((pending.offers as { price: number }).price, underContract.price)
+})
+
+test('gallery photos are the schema image and stay capped', () => {
+  const active = listings.find((l) => l.status === 'Active')
+  assert.ok(active)
+  const photoUrls = Array.from({ length: 35 }, (_, i) => `https://www.compass.com/m/${i}/2048x1536.webp`)
+  const schema = buildListingSchema({ ...active, photoUrls }, listingCanonicalUrl(active))
+  assert.equal(Array.isArray(schema.image), true)
+  assert.equal((schema.image as string[]).length, 30)
+})
+
 test('ItemList sold items point at on-site pages, not Compass', () => {
   const list = buildListingItemList(soldListings, 'Recently Sold')
   assert.equal(list.numberOfItems, soldListings.length)
