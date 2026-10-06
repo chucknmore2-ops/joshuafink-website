@@ -3,12 +3,17 @@
  * fetch-sold.mjs
  * Scrapes sold/past-sales listings from Joshua Fink's Compass profile
  * (from the "Transactions" section) and writes to lib/sold-listings.ts
+ *
+ * A failed detail fetch or empty skip salvages the prior sold entry for
+ * that Compass URL instead of dropping a previously known home.
+ * Does not invent sold data.
  */
 
 import { chromium } from 'playwright';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { loadExistingListingsMap, salvagePriorListing } from './listings-file.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SOLD_FILE = path.join(__dirname, '..', 'lib', 'sold-listings.ts');
@@ -105,6 +110,9 @@ async function main() {
 
   console.log(`[fetch-sold] Found ${soldCards.length} sold cards on page`);
 
+  const priorByUrl = loadExistingListingsMap(SOLD_FILE, 'soldListings');
+  console.log(`[fetch-sold] Loaded ${priorByUrl.size} prior sold listing(s) for salvage`);
+
   // For cards missing address, visit the detail page
   const listings = [];
   for (const card of soldCards) {
@@ -131,13 +139,30 @@ async function main() {
         address = commaIdx > 0 ? meta.substring(0, commaIdx).trim() : meta;
         city = commaIdx > 0 ? meta.substring(commaIdx + 1).trim() : '';
         await lp.close();
-      } catch {}
+      } catch (e) {
+        console.error(`  ❌ Failed detail: ${card.url} — ${e.message}`);
+      }
     }
 
-    if (!address && !card.price) continue; // Skip empty
+    if (!address) {
+      const prior = salvagePriorListing(priorByUrl, card.url);
+      if (prior) {
+        console.warn(`  ↩︎ salvaged prior sold listing for ${card.url}: ${prior.address} — $${Number(prior.price).toLocaleString()}`);
+        listings.push(prior);
+        continue;
+      }
+      if (!card.price) {
+        console.error(`  ❌ Skipping sold card with no address/price and no salvage: ${card.url || '(missing compassUrl)'}`);
+        continue;
+      }
+      // Price on the card but no address and no prior entry — do not invent
+      // a "Nashville Area" placeholder; skip this card.
+      console.error(`  ❌ Skipping sold card with no address and no salvage: ${card.url || '(missing compassUrl)'}`);
+      continue;
+    }
 
     const listing = {
-      address: address || 'Nashville Area',
+      address,
       city: city || 'TN',
       price: card.price,
       status: 'Sold',

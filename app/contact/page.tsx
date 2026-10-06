@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import ContactForm from './ContactForm'
+import TrackedTelLink from '@/components/TrackedTelLink'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 
 export const metadata: Metadata = {
@@ -8,6 +9,7 @@ export const metadata: Metadata = {
   title: { absolute: 'Contact Joshua Fink | Compass Real Estate, Middle Tennessee' },
   description:
     'Get in touch with Joshua Fink — Affiliate Broker at Compass Real Estate. Call 615-551-2727 or send a message for buying, selling, or investment guidance in Middle Tennessee.',
+  openGraph: { url: 'https://www.joshuafink.com/contact' },
 }
 
 export default function ContactPage() {
@@ -47,12 +49,13 @@ export default function ContactPage() {
                 <p className="text-xs text-neutral-400 uppercase tracking-widest font-semibold mb-1">
                   Phone
                 </p>
-                <a
+                <TrackedTelLink
                   href="tel:6155512727"
                   className="text-xl font-black text-black hover:underline"
+                  data-cta="contact-details-call"
                 >
                   615-551-2727
-                </a>
+                </TrackedTelLink>
               </div>
 
               <div className="border-l-2 border-black pl-5">

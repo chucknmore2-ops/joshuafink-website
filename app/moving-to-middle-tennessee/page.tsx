@@ -1,10 +1,36 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { suburbs, marketStatsLastUpdated } from '@/lib/suburbs'
+import { suburbs } from '@/lib/suburbs'
+import {
+  gnarMarketUpdatePath,
+  homesCostFaqAnswer,
+  HOUSING_MARKET_FAQ_QUESTION,
+  housingMarketFaqAnswer,
+} from '@/lib/moving-faqs'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
 
 const SITE = 'https://www.joshuafink.com'
+
+// Content-review stamp for this pillar page (America/Chicago). Distinct from
+// `marketStatsLastUpdated`, which is when the Redfin city medians were refreshed.
+const PAGE_LAST_VERIFIED = '2026-10-05'
+
+function FaqAnswer({ text }: { text: string }) {
+  const path = gnarMarketUpdatePath()
+  const url = `${SITE}${path}`
+  const idx = text.indexOf(url)
+  if (idx === -1) return <>{text}</>
+  return (
+    <>
+      {text.slice(0, idx)}
+      <Link href={path} className="font-semibold text-black hover:underline">
+        {path}
+      </Link>
+      {text.slice(idx + url.length)}
+    </>
+  )
+}
 
 // Relocation pillar page. Targets the high-intent "moving to Middle Tennessee /
 // moving to [city] TN" cluster that had zero on-site coverage, and acts as a
@@ -23,6 +49,10 @@ const RELO_FAQS: { q: string; a: string }[] = [
     a: 'Joshua Fink is an Affiliate Broker with Compass Real Estate serving all of Middle Tennessee — Franklin, Brentwood, Nashville, Spring Hill, Williamson County, and every surrounding suburb. With 17+ years of experience and 100+ homes sold annually, he works with relocating buyers through remote searches, video walkthroughs, school-zone verification, and coordinated closings, so you can buy confidently before or shortly after you arrive. Call 615-551-2727 or visit joshuafink.com to start a relocation plan.',
   },
   {
+    q: HOUSING_MARKET_FAQ_QUESTION,
+    a: housingMarketFaqAnswer(),
+  },
+  {
     q: 'Why are so many people moving to Middle Tennessee?',
     a: 'A few reasons keep coming up with the buyers Joshua works with: Tennessee has no state income tax on wages, the cost of living is lower than the large coastal and Northern metros people are relocating from, the job market across Nashville (healthcare, music, tech, auto and advanced manufacturing) keeps growing, and the lifestyle — historic downtowns, lakes, state parks, and a central US location — is a genuine draw. Williamson County’s schools are a separate, powerful magnet for relocating families.',
   },
@@ -32,7 +62,7 @@ const RELO_FAQS: { q: string; a: string }[] = [
   },
   {
     q: 'How much do homes cost across Middle Tennessee in 2026?',
-    a: 'It varies widely by city. On the more accessible end, median prices run in the low-to-mid $300Ks (La Vergne, Columbia, Gallatin) and mid-$300Ks to $400Ks (Murfreesboro, Smyrna, Hendersonville, Lebanon). The Williamson County core is higher — Spring Hill around the $450Ks, Nolensville near $580K, Franklin around $650K, and Brentwood around $900K. Joshua can pull exact, current comps for any specific area.',
+    a: homesCostFaqAnswer(),
   },
   {
     q: 'Which Middle TN city is right for me?',
@@ -125,7 +155,7 @@ export default function MovingToMiddleTennesseePage() {
     name: 'Moving to Middle Tennessee — Relocation Guide (2026)',
     url: `${SITE}/moving-to-middle-tennessee`,
     datePublished: '2026-01-15',
-    dateModified: '2026-07-17',
+    dateModified: PAGE_LAST_VERIFIED,
     inLanguage: 'en-US',
     author: {
       '@type': 'Person',
@@ -236,7 +266,7 @@ export default function MovingToMiddleTennesseePage() {
                 Choose Your City
               </p>
               <p className="text-xs text-[#A0A0A0]">
-                Page last verified: {marketStatsLastUpdated}
+                Page last verified: {PAGE_LAST_VERIFIED}
               </p>
             </div>
             <h2 className="text-3xl font-black text-black tracking-tight mb-3">
@@ -338,7 +368,9 @@ export default function MovingToMiddleTennesseePage() {
               {RELO_FAQS.map((f, i) => (
                 <div key={i} className="bg-white p-8 border-l-4" style={{ borderColor: '#0A1628' }}>
                   <h3 className="text-base font-black text-black mb-3">{f.q}</h3>
-                  <p className="text-sm text-[#6B6B6B] leading-relaxed">{f.a}</p>
+                  <p className="text-sm text-[#6B6B6B] leading-relaxed">
+                    <FaqAnswer text={f.a} />
+                  </p>
                 </div>
               ))}
             </div>
@@ -363,12 +395,13 @@ export default function MovingToMiddleTennesseePage() {
               >
                 Call 615-551-2727
               </TrackedTelLink>
-              <a
+              <TrackedTelLink
                 href="sms:+16155512727"
                 className="inline-block border border-white text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-white hover:text-black transition-colors text-center"
+                data-cta="moving-hero-sms"
               >
                 Text 615-551-2727
-              </a>
+              </TrackedTelLink>
             </div>
           </div>
 

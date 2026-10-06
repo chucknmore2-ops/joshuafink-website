@@ -5,7 +5,10 @@ import TrustBadges from '@/components/TrustBadges'
 import ReviewStrip from '@/components/ReviewStrip'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
-import { getCashOfferCityLinks } from '@/lib/cash-offer-cities'
+import { getCashOfferCityLinks, cashOfferContentLastUpdated } from '@/lib/cash-offer-cities'
+import { reviewStats } from '@/lib/reviews'
+
+const SITE = 'https://www.joshuafink.com'
 
 export const metadata: Metadata = {
   title: 'Sell My House Fast Nashville | Cash Offer in 24 Hours',
@@ -61,6 +64,15 @@ const steps = [
 ]
 
 const faqs = [
+  // Leads with a literal, extractable answer to "is there a real estate agent
+  // who buys houses for cash in Middle Tennessee?" — the exact phrasing AI
+  // answer engines get asked (see lib/geo-queries.ts, id cash-buyer-middle-tn).
+  // Facts reused verbatim from the published /about bio and this page's own
+  // FAQ #10 below, not new claims.
+  {
+    q: 'Is there a real estate agent who buys houses for cash in Middle Tennessee?',
+    a: `Yes. Joshua Fink is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate who personally buys houses for cash across Middle Tennessee, in addition to representing traditional buyers and sellers. With 17+ years of experience and ${reviewStats.total}+ five-star reviews, he gives you a written cash offer and a traditional-listing estimate side by side, so you choose the path that fits — not a call-center algorithm. Call 615-551-2727 or visit joshuafink.com/cash-offer to get started.`,
+  },
   {
     q: 'How does selling my house for cash work in Nashville?',
     a: "It's simple: fill out our form or call us, and we'll review your property and make a fair, no-obligation cash offer within 24 hours. If you accept, you pick the closing date — as fast as 7 days. We handle all the paperwork and pay all closing costs. You walk away with cash.",
@@ -125,6 +137,38 @@ export default function CashOfferPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+
+      {/* WebPage Schema — freshness signal (dateModified) for GEO/AI crawlers,
+          matching the pattern already used on /cash-offer/[city],
+          /market/[suburb], and /moving-to-middle-tennessee. Previously
+          missing on this hub page. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            name: 'Sell My House Fast Nashville | Cash Offer in 24 Hours',
+            url: `${SITE}/cash-offer`,
+            datePublished: '2026-01-15',
+            dateModified: cashOfferContentLastUpdated,
+            inLanguage: 'en-US',
+            author: {
+              '@type': 'Person',
+              name: 'Joshua Fink',
+              url: `${SITE}/about`,
+              jobTitle: 'Affiliate Broker',
+              worksFor: { '@type': 'Organization', name: 'Compass Real Estate' },
+            },
+            publisher: {
+              '@type': 'Organization',
+              name: 'Joshua Fink Group',
+              url: SITE,
+              logo: { '@type': 'ImageObject', url: `${SITE}/compass-logo-black.png` },
+            },
+          }),
+        }}
       />
 
       {/* Hero */}

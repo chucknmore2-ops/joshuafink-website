@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated, suburbCityGeo } from '@/lib/suburbs'
+import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated, suburbCityGeo, yoyColor, yoyMovement } from '@/lib/suburbs'
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
 import { linkifyNeighborhoods } from '@/lib/linkify-neighborhoods'
 import { reviewStats } from '@/lib/reviews'
+import { cashOfferPath } from '@/lib/cash-offer-cities'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
 
@@ -65,6 +66,17 @@ export default async function SuburbPage({ params }: Props) {
   const schemaOrg = {
     '@context': 'https://schema.org',
     '@graph': [
+      {
+        // Freshness signal for crawlers/AI answer engines — mirrors the
+        // WebPage node added to /buy/[suburb]; same verified suburb data
+        // (and its update date) backs both templates.
+        '@type': 'WebPage',
+        '@id': `https://www.joshuafink.com/sell/${slug}#webpage`,
+        url: `https://www.joshuafink.com/sell/${slug}`,
+        name: `Sell My Home in ${suburb.displayName} | Free Market Valuation`,
+        dateModified: suburb.dataUpdatedAt ?? marketStatsLastUpdated,
+        about: { '@id': `https://www.joshuafink.com/sell/${slug}#place` },
+      },
       {
         '@type': 'RealEstateAgent',
         '@id': 'https://www.joshuafink.com/#agent',
@@ -213,7 +225,7 @@ export default async function SuburbPage({ params }: Props) {
             </h1>
             <p className="text-lg mt-5 max-w-2xl leading-relaxed" style={{ color: '#A0A0A0' }}>
               Median home prices in {suburb.displayName} are <strong className="text-white">{suburb.medianPrice}</strong> in
-              2026 — up <strong className="text-white">{suburb.yoyChange}</strong> year-over-year. Find out exactly what
+              2026 — <strong className="text-white">{yoyMovement(suburb.yoyChange)}</strong> year-over-year. Find out exactly what
               your home is worth with a free, no-obligation valuation from Joshua Fink at Compass.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-4">
@@ -261,7 +273,7 @@ export default async function SuburbPage({ params }: Props) {
                 <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">Price Per Sq Ft</p>
               </div>
               <div className="bg-white p-6 border border-[#E8E8E8]">
-                <p className="text-3xl font-black" style={{ color: '#16a34a' }}>{suburb.yoyChange}</p>
+                <p className="text-3xl font-black" style={{ color: yoyColor(suburb.yoyChange) }}>{suburb.yoyChange}</p>
                 <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">YoY Price Change</p>
               </div>
             </div>
@@ -289,7 +301,7 @@ export default async function SuburbPage({ params }: Props) {
                   ← Back to Seller Hub
                 </Link>
                 <Link
-                  href="/cash-offer"
+                  href={cashOfferPath(slug)}
                   className="inline-block text-sm font-bold px-6 py-3 tracking-wide transition-colors text-center"
                   style={{ backgroundColor: '#0A1628', color: '#FFFFFF' }}
                 >
@@ -321,7 +333,7 @@ export default async function SuburbPage({ params }: Props) {
                   </div>
                   <div className="flex justify-between items-center">
                     <dt className="text-sm text-[#A0A0A0]">YoY Change</dt>
-                    <dd className="text-sm font-bold" style={{ color: '#4ade80' }}>{suburb.yoyChange}</dd>
+                    <dd className="text-sm font-bold" style={{ color: yoyColor(suburb.yoyChange, true) }}>{suburb.yoyChange}</dd>
                   </div>
                 </dl>
               </div>
@@ -445,7 +457,7 @@ export default async function SuburbPage({ params }: Props) {
                 <div className="border-l-2 pl-5" style={{ borderColor: '#C41E3A' }}>
                   <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mb-1">Also Consider</p>
                   <div className="space-y-1">
-                    <Link href="/cash-offer" className="block text-sm font-semibold text-black hover:underline">
+                    <Link href={cashOfferPath(slug)} className="block text-sm font-semibold text-black hover:underline">
                       → Request a cash offer instead
                     </Link>
                     <Link href={`/buy/${slug}`} className="block text-sm font-semibold text-black hover:underline">
@@ -635,7 +647,7 @@ export default async function SuburbPage({ params }: Props) {
                 Get My Free Valuation
               </a>
               <Link
-                href="/cash-offer"
+                href={cashOfferPath(slug)}
                 className="inline-block border border-white text-white text-sm font-bold px-8 py-4 tracking-wide hover:bg-white hover:text-black transition-colors text-center"
               >
                 Request Cash Offer

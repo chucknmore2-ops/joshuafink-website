@@ -3,13 +3,24 @@
  * fetch-images.mjs
  * Scrapes listing photos from Compass agent page and merges them
  * into the existing lib/listings.ts (preserving known-good data).
+ *
+ * A failed detail fetch (or blank address / missing price) salvages the
+ * prior entry for that Compass URL instead of dropping the home. If an
+ * agent-page card cannot be scraped AND cannot be salvaged, the script
+ * exits non-zero without writing so yesterday's file stays live.
+ * Does not commit or push — scripts/sync-all.sh / the workflow owns git.
  */
 
 import { chromium } from 'playwright';
 import fs from 'fs';
 import path from 'path';
-import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
+import {
+  loadExistingListingsMap,
+  isUnusableScrapedListing,
+  salvagePriorListing,
+  decideFetchImagesWrite,
+} from './listings-file.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const LISTINGS_FILE = path.join(__dirname, '..', 'lib', 'listings.ts');
@@ -82,11 +93,16 @@ async function main() {
 
   console.log(`[fetch-images] Found ${cards.length} listing cards`);
 
+  const priorByUrl = loadExistingListingsMap(LISTINGS_FILE, 'listings');
+  console.log(`[fetch-images] Loaded ${priorByUrl.size} prior listing(s) for salvage`);
+
   // Visit each listing detail page for og: metadata
   const listings = [];
+  const unresolved = [];
   for (const card of cards) {
+    let lp;
     try {
-      const lp = await ctx.newPage();
+      lp = await ctx.newPage();
       await lp.goto(card.url, { waitUntil: 'domcontentloaded', timeout: 20000 });
       await lp.waitForTimeout(1500);
 
@@ -133,19 +149,44 @@ async function main() {
       if (baths) listing.baths = baths;
       if (sqft) listing.sqft = sqft;
 
+      if (isUnusableScrapedListing(listing)) {
+        throw new Error(`blank address or missing/zero price (address=${JSON.stringify(address)} price=${price})`);
+      }
+
       console.log(`  ✅ ${address} — $${price.toLocaleString()} — ${listing.imageUrl ? 'has photo' : 'NO photo'}`);
       listings.push(listing);
       await lp.close();
     } catch (e) {
+      if (lp) {
+        try { await lp.close(); } catch { /* already closed or never opened */ }
+      }
       console.error(`  ❌ Failed: ${card.url} — ${e.message}`);
+      const prior = salvagePriorListing(priorByUrl, card.url);
+      if (prior) {
+        console.warn(`  ↩︎ salvaged prior listing for ${card.url}: ${prior.address} — $${Number(prior.price).toLocaleString()}`);
+        listings.push(prior);
+      } else {
+        unresolved.push(card.url || '(missing compassUrl)');
+      }
     }
   }
 
   await browser.close();
 
-  if (listings.length === 0) {
-    console.log('[fetch-images] No listings scraped — keeping existing file.');
-    process.exit(0);
+  const decision = decideFetchImagesWrite({
+    resolvedCount: listings.length,
+    unresolvedCount: unresolved.length,
+  });
+  if (!decision.write) {
+    if (decision.reason === 'unresolved-cards') {
+      console.error(`[fetch-images] ${unresolved.length} agent-page card(s) could not be resolved (no successful scrape and no salvage). Leaving lib/listings.ts unchanged.`);
+      for (const url of unresolved) {
+        console.error(`  • ${url}`);
+      }
+    } else {
+      console.log('[fetch-images] No listings scraped — keeping existing file.');
+    }
+    process.exit(decision.exitCode);
   }
 
   // Generate listings.ts
@@ -197,17 +238,6 @@ ${listingsCode}
 
   fs.writeFileSync(LISTINGS_FILE, tsContent, 'utf8');
   console.log(`\n[fetch-images] ✅ Written ${listings.length} listings with photos to lib/listings.ts`);
-
-  // Git commit and push
-  try {
-    const repoRoot = path.join(__dirname, '..');
-    execSync('git add lib/listings.ts', { cwd: repoRoot, stdio: 'inherit' });
-    execSync(`git commit -m "fix: restore listing photos from Compass [${new Date().toLocaleDateString()}]"`, { cwd: repoRoot, stdio: 'inherit' });
-    execSync('git push origin main', { cwd: repoRoot, stdio: 'inherit' });
-    console.log('[fetch-images] ✅ Pushed to GitHub — Vercel will auto-deploy.');
-  } catch (err) {
-    console.warn(`[fetch-images] Git push note: ${err.message}`);
-  }
 }
 
 main().catch(err => {

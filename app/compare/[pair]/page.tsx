@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { parsePairSlug, getAllPairSlugsForBuild, pairVerdict, canonicalPairSlug } from '@/lib/compare'
+import { yoyColor } from '@/lib/suburbs'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
 
@@ -90,8 +91,8 @@ export default async function ComparePage({ params }: Props) {
       a: `${faster.displayName} moves faster, with homes averaging ${faster.avgDaysOnMarket} days on market compared to ${slower.avgDaysOnMarket} days in ${slower.displayName}. Faster markets favor sellers but pressure buyers to move quickly with pre-approval in hand.`,
     },
     {
-      q: `Which is appreciating faster — ${a.name} or ${b.name}?`,
-      a: `${aYoy > bYoy ? a.displayName : b.displayName} is appreciating faster at ${aYoy > bYoy ? a.yoyChange : b.yoyChange}, compared to ${aYoy > bYoy ? b.yoyChange : a.yoyChange} in ${aYoy > bYoy ? b.displayName : a.displayName}. Past appreciation isn't a guarantee of future returns, but it's a reasonable proxy for market demand right now.`,
+      q: `Which median sale price changed more — ${a.name} or ${b.name}?`,
+      a: `${aYoy > bYoy ? a.displayName : b.displayName} has the higher year-over-year median-price change at ${aYoy > bYoy ? a.yoyChange : b.yoyChange}, compared with ${aYoy > bYoy ? b.yoyChange : a.yoyChange} in ${aYoy > bYoy ? b.displayName : a.displayName}. That citywide print is not a forecast for one address.`,
     },
     {
       q: `Should I choose ${a.name} or ${b.name} for relocation?`,
@@ -143,7 +144,7 @@ export default async function ComparePage({ params }: Props) {
       highlight: faster === a ? 'a' : 'b',
     },
     { label: 'Price Per Sq Ft', av: `$${a.pricePerSqft}`, bv: `$${b.pricePerSqft}`, highlight: a.pricePerSqft < b.pricePerSqft ? 'a' : 'b' },
-    { label: 'YoY Appreciation', av: a.yoyChange, bv: b.yoyChange, highlight: aYoy > bYoy ? 'a' : 'b' },
+    { label: 'YoY Price Change', av: a.yoyChange, bv: b.yoyChange, highlight: aYoy > bYoy ? 'a' : 'b' },
     { label: 'School District', av: a.schoolDistrict || '—', bv: b.schoolDistrict || '—', highlight: 'none' },
     { label: 'Commute to Nashville', av: a.commuteNote || '—', bv: b.commuteNote || '—', highlight: 'none' },
   ]
@@ -212,7 +213,7 @@ export default async function ComparePage({ params }: Props) {
                   </div>
                   <div>
                     <p className="text-[#A0A0A0] uppercase font-semibold">YoY</p>
-                    <p className="font-black" style={{ color: '#16a34a' }}>{a.yoyChange}</p>
+                    <p className="font-black" style={{ color: yoyColor(a.yoyChange) }}>{a.yoyChange}</p>
                   </div>
                 </div>
                 <div className="mt-5 flex flex-col gap-2">
@@ -246,7 +247,7 @@ export default async function ComparePage({ params }: Props) {
                   </div>
                   <div>
                     <p className="text-[#A0A0A0] uppercase font-semibold">YoY</p>
-                    <p className="font-black" style={{ color: '#16a34a' }}>{b.yoyChange}</p>
+                    <p className="font-black" style={{ color: yoyColor(b.yoyChange) }}>{b.yoyChange}</p>
                   </div>
                 </div>
                 <div className="mt-5 flex flex-col gap-2">
