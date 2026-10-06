@@ -17,6 +17,13 @@ export interface Listing {
   // ISO timestamp of the last Compass sync that confirmed this listing.
   // Used by /listings to flag the grid as 'Verifying…' if the file goes stale.
   lastVerified?: string;
+  // ISO timestamp of the first Compass sync that included this listing.
+  // Preserved by scripts/fetch-images.mjs. The Facebook spotlight uses it
+  // for #JustListed (within 14 days). Not a list date and not a market stat.
+  firstSeen?: string;
+  // Open-house line copied from the Compass card when one is shown.
+  // Absent when Compass does not publish one.
+  openHouse?: string;
 }
 
 // Mirrors the header timestamp so server components can compute sync staleness
@@ -34,6 +41,7 @@ export const listings: Listing[] = [
     status: "Active Under Contract",
     compassUrl: "https://www.compass.com/homedetails/511-Wanda-Dr-Nashville-TN-37210/SDYP1_pid/",
     imageUrl: "https://www.compass.com/m/f0024ff837d3adc039ba8c6d1dc635742a6efeecc314e741179475524cec3185/2048x1536.webp",
+    firstSeen: "2026-03-20T14:01:35.000Z",
     lastVerified: listingsSyncedAt,
   },
   {
@@ -46,6 +54,7 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/4127-Edwards-Ave-Nashville-TN-37216/THUS9_pid/",
     imageUrl: "https://www.compass.com/m/a9acaa52f1af4a5177df8b946004d09e9a06867e02336fcf803a804d4570b560/2048x1536.webp",
+    firstSeen: "2026-05-11T12:00:26.000Z",
     lastVerified: listingsSyncedAt,
   },
   {
@@ -58,6 +67,7 @@ export const listings: Listing[] = [
     status: "Active Under Contract",
     compassUrl: "https://www.compass.com/homedetails/1100-Gibson-Dr-Madison-TN-37115/SJV0E_pid/",
     imageUrl: "https://www.compass.com/m/11e587962d972824bcfa83986a2a18c8b7991d767be1f8ec6b0cb060ef148290/2048x1536.webp",
+    firstSeen: "2026-09-05T11:47:43.000Z",
     lastVerified: listingsSyncedAt,
   },
   {
@@ -70,6 +80,7 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/3814-Plantation-Dr-Hermitage-TN-37076/TFS3S_pid/",
     imageUrl: "https://www.compass.com/m/6639cc5243226d377992b3c778d4794a2f72457c3b18b67263cd98c6a21838fa/2048x1536.webp",
+    firstSeen: "2026-06-24T10:55:44.000Z",
     lastVerified: listingsSyncedAt,
   },
   {
@@ -82,6 +93,7 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/261-Paragon-Mills-Rd-Nashville-TN-37211/TLH7F_pid/",
     imageUrl: "https://www.compass.com/m/4e0ad91dae272cb8d10ab72fe92e356caa4ea6acda5b71c2fdc9a5e7d5b4f0ef/2048x1536.webp",
+    firstSeen: "2026-10-06T15:02:04.000Z",
     lastVerified: listingsSyncedAt,
   },
   {
@@ -94,6 +106,7 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/316-7th-Ave-Columbia-TN-38401/SQ46B_pid/",
     imageUrl: "https://www.compass.com/m/4f489e005c9f2045d6bbcce5471fc3b26542e22acea65390028536c64024397d/2048x1536.webp",
+    firstSeen: "2026-08-28T20:03:33.000Z",
     lastVerified: listingsSyncedAt,
   },
   {
@@ -106,6 +119,7 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/2037-Walnut-Ln-Gallatin-TN-37066/SFFDI_pid/",
     imageUrl: "https://www.compass.com/m/cfb0b5c09b81c0659c2b0baa6b3bc9332777f4a2bd4d6d647b185638b946738f/2048x1536.webp",
+    firstSeen: "2026-08-30T13:44:15.000Z",
     lastVerified: listingsSyncedAt,
   },
   {
@@ -118,6 +132,7 @@ export const listings: Listing[] = [
     status: "Active",
     compassUrl: "https://www.compass.com/homedetails/4874-Sparta-Pike-Watertown-TN-37184/TMU6R_pid/",
     imageUrl: "https://www.compass.com/m/9271db1e1cbdb146eb498cd63a192c09a438f39c3b9627023b0cbda6f044a677/2048x1536.webp",
+    firstSeen: "2026-06-24T10:55:44.000Z",
     lastVerified: listingsSyncedAt,
   }
 ];

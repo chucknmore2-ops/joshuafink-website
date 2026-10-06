@@ -76,6 +76,30 @@ export function salvagePriorListing(priorByUrl, compassUrl) {
  * Unresolved cards fail the job without writing so yesterday's file stays live.
  * Zero cards / nothing resolved keeps the existing file (exit 0).
  */
+/**
+ * Keep the first sync that saw this home. A new Compass URL gets this
+ * sync's timestamp. Not a list date.
+ */
+export function firstSeenForListing(prior, syncTimestamp) {
+  const seen = prior && typeof prior.firstSeen === 'string' ? prior.firstSeen.trim() : '';
+  if (seen && !Number.isNaN(Date.parse(seen))) return seen;
+  return syncTimestamp;
+}
+
+/**
+ * Open-house line from a Compass card, or '' when the card doesn't say so.
+ * Does not invent a date or time.
+ */
+export function openHouseFromCardText(cardText) {
+  if (!cardText || typeof cardText !== 'string') return '';
+  const line = cardText
+    .split('\n')
+    .map((s) => s.trim())
+    .find((s) => /open\s*house/i.test(s));
+  if (!line) return '';
+  return line.replace(/\s+/g, ' ').trim();
+}
+
 export function decideFetchImagesWrite({ resolvedCount, unresolvedCount }) {
   if (unresolvedCount > 0) {
     return { write: false, exitCode: 1, reason: 'unresolved-cards' };

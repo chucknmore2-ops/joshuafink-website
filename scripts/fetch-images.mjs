@@ -20,6 +20,9 @@ import {
   isUnusableScrapedListing,
   salvagePriorListing,
   decideFetchImagesWrite,
+  firstSeenForListing,
+  openHouseFromCardText,
+  normalizeCompassUrl,
 } from './listings-file.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -87,7 +90,7 @@ async function main() {
       else if (/Pending/i.test(cardText)) cardStatus = 'Pending';
       else if (/(?:^|[^A-Za-z])Sold(?:$|[^A-Za-z])/i.test(cardText)) cardStatus = 'Sold';
 
-      return { url, imgUrl, cardBeds, cardBaths, cardSqft, cardStatus };
+      return { url, imgUrl, cardBeds, cardBaths, cardSqft, cardStatus, cardText };
     });
   });
 
@@ -148,6 +151,8 @@ async function main() {
       if (beds) listing.beds = beds;
       if (baths) listing.baths = baths;
       if (sqft) listing.sqft = sqft;
+      const openHouse = openHouseFromCardText(card.cardText);
+      if (openHouse) listing.openHouse = openHouse;
 
       if (isUnusableScrapedListing(listing)) {
         throw new Error(`blank address or missing/zero price (address=${JSON.stringify(address)} price=${price})`);
@@ -191,6 +196,10 @@ async function main() {
 
   // Generate listings.ts
   const timestamp = new Date().toISOString();
+  for (const l of listings) {
+    const prior = priorByUrl.get(normalizeCompassUrl(l.compassUrl));
+    l.firstSeen = firstSeenForListing(prior, timestamp);
+  }
   const listingsCode = listings.map(l => {
     const parts = [];
     parts.push(`    address: ${JSON.stringify(l.address)}`);
@@ -202,6 +211,8 @@ async function main() {
     parts.push(`    status: ${JSON.stringify(l.status)}`);
     parts.push(`    compassUrl: ${JSON.stringify(l.compassUrl)}`);
     if (l.imageUrl) parts.push(`    imageUrl: ${JSON.stringify(l.imageUrl)}`);
+    if (l.openHouse) parts.push(`    openHouse: ${JSON.stringify(l.openHouse)}`);
+    parts.push(`    firstSeen: ${JSON.stringify(l.firstSeen)}`);
     parts.push(`    lastVerified: listingsSyncedAt`);
     return `  {\n${parts.join(',\n')},\n  }`;
   }).join(',\n');
@@ -225,6 +236,11 @@ export interface Listing {
   // ISO timestamp of the last Compass sync that confirmed this listing.
   // Used by /listings to flag the grid as 'Verifying…' if the file goes stale.
   lastVerified?: string;
+  // ISO timestamp of the first Compass sync that included this listing.
+  // Preserved across later syncs. Not a list date and not a market stat.
+  firstSeen?: string;
+  // Open-house line copied from the Compass card when one is shown.
+  openHouse?: string;
 }
 
 // Mirrors the header timestamp so server components can compute sync staleness

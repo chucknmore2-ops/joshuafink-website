@@ -23,11 +23,15 @@ export const BUFFER_CREATE_POST_MUTATION = `
   }
 `
 
+export type BufferPostChannel = 'instagram' | 'facebook'
+
 export type BufferImagePostInput = {
   apiKey: string
   channelId: string
   text: string
   imageUrl: string
+  /** Defaults to Instagram so the weekly autopost stays on that metadata. */
+  channel?: BufferPostChannel
 }
 
 export type BufferQueueResult =
@@ -46,11 +50,17 @@ type BufferGraphqlBody = {
 }
 
 export function bufferImagePostVariables(
-  input: Pick<BufferImagePostInput, 'channelId' | 'text' | 'imageUrl'>,
+  input: Pick<BufferImagePostInput, 'channelId' | 'text' | 'imageUrl' | 'channel'>,
 ): { input: Record<string, unknown> } {
-  // InstagramPostMetadataInput.type (PostType!) is required. Feed photo is
-  // `post`, not story or reel. shouldShareToFeed is Boolean! on that input.
-  // https://developers.buffer.com/types/InstagramPostMetadataInput.html
+  // InstagramPostMetadataInput.type is required for Instagram. Facebook's
+  // type is PostTypeFacebook (`post`, not reel or story). A link card is
+  // mutually exclusive with an image asset, so the listing URL stays in
+  // the caption. https://developers.buffer.com/types/FacebookPostMetadataInput.html
+  const channel = input.channel ?? 'instagram'
+  const metadata =
+    channel === 'facebook'
+      ? { facebook: { type: 'post' } }
+      : { instagram: { type: 'post', shouldShareToFeed: true } }
   return {
     input: {
       text: input.text,
@@ -58,12 +68,7 @@ export function bufferImagePostVariables(
       schedulingType: 'automatic',
       mode: 'addToQueue',
       assets: [{ image: { url: input.imageUrl } }],
-      metadata: {
-        instagram: {
-          type: 'post',
-          shouldShareToFeed: true,
-        },
-      },
+      metadata,
     },
   }
 }
@@ -134,14 +139,20 @@ export function interpretBufferCreatePost(
   }
 }
 
-export async function queueInstagramImagePost(
+export async function queueBufferImagePost(
   input: BufferImagePostInput,
   fetchImpl: typeof fetch = fetch,
 ): Promise<BufferQueueResult> {
   const apiKey = input.apiKey.trim()
   const channelId = input.channelId.trim()
+  const channel = input.channel ?? 'instagram'
   if (!apiKey) return { ok: false, error: 'BUFFER_API_KEY not set' }
-  if (!channelId) return { ok: false, error: 'BUFFER_IG_CHANNEL_ID not set' }
+  if (!channelId) {
+    return {
+      ok: false,
+      error: channel === 'facebook' ? 'BUFFER_FB_CHANNEL_ID not set' : 'BUFFER_IG_CHANNEL_ID not set',
+    }
+  }
   if (!input.text.trim()) return { ok: false, error: 'caption missing' }
   if (!input.imageUrl.trim()) return { ok: false, error: 'image url missing' }
 
@@ -160,6 +171,7 @@ export async function queueInstagramImagePost(
           channelId,
           text: input.text,
           imageUrl: input.imageUrl,
+          channel,
         }),
       }),
       signal: AbortSignal.timeout(20_000),
@@ -173,4 +185,11 @@ export async function queueInstagramImagePost(
 
   const raw = await res.text().catch(() => '')
   return interpretBufferCreatePost(res.status, raw, apiKey)
+}
+
+export async function queueInstagramImagePost(
+  input: BufferImagePostInput,
+  fetchImpl: typeof fetch = fetch,
+): Promise<BufferQueueResult> {
+  return queueBufferImagePost({ ...input, channel: 'instagram' }, fetchImpl)
 }

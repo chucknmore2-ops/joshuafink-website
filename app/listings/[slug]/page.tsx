@@ -16,6 +16,7 @@ import { buildListingSchema } from '@/lib/listing-schema'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 import { getSuburb, getSuburbSlugForListing } from '@/lib/suburbs'
 import { withUtm } from '@/lib/utm'
+import { compassJpegUrl } from '@/lib/compass-photo'
 
 const SITE = 'https://www.joshuafink.com'
 
@@ -94,7 +95,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url,
       siteName: 'Joshua Fink Group',
       type: 'website',
-      ...(listing.imageUrl ? { images: [{ url: listing.imageUrl }] } : {}),
+      ...(listing.imageUrl
+        ? { images: [{ url: compassJpegUrl(listing.imageUrl) ?? listing.imageUrl }] }
+        : {}),
     },
   }
 }

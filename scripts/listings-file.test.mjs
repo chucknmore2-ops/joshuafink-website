@@ -15,6 +15,8 @@ import {
   isUnusableScrapedListing,
   salvagePriorListing,
   decideFetchImagesWrite,
+  firstSeenForListing,
+  openHouseFromCardText,
 } from './listings-file.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -176,6 +178,30 @@ test('decideFetchImagesWrite keeps the existing file on an empty scrape', () => 
   assert.deepEqual(
     decideFetchImagesWrite({ resolvedCount: 0, unresolvedCount: 0 }),
     { write: false, exitCode: 0, reason: 'empty-scrape' },
+  );
+});
+
+test('firstSeenForListing keeps the original sync time', () => {
+  assert.equal(
+    firstSeenForListing({ firstSeen: '2026-05-11T12:00:26.000Z' }, '2026-10-06T14:53:43.661Z'),
+    '2026-05-11T12:00:26.000Z',
+  );
+  assert.equal(
+    firstSeenForListing(null, '2026-10-06T14:53:43.661Z'),
+    '2026-10-06T14:53:43.661Z',
+  );
+  assert.equal(
+    firstSeenForListing({ firstSeen: 'not-a-date' }, '2026-10-06T14:53:43.661Z'),
+    '2026-10-06T14:53:43.661Z',
+  );
+});
+
+test('openHouseFromCardText returns only a line Compass showed', () => {
+  assert.equal(openHouseFromCardText(''), '');
+  assert.equal(openHouseFromCardText('Active\n3 beds'), '');
+  assert.equal(
+    openHouseFromCardText('Active\nOpen House Sat 1-3\n$409,900'),
+    'Open House Sat 1-3',
   );
 });
 
