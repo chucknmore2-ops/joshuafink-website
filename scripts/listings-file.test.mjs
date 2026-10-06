@@ -17,6 +17,7 @@ import {
   decideFetchImagesWrite,
   firstSeenForListing,
   openHouseFromCardText,
+  renderActiveListingsFile,
 } from './listings-file.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -210,4 +211,42 @@ test('decideFetchImagesWrite writes when every card resolved (scraped or salvage
     decideFetchImagesWrite({ resolvedCount: 10, unresolvedCount: 0 }),
     { write: true, exitCode: 0, reason: 'ok' },
   );
+});
+
+test('renderActiveListingsFile writes a capped photoUrls array the loader can read back', () => {
+  const photos = Array.from({ length: 35 }, (_, i) =>
+    `https://www.compass.com/m/${String(i).padStart(32, 'a')}/2048x1536.webp`,
+  );
+  const file = renderActiveListingsFile(
+    [{
+      address: '1 Main St',
+      city: 'Nashville, TN 37201',
+      price: 100000,
+      beds: 3,
+      baths: 2,
+      sqft: 1200,
+      status: 'Active',
+      compassUrl: 'https://www.compass.com/homedetails/1-main/',
+      imageUrl: photos[0],
+      photoUrls: photos,
+      firstSeen: '2026-05-11T12:00:26.000Z',
+      openHouse: 'Open House Sat 1-3',
+    }],
+    '2026-10-06T14:53:43.661Z',
+    'https://www.compass.com/agents/joshua-fink/',
+  );
+  assert.match(file, /photoUrls\?: string\[\]/);
+  assert.equal((file.match(/2048x1536\.webp/g) || []).length, 31);
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'listings-render-'));
+  const out = path.join(dir, 'listings.ts');
+  fs.writeFileSync(out, file);
+  const map = loadExistingListingsMap(out, 'listings');
+  const listing = map.values().next().value;
+  assert.equal(listing.photoUrls.length, 30);
+  assert.equal(listing.imageUrl, photos[0]);
+  assert.equal(listing.address, '1 Main St');
+  assert.equal(listing.firstSeen, '2026-05-11T12:00:26.000Z');
+  assert.equal(listing.openHouse, 'Open House Sat 1-3');
+  assert.match(file, /firstSeen\?: string/);
+  assert.match(file, /openHouse\?: string/);
 });

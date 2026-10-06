@@ -185,6 +185,7 @@ export default function Footer() {
                 { href: '/market', label: 'Market Reports' },
                 { href: '/compare', label: 'Suburb Comparisons' },
                 { href: '/contact', label: 'Contact' },
+                { href: '/alerts', label: 'New Listing Alerts' },
                 { href: '/privacy', label: 'Privacy Policy' },
               ].map((link) => (
                 <li key={link.href}>

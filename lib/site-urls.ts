@@ -54,6 +54,7 @@ export function getSiteUrlCatalog(): SiteUrlEntry[] {
     { path: '/neighborhoods', priority: 0.85, changeFrequency: 'weekly' },
     { path: '/reviews', priority: 0.7, changeFrequency: 'monthly' },
     { path: '/contact', priority: 0.7, changeFrequency: 'monthly' },
+    { path: '/alerts', priority: 0.5, changeFrequency: 'monthly' },
     { path: '/market', priority: 0.85, changeFrequency: 'weekly' },
     { path: '/compare', priority: 0.8, changeFrequency: 'monthly' },
     { path: '/homes-near', priority: 0.8, changeFrequency: 'monthly' },

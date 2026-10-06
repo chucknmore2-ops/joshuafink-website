@@ -52,3 +52,28 @@ CREATE TABLE IF NOT EXISTS geo_visibility (
 
 CREATE INDEX IF NOT EXISTS idx_geo_visibility_recent
   ON geo_visibility (checked_at DESC);
+
+-- Opt-in listing alert list and the last price snapshot. Created on first
+-- use by lib/listing-alert-store.ts (the Vercel cron). Not applied by the
+-- Railway autoposter. Unsubscribe tokens are the secret for the one-click link.
+CREATE TABLE IF NOT EXISTS listing_alert_subscribers (
+  email TEXT PRIMARY KEY,
+  city TEXT,
+  price_min INTEGER,
+  price_max INTEGER,
+  unsubscribe_token TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'active',
+  source TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  unsubscribed_at TIMESTAMPTZ
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS listing_alert_subscribers_token
+  ON listing_alert_subscribers (unsubscribe_token);
+
+CREATE TABLE IF NOT EXISTS listing_alert_state (
+  compass_url TEXT PRIMARY KEY,
+  price INTEGER NOT NULL,
+  address TEXT,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);

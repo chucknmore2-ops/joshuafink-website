@@ -69,6 +69,7 @@ export const SHEET_APPENDED_COLUMNS = [
   'last_referrer',
   'last_landing_page',
   'page_url',
+  'alert_opt_in',
 ] as const
 
 export const SHEET_CRM_COLUMNS = [...SHEET_BASE_COLUMNS, ...SHEET_APPENDED_COLUMNS] as const
