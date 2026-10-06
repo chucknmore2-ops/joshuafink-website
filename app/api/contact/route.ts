@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { classifyLead } from '@/lib/classify-lead'
+import { botChallengeMode } from '@/lib/bot-challenge'
 import { ensureLeadAttribution, LEAD_ATTRIBUTION_FIELDS } from '@/lib/attribution'
 import { sendEmail, activeEmailProvider, fetchWithTimeout } from '@/lib/send-email'
 
@@ -352,7 +353,10 @@ async function pushToSheet(
     // Normalize the lead type across the different forms into one column.
     lead_type: lead.subject || lead.lead_type || '',
     received_at: new Date().toISOString(),
-    ...(blockedReason ? { blocked_reason: blockedReason } : {}),
+    // blocked_reason is what the deployed Apps Script already routes to the
+    // Blocked tab. status: spam is a marker for a script that only writes the
+    // CRM tab and copies whatever status it is sent.
+    ...(blockedReason ? { blocked_reason: blockedReason, status: 'spam' } : {}),
     ...(testMode ? { system_test: 'true' } : {}),
     ...(SHEET_WEBHOOK_SECRET ? { secret: SHEET_WEBHOOK_SECRET } : {}),
   }
@@ -533,6 +537,11 @@ async function sendEmergencyPushover(
 // single-source case that is actually easy to pull off.
 const FLOOD_MAX_PER_WINDOW = 12
 const FLOOD_WINDOW_MS = 60_000
+// Longer window than the hard flood cap. Five or more in ten minutes adds a
+// scoring signal (see classifyLead). It does not, by itself, quarantine a
+// normal lead — a household submitting a few forms still gets through, tagged
+// at most. In-memory, so it is per serverless instance, same as the flood cap.
+const RATE_WINDOW_MS = 10 * 60_000
 const submissionTimes = new Map<string, number[]>()
 
 function clientIp(req: NextRequest): string {
@@ -541,14 +550,18 @@ function clientIp(req: NextRequest): string {
   return req.headers.get('x-real-ip') ?? 'unknown'
 }
 
-/** Records this hit and reports whether the caller has now exceeded the window. */
-function exceedsFloodLimit(ip: string, now: number = Date.now()): boolean {
+/**
+ * Records this hit. `flooded` is the hard cap (more than 12 in 60 seconds).
+ * `recent` is how many hits this IP has in the last 10 minutes, including
+ * this one, and is passed to the scorer.
+ */
+function recordSubmission(ip: string, now: number = Date.now()): { flooded: boolean; recent: number } {
   // Prune every caller, not just this one, so the map cannot grow without bound
   // across a long-lived instance. forEach rather than for-of: this tsconfig
   // targets below ES2015, so iterating a Map directly needs downlevelIteration.
   const stale: string[] = []
   submissionTimes.forEach((times, key) => {
-    const live = times.filter((t: number) => now - t < FLOOD_WINDOW_MS)
+    const live = times.filter((t: number) => now - t < RATE_WINDOW_MS)
     if (live.length === 0) stale.push(key)
     else submissionTimes.set(key, live)
   })
@@ -556,7 +569,18 @@ function exceedsFloodLimit(ip: string, now: number = Date.now()): boolean {
   const hits = submissionTimes.get(ip) ?? []
   hits.push(now)
   submissionTimes.set(ip, hits)
-  return hits.length > FLOOD_MAX_PER_WINDOW
+  const inFloodWindow = hits.filter((t: number) => now - t < FLOOD_WINDOW_MS).length
+  return { flooded: inFloodWindow > FLOOD_MAX_PER_WINDOW, recent: hits.length }
+}
+
+let botChallengeWarned = false
+function noteBotChallengeConfig(): void {
+  const mode = botChallengeMode()
+  if (mode === 'off' || botChallengeWarned) return
+  botChallengeWarned = true
+  // The flag is recognized so a later change can enforce Turnstile or BotID.
+  // There is no widget on the forms, so this must not drop or challenge anyone.
+  console.warn(`LEAD_BOT_CHALLENGE=${mode} is not enforced (no widget on the forms). Spam scoring still applies.`)
 }
 
 export async function POST(req: NextRequest) {
@@ -565,8 +589,11 @@ export async function POST(req: NextRequest) {
   // least ONE of those is configured we can accept the submission; only fail
   // closed when nothing is wired up.
 
+  noteBotChallengeConfig()
+
   const ip = clientIp(req)
-  if (exceedsFloodLimit(ip)) {
+  const pace = recordSubmission(ip)
+  if (pace.flooded) {
     console.warn(`Contact API: flood limit hit by ${ip} — rejecting without notifying`)
     return NextResponse.json(
       { error: 'Too many submissions — please call or text 615-551-2727 directly' },
@@ -617,19 +644,29 @@ export async function POST(req: NextRequest) {
     ensureLeadAttribution(lead, req.headers.get('referer'))
 
     // ---------- Classify ----------
-    const verdict = classifyLead(lead)
+    // No address to key on (some test clients, a stripped proxy header) must
+    // not share one bucket for the soft rate signal. The hard 12/minute cap
+    // above still applies to "unknown".
+    const verdict = classifyLead(lead, {
+      recentSubmissions: ip === 'unknown' ? 1 : pace.recent,
+    })
 
-    if (verdict.kind === 'bot') {
-      // Honeypot only. Log the WHOLE submission, not just the contact fields —
-      // if this ever fires on a real person (browsers can autofill the hidden
-      // field), the message text is the only way to identify and recover them.
-      console.log(`BOT blocked (${verdict.reason}): ${JSON.stringify(lead)}`)
-      // Durable copy in the sheet's "Blocked" tab, which Josh can skim for
-      // humans — sheet only, so real bots never make noise on ClickUp/Pushover/
-      // email. Awaited: Vercel freezes the function once the response is sent,
-      // so a fire-and-forget write here could silently never happen.
-      await pushToSheet(lead, verdict.reason)
-      // Return success so bots don't retry.
+    if (verdict.kind === 'bot' || verdict.kind === 'spam') {
+      // Honeypot, too-fast, or a high content score. Log the WHOLE submission —
+      // if this ever fires on a real person (a browser can autofill the hidden
+      // field, or someone pastes a weird message), the text is how Josh
+      // recovers them from the Blocked tab.
+      console.log(`Lead quarantined (${verdict.kind}/${verdict.reason}): ${JSON.stringify(lead)}`)
+      // Durable copy in the sheet's "Blocked" tab (blocked_reason is the
+      // existing Apps Script switch). Sheet only: no ClickUp, Pushover, email,
+      // auto-reply, or downstream webhooks. Awaited: Vercel freezes the
+      // function once the response is sent, so a fire-and-forget write here
+      // could silently never happen.
+      const quarantined = await pushToSheet(lead, verdict.reason)
+      if (quarantined.configured && !quarantined.ok) {
+        console.error(`Quarantine sheet write failed (${verdict.reason}): ${quarantined.detail}`)
+      }
+      // Success either way, so the bot cannot tell it was stopped.
       return NextResponse.json({ ok: true })
     }
 

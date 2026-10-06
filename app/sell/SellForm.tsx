@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, FormEvent } from 'react'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import { captureAttribution, getAttribution } from '@/lib/attribution'
+import LeadFormGuards from '@/components/LeadFormGuards'
 import { MISSING_CONTACT_MESSAGE, missingContact, trackLeadFormError } from '@/lib/lead-form'
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error'
@@ -123,9 +124,7 @@ export default function SellForm() {
     <form method="POST" action="/api/contact" onSubmit={handleSubmit} className="space-y-5">
       <input type="hidden" name="lead_type" value="seller" />
       <input type="hidden" name="subject" value="sell" />
-      {/* Honeypot — invisible to humans, bots auto-fill it. */}
-      <input type="text" name="website" autoComplete="off" tabIndex={-1} aria-hidden="true"
-        style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, width: 0 }} />
+      <LeadFormGuards />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div>

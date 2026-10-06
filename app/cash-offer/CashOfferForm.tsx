@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, FormEvent } from 'react'
 import { captureAttribution, getAttribution } from '@/lib/attribution'
+import LeadFormGuards from '@/components/LeadFormGuards'
 import { trackLeadFormError } from '@/lib/lead-form'
 import TrackedTelLink from '@/components/TrackedTelLink'
 
@@ -123,9 +124,7 @@ export default function CashOfferForm({ source = 'cash-offer', cityName }: CashO
         <input type="hidden" name="subject" value="sell" />
         <input type="hidden" name="source" value={source} />
         {cityName && <input type="hidden" name="suburb" value={cityName} />}
-        {/* Honeypot — invisible to humans, bots auto-fill it */}
-        <input type="text" name="website" autoComplete="off" tabIndex={-1} aria-hidden="true"
-          style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, width: 0 }} />
+        <LeadFormGuards />
 
         <div>
           <input

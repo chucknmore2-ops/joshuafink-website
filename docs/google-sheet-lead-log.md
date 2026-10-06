@@ -4,10 +4,16 @@ Every website lead (contact, sell, cash-offer, buyer, neighborhood, etc.) is
 appended as a row to a Google Sheet tab named **CRM**. No paid CRM, no OAuth —
 the site POSTs each lead to a Google Apps Script Web App bound to the sheet.
 
-Submissions the honeypot blocks are logged too, but to a separate **Blocked**
-tab (auto-created, with the block reason) — sheet-only, no Pushover/email,
-so bots stay silent. The honeypot can misfire on a real person whose browser
-autofills the hidden field, so skim the Blocked tab weekly for anything human.
+Submissions the spam filter quarantines are logged too, but to a separate
+**Blocked** tab (auto-created, with the block reason) — sheet-only, no
+Pushover and no email, so bots stay silent. That covers the honeypot, a form
+sent in under 3 seconds, and a high content score (the Russian "перевод /
+руб" leads with an off-site link are the current example). A single weak
+signal does not land here: those leads still go to **CRM**, tagged in
+`suspected_spam`, and still email and Pushover. The honeypot can misfire on
+a real person whose browser autofills the hidden field, and a fast human can
+trip `too_fast`, so skim the Blocked tab for anything that looks like a
+person.
 
 The daily healthcheck's SYSTEM TEST lead is routed the same way: it arrives
 tagged `system_test` and files into an auto-created **System** tab, so the CRM
@@ -65,9 +71,11 @@ the top of the script — the script then rejects any POST without it.
 Paste this whole script over the Apps Script project. It is the script to deploy.
 
 ```javascript
-// Appends each website lead as a row in the "CRM" tab. Honeypot-blocked
-// submissions arrive tagged with `blocked_reason` and go to a "Blocked" tab
-// instead (auto-created) — skim it weekly for real people the trap caught.
+// Appends each website lead as a row in the "CRM" tab. Quarantined
+// submissions (honeypot, too-fast, or a high spam score) arrive tagged with
+// `blocked_reason` and go to a "Blocked" tab instead (auto-created) — skim
+// it for real people the filter caught. No redeploy is required for that;
+// any non-empty blocked_reason already takes this path.
 // The daily healthcheck's test lead arrives tagged `system_test` and goes to
 // a "System" tab (auto-created), keeping the CRM tab real-leads-only.
 //
@@ -217,8 +225,8 @@ last_wbraid · last_fbclid · last_referrer · last_landing_page · page_url`
 - **page_url** is the page the form was submitted from, which is often not
   the landing page.
 - **suspected_spam** holds a heuristic's reason (e.g. `url_in_field`) when one
-  fired. The lead was still delivered on every channel — judge it yourself.
-  Empty for normal leads.
+  fired but the lead was still delivered on every channel — judge it yourself.
+  Empty for normal leads. It is not how quarantined spam is marked.
 - **budget / bedrooms / bathrooms** come from the buy and sell forms when the
   visitor filled them in.
 
@@ -230,8 +238,12 @@ do not type them in. A tab that already has `traffic_source` through
 `page_url` columns after them. Older rows stay blank in the new columns.
 
 The **Blocked** tab has the same columns except `status` is replaced by
-`blocked_reason` (e.g. `honeypot`). Nothing else fires for these rows — no
-Pushover or email — so the tab is skim-at-your-leisure.
+`blocked_reason` (e.g. `honeypot`, `too_fast`, or
+`non_latin+spam_phrase+spam_url`). Nothing else fires for these rows — no
+Pushover or email — so the tab is skim-at-your-leisure. The site sends
+`blocked_reason` for every quarantined row. The script already in this file
+routes that field to this tab, so no redeploy is required for the spam
+filter. A row only lands on CRM if this field is absent.
 
 The **System** tab has the same columns as CRM and holds one row per weekday
 from the morning healthcheck's test lead — proof the sheet channel is alive,
@@ -242,8 +254,10 @@ never something to act on.
 `app/api/contact/route.ts` → `pushToSheet(lead)` POSTs the lead JSON to
 `GOOGLE_SHEET_WEBHOOK_URL`. It runs on every non-spam submission and no-ops
 safely when the env var is unset, so it's harmless to deploy before setup.
-Honeypot-blocked submissions call `pushToSheet(lead, reason)` — the extra
-`blocked_reason` field is what routes the row to the Blocked tab. The daily
+Honeypot, too-fast, and high-score spam all call `pushToSheet(lead, reason)` —
+the extra `blocked_reason` field is what routes the row to the Blocked tab.
+The payload also includes `status: "spam"` so an older script that ignores
+`blocked_reason` and always appends to CRM still marks the row. The daily
 healthcheck lead calls `pushToSheet(lead, undefined, true)` — the resulting
 `system_test` field routes its row to the System tab the same way.
 

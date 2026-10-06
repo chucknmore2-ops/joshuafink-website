@@ -68,24 +68,35 @@ Do not build a second endpoint.
 ```
 form (SuburbLeadForm / SellForm / ContactForm / CashOfferForm)
   → POST /api/contact
-  → lib/classify-lead.ts      clean | suspect | invalid | bot
-  → 4 channels IN PARALLEL:   email (Resend) · Pushover · Google Sheet · ClickUp (off)
-  → best-effort webhooks:     n8n · FlipIntel cash-offer · buyer-lead   (skipped if localhost)
-  → delivery check:           did ANY channel succeed?
-      yes → 200, success screen
-      no  → emergency Pushover → if that works, 200; else 502 telling the visitor to call
+  → lib/classify-lead.ts      clean | suspect | invalid | bot | spam
+  → invalid:                  400, the visitor can fix it
+  → bot or spam:              Blocked tab only, then 200 {ok:true}
+                              (no email, no Pushover, no webhooks)
+  → clean or suspect:
+       email (Resend) · Pushover · Google Sheet CRM · ClickUp (off)
+       best-effort webhooks:  n8n · FlipIntel cash-offer · buyer-lead
+                              (skipped if localhost)
+       delivery check:        did ANY channel succeed?
+         yes → 200, success screen
+         no  → emergency Pushover → if that works, 200; else 502 telling the visitor to call
 ```
 
 **Classification rules that must not be broken** (`lib/classify-lead.ts`):
 
-- **Only the honeypot may drop a lead.** A hidden `website` field; bots fill it.
-  Dropped leads still get logged to the sheet's **Blocked** tab, and the visitor
-  still sees success so bots don't retry.
+- **Quarantine is not a delete.** Honeypot, a submit faster than 3 seconds
+  (client mount timestamp), or a combined spam score of 5+ skips email,
+  Pushover, the auto-reply, and the downstream webhooks. The row is written
+  to the sheet's **Blocked** tab with `blocked_reason`, and the visitor still
+  sees success so bots don't learn they were stopped. One weak signal is not
+  enough: a Zillow link, a long or international name, a non-US phone, or a
+  message in another language without a scam phrase is still delivered.
 - `invalid` = something the human can fix (no name, 4-digit phone, cash-offer
   with no address). Returns a **visible** 400 so they can correct it. Never silent.
-- `suspect` = a shape heuristic fired. **Delivered anyway**, tagged
-  `suspected_spam` so Joshua can judge. This logic silently ate real leads four
-  separate times; the tests in `lib/classify-lead.test.ts` exist to stop a fifth.
+- `suspect` = one weak signal, or a few that don't add up to a quarantine.
+  **Delivered anyway**, tagged `suspected_spam` so Joshua can judge. This
+  logic silently ate real leads four separate times when a single heuristic
+  was allowed to drop them; the tests in `lib/classify-lead.test.ts` exist
+  to stop that from coming back.
 - There is **no server-side "must provide phone or email" rule**, on purpose: the
   daily healthcheck's test lead has neither. That check lives in the browser
   (`lib/lead-form.ts`).
@@ -101,7 +112,7 @@ form (SuburbLeadForm / SellForm / ContactForm / CashOfferForm)
 - **Pushover** — `PUSHOVER_TOKEN` / `PUSHOVER_USER`. This is both the new-lead
   phone alert and the emergency last resort. See landmine #2.
 - **Google Sheet** — Apps Script web app at `GOOGLE_SHEET_WEBHOOK_URL`. Tabs:
-  **CRM** (real leads), **Blocked** (honeypot), **System** (daily test lead).
+  **CRM** (real leads), **Blocked** (honeypot, too-fast, and scored spam), **System** (daily test lead).
   The script answers HTTP 200 for everything, so the route believes the *body*,
   not the status. See `docs/google-sheet-lead-log.md`.
 - **ClickUp** — OFF. Skipped unless `CLICKUP_LEADS_ENABLED=true` *and*
@@ -122,6 +133,7 @@ RESEND_API_KEY  EMAIL_FROM  GOOGLE_SHEET_WEBHOOK_URL  SHEET_WEBHOOK_SECRET
 PUSHOVER_TOKEN  PUSHOVER_USER  CRON_SECRET  ADMIN_PASSWORD  DATABASE_URL
 NEXT_PUBLIC_GA_ID  LEAD_CHANNEL_TIMEOUT_MS
 N8N_WEBHOOK_BASE  CASH_OFFER_WEBHOOK_BASE  BUYER_LEAD_WEBHOOK_BASE
+LEAD_BOT_CHALLENGE   (optional, default off — turnstile or botid later; not enforced)
 IG_BUSINESS_ACCOUNT_ID  IG_ACCESS_TOKEN
 LINKEDIN_CLIENT_ID  LINKEDIN_CLIENT_SECRET  LINKEDIN_REDIRECT_URI
 LINKEDIN_ACCESS_TOKEN  LINKEDIN_AUTHOR_URN  LINKEDIN_TOKEN_EXPIRES_AT_MS
@@ -319,8 +331,10 @@ Production**. Then revert the commit (`git revert <sha>`) so the code matches.
    and can move a real lead's deal stage.
 4. **`lib/listings.ts` / `lib/sold-listings.ts` are generated.** Hand edits are
    silently overwritten nightly.
-5. **Only the honeypot may drop a lead.** Any new "this looks like spam" rule
-   must tag (`suspect`), not discard. This has cost real leads four times.
+5. **Do not quarantine on one weak signal.** Honeypot, a sub-3-second submit,
+   or a combined score of 5+ goes to the Blocked tab with no email or
+   Pushover. Anything less is tagged and delivered. A single regex used as a
+   hard drop has cost real leads four times.
 6. **The repo is public.** No secrets, internal URLs, or client details in code,
    comments, or commit messages.
 7. **A Pushover/Resend 200 means accepted, not delivered.** The only proof the

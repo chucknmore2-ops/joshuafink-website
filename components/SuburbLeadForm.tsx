@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, FormEvent, ReactNode } from 'react'
 import { captureAttribution, getAttribution } from '@/lib/attribution'
+import LeadFormGuards from '@/components/LeadFormGuards'
 import { MISSING_CONTACT_MESSAGE, missingContact, trackLeadFormError } from '@/lib/lead-form'
 
 type Props = {
@@ -118,19 +119,9 @@ export default function SuburbLeadForm({ children, successTitle, successMessage,
       className="space-y-5"
       aria-busy={state === 'submitting'}
     >
-      {/* Honeypot — invisible to humans, bots auto-fill it. /api/contact drops
-          any submission where this is non-empty. Living here rather than at
-          each call site means every page using SuburbLeadForm gets bot
-          protection, which is what lets the server-side heuristics stay
-          conservative instead of guessing from name/message shape. */}
-      <input
-        type="text"
-        name="website"
-        autoComplete="off"
-        tabIndex={-1}
-        aria-hidden="true"
-        style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, width: 0 }}
-      />
+      {/* Honeypot + mount timestamp. Outside the disabled fieldset so a
+          submit still includes them. */}
+      <LeadFormGuards />
       <fieldset disabled={state === 'submitting'} className="space-y-5 border-0 p-0 m-0 min-w-0 disabled:opacity-70">
         {children}
       </fieldset>
