@@ -120,10 +120,16 @@ test('Nashville fair-cash-offer FAQ reuses only figures already on the site', ()
   const dollars = copy.match(/\$[0-9][0-9,.]*[KM]?/g) ?? []
   assert.deepEqual(Array.from(new Set(dollars)), ['$475,538'])
 
-  // Links to the August 2026 GNAR market update, which must exist.
+  // Links to the September 2026 GNAR market update (published October 5, 2026).
   const links = faqs.flatMap((f) => (f.link ? [f.link.href] : []))
-  assert.ok(links.includes('/blog/middle-tennessee-market-update-august-2026'))
-  assert.ok(blogPosts.some((p) => p.slug === 'middle-tennessee-market-update-august-2026'))
+  const labels = faqs.flatMap((f) => (f.link ? [f.link.label] : []))
+  assert.ok(links.includes('/blog/middle-tennessee-market-update-september-2026'))
+  assert.ok(labels.includes('September 2026 Middle Tennessee market update'))
+  assert.match(copy, /September 2026 Middle Tennessee market update/)
+  assert.doesNotMatch(copy, /August 2026 Middle Tennessee market update/)
+  const september = blogPosts.find((p) => p.slug === 'middle-tennessee-market-update-september-2026')
+  assert.ok(september)
+  assert.equal(september.date, 'October 5, 2026')
 
   // Does not duplicate the shared "agent who buys houses for cash" answer or existing city FAQs.
   const existing = new Set(city.faqs.map((f) => f.q))

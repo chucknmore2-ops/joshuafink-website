@@ -268,8 +268,8 @@ const cityContent: Record<string, CashOfferCityContent> = {
       },
       {
         q: "Does Nashville's median home price tell me what my cash offer will be?",
-        a: "No. Nashville's $475,538 median (Redfin, as of October 5, 2026) is a citywide midpoint that blends updated East Nashville bungalows with dated homes in Madison, Antioch, and Donelson. A fair offer on your house should be tied to comps near your address and to your home's condition, not to the citywide number. For the regional trend, see the August 2026 Middle Tennessee market update, built from Greater Nashville REALTORS® figures.",
-        link: { href: `/blog/${marketUpdateSlug('2026-08')}`, label: 'August 2026 Middle Tennessee market update' },
+        a: "No. Nashville's $475,538 median (Redfin, as of October 5, 2026) is a citywide midpoint that blends updated East Nashville bungalows with dated homes in Madison, Antioch, and Donelson. A fair offer on your house should be tied to comps near your address and to your home's condition, not to the citywide number. For the regional trend, see the September 2026 Middle Tennessee market update, built from Greater Nashville REALTORS® figures.",
+        link: { href: `/blog/${marketUpdateSlug('2026-09')}`, label: 'September 2026 Middle Tennessee market update' },
       },
       {
         q: 'How can I tell if a Nashville cash offer is fair?',
