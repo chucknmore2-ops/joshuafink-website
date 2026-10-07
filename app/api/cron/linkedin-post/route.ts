@@ -153,6 +153,10 @@ function buildFromListing(): PostPayload | null {
   }
 }
 
+// Same-day Just Listed, Price Improved, Back on Market, and Open House
+// posts go through /api/cron/listing-events, which uses this route's
+// LinkedIn token and ugcPosts connection. Just Sold stays here, on demand.
+//
 // "Just sold" post. NOT part of the weekly rotation: lib/sold-listings.ts
 // carries no close date (Compass's transactions section doesn't publish one),
 // so nothing here can tell a sale that closed last week from one that closed in

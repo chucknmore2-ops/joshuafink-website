@@ -31,11 +31,28 @@ test('bufferImagePostVariables queues an automatic image post', () => {
   assert.deepEqual(input.metadata, {
     instagram: { type: 'post', shouldShareToFeed: true },
   })
+  assert.equal('facebook' in (input.metadata as object), false)
   assert.equal('dueAt' in input, false)
   assert.equal(JSON.stringify(input).includes('shareNow'), false)
   assert.equal(JSON.stringify(input).includes('notification'), false)
   assert.equal(JSON.stringify(input).includes('"story"'), false)
   assert.equal(JSON.stringify(input).includes('"reel"'), false)
+})
+
+test('bufferImagePostVariables uses Facebook metadata for a Facebook channel', () => {
+  const variables = bufferImagePostVariables({
+    channelId: CHANNEL_ID,
+    text: 'Listed with Joshua Fink, Compass.',
+    imageUrl: IMAGE,
+    channel: 'facebook',
+  })
+  const input = variables.input
+  assert.equal(input.schedulingType, 'automatic')
+  assert.equal(input.mode, 'addToQueue')
+  assert.deepEqual(input.metadata, { facebook: { type: 'post' } })
+  assert.equal(JSON.stringify(input).includes('instagram'), false)
+  assert.equal(JSON.stringify(input).includes('graph.facebook.com'), false)
+  assert.equal(JSON.stringify(input).includes('reel'), false)
 })
 
 test('interpretBufferCreatePost accepts PostActionSuccess', () => {

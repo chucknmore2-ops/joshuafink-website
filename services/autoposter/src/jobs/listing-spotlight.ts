@@ -3,6 +3,7 @@ import { log } from "../log.ts";
 import { logPost, recentlyPosted } from "../db.ts";
 import { loadListings, type Listing } from "../listings.ts";
 import { postToFacebookPage } from "../channels/facebook.ts";
+import { buildSpotlightCaption, spotlightListingUrl } from "../listing-spotlight-copy.ts";
 
 const CHANNEL = "facebook";
 const JOB_NAME = "listing-spotlight";
@@ -10,62 +11,6 @@ const PAYLOAD_KIND = "listing";
 
 function isEligible(l: Listing): boolean {
   return !l.status.toLowerCase().includes("under contract");
-}
-
-function formatPrice(price: number): string {
-  return "$" + price.toLocaleString("en-US");
-}
-
-function statusTag(status: string): string {
-  if (status === "Active") return "🟢 Available Now";
-  if (status === "New") return "🆕 Just Listed";
-  if (status.toLowerCase().includes("under contract")) return "🔴 Under Contract";
-  if (status.toLowerCase().includes("open")) return `🏠 ${status}`;
-  return status;
-}
-
-function buildCaption(listing: Listing): string {
-  const parts = [
-    listing.beds ? `${listing.beds} bed` : "",
-    listing.baths ? `${listing.baths} bath` : "",
-    listing.sqft ? `${listing.sqft.toLocaleString()} sqft` : "",
-  ].filter(Boolean);
-  const details = parts.join(" | ");
-  const cityTag = listing.city.split(",")[0].replace(/\s+/g, "");
-  // Dedupe: Nashville listings derive "#NashvilleRealEstate" as their city tag,
-  // which collides with the hardcoded one and doubled it in every caption.
-  const hashtags = Array.from(
-    new Set([
-      `#${cityTag}RealEstate`,
-      "#NashvilleRealEstate",
-      "#MiddleTennessee",
-      "#CompassRealEstate",
-      "#JoshuaFinkGroup",
-      "#HomesForSale",
-      "#TennesseeRealEstate",
-      "#JustListed",
-    ]),
-  ).join(" ");
-
-  return [
-    statusTag(listing.status),
-    "",
-    `🏡 ${listing.address}`,
-    `📍 ${listing.city}`,
-    `💰 ${formatPrice(listing.price)}`,
-    details ? `📐 ${details}` : "",
-    listing.note ? `📝 ${listing.note}` : "",
-    "",
-    "Ready to make a move? Contact Joshua Fink today!",
-    "📲 615-551-2727",
-    "🌐 joshuafink.com",
-    "✉️ joshua@joshuafink.com",
-    "",
-    hashtags,
-  ]
-    .filter((line) => line !== "")
-    .join("\n")
-    .replace(/\n{3,}/g, "\n\n");
 }
 
 export async function runListingSpotlight(): Promise<void> {
@@ -122,7 +67,8 @@ export async function runListingSpotlight(): Promise<void> {
   }
 
   const listing = eligible[0];
-  const caption = buildCaption(listing);
+  const caption = buildSpotlightCaption(listing);
+  const link = spotlightListingUrl(listing);
   log.info(`Selected: ${listing.address}`);
   log.info(`--- PREVIEW ---\n${caption}\n---------------`);
 
@@ -133,7 +79,7 @@ export async function runListingSpotlight(): Promise<void> {
       payloadKind: PAYLOAD_KIND,
       refKey: listing.address,
       messagePreview: caption.slice(0, 280),
-      link: listing.compassUrl,
+      link,
       status: "dry_run",
       dryRun: true,
     });
@@ -143,7 +89,7 @@ export async function runListingSpotlight(): Promise<void> {
 
   const result = await postToFacebookPage({
     message: caption,
-    link: listing.compassUrl,
+    link,
   });
 
   if (result.id) {
@@ -154,7 +100,7 @@ export async function runListingSpotlight(): Promise<void> {
       payloadKind: PAYLOAD_KIND,
       refKey: listing.address,
       messagePreview: caption.slice(0, 280),
-      link: listing.compassUrl,
+      link,
       externalPostId: result.id,
       status: "posted",
       dryRun: false,
@@ -168,7 +114,7 @@ export async function runListingSpotlight(): Promise<void> {
       payloadKind: PAYLOAD_KIND,
       refKey: listing.address,
       messagePreview: caption.slice(0, 280),
-      link: listing.compassUrl,
+      link,
       status: "failed",
       errorMessage: err,
       dryRun: false,

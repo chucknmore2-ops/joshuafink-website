@@ -71,6 +71,30 @@ export function salvagePriorListing(priorByUrl, compassUrl) {
 }
 
 /**
+ * Keep the first sync that saw this home. A new Compass URL gets this
+ * sync's timestamp. Not a list date.
+ */
+export function firstSeenForListing(prior, syncTimestamp) {
+  const seen = prior && typeof prior.firstSeen === 'string' ? prior.firstSeen.trim() : '';
+  if (seen && !Number.isNaN(Date.parse(seen))) return seen;
+  return syncTimestamp;
+}
+
+/**
+ * Open-house line from a Compass card, or '' when the card doesn't say so.
+ * Does not invent a date or time.
+ */
+export function openHouseFromCardText(cardText) {
+  if (!cardText || typeof cardText !== 'string') return '';
+  const line = cardText
+    .split('\n')
+    .map((s) => s.trim())
+    .find((s) => /open\s*house/i.test(s));
+  if (!line) return '';
+  return line.replace(/\s+/g, ' ').trim();
+}
+
+/**
  * After the scrape loop: write only when every agent-page card resolved
  * (fresh scrape or salvage) and there is at least one listing.
  * Unresolved cards fail the job without writing so yesterday's file stays live.
@@ -111,6 +135,8 @@ export function renderActiveListingsFile(listings, timestamp, sourceUrl) {
       const lines = l.photoUrls.slice(0, PHOTO_URL_CAP).map((url) => `      ${JSON.stringify(url)}`);
       parts.push(`    photoUrls: [\n${lines.join(',\n')},\n    ]`);
     }
+    if (l.openHouse) parts.push(`    openHouse: ${JSON.stringify(l.openHouse)}`);
+    if (l.firstSeen) parts.push(`    firstSeen: ${JSON.stringify(l.firstSeen)}`);
     parts.push(`    lastVerified: listingsSyncedAt`);
     return `  {\n${parts.join(',\n')},\n  }`;
   }).join(',\n');
@@ -137,6 +163,11 @@ export interface Listing {
   // ISO timestamp of the last Compass sync that confirmed this listing.
   // Used by /listings to flag the grid as 'Verifying…' if the file goes stale.
   lastVerified?: string;
+  // ISO timestamp of the first Compass sync that included this listing.
+  // Preserved across later syncs. Not a list date and not a market stat.
+  firstSeen?: string;
+  // Open-house line copied from the Compass card when one is shown.
+  openHouse?: string;
 }
 
 // Mirrors the header timestamp so server components can compute sync staleness

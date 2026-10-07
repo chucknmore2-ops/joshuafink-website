@@ -20,6 +20,7 @@ import { buildListingSchema } from '@/lib/listing-schema'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 import { getSuburb, getSuburbSlugForListing } from '@/lib/suburbs'
 import { withUtm } from '@/lib/utm'
+import { compassJpegUrl } from '@/lib/compass-photo'
 import { listings } from '@/lib/listings'
 import { listingCityName, similarListings, suggestedPriceBand } from '@/lib/similar-listings'
 import { listingCtaKind, listingStatusBadgeClass, listingStatusLabel } from '@/lib/listing-cta'
@@ -100,7 +101,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url,
       siteName: 'Joshua Fink Group',
       type: 'website',
-      ...(photos[0] ? { images: [{ url: photos[0] }] } : {}),
+      ...(photos[0]
+        ? { images: [{ url: compassJpegUrl(photos[0]) ?? photos[0] }] }
+        : {}),
     },
   }
 }

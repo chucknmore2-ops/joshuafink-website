@@ -206,10 +206,11 @@ jobs:
           trap - ERR
 
           # A merge performed with GITHUB_TOKEN does not start push workflows.
-          # Dispatch Just Listed once the new lib/listings.ts is on main. The
-          # workflow itself waits for production. Failure to dispatch is not a
-          # sync failure — the 14:20 and 20:20 UTC schedule posts the same way.
-          echo "Waiting for the sync PR to merge so Just Listed can run."
+          # Dispatch Just Listed, listing events, listing videos, and listing
+          # alert emails once the new lib/listings.ts is on main. Each
+          # workflow waits for production. Failure to dispatch is not a sync
+          # failure — the scheduled runs post the same way.
+          echo "Waiting for the sync PR to merge so Just Listed, listing events, videos, and alert emails can run."
           merged=0
           for i in $(seq 1 30); do
             state=$(gh pr view "$PR_URL" --json state --jq .state || echo unknown)
@@ -226,6 +227,11 @@ jobs:
             else
               echo "::warning::Could not dispatch GBP Just Listed. The 14:20 and 20:20 UTC schedules will retry."
             fi
+            if gh workflow run listing-events.yml --ref main; then
+              echo "Dispatched listing events."
+            else
+              echo "::warning::Could not dispatch listing events. The 14:20 and 20:20 UTC schedules will retry."
+            fi
             if gh workflow run listing-video.yml --ref main; then
               echo "Dispatched listing video."
             else
@@ -237,5 +243,5 @@ jobs:
               echo "::warning::Could not dispatch listing alerts. The 13:30 UTC schedule will retry."
             fi
           else
-            echo "::warning::Sync PR was not merged within 15 minutes. Auto-merge stays on. GBP Just Listed, listing video, and listing alerts will run on their schedules once main updates."
+            echo "::warning::Sync PR was not merged within 15 minutes. Auto-merge stays on. GBP Just Listed, listing events, listing video, and alert emails will run on their schedules once main updates."
           fi

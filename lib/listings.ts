@@ -20,6 +20,13 @@ export interface Listing {
   // ISO timestamp of the last Compass sync that confirmed this listing.
   // Used by /listings to flag the grid as 'Verifying…' if the file goes stale.
   lastVerified?: string;
+  // ISO timestamp of the first Compass sync that included this listing.
+  // Preserved by scripts/fetch-images.mjs. The Facebook spotlight uses it
+  // for #JustListed (within 14 days). Not a list date and not a market stat.
+  firstSeen?: string;
+  // Open-house line copied from the Compass card when one is shown.
+  // Absent when Compass does not publish one.
+  openHouse?: string;
 }
 
 // Mirrors the header timestamp so server components can compute sync staleness
@@ -68,6 +75,7 @@ export const listings: Listing[] = [
       "https://www.compass.com/m/2baf09a70e7a6ceb0f1200f1fd1f0b9561b15c6e3905250dfd2ac8589261592f/2048x1536.webp",
       "https://www.compass.com/m/4de5eb34201a7636c8f7ff2d452d7bc486a2afcbc204598d5b2161cc30e2bdfd/2048x1536.webp",
     ],
+    firstSeen: "2026-03-20T14:01:35.000Z",
     lastVerified: listingsSyncedAt,
   },
   {
@@ -112,6 +120,7 @@ export const listings: Listing[] = [
       "https://www.compass.com/m/13645edd20a6cd66c0c59163b18def8f800cbddd653d9ac80a81cceba5480ab4/2048x1536.webp",
       "https://www.compass.com/m/839193932a7492e3992107a0ed33c80eae8f15468b0404004e68744617e3ef3c/2048x1536.webp",
     ],
+    firstSeen: "2026-05-11T12:00:26.000Z",
     lastVerified: listingsSyncedAt,
   },
   {
@@ -150,6 +159,7 @@ export const listings: Listing[] = [
       "https://www.compass.com/m/4ef4bccd85433f7f6bd5483a32fc04447b198f8c6d3d6be621a4fc705ba0615a/2048x1536.webp",
       "https://www.compass.com/m/d34e204f923201206dc81703d86846c998229b8212265620bcd8a770441b9b77/2048x1536.webp",
     ],
+    firstSeen: "2026-09-05T11:47:43.000Z",
     lastVerified: listingsSyncedAt,
   },
   {
@@ -188,6 +198,7 @@ export const listings: Listing[] = [
       "https://www.compass.com/m/7e430f314ede23cc9559902ac632fe2a5f013cc26a8cf5bbc7878b5d41e4a973/2048x1536.webp",
       "https://www.compass.com/m/9e17222e0244498cf563e8260d1ac47a4840db405c22d562677d2bd5ace14e8a/2048x1536.webp",
     ],
+    firstSeen: "2026-06-24T10:55:44.000Z",
     lastVerified: listingsSyncedAt,
   },
   {
@@ -229,6 +240,7 @@ export const listings: Listing[] = [
       "https://www.compass.com/m/61b09b581bbe4a3b0e54b4ebb1a69f977e5f37212af853ce562eaa1a9d6e2185/2048x1536.webp",
       "https://www.compass.com/m/824691f4784d39702a1f8f58cd3c4f386ada99c2a08763ee6994b0c3957baea1/2048x1536.webp",
     ],
+    firstSeen: "2026-10-06T15:02:04.000Z",
     lastVerified: listingsSyncedAt,
   },
   {
@@ -269,6 +281,7 @@ export const listings: Listing[] = [
       "https://www.compass.com/m/3b845bc5674ac33dcf783e801dfedaf63e82955bf0a927c4196c0b9ebb316b54/2048x1536.webp",
       "https://www.compass.com/m/a8adb9fff25b7acb44e5c380c958d8e804ccf951945382709a1d98bb4bb9fdb1/2048x1536.webp",
     ],
+    firstSeen: "2026-08-28T20:03:33.000Z",
     lastVerified: listingsSyncedAt,
   },
   {
@@ -313,6 +326,7 @@ export const listings: Listing[] = [
       "https://www.compass.com/m/4cb0183d5188ee1ff64b588e358b904858ce2750abf3607ce092c5d923bd4714/2048x1536.webp",
       "https://www.compass.com/m/3e912091dfd3bcbf291d9f98171cd664c9702fd60c669d65d5be4e89d55b3be3/2048x1536.webp",
     ],
+    firstSeen: "2026-08-30T13:44:15.000Z",
     lastVerified: listingsSyncedAt,
   },
   {
@@ -353,6 +367,7 @@ export const listings: Listing[] = [
       "https://www.compass.com/m/c0d18fc117a2f8a92c511403cbe512baeface3f48d45ff089519682b6455a400/2048x1536.webp",
       "https://www.compass.com/m/b4f7eb327d63ebd526d2367e7b5bd1c1a1b78ddd2f969409628de106e87a5b5c/2048x1536.webp",
     ],
+    firstSeen: "2026-06-24T10:55:44.000Z",
     lastVerified: listingsSyncedAt,
   }
 ];

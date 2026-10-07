@@ -15,6 +15,8 @@ import {
   isUnusableScrapedListing,
   salvagePriorListing,
   decideFetchImagesWrite,
+  firstSeenForListing,
+  openHouseFromCardText,
   renderActiveListingsFile,
 } from './listings-file.mjs';
 
@@ -180,6 +182,30 @@ test('decideFetchImagesWrite keeps the existing file on an empty scrape', () => 
   );
 });
 
+test('firstSeenForListing keeps the original sync time', () => {
+  assert.equal(
+    firstSeenForListing({ firstSeen: '2026-05-11T12:00:26.000Z' }, '2026-10-06T14:53:43.661Z'),
+    '2026-05-11T12:00:26.000Z',
+  );
+  assert.equal(
+    firstSeenForListing(null, '2026-10-06T14:53:43.661Z'),
+    '2026-10-06T14:53:43.661Z',
+  );
+  assert.equal(
+    firstSeenForListing({ firstSeen: 'not-a-date' }, '2026-10-06T14:53:43.661Z'),
+    '2026-10-06T14:53:43.661Z',
+  );
+});
+
+test('openHouseFromCardText returns only a line Compass showed', () => {
+  assert.equal(openHouseFromCardText(''), '');
+  assert.equal(openHouseFromCardText('Active\n3 beds'), '');
+  assert.equal(
+    openHouseFromCardText('Active\nOpen House Sat 1-3\n$409,900'),
+    'Open House Sat 1-3',
+  );
+});
+
 test('decideFetchImagesWrite writes when every card resolved (scraped or salvaged)', () => {
   assert.deepEqual(
     decideFetchImagesWrite({ resolvedCount: 10, unresolvedCount: 0 }),
@@ -203,6 +229,8 @@ test('renderActiveListingsFile writes a capped photoUrls array the loader can re
       compassUrl: 'https://www.compass.com/homedetails/1-main/',
       imageUrl: photos[0],
       photoUrls: photos,
+      firstSeen: '2026-05-11T12:00:26.000Z',
+      openHouse: 'Open House Sat 1-3',
     }],
     '2026-10-06T14:53:43.661Z',
     'https://www.compass.com/agents/joshua-fink/',
@@ -217,4 +245,8 @@ test('renderActiveListingsFile writes a capped photoUrls array the loader can re
   assert.equal(listing.photoUrls.length, 30);
   assert.equal(listing.imageUrl, photos[0]);
   assert.equal(listing.address, '1 Main St');
+  assert.equal(listing.firstSeen, '2026-05-11T12:00:26.000Z');
+  assert.equal(listing.openHouse, 'Open House Sat 1-3');
+  assert.match(file, /firstSeen\?: string/);
+  assert.match(file, /openHouse\?: string/);
 });

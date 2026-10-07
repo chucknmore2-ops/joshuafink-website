@@ -263,3 +263,158 @@ export async function logPost(row: LogPostRow): Promise<void> {
     console.error("[admin-db] logPost failed:", (err as Error).message);
   }
 }
+
+export interface ListingStateRecord {
+  listingKey: string;
+  address: string;
+  city: string;
+  price: number;
+  beds: number | null;
+  baths: number | null;
+  sqft: number | null;
+  status: string;
+  openHouse: string | null;
+  compassUrl: string;
+  imageUrl: string | null;
+  seenAt: string;
+  generation: number;
+}
+
+const LISTING_STATE_SQL = `
+CREATE TABLE IF NOT EXISTS listing_state (
+  listing_key TEXT PRIMARY KEY,
+  address TEXT NOT NULL,
+  city TEXT NOT NULL DEFAULT '',
+  price INTEGER NOT NULL,
+  beds INTEGER,
+  baths DOUBLE PRECISION,
+  sqft INTEGER,
+  status TEXT NOT NULL,
+  open_house TEXT,
+  compass_url TEXT NOT NULL DEFAULT '',
+  image_url TEXT,
+  seen_at TIMESTAMPTZ NOT NULL,
+  generation INTEGER NOT NULL DEFAULT 1
+)`;
+
+function isoTimestamp(value: Date | string): string {
+  const date = value instanceof Date ? value : new Date(value);
+  return Number.isNaN(date.getTime()) ? new Date(0).toISOString() : date.toISOString();
+}
+
+/**
+ * Previous price and status for each home. Null when the database cannot
+ * be read — callers must not post in that case. An empty array means the
+ * table exists and has not been seeded yet.
+ */
+export async function readListingState(): Promise<ListingStateRecord[] | null> {
+  const pool = getPool();
+  if (!pool) return null;
+  try {
+    await pool.query(LISTING_STATE_SQL);
+    const r = await pool.query<{
+      listing_key: string;
+      address: string;
+      city: string;
+      price: number;
+      beds: number | null;
+      baths: number | null;
+      sqft: number | null;
+      status: string;
+      open_house: string | null;
+      compass_url: string;
+      image_url: string | null;
+      seen_at: Date | string;
+      generation: number;
+    }>(
+      `SELECT listing_key, address, city, price, beds, baths, sqft, status,
+              open_house, compass_url, image_url, seen_at, generation
+         FROM listing_state
+        ORDER BY address`
+    );
+    return r.rows.map((row) => ({
+      listingKey: row.listing_key,
+      address: row.address,
+      city: row.city,
+      price: Number(row.price),
+      beds: row.beds == null ? null : Number(row.beds),
+      baths: row.baths == null ? null : Number(row.baths),
+      sqft: row.sqft == null ? null : Number(row.sqft),
+      status: row.status,
+      openHouse: row.open_house,
+      compassUrl: row.compass_url,
+      imageUrl: row.image_url,
+      seenAt: isoTimestamp(row.seen_at),
+      generation: Number(row.generation) || 1,
+    }));
+  } catch (err) {
+    console.error("[admin-db] readListingState failed:", (err as Error).message);
+    return null;
+  }
+}
+
+/** Replace the stored snapshot. Null when the write did not commit. */
+export async function replaceListingState(rows: ListingStateRecord[]): Promise<boolean | null> {
+  const pool = getPool();
+  if (!pool) return null;
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    await client.query(LISTING_STATE_SQL);
+    await client.query("DELETE FROM listing_state");
+    for (const row of rows) {
+      await client.query(
+        `INSERT INTO listing_state
+           (listing_key, address, city, price, beds, baths, sqft, status,
+            open_house, compass_url, image_url, seen_at, generation)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`,
+        [
+          row.listingKey,
+          row.address,
+          row.city,
+          row.price,
+          row.beds,
+          row.baths,
+          row.sqft,
+          row.status,
+          row.openHouse,
+          row.compassUrl,
+          row.imageUrl,
+          row.seenAt,
+          row.generation,
+        ]
+      );
+    }
+    await client.query("COMMIT");
+    return true;
+  } catch (err) {
+    await client.query("ROLLBACK").catch(() => undefined);
+    console.error("[admin-db] replaceListingState failed:", (err as Error).message);
+    return null;
+  } finally {
+    client.release();
+  }
+}
+
+/**
+ * Channels that already have a successful listing-events row for this
+ * ref key. Null when post_log cannot be read.
+ */
+export async function postedEventChannels(refKey: string): Promise<Set<string> | null> {
+  const pool = getPool();
+  if (!pool) return null;
+  try {
+    const r = await pool.query<{ channel: string }>(
+      `SELECT DISTINCT channel
+         FROM post_log
+        WHERE job_name = 'listing-events'
+          AND ref_key = $1
+          AND status = 'posted'`,
+      [refKey]
+    );
+    return new Set(r.rows.map((row) => row.channel));
+  } catch (err) {
+    console.error("[admin-db] postedEventChannels failed:", (err as Error).message);
+    return null;
+  }
+}

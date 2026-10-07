@@ -20,6 +20,8 @@ import {
   isUnusableScrapedListing,
   salvagePriorListing,
   decideFetchImagesWrite,
+  firstSeenForListing,
+  openHouseFromCardText,
   normalizeCompassUrl,
   renderActiveListingsFile,
 } from './listings-file.mjs';
@@ -94,7 +96,7 @@ async function main() {
       else if (/Pending/i.test(cardText)) cardStatus = 'Pending';
       else if (/(?:^|[^A-Za-z])Sold(?:$|[^A-Za-z])/i.test(cardText)) cardStatus = 'Sold';
 
-      return { url, imgUrl, cardBeds, cardBaths, cardSqft, cardStatus };
+      return { url, imgUrl, cardBeds, cardBaths, cardSqft, cardStatus, cardText };
     });
   });
 
@@ -189,6 +191,8 @@ async function main() {
       if (beds) listing.beds = beds;
       if (baths) listing.baths = baths;
       if (sqft) listing.sqft = sqft;
+      const openHouse = openHouseFromCardText(card.cardText);
+      if (openHouse) listing.openHouse = openHouse;
 
       if (isUnusableScrapedListing(listing)) {
         throw new Error(`blank address or missing/zero price (address=${JSON.stringify(address)} price=${price})`);
@@ -231,6 +235,10 @@ async function main() {
   }
 
   const timestamp = new Date().toISOString();
+  for (const l of listings) {
+    const prior = priorByUrl.get(normalizeCompassUrl(l.compassUrl));
+    l.firstSeen = firstSeenForListing(prior, timestamp);
+  }
   const tsContent = renderActiveListingsFile(listings, timestamp, COMPASS_URL);
 
   fs.writeFileSync(LISTINGS_FILE, tsContent, 'utf8');
