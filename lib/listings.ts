@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-10-06T14:53:43.661Z
+// AUTO-GENERATED — Last synced: 2026-10-07T15:21:20.822Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -21,17 +21,15 @@ export interface Listing {
   // Used by /listings to flag the grid as 'Verifying…' if the file goes stale.
   lastVerified?: string;
   // ISO timestamp of the first Compass sync that included this listing.
-  // Preserved by scripts/fetch-images.mjs. The Facebook spotlight uses it
-  // for #JustListed (within 14 days). Not a list date and not a market stat.
+  // Preserved across later syncs. Not a list date and not a market stat.
   firstSeen?: string;
   // Open-house line copied from the Compass card when one is shown.
-  // Absent when Compass does not publish one.
   openHouse?: string;
 }
 
 // Mirrors the header timestamp so server components can compute sync staleness
 // without parsing comments. Updated by scripts/fetch-images.mjs each sync.
-export const listingsSyncedAt = "2026-10-06T14:53:43.661Z";
+export const listingsSyncedAt = "2026-10-07T15:21:20.822Z";
 
 export const listings: Listing[] = [
   {
