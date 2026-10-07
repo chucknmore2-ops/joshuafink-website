@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { blogDateToIso, blogPosts } from './blog.ts'
 import { chicagoIsoDate } from './gnar-snapshot.ts'
+import { currentSnapshot, marketUpdateSlug } from './market-snapshot.ts'
 
 const SELLER_PAGE = readFileSync('app/guide/seller/page.tsx', 'utf8')
 const post = blogPosts.find((p) => p.slug === 'middle-tennessee-sellers-guide-2026')
@@ -19,14 +20,18 @@ test('seller guide drops stale experience claims and stays Compass-only', () => 
 })
 
 test('seller guide cites the current GNAR and Redfin sources and live links', () => {
-  assert.match(SELLER_PAGE, /middle-tennessee-market-update-september-2026/)
+  assert.match(SELLER_PAGE, /marketUpdateSlug\(snapshot\.month\)/)
+  const snapshot = currentSnapshot(new Date('2026-10-07T16:00:00Z'))
+  assert.ok(snapshot)
+  assert.equal(marketUpdateSlug(snapshot.month), 'middle-tennessee-market-update-september-2026')
+  assert.ok(post)
+  assert.match(post.content, /middle-tennessee-market-update-september-2026/)
   assert.match(SELLER_PAGE, /\/listings/)
   assert.match(SELLER_PAGE, /\/cash-offer/)
   assert.match(SELLER_PAGE, /\/cash-offer\/nashville-tn/)
   assert.match(SELLER_PAGE, /\/cash-offer\/franklin-tn/)
   assert.match(SELLER_PAGE, /datePublished: PUBLISHED/)
   assert.match(SELLER_PAGE, /const PUBLISHED = '2026-10-07'/)
-  assert.ok(post)
   assert.equal(post.title, "The 2026 Middle Tennessee Seller's Guide")
   assert.equal(post.date, 'October 7, 2026')
   assert.equal(blogDateToIso(post.date), '2026-10-07')
