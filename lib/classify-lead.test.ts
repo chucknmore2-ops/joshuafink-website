@@ -88,6 +88,19 @@ test('honeypot is quarantined as a bot', () => {
   assert.equal(v.reason, 'honeypot')
 })
 
+test('a phone-only lead is clean, and honeypot and speed still quarantine it', () => {
+  const phoneOnly = lead({ email: '' })
+  assert.equal(classifyLead(phoneOnly).kind, 'clean')
+
+  const bot = classifyLead({ ...phoneOnly, website: 'http://spam.example' })
+  assert.equal(bot.kind, 'bot')
+  assert.equal(bot.kind === 'bot' ? bot.reason : '', 'honeypot')
+
+  const fast = classifyLead({ ...phoneOnly, _loaded: String(Date.now() - 500) })
+  assert.equal(fast.kind, 'spam')
+  assert.equal(fast.kind === 'spam' ? fast.reason : '', 'too_fast')
+})
+
 test('no single heuristic quarantines a lead', () => {
   const shapes: Record<string, string>[] = [
     { body: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' },       // gibberish_body

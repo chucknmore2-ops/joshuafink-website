@@ -349,9 +349,10 @@ export default async function MarketSuburbPage({ params }: Props) {
                   </div>
 
                   <div>
-                    <label htmlFor="mid-email" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Email *</label>
-                    <input type="email" id="mid-email" name="email" required placeholder="you@example.com" autoComplete="email"
+                    <label htmlFor="mid-email" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Email (optional)</label>
+                    <input type="email" id="mid-email" name="email" placeholder="you@example.com" autoComplete="email"
                       className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                    <p className="mt-2 text-xs text-[#A0A0A0]">Phone or email — whichever you prefer.</p>
                   </div>
 
                   <button type="submit"
@@ -681,9 +682,10 @@ export default async function MarketSuburbPage({ params }: Props) {
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Email Address *</label>
-                <input type="email" id="email" name="email" required placeholder="you@example.com" autoComplete="email"
+                <label htmlFor="email" className="block text-xs font-semibold text-black tracking-widest uppercase mb-2">Email (optional)</label>
+                <input type="email" id="email" name="email" placeholder="you@example.com" autoComplete="email"
                   className="w-full border border-[#E8E8E8] px-4 py-3 text-sm text-black placeholder-[#A0A0A0] focus:outline-none focus:border-black transition-colors" />
+                <p className="mt-2 text-xs text-[#A0A0A0]">Phone or email — whichever you prefer.</p>
               </div>
 
               <div>
