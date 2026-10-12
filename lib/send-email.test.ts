@@ -52,6 +52,43 @@ test('reports none when no key is configured', async () => {
   })
 })
 
+test('Resend omits reply_to when the lead gave no email', async () => {
+  const bodies: string[] = []
+  const original = globalThis.fetch
+  globalThis.fetch = (async (_input: RequestInfo | URL, init?: RequestInit) => {
+    bodies.push(String(init?.body ?? ''))
+    return new Response('{"id":"email-1"}', { status: 200, headers: { 'Content-Type': 'application/json' } })
+  }) as typeof fetch
+  try {
+    await withEnv({ RESEND_API_KEY: 're_test' }, async () => {
+      const { sendEmail } = await import('./send-email.ts')
+      const omitted = await sendEmail({
+        to: 'joshua@joshuafink.com',
+        fromName: 'joshuafink.com Lead',
+        subject: 'New Lead',
+        html: '<p>phone only</p>',
+      })
+      assert.equal(omitted.ok, true)
+      const blank = await sendEmail({
+        to: 'joshua@joshuafink.com',
+        fromName: 'joshuafink.com Lead',
+        subject: 'New Lead',
+        html: '<p>blank reply-to</p>',
+        replyTo: { email: '   ', name: 'Sam Rivera' },
+      })
+      assert.equal(blank.ok, true)
+    })
+  } finally {
+    globalThis.fetch = original
+  }
+  assert.equal(bodies.length, 2)
+  for (const body of bodies) {
+    const parsed = JSON.parse(body) as Record<string, unknown>
+    assert.equal('reply_to' in parsed, false)
+    assert.equal(parsed.to instanceof Array ? parsed.to[0] : '', 'joshua@joshuafink.com')
+  }
+})
+
 test('sending with no provider resolves — it must never throw at a lead', async () => {
   await withEnv({ RESEND_API_KEY: undefined }, async () => {
     const { sendEmail } = await import('./send-email.ts')

@@ -44,10 +44,11 @@ export interface EmailResult {
 // for the sake of a lead auto-reply. A subdomain gets its own SPF and DKIM and
 // cannot collide with it.
 //
-// Nothing receives at this address: both callers set an explicit `reply_to`
-// (the lead's auto-reply replies to joshua@joshuafink.com, and his new-lead
-// notification replies straight to the lead), so conversations still land in
-// the real Microsoft 365 inbox.
+// Nothing receives at this address. The lead auto-reply sets reply_to to
+// joshua@joshuafink.com. The new-lead notification replies straight to the
+// lead when they gave an email, and omits reply_to on a phone-only lead so
+// Resend does not reject an empty address. Either way the conversation still
+// lands in the real Microsoft 365 inbox when there is someone to reply to.
 export const FROM_EMAIL = process.env.EMAIL_FROM || 'leads@send.joshuafink.com'
 
 // Abort a provider call after a few seconds so one hung service degrades into
@@ -88,7 +89,9 @@ async function sendViaResend(msg: OutboundEmail): Promise<EmailResult> {
       to: [msg.to],
       subject: msg.subject,
       html: msg.html,
-      ...(msg.replyTo ? { reply_to: msg.replyTo.email } : {}),
+      // Omit reply_to entirely when the lead left no email. Resend rejects
+      // an empty reply_to, and a phone-only lead still has to reach Joshua.
+      ...(msg.replyTo?.email?.trim() ? { reply_to: msg.replyTo.email.trim() } : {}),
       ...(msg.headers ? { headers: msg.headers } : {}),
     }),
   })

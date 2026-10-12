@@ -848,6 +848,56 @@ test('a real lead with an international name still emails, pushes, and logs', as
   }
 })
 
+test('a phone-only lead reaches the sheet, Pushover, and Resend without a reply-to', async () => {
+  const captured = mockDeliveryChannels()
+  process.env.RESEND_API_KEY = 're_test_key'
+  process.env.PUSHOVER_TOKEN = 'po_test_token'
+  process.env.PUSHOVER_USER = 'po_test_user'
+  try {
+    const { status, json } = await postContact({
+      name: 'Sam Rivera',
+      phone: '615-555-0142',
+      email: '',
+      body: 'Please call me about homes in Brentwood.',
+      lead_type: 'buyer',
+      suburb: 'Brentwood',
+      source: 'market-brentwood-midpage',
+      _loaded: String(Date.now() - 20_000),
+    }, '203.0.113.55')
+    assert.equal(status, 200)
+    assert.equal(json.ok, true)
+
+    const emails = captured
+      .filter((c) => c.url.includes('api.resend.com'))
+      .map((c) => JSON.parse(c.body))
+    assert.equal(emails.length, 1, 'auto-reply must not send when there is no address')
+    assert.match(emails[0].subject, /New Lead/)
+    assert.equal(emails[0].to[0], 'joshua@joshuafink.com')
+    assert.equal('reply_to' in emails[0], false)
+
+    const push = captured.find((c) => c.url.includes('api.pushover.net'))
+    assert.ok(push)
+    const pushBody = new URLSearchParams(push.body)
+    assert.match(pushBody.get('message') || '', /615-555-0142/)
+    assert.equal((pushBody.get('message') || '').includes('@'), false)
+
+    const sheet = JSON.parse(captured.find((c) => c.url.includes('script.google.com'))!.body)
+    assert.equal(sheet.name, 'Sam Rivera')
+    assert.equal(sheet.phone, '615-555-0142')
+    assert.equal(sheet.email, '')
+    assert.equal(sheet.lead_type, 'buyer')
+    assert.equal(sheet.suburb, 'Brentwood')
+    assert.equal(sheet.source, 'market-brentwood-midpage')
+    assert.equal(sheet.blocked_reason, undefined)
+    assert.equal('website' in sheet, false)
+    assert.equal('_loaded' in sheet, false)
+  } finally {
+    delete process.env.RESEND_API_KEY
+    delete process.env.PUSHOVER_TOKEN
+    delete process.env.PUSHOVER_USER
+  }
+})
+
 test('more than 12 submits in a minute from one IP are told to call', async () => {
   mockFetch('{"ok":true}', 'application/json')
   const { POST } = await import('./route.ts')
