@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `${s.displayName} Real Estate Market Report 2026 — Median ${s.medianPrice}`,
-    description: `${s.displayName} housing market 2026: median sale price ${s.medianPrice}, ${s.avgDaysOnMarket} avg days on market, ${s.yoyChange} YoY change. Should you buy or sell now? Honest analysis from Joshua Fink at Compass.`,
+    description: `${s.displayName} housing market 2026: median sale price ${s.medianPrice}, ${s.avgDaysOnMarket} median days on market, ${s.yoyChange} YoY change. Should you buy or sell now? Honest analysis from Joshua Fink at Compass.`,
     alternates: { canonical: `${SITE}/market/${slug}` },
     keywords: [
       `${s.name} housing market 2026`,
@@ -85,7 +85,7 @@ export default async function MarketSuburbPage({ params }: Props) {
     '@type': 'Report',
     name: `${s.displayName} Real Estate Market Report — 2026`,
     headline: `${s.displayName} housing market in 2026: median ${s.medianPrice}, ${s.yoyChange} YoY`,
-    description: `2026 housing market report for ${s.displayName}: median sale price ${s.medianPrice}, ${s.avgDaysOnMarket} avg days on market, median sale price ${yoyMovement(s.yoyChange)} year over year. Market lean: ${lean.lean}. Source: ${marketStatsSource}, as of ${statsAsOf}.`,
+    description: `2026 housing market report for ${s.displayName}: median sale price ${s.medianPrice}, ${s.avgDaysOnMarket} median days on market, median sale price ${yoyMovement(s.yoyChange)} year over year. Market lean: ${lean.lean}. Source: ${marketStatsSource}, as of ${statsAsOf}.`,
     datePublished: '2026-01-15',
     dateModified: statsAsOf,
     inLanguage: 'en-US',
@@ -118,11 +118,11 @@ export default async function MarketSuburbPage({ params }: Props) {
   const faqs = [
     {
       q: `Is ${s.name}, TN a buyer's or seller's market in 2026?`,
-      a: `${s.displayName} is currently ${lean.lean.toLowerCase()}. Homes are averaging ${s.avgDaysOnMarket} days on market, and the median sale price is ${yoyMovement(s.yoyChange)} year over year. ${s.avgDaysOnMarket <= 25 ? 'Tight inventory and rapid turnover favor sellers — well-priced homes move quickly.' : 'Buyers have meaningful selection and time to be deliberate, while sellers should price competitively from launch.'} Talk to Joshua for a read on your specific block — citywide averages don't price a specific home.`,
+      a: `${s.displayName} is currently ${lean.lean.toLowerCase()}. The median days on market is ${s.avgDaysOnMarket}, and the median sale price is ${yoyMovement(s.yoyChange)} year over year. ${s.avgDaysOnMarket <= 25 ? 'Tight inventory and rapid turnover favor sellers — well-priced homes move quickly.' : 'Buyers have meaningful selection and time to be deliberate, while sellers should price competitively from launch.'} Talk to Joshua for a read on your specific block — a citywide median does not price a specific home.`,
     },
     {
       q: `What is the median home price in ${s.displayName} right now?`,
-      a: `According to ${marketStatsSource} city-level data as of ${statsAsOfLabel}, the median sale price in ${s.displayName} is ${s.medianPrice}, with average price per square foot at $${s.pricePerSqft}. Your actual value depends on neighborhood, condition, lot size, and school zone — these averages set a baseline, not a final number.`,
+      a: `According to ${marketStatsSource} city-level data as of ${statsAsOfLabel}, the median sale price in ${s.displayName} is ${s.medianPrice}, with a median price per square foot of $${s.pricePerSqft}. Your actual value depends on neighborhood, condition, lot size, and school zone — these medians set a baseline, not a final number.`,
     },
     {
       q: `Is ${s.name} appreciating in 2026?`,
@@ -132,7 +132,7 @@ export default async function MarketSuburbPage({ params }: Props) {
     },
     {
       q: `How fast do homes sell in ${s.name}?`,
-      a: `Homes in ${s.displayName} average ${s.avgDaysOnMarket} days on market in 2026. Move-in-ready homes priced correctly often go faster — sometimes within a single weekend. Overpriced or under-presented homes routinely sit 60+ days and ultimately sell below their original list.`,
+      a: `The median days on market in ${s.displayName} is ${s.avgDaysOnMarket} in 2026. Move-in-ready homes priced correctly often go faster — sometimes within a single weekend. Overpriced or under-presented homes routinely sit 60+ days and ultimately sell below their original list.`,
     },
     {
       q: `Should I wait to buy or sell in ${s.name}?`,
@@ -240,7 +240,7 @@ export default async function MarketSuburbPage({ params }: Props) {
             </h1>
             <p className="text-lg mt-5 max-w-3xl leading-relaxed" style={{ color: '#A0A0A0' }}>
               Median sale price in {s.displayName} is{' '}
-              <strong className="text-white">{s.medianPrice}</strong> with homes averaging{' '}
+              <strong className="text-white">{s.medianPrice}</strong> with a median of{' '}
               <strong className="text-white">{s.avgDaysOnMarket} days on market</strong> and{' '}
               <strong className="text-white">{yoyMovement(s.yoyChange)}</strong> year-over-year.
               Here&apos;s what those numbers actually mean for buyers and sellers right now.
@@ -282,7 +282,7 @@ export default async function MarketSuburbPage({ params }: Props) {
               </div>
               <div className="bg-white p-6 border border-[#E8E8E8]">
                 <p className="text-3xl font-black text-black">{s.avgDaysOnMarket}</p>
-                <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">Avg. Days on Market</p>
+                <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold mt-1">Median Days on Market</p>
               </div>
               <div className="bg-white p-6 border border-[#E8E8E8]">
                 <p className="text-3xl font-black text-black">${s.pricePerSqft}</p>
@@ -419,7 +419,7 @@ export default async function MarketSuburbPage({ params }: Props) {
               </p>
               {s.slug === 'columbia-tn' ? (
                 <p className="text-[#444] text-base leading-relaxed mb-4">
-                  Homes in Columbia are averaging about {s.avgDaysOnMarket} days on market. If you need a firmer date than that — repairs, an estate, a divorce, or a move you cannot put off —{' '}
+                  Homes in Columbia have a median of about {s.avgDaysOnMarket} days on market. If you need a firmer date than that — repairs, an estate, a divorce, or a move you cannot put off —{' '}
                   <Link href={cashOfferPath(s.slug)} className="text-black underline hover:no-underline">
                     get a cash offer on your Columbia home
                   </Link>
@@ -500,7 +500,7 @@ export default async function MarketSuburbPage({ params }: Props) {
                     <dd className="text-sm font-semibold text-white">{s.medianPrice}</dd>
                   </div>
                   <div className="flex justify-between items-center border-b border-[#ffffff22] pb-3">
-                    <dt className="text-sm" style={{ color: '#A0A0A0' }}>Avg DOM</dt>
+                    <dt className="text-sm" style={{ color: '#A0A0A0' }}>Median DOM</dt>
                     <dd className="text-sm font-semibold text-white">{s.avgDaysOnMarket} days</dd>
                   </div>
                   <div className="flex justify-between items-center border-b border-[#ffffff22] pb-3">

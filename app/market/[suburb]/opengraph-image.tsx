@@ -1,5 +1,5 @@
 import { ImageResponse } from 'next/og'
-import { getSuburb, getAllSuburbSlugs } from '@/lib/suburbs'
+import { getSuburb, getAllSuburbSlugs, yoyValue } from '@/lib/suburbs'
 
 export const runtime = 'edge'
 export const contentType = 'image/png'
@@ -17,6 +17,7 @@ export default async function Image({ params }: { params: { suburb: string } }) 
   const median = suburb?.medianPrice ?? ''
   const dom = suburb?.avgDaysOnMarket
   const yoy = suburb?.yoyChange ?? ''
+  const yoyColor = yoyValue(yoy) < 0 ? '#fca5a5' : '#4ade80'
 
   return new ImageResponse(
     (
@@ -136,13 +137,13 @@ export default async function Image({ params }: { params: { suburb: string } }) 
                     marginTop: 4,
                   }}
                 >
-                  Avg on Market
+                  Median on Market
                 </span>
               </div>
             )}
             {yoy && (
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span style={{ fontSize: 36, fontWeight: 900, color: '#4ade80' }}>{yoy}</span>
+                <span style={{ fontSize: 36, fontWeight: 900, color: yoyColor }}>{yoy}</span>
                 <span
                   style={{
                     fontSize: 13,
