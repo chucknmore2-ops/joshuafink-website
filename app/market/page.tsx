@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { suburbs } from '@/lib/suburbs'
+import { suburbs, yoyColor } from '@/lib/suburbs'
+import { marketHubFaqs } from '@/lib/market-hub'
 
 export const metadata: Metadata = {
   title: 'Middle Tennessee Real Estate Market Reports — 2026',
@@ -11,31 +12,9 @@ export const metadata: Metadata = {
 
 const SITE = 'https://www.joshuafink.com'
 
-const faqs = [
-  {
-    q: 'How often are these Middle Tennessee market reports updated?',
-    a: 'Each suburb report is reviewed and refreshed as new closings are reported through the Middle Tennessee MLS — typically monthly, with year-over-year benchmarks updated quarterly. Headline numbers (median price, days on market, $/sqft, YoY change) are kept current for 2026.',
-  },
-  {
-    q: 'Where does the market data come from?',
-    a: 'Numbers are pulled from RealTracs MLS closings and county assessor records, then filtered to single-family residential transactions in each named suburb. Joshua reviews the data manually — these are not algorithm-generated AVM estimates.',
-  },
-  {
-    q: 'Is the Middle Tennessee housing market up or down right now?',
-    a: 'Year-over-year direction varies by suburb. Higher-priced Williamson County submarkets (Franklin, Brentwood, Nolensville) and growing corridors (Spring Hill, Thompson’s Station, Nashville urban core) have generally appreciated through 2025–2026, while days-on-market has lengthened from the 2021–2022 peak. Open any suburb report for that specific market’s YoY change.',
-  },
-  {
-    q: 'What does "days on market" mean on these reports?',
-    a: 'Average days on market is the median time from list date to under-contract date for closed sales in the last reporting window. It is a stronger market-temperature signal than price alone — under 14 days indicates a seller’s market, 30+ days indicates buyers have negotiating room.',
-  },
-  {
-    q: 'Can Joshua send a more detailed report for my specific street or subdivision?',
-    a: 'Yes. Hyperlocal reports — narrowed to your subdivision, street, or a specific price band — are free on request. Call or text 615-551-2727 and tell Joshua the address and what decision the report is informing.',
-  },
-]
-
 export default function MarketHubPage() {
   const all = Object.values(suburbs).sort((a, b) => b.medianPriceNum - a.medianPriceNum)
+  const faqs = marketHubFaqs()
 
   const itemList = {
     '@context': 'https://schema.org',
@@ -93,7 +72,7 @@ export default function MarketHubPage() {
               <span style={{ color: '#C41E3A' }}>Real Estate Market Reports</span>
             </h1>
             <p className="text-lg mt-5 max-w-3xl leading-relaxed" style={{ color: '#A0A0A0' }}>
-              Median sale price, average days on market, price per square foot, and year-over-year
+              Median sale price, median days on market, price per square foot, and year-over-year
               price change for every Middle Tennessee suburb Joshua covers. Honest numbers, no
               algorithm guessing, updated as the market moves.
             </p>
@@ -121,13 +100,13 @@ export default function MarketHubPage() {
                   </div>
                   <div>
                     <p className="text-[#A0A0A0] uppercase tracking-widest font-semibold">YoY</p>
-                    <p className="text-base font-black" style={{ color: '#16a34a' }}>
+                    <p className="text-base font-black" style={{ color: yoyColor(s.yoyChange) }}>
                       {s.yoyChange}
                     </p>
                   </div>
                 </div>
                 <p className="text-xs text-[#A0A0A0]">
-                  Avg {s.avgDaysOnMarket} days on market · ${s.pricePerSqft}/sqft
+                  Median days on market {s.avgDaysOnMarket} · ${s.pricePerSqft}/sqft
                 </p>
               </Link>
             ))}
