@@ -8,6 +8,7 @@ import TrackedTelLink from '@/components/TrackedTelLink'
 import ReviewStrip from '@/components/ReviewStrip'
 import TrustBadges from '@/components/TrustBadges'
 import SoldPropertyExperience from '@/components/SoldPropertyExperience'
+import CityGnarMonths from '@/components/CityGnarMonths'
 import { soldListingsForSuburb } from '@/lib/sold-proof'
 
 const SITE = 'https://www.joshuafink.com'
@@ -301,6 +302,8 @@ export default async function MarketSuburbPage({ params }: Props) {
             </p>
           </div>
         </div>
+
+        <CityGnarMonths slug={s.slug} cityName={s.name} />
 
         {/* Mid-page inline lead capture — catches high-intent visitors who scroll
             past the headline stats but won't reach the bottom CTA form. */}

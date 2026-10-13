@@ -5,6 +5,8 @@ import { getAllNeighborhoodSlugs } from '@/lib/neighborhoods'
 import { allFeaturedPairSlugs } from '@/lib/compare'
 import { getAllSchoolSlugs } from '@/lib/schools'
 import { getListingBySlug, isSoldStatus, listingDetailSlugs } from '@/lib/listing-detail'
+import { cityMonthParams, cityMonthPath } from '@/lib/city-gnar-months'
+import { marketSnapshots } from '@/lib/market-snapshot'
 
 export const SITE_ORIGIN = 'https://www.joshuafink.com'
 
@@ -115,6 +117,18 @@ export function getSiteUrlCatalog(): SiteUrlEntry[] {
     changeFrequency: 'weekly',
   }))
 
+  // Per-city pages for each month in lib/market-snapshot.ts. A new GNAR
+  // month adds these URLs on the next build.
+  const cityMonthPages: SiteUrlEntry[] = cityMonthParams().map(({ suburb, month }) => {
+    const snapshot = marketSnapshots.find((row) => row.month === month)
+    return {
+      path: cityMonthPath(suburb, month),
+      priority: 0.7,
+      changeFrequency: 'monthly' as const,
+      lastModified: snapshot ? new Date(`${snapshot.reportDate}T12:00:00.000Z`) : undefined,
+    }
+  })
+
   // ── Suburb head-to-head comparison pages (featured pairs only) ────
   const comparePages: SiteUrlEntry[] = allFeaturedPairSlugs().map((slug) => ({
     path: `/compare/${slug}`,
@@ -151,6 +165,7 @@ export function getSiteUrlCatalog(): SiteUrlEntry[] {
     ...cashOfferCities,
     ...neighborhoodPages,
     ...marketReports,
+    ...cityMonthPages,
     ...comparePages,
     ...schoolPages,
     ...listingDetailPages,
