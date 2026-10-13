@@ -85,6 +85,8 @@ test('a sold flip is not a public listing event', () => {
     status,
     compassUrl: 'https://www.compass.com/homedetails/10-Oak-St/ABC_pid/',
     imageUrl: 'https://example.com/a.jpg',
+    seenAt: '2026-10-06T14:53:43.661Z',
+    generation: 1,
   })
   assert.deepEqual(detectListingEvents([snap('Active')], [snap('Sold')]), [])
 })

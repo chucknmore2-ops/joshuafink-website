@@ -27,7 +27,7 @@ type ListingsFile = {
 
 async function loadMap(filePath: string, exportName: string): Promise<SoldFlipListing[]> {
   const mod = (await import(pathToFileURL(join(repoRoot, 'scripts/listings-file.mjs')).href)) as ListingsFile
-  return [...mod.loadExistingListingsMap(filePath, exportName).values()]
+  return Array.from(mod.loadExistingListingsMap(filePath, exportName).values())
 }
 
 function gitShow(spec: string): string | null {
