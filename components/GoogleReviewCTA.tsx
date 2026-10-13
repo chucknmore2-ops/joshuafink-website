@@ -1,10 +1,13 @@
-import { GOOGLE_REVIEW_URL, hasGoogleReviewLink } from '@/lib/reviews'
+import { hasGoogleReviewLink } from '@/lib/reviews'
+import ReviewRequestLink from '@/components/ReviewRequestLink'
 
 type Props = {
   /** 'dark' = white card on black bg; 'light' = black card on white bg. */
   variant?: 'dark' | 'light'
   heading?: string
   body?: string
+  /** GA4 label for the review-request click. */
+  cta?: string
 }
 
 /**
@@ -19,6 +22,7 @@ export default function GoogleReviewCTA({
   variant = 'light',
   heading = 'Loved working with Joshua?',
   body = 'A quick Google review takes 30 seconds and helps other Middle Tennessee families find him. Thank you!',
+  cta = 'google-review-cta',
 }: Props) {
   if (!hasGoogleReviewLink) return null
 
@@ -36,14 +40,12 @@ export default function GoogleReviewCTA({
       <div className="text-3xl mb-3" aria-hidden="true">⭐️</div>
       <h2 className="text-2xl sm:text-3xl font-black tracking-tight mb-3">{heading}</h2>
       <p className={`${sub} text-sm max-w-xl mx-auto mb-8 leading-relaxed`}>{body}</p>
-      <a
-        href={GOOGLE_REVIEW_URL}
-        target="_blank"
-        rel="noopener noreferrer"
+      <ReviewRequestLink
+        cta={cta}
         className={`${btn} inline-flex items-center justify-center text-sm font-black px-10 py-4 rounded-full tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-crimson focus-visible:ring-offset-2`}
       >
         <span aria-hidden="true">★</span>&nbsp;Leave a Google Review&nbsp;<span aria-hidden="true">→</span>
-      </a>
+      </ReviewRequestLink>
     </div>
   )
 }

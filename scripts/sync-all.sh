@@ -17,4 +17,9 @@ node scripts/fetch-images.mjs
 # Sync sold listings
 node scripts/fetch-sold.mjs
 
+# Pushover Josh when a previously active home is now sold. The message is a
+# ready-to-text review ask. It does not text the client, and a failed alert
+# must not fail the listing sync.
+node --import tsx scripts/notify-sold-flips.ts || echo "[sync-all] sold-flip notify failed; continuing"
+
 echo "[sync-all] $(date) — Done"
