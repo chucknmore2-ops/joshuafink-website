@@ -1,4 +1,5 @@
-import { reviews, reviewStats, type Review } from '@/lib/reviews'
+import { hasGoogleReviewLink, reviews, reviewStats, type Review } from '@/lib/reviews'
+import ReviewRequestLink from '@/components/ReviewRequestLink'
 
 type Variant = 'light' | 'dark'
 
@@ -72,6 +73,11 @@ export default function ReviewStrip({
               >
                 Read all {reviewStats.total}+ reviews on Zillow →
               </a>
+              {hasGoogleReviewLink && (
+                <ReviewRequestLink cta="review-strip-request" className={linkClass}>
+                  Leave a Google review →
+                </ReviewRequestLink>
+              )}
             </div>
           </div>
         )}

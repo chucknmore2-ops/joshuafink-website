@@ -39,6 +39,7 @@ export default function ReviewPage() {
         {hasGoogleReviewLink ? (
           <GoogleReviewCTA
             variant="light"
+            cta="review-page-request"
             heading="Leave a Google review"
             body="One tap opens Google — no account setup, just tap the stars and share a quick thought."
           />
