@@ -24,6 +24,7 @@ import { compassJpegUrl } from '@/lib/compass-photo'
 import { listings } from '@/lib/listings'
 import { listingCityName, similarListings, suggestedPriceBand } from '@/lib/similar-listings'
 import { listingCtaKind, listingStatusBadgeClass, listingStatusLabel } from '@/lib/listing-cta'
+import { listingQuestions } from '@/lib/listing-qa'
 
 const SITE = 'https://www.joshuafink.com'
 
@@ -172,10 +173,30 @@ export default async function ListingDetailPage({ params }: Props) {
         ? 'Ask about similar homes'
         : 'Schedule a showing'
 
+  const questions = listingQuestions({
+    address: listing.address,
+    city,
+    status: listing.status,
+    priceLabel: formatPrice(listing.price),
+    specLine: specs,
+    suburbName,
+    hasSimilar: similar.length > 0,
+  })
+  const faqLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: questions.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  }
+
   return (
     <div className="bg-white">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(listingLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
         <nav aria-label="Breadcrumb" className="mb-6">
@@ -469,6 +490,20 @@ export default async function ListingDetailPage({ params }: Props) {
           </section>
         )}
       </div>
+
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4" aria-labelledby="listing-qa-heading">
+        <h2 id="listing-qa-heading" className="text-2xl font-black text-black tracking-tight">
+          Questions about this home
+        </h2>
+        <div className="mt-6 space-y-6 max-w-3xl">
+          {questions.map((item) => (
+            <div key={item.q}>
+              <h3 className="text-base font-black text-black">{item.q}</h3>
+              <p className="mt-2 text-sm text-neutral-600 leading-relaxed">{item.a}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
       <ReviewStrip variant="light" limit={3} />
     </div>
