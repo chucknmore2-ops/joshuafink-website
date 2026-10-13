@@ -91,6 +91,11 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Sync listings from Compass
+        env:
+          # Used only to Pushover Josh a ready-to-text review ask when a
+          # listing flips to Sold. The sync does not message the client.
+          PUSHOVER_TOKEN: ${{ secrets.PUSHOVER_TOKEN }}
+          PUSHOVER_USER: ${{ secrets.PUSHOVER_USER }}
         run: bash scripts/sync-all.sh
 
       - name: Open auto-merging PR with updated listing files
