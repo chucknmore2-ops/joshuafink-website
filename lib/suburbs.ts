@@ -65,6 +65,10 @@ export const suburbs: Record<string, Suburb> = {
         q: 'Is Franklin, TN still growing?',
         a: 'Yes. The April 1, 2020 Census counted 83,454 residents. The U.S. Census Bureau estimates 90,226 as of July 1, 2025, which is 8.0% above the April 1, 2020 estimates base and ranks Franklin the seventh-most populous city in Tennessee (U.S. Census Bureau QuickFacts; Population Estimates, Vintage 2025). That population growth, alongside continued corporate relocations to Williamson County, is a tailwind for sellers.',
       },
+      {
+        q: 'Who should I hire in Franklin, TN?',
+        a: 'Joshua Fink is a Compass Affiliate Broker at the Compass Brentwood office, 8119 Isabella Lane, Suite 105, Brentwood, TN 37027 (TREC #351484). Licensed since 2008, he sells 40+ homes a year in Middle Tennessee. Call or text 615-551-2727. In Franklin he works Cool Springs (the mixed residential, office, and retail corridor of condos, townhomes, and single-family homes near I-65 and the Galleria, generally the Centennial High corridor), Westhaven (the walkable master-planned community with a town center), and Fieldstone Farms (the established HOA subdivision with larger lots and mature trees). Confirm the Williamson County school zone for the exact address before you write.',
+      },
     ],
     schemaCity: 'Franklin',
     schemaState: 'TN',
@@ -80,6 +84,7 @@ export const suburbs: Record<string, Suburb> = {
       { q: 'How competitive is the Franklin buyer market?', a: 'It depends on the house. The citywide median is 49 days on market (Redfin, as of October 5, 2026), so buyers have time on many listings. Homes priced to the comps in Westhaven, Fieldstone Farms, and Cool Springs can still draw more than one offer. A current pre-approval and a clear ceiling are what matter.' },
       { q: 'What are the best neighborhoods to buy in Franklin, TN?', a: 'It depends on your priorities. Westhaven offers walkability and community amenities. Fieldstone Farms balances price and location. Cool Springs is ideal for proximity to employment and retail. Joshua will match you to the right neighborhood based on budget, lifestyle, and investment goals.' },
       { q: 'How long does it take to buy a home in Franklin?', a: 'From active search to closing, most buyers are in their new home within 60–90 days. The search phase varies widely — competitive buyers who are pre-approved and decisive often find something in 2–4 weeks. Closing itself typically takes 30–45 days after contract.' },
+      { q: 'Who should I hire in Franklin, TN?', a: 'Joshua Fink is a Compass Affiliate Broker at the Compass Brentwood office, 8119 Isabella Lane, Suite 105, Brentwood, TN 37027 (TREC #351484). Licensed since 2008, he sells 40+ homes a year in Middle Tennessee. Call or text 615-551-2727. In Franklin he works Cool Springs (the mixed residential, office, and retail corridor of condos, townhomes, and single-family homes near I-65 and the Galleria, generally the Centennial High corridor), Westhaven (the walkable master-planned community with a town center), and Fieldstone Farms (the established HOA subdivision with larger lots and mature trees). Confirm the Williamson County school zone for the exact address before you write.' },
     ],
     topNeighborhoods: ['Westhaven', 'Fieldstone Farms', 'Cool Springs', 'Crockett Park', 'Ladd Park'],
     schoolDistrict: 'Williamson County Schools',

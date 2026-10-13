@@ -8,6 +8,7 @@ import { reviewStats } from '@/lib/reviews'
 import { cashOfferPath } from '@/lib/cash-offer-cities'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
+import FranklinWhoToHire from '@/components/FranklinWhoToHire'
 
 type Props = {
   params: Promise<{ suburb: string }>
@@ -279,6 +280,8 @@ export default async function SuburbPage({ params }: Props) {
             </div>
           </div>
         </div>
+
+        {slug === 'franklin-tn' && <FranklinWhoToHire />}
 
         {/* Market Description */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
