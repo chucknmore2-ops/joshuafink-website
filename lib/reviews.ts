@@ -92,6 +92,37 @@ export function reviewDateToIso(human: string): string | undefined {
   return d.toISOString().slice(0, 10);
 }
 
+/**
+ * Quotes for the Franklin buyer page only. Selection is by the transaction
+ * and date already stored on each review — Brentwood buyers from January
+ * 2024, November 2021, and September 2020, plus Thompson's Station clients
+ * from March 2022 and August 2020. Returns the same objects as `reviews`,
+ * so names, dates, and quote text are never rewritten here.
+ */
+const FRANKLIN_BRENTWOOD_BUYER_DATES = new Set([
+  "January 2024",
+  "November 2021",
+  "September 2020",
+]);
+
+const FRANKLIN_THOMPSONS_STATION_DATES = new Set([
+  "March 2022",
+  "August 2020",
+]);
+
+export function isFranklinBuyerPageReview(review: Review): boolean {
+  if (
+    /bought a home in brentwood, tn/i.test(review.transaction) &&
+    FRANKLIN_BRENTWOOD_BUYER_DATES.has(review.date)
+  ) {
+    return true;
+  }
+  return (
+    /thompsons station, tn/i.test(review.transaction) &&
+    FRANKLIN_THOMPSONS_STATION_DATES.has(review.date)
+  );
+}
+
 export const reviewStats = {
   total: 218,
   rating: 5.0,
