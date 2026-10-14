@@ -5,10 +5,11 @@ import { getSuburb, getAllSuburbSlugs, getSuburbSlugForListing, citywideStatsCit
 import { listings } from '@/lib/listings'
 import { schools } from '@/lib/schools'
 import ListingCard from '@/components/ListingCard'
+import ReviewStrip from '@/components/ReviewStrip'
 import { isAvailable } from '@/app/listings/page'
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
 import { linkifyNeighborhoods } from '@/lib/linkify-neighborhoods'
-import { reviewStats } from '@/lib/reviews'
+import { isFranklinBuyerPageReview, reviews, reviewStats } from '@/lib/reviews'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import GnarRegionalSnapshot from '@/components/GnarRegionalSnapshot'
@@ -857,6 +858,18 @@ export default async function BuySuburbPage({ params }: Props) {
               </div>
             </div>
           </div>
+        )}
+
+        {/* Nearby client reviews, same strip as /cash-offer/nashville-tn.
+            AggregateRating already lives on the agent node above — the cash-offer
+            city page does it the same way, and ReviewStrip itself emits no
+            Review schema. */}
+        {slug === 'franklin-tn' && (
+          <ReviewStrip
+            variant="light"
+            limit={reviews.length}
+            filter={isFranklinBuyerPageReview}
+          />
         )}
 
         {/* Bottom CTA */}
