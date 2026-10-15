@@ -475,6 +475,67 @@ export const neighborhoods: Record<string, Neighborhood> = {
     longitude: -86.7855,
   },
 
+  'green-hills-nashville-tn': {
+    slug: 'green-hills-nashville-tn',
+    name: 'Green Hills',
+    city: 'Nashville',
+    citySlug: 'nashville-tn',
+    county: 'Davidson County',
+    metaTitle: 'Green Hills Neighborhood Guide — Nashville, TN',
+    metaDescription:
+      'Green Hills in Nashville, TN: Hillsboro Pike, the Mall at Green Hills, and the Julia Green Elementary zone. From Compass agent Joshua Fink.',
+    intro:
+      'Green Hills is an established Nashville neighborhood south of downtown on Hillsboro Pike (U.S. 431). The Mall at Green Hills and Hill Center sit on that corridor. The area runs west toward Belle Meade and south toward Forest Hills, with Hillsboro Village directly north across I-440. Julia Green Elementary, at 3500 Hobbs Road, is a 2020 U.S. Department of Education National Blue Ribbon School and the zoned elementary for Green Hills and Belle Meade, with one address-level exception below.',
+    about:
+      'Houses here started going up on a small scale in the 1930s, and Green Hills was not heavily populated until after World War II. The original stock was mostly brick ranch houses on large lots. Sewers came later, and larger lots and leftover open space have since been redivided for higher-density infill. The neighborhood is suburban and largely car-oriented, organized around Hillsboro Pike rather than one walkable grid. Nashville has no official neighborhood boundary; a commonly used extent runs from I-440 south to Harding Place and from Estes Road east to Lealand Lane, roughly the northern half of ZIP 37215. The retail core is separate from that residential pattern: the Mall at Green Hills began as a strip center in the early 1950s, Hill Center Green Hills (4015–4031 Hillsboro Pike) is a walkable shopping and dining center, Whole Foods Market is at 4021 Hillsboro Pike, and Regal Green Hills is at 3815 Greenhills Village Drive. Vanderbilt, Belmont, and Lipscomb are nearby.',
+    vibe: 'Established, car-oriented neighborhood along Hillsboro Pike.',
+    priceBand: 'No published median',
+    buildYears: '1930s start; postwar growth and later infill',
+    hoa: 'HOA dues, if any, depend on the street or building — confirm for the address.',
+    schoolNotes:
+      'Julia Green Elementary at 3500 Hobbs Road is a 2020 U.S. Department of Education National Blue Ribbon School and the zoned elementary for Green Hills and Belle Meade. The MNPS 2026–27 pathway map places it in the Hillsboro Cluster with John Trotwood Moore Middle School and Hillsboro High School. In November 2024 the board approved moving a small section east of Hillsboro Pike — 28 students — from Julia Green to Percy Priest Elementary for 2025–26, with grandfathering for students already enrolled. Confirm the address in the MNPS zone finder before you write an offer.',
+    amenities: [
+      'The Mall at Green Hills, on the Hillsboro Pike corridor',
+      'Hill Center Green Hills, 4015–4031 Hillsboro Pike',
+      'Whole Foods Market, 4021 Hillsboro Pike',
+      'Regal Green Hills, 3815 Greenhills Village Drive',
+      'Julia Green Elementary — 2020 National Blue Ribbon School',
+      'Near Vanderbilt, Belmont, and Lipscomb',
+    ],
+    homeStyles: [
+      'Postwar brick ranch houses on larger lots',
+      'Higher-density infill where larger lots were redivided',
+      'Updated and expanded older houses',
+    ],
+    whyBullets: [
+      'Read the street, not a neighborhood average: postwar ranches and later infill sit on the same blocks. Joshua walks the specific street so those read as different houses, not one product.',
+      'School assignment is address-specific. Julia Green Elementary is a 2020 National Blue Ribbon School and the zoned elementary for Green Hills and Belle Meade, but a small section east of Hillsboro Pike was moved to Percy Priest. Joshua checks the current MNPS zone before you tour.',
+      'The corridor is the landmark: Hillsboro Pike holds the mall, Hill Center, and Whole Foods, with Belle Meade to the west and Forest Hills to the south. Joshua compares those places by the house and the school assignment, not by a slogan.',
+    ],
+    faqs: [
+      {
+        q: 'How much do homes in Green Hills, Nashville cost in 2026?',
+        a: 'There is no published Redfin or GNAR median for Green Hills in this site’s data, so this page does not quote a neighborhood price band. The Nashville citywide figures above are for the city, not Green Hills. Joshua pulls current closed comps for the specific street.',
+      },
+      {
+        q: 'What school does Green Hills feed into?',
+        a: 'Julia Green Elementary is a 2020 U.S. Department of Education National Blue Ribbon School and the zoned elementary for Green Hills and Belle Meade. MNPS’s 2026–27 pathway map places it in the Hillsboro Cluster with John Trotwood Moore Middle School and Hillsboro High School. A November 2024 board vote moved a small section east of Hillsboro Pike, 28 students, from Julia Green to Percy Priest Elementary for 2025–26. Confirm the address with MNPS before writing an offer.',
+      },
+      {
+        q: 'Is there new construction available in Green Hills?',
+        a: 'Newer houses are mostly infill. The neighborhood filled in after World War II with ranch houses on large lots, and later building has redivided some of those lots and leftover open space rather than opening a new subdivision. Joshua can show what has actually sold on the block you are considering.',
+      },
+      {
+        q: 'How does Green Hills compare to Belle Meade or 12 South?',
+        a: 'Belle Meade is the city to the west, and Forest Hills is to the south. Hillsboro Village is directly north across I-440. 12 South is its own Nashville neighborhood. This page does not rank their prices against each other. Joshua can tour the differences in house, lot, and school assignment.',
+      },
+    ],
+    schemaCity: 'Nashville',
+    schemaState: 'TN',
+    latitude: 36.10361,
+    longitude: -86.81667,
+  },
+
   'governors-club-brentwood-tn': {
     slug: 'governors-club-brentwood-tn',
     name: 'Governors Club',
