@@ -13,7 +13,7 @@ test('seller guide drops stale experience claims and stays Compass-only', () => 
   assert.doesNotMatch(blob, /Parks|RE\/MAX|17-year|17 years|13 years|100\+ homes|100\+ transactions/i)
   assert.match(SELLER_PAGE, /licensed since 2008/)
   assert.match(SELLER_PAGE, /40\+ homes a year/)
-  assert.match(SELLER_PAGE, /8119 Isabella Lane, Suite 105, Brentwood, TN 37027/)
+  assert.match(SELLER_PAGE, /8119 Isabella Lane Suite 105, Brentwood, TN 37027/)
   assert.match(SELLER_PAGE, /TREC #351484/)
   assert.match(SELLER_PAGE, /615-551-2727/)
   assert.doesNotMatch(SELLER_PAGE, /name="website"/)

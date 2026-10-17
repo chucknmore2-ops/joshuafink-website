@@ -35,7 +35,7 @@ export default function FranklinWhoToHire() {
           Who to hire in Franklin
         </h2>
         <p className="text-[#444] text-base leading-relaxed max-w-3xl mb-8">
-          Joshua Fink is a Compass Affiliate Broker at the Compass Brentwood office, 8119 Isabella Lane, Suite 105, Brentwood, TN 37027. Tennessee Real Estate Commission license TREC #351484. Licensed since 2008, he sells 40+ homes a year in Middle Tennessee. Call or text{' '}
+          Joshua Fink is a Compass Affiliate Broker at the Compass Brentwood office, 8119 Isabella Lane Suite 105, Brentwood, TN 37027. Tennessee Real Estate Commission license TREC #351484. Licensed since 2008, he sells 40+ homes a year in Middle Tennessee. Call or text{' '}
           <TrackedTelLink href="tel:6155512727" className="text-black font-semibold underline" data-cta="franklin-who-to-hire-call">
             615-551-2727
           </TrackedTelLink>

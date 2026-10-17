@@ -138,7 +138,7 @@ test('the invite is dry-run unless explicitly disabled and skips people already 
   const invite = renderListingAlertInvite('invite-token')
   assert.equal(invite.subject, 'Want new listing alerts?')
   assert.match(invite.html, /I will not add you unless you click yes/)
-  assert.match(invite.html, /8119 Isabella Lane, Suite 105/)
+  assert.match(invite.html, /8119 Isabella Lane Suite 105/)
   assert.match(invite.html, /api\/listing-alerts\/confirm\?token=invite-token/)
   assert.equal(invite.headers['List-Unsubscribe-Post'], 'List-Unsubscribe=One-Click')
   assert.equal(invite.html.toLowerCase().includes('parks'), false)

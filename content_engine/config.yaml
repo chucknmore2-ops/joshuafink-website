@@ -27,6 +27,7 @@ site:
   brokerage: "Compass Real Estate"
   phone: "615-551-2727"
   email: "joshua@joshuafink.com"
+  address: "8119 Isabella Lane Suite 105, Brentwood, TN 37027"
   website: "https://joshuafink.com"
   internal_links:
     listings: "/listings"

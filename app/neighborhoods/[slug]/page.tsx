@@ -8,6 +8,7 @@ import {
 } from '@/lib/neighborhoods'
 import { getSuburb, getSuburbSlugForListing, citywideStatsCitation } from '@/lib/suburbs'
 import { reviewStats } from '@/lib/reviews'
+import { AGENT_SAME_AS } from '@/lib/agent-profile'
 import { withUtm } from '@/lib/utm'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrustBadges from '@/components/TrustBadges'
@@ -142,15 +143,7 @@ export default async function NeighborhoodPage({ params }: Props) {
       addressRegion: n.schemaState,
       addressCountry: 'US',
     },
-    sameAs: [
-      'https://www.facebook.com/profile.php?id=100064076493905',
-      'https://www.instagram.com/joshuafinkgroup',
-      'https://www.linkedin.com/in/joshuafinkgroup/',
-      'https://x.com/JoshuaFinkGroup',
-      'https://www.youtube.com/channel/UCc6j1NWgJeb00pT5xsenz3g',
-      'https://www.compass.com/agents/joshua-fink/',
-      'https://www.zillow.com/profile/JoshuaFinkGroup',
-    ],
+    sameAs: [...AGENT_SAME_AS],
     aggregateRating: {
       '@type': 'AggregateRating',
       ratingValue: reviewStats.rating.toFixed(1),
@@ -172,7 +165,7 @@ export default async function NeighborhoodPage({ params }: Props) {
     // business location (map-pack eligibility).
     address: {
       '@type': 'PostalAddress',
-      streetAddress: '8119 Isabella Lane, Suite 105',
+      streetAddress: '8119 Isabella Lane Suite 105',
       addressLocality: 'Brentwood',
       addressRegion: 'TN',
       postalCode: '37027',
@@ -524,7 +517,7 @@ export default async function NeighborhoodPage({ params }: Props) {
               className="inline-block border border-black text-black text-sm font-bold px-6 py-3 tracking-wide hover:bg-black hover:text-white transition-colors whitespace-nowrap text-center"
               data-cta="neighborhood-cash-offer"
             >
-              Get a cash offer →
+              {n.citySlug === 'nashville-tn' ? 'Nashville cash offer →' : 'Get a cash offer →'}
             </Link>
           </div>
         </div>

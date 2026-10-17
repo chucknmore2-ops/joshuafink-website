@@ -193,7 +193,7 @@ export default function ListingsPage() {
                     href={`/cash-offer/${slug}`}
                     className="text-black underline-offset-4 hover:underline"
                   >
-                    Cash offer
+                    {slug === 'nashville-tn' ? 'Nashville cash offer' : 'Cash offer'}
                   </Link>
                 </li>
               ))}

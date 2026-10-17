@@ -1,6 +1,6 @@
 import { blogDateToUtcDate, blogPosts, getAuditTier } from '@/lib/blog'
-import { getAllSuburbSlugs } from '@/lib/suburbs'
-import { getAllCashOfferCitySlugs } from '@/lib/cash-offer-cities'
+import { getAllSuburbSlugs, getSuburb, suburbStatsAsOf } from '@/lib/suburbs'
+import { cashOfferContentLastUpdated, cashOfferHubLastUpdated, getAllCashOfferCitySlugs, getCashOfferCity } from '@/lib/cash-offer-cities'
 import { getAllNeighborhoodSlugs } from '@/lib/neighborhoods'
 import { allFeaturedPairSlugs } from '@/lib/compare'
 import { getAllSchoolSlugs } from '@/lib/schools'
@@ -41,6 +41,16 @@ export interface SiteUrlEntry {
  * When you add a new programmatic page type, add it here once and both
  * consumers pick it up automatically.
  */
+/** Noon UTC so a calendar day does not shift across time zones. */
+function noonUtc(day: string): Date {
+  return new Date(`${day}T12:00:00.000Z`)
+}
+
+function suburbContentDate(slug: string): Date | undefined {
+  const suburb = getSuburb(slug)
+  return suburb ? noonUtc(suburbStatsAsOf(suburb)) : undefined
+}
+
 export function getSiteUrlCatalog(): SiteUrlEntry[] {
   const suburbSlugs = getAllSuburbSlugs()
 
@@ -49,13 +59,13 @@ export function getSiteUrlCatalog(): SiteUrlEntry[] {
     { path: '/', priority: 1.0, changeFrequency: 'weekly' },
     { path: '/listings', priority: 0.9, changeFrequency: 'daily' },
     { path: '/buy', priority: 0.9, changeFrequency: 'weekly' },
-    { path: '/sell', priority: 0.9, changeFrequency: 'weekly' },
-    { path: '/cash-offer', priority: 0.9, changeFrequency: 'monthly' },
+    { path: '/sell', priority: 0.9, changeFrequency: 'weekly', lastModified: noonUtc('2026-10-17') },
+    { path: '/cash-offer', priority: 0.9, changeFrequency: 'monthly', lastModified: noonUtc(cashOfferHubLastUpdated) },
     { path: '/about', priority: 0.8, changeFrequency: 'monthly' },
     { path: '/blog', priority: 0.8, changeFrequency: 'weekly' },
     { path: '/neighborhoods', priority: 0.85, changeFrequency: 'weekly' },
     { path: '/reviews', priority: 0.7, changeFrequency: 'monthly' },
-    { path: '/contact', priority: 0.7, changeFrequency: 'monthly' },
+    { path: '/contact', priority: 0.7, changeFrequency: 'monthly', lastModified: noonUtc('2026-10-17') },
     { path: '/alerts', priority: 0.5, changeFrequency: 'monthly' },
     { path: '/market', priority: 0.85, changeFrequency: 'weekly' },
     { path: '/compare', priority: 0.8, changeFrequency: 'monthly' },
@@ -89,11 +99,13 @@ export function getSiteUrlCatalog(): SiteUrlEntry[] {
     path: `/sell/${slug}`,
     priority: 0.95, // seller-lead-focused pages
     changeFrequency: 'weekly',
+    lastModified: suburbContentDate(slug),
   }))
   const buySuburbs: SiteUrlEntry[] = suburbSlugs.map((slug) => ({
     path: `/buy/${slug}`,
     priority: 0.85,
     changeFrequency: 'weekly',
+    lastModified: suburbContentDate(slug),
   }))
 
   // ── Cash-offer city landing pages (high-intent seller leads) ──────
@@ -101,6 +113,7 @@ export function getSiteUrlCatalog(): SiteUrlEntry[] {
     path: `/cash-offer/${slug}`,
     priority: 0.9,
     changeFrequency: 'monthly',
+    lastModified: noonUtc(getCashOfferCity(slug)?.contentUpdated ?? cashOfferContentLastUpdated),
   }))
 
   // ── Neighborhood guide pages ──────────────────────────────────────
@@ -115,6 +128,7 @@ export function getSiteUrlCatalog(): SiteUrlEntry[] {
     path: `/market/${slug}`,
     priority: 0.85,
     changeFrequency: 'weekly',
+    lastModified: suburbContentDate(slug),
   }))
 
   // Per-city pages for each month in lib/market-snapshot.ts. A new GNAR
@@ -154,6 +168,7 @@ export function getSiteUrlCatalog(): SiteUrlEntry[] {
       path: `/listings/${slug}`,
       priority: sold ? 0.65 : 0.7,
       changeFrequency: sold ? 'monthly' : 'daily',
+      lastModified: listing?.lastVerified ? new Date(listing.lastVerified) : undefined,
     }
   })
 

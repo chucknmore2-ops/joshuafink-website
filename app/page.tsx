@@ -366,7 +366,7 @@ export default function HomePage() {
                   href={`/cash-offer/${slug}`}
                   className="mt-1 block text-xs text-neutral-500 hover:text-black"
                 >
-                  Get a cash offer →
+                  {slug === 'nashville-tn' ? 'Nashville cash offer →' : 'Get a cash offer →'}
                 </Link>
                 <Link
                   href="/neighborhoods"

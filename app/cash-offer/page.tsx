@@ -5,24 +5,24 @@ import TrustBadges from '@/components/TrustBadges'
 import ReviewStrip from '@/components/ReviewStrip'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
-import { getCashOfferCityLinks, cashOfferContentLastUpdated } from '@/lib/cash-offer-cities'
+import { getCashOfferCityLinks, cashOfferHubLastUpdated } from '@/lib/cash-offer-cities'
 import { reviewStats } from '@/lib/reviews'
 
 const SITE = 'https://www.joshuafink.com'
 
 export const metadata: Metadata = {
-  title: 'Sell My House Fast Nashville | Cash Offer in 24 Hours',
+  title: 'Sell My House Fast in Middle Tennessee | Cash Offer in 24 Hours',
   description:
-    'Sell your house fast for cash in Nashville, Franklin, Brentwood, Spring Hill, Columbia, and all of Middle Tennessee. Any condition, any situation. Fair cash offer in 24 hours. Close in 7 days. No repairs, no commissions, no fees.',
+    'Sell your house fast for cash across Middle Tennessee — Franklin, Brentwood, Nashville, Spring Hill, Columbia, and nearby cities. Any condition, any situation. Fair cash offer in 24 hours. Close in 7 days. No repairs, no commissions, no fees.',
   keywords:
-    'sell my house fast Nashville,cash home buyer Nashville,we buy houses Nashville TN,sell house as-is Nashville,cash offer for home Nashville,sell house fast Franklin TN,cash home buyer Middle Tennessee,sell my house fast Murfreesboro,we buy houses Brentwood TN',
+    'sell my house fast Middle Tennessee,cash home buyer Middle Tennessee,cash offer Middle Tennessee,sell house as-is Tennessee,we buy houses Franklin TN,cash offer Nashville TN,sell house fast Brentwood TN',
   alternates: {
     canonical: 'https://www.joshuafink.com/cash-offer',
   },
   openGraph: {
-    title: 'We Buy Houses Nashville — Cash Offer in 24 Hours',
+    title: 'Cash Offers in Middle Tennessee — Fair Offer in 24 Hours',
     description:
-      'Get a fair cash offer on your home in 24 hours. No repairs, no commissions, no hassle. Close in as little as 7 days. Serving all of Middle Tennessee.',
+      'Get a fair cash offer on your Middle Tennessee home in 24 hours. No repairs, no commissions, no hassle. Close in as little as 7 days.',
     url: 'https://www.joshuafink.com/cash-offer',
     siteName: 'Joshua Fink Group',
     type: 'website',
@@ -74,8 +74,8 @@ const faqs = [
     a: `Yes. Joshua Fink is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate who personally buys houses for cash across Middle Tennessee, in addition to representing traditional buyers and sellers. Licensed since 2008, with ${reviewStats.total}+ five-star reviews, he gives you a written cash offer and a traditional-listing estimate side by side, so you choose the path that fits — not a call-center algorithm. Call 615-551-2727 or visit joshuafink.com/cash-offer to get started.`,
   },
   {
-    q: 'How does selling my house for cash work in Nashville?',
-    a: "It's simple: fill out our form or call us, and we'll review your property and make a fair, no-obligation cash offer within 24 hours. If you accept, you pick the closing date — as fast as 7 days. We handle all the paperwork and pay all closing costs. You walk away with cash.",
+    q: 'How does selling my house for cash work in Middle Tennessee?',
+    a: "It's simple: fill out our form or call us, and we'll review your property and make a fair, no-obligation cash offer within 24 hours. If you accept, you pick the closing date — as fast as 7 days. We handle all the paperwork and pay all closing costs. You walk away with cash. A Nashville house has its own page at joshuafink.com/cash-offer/nashville-tn.",
   },
   {
     q: 'What types of properties do you buy?',
@@ -149,10 +149,10 @@ export default function CashOfferPage() {
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'WebPage',
-            name: 'Sell My House Fast Nashville | Cash Offer in 24 Hours',
+            name: 'Sell My House Fast in Middle Tennessee | Cash Offer in 24 Hours',
             url: `${SITE}/cash-offer`,
             datePublished: '2026-01-15',
-            dateModified: cashOfferContentLastUpdated,
+            dateModified: cashOfferHubLastUpdated,
             inLanguage: 'en-US',
             author: {
               '@type': 'Person',
@@ -350,7 +350,8 @@ export default function CashOfferPage() {
                 href={`/cash-offer/${slug}`}
                 className="rounded-2xl border border-neutral-200 bg-white px-5 py-4 text-sm font-semibold text-black transition-all duration-200 hover:bg-black hover:text-white hover:border-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
               >
-                Sell My House Fast in {name}, TN <span aria-hidden="true">→</span>
+                {slug === 'nashville-tn' ? 'Cash Offer in Nashville, TN' : `Sell My House Fast in ${name}, TN`}{' '}
+                <span aria-hidden="true">→</span>
               </Link>
             ))}
           </div>
@@ -402,7 +403,7 @@ export default function CashOfferPage() {
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'Service',
-            name: 'Cash Home Buying — Nashville & Middle Tennessee',
+            name: 'Cash Home Buying — Middle Tennessee',
             url: 'https://www.joshuafink.com/cash-offer',
             mainEntityOfPage: 'https://www.joshuafink.com/cash-offer',
             provider: {
