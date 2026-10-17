@@ -31,6 +31,8 @@ function getPostsForYear(year: number) {
     .sort((a, b) => +new Date(b.date) - +new Date(a.date))
 }
 
+export const dynamicParams = false
+
 export async function generateStaticParams() {
   return getYears().map((y) => ({ year: String(y) }))
 }

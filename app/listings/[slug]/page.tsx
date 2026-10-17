@@ -64,6 +64,8 @@ function galleryPhotos(listing: { imageUrl?: string; photoUrls?: string[] }): st
   return listing.imageUrl ? [listing.imageUrl] : []
 }
 
+export const dynamicParams = false
+
 export async function generateStaticParams() {
   return Array.from(listingDetailSlugs).map((slug) => ({ slug }))
 }

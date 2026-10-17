@@ -12,6 +12,8 @@ type Props = {
   params: Promise<{ pair: string }>
 }
 
+export const dynamicParams = false
+
 export async function generateStaticParams() {
   return getAllPairSlugsForBuild().map((pair) => ({ pair }))
 }

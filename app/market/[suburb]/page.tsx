@@ -17,6 +17,8 @@ type Props = {
   params: Promise<{ suburb: string }>
 }
 
+export const dynamicParams = false
+
 export async function generateStaticParams() {
   return getAllSuburbSlugs().map((slug) => ({ suburb: slug }))
 }

@@ -144,6 +144,17 @@ jobs:
             exit 0
           fi
 
+          # A quiet Compass day rewrites only "Last synced" and listingsSyncedAt.
+          # That commit used to ship a production deploy (and move every listing
+          # lastmod) even when no price, status, or photo changed. From 2026-10-03
+          # through 2026-10-17, 11 of 15 daily syncs were that timestamp alone.
+          DIFF_KIND=$(node scripts/listing-sync-diff.mjs)
+          if [ "$DIFF_KIND" = "timestamp-only" ]; then
+            echo 'Only the Compass sync timestamp changed. Not opening a PR, so production does not redeploy.'
+            git restore --source=HEAD --staged --worktree -- lib/listings.ts lib/sold-listings.ts
+            exit 0
+          fi
+
           BRANCH="sync-listings/$(date +%Y-%m-%d-%H%M%S)"
           TITLE="chore: daily listing sync from Compass [$(date +%F)]"
           git checkout -b "$BRANCH"
