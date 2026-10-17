@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
+import QuietLink from '@/components/QuietLink'
 import BlogCard from '@/components/BlogCard'
 import { blogPosts } from '@/lib/blog'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
@@ -77,13 +77,13 @@ export default function BlogPage() {
               { label: 'Buy in Nolensville', href: '/buy/nolensville-tn' },
               { label: 'All neighborhoods', href: '/neighborhoods' },
             ].map((l) => (
-              <Link
+              <QuietLink
                 key={l.href}
                 href={l.href}
                 className="text-sm font-semibold text-center px-4 py-3 border border-[#E8E8E8] text-[#444] tracking-wide hover:border-black hover:text-black transition-colors"
               >
                 {l.label}
-              </Link>
+              </QuietLink>
             ))}
           </div>
         </div>
@@ -113,13 +113,13 @@ export default function BlogPage() {
             </p>
             <div className="flex flex-wrap justify-center gap-3">
               {archiveYears.map((y) => (
-                <Link
+                <QuietLink
                   key={y}
                   href={`/blog/archive/${y}`}
                   className="text-sm font-semibold px-4 py-2 border border-[#E8E8E8] text-[#444] tracking-wide hover:border-black hover:text-black transition-colors"
                 >
                   {y}
-                </Link>
+                </QuietLink>
               ))}
             </div>
           </div>

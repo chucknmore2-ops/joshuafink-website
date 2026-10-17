@@ -21,6 +21,8 @@ type Props = {
   params: Promise<{ school: string }>
 }
 
+export const dynamicParams = false
+
 export async function generateStaticParams() {
   return getAllSchoolSlugs().map((school) => ({ school }))
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import QuietLink from '@/components/QuietLink'
 import { notFound } from 'next/navigation'
 import { getSuburb, getAllSuburbSlugs, getSuburbSlugForListing, citywideStatsCitation, marketStatsLastUpdated, suburbCityGeo, yoyColor, type Suburb } from '@/lib/suburbs'
 import { listings } from '@/lib/listings'
@@ -21,6 +22,8 @@ import { cashOfferPath } from '@/lib/cash-offer-cities'
 type Props = {
   params: Promise<{ suburb: string }>
 }
+
+export const dynamicParams = false
 
 export async function generateStaticParams() {
   return getAllSuburbSlugs().map((slug) => ({ suburb: slug }))
@@ -654,7 +657,7 @@ export default async function BuySuburbPage({ params }: Props) {
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {suburbSchools.map((school) => (
-                  <Link
+                  <QuietLink
                     key={school.slug}
                     href={`/homes-near/${school.slug}`}
                     className="group block border border-[#E8E8E8] rounded-2xl p-6 bg-white hover:border-black transition-colors"
@@ -671,7 +674,7 @@ export default async function BuySuburbPage({ params }: Props) {
                     <span className="mt-4 inline-flex text-sm font-semibold text-black">
                       Homes near {school.name} →
                     </span>
-                  </Link>
+                  </QuietLink>
                 ))}
               </div>
             </div>
@@ -695,7 +698,7 @@ export default async function BuySuburbPage({ params }: Props) {
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {cityGuides.map((g) => (
-                  <Link
+                  <QuietLink
                     key={g.slug}
                     href={`/neighborhoods/${g.slug}`}
                     className="block border border-[#E8E8E8] p-6 hover:border-black transition-colors bg-white"
@@ -709,7 +712,7 @@ export default async function BuySuburbPage({ params }: Props) {
                       <span className="font-semibold text-black">{g.priceBand}</span>
                       <span className="text-[#A0A0A0]">Read guide →</span>
                     </div>
-                  </Link>
+                  </QuietLink>
                 ))}
               </div>
             </div>
@@ -835,7 +838,7 @@ export default async function BuySuburbPage({ params }: Props) {
               </p>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 {nearbyCities.map((c) => (
-                  <Link
+                  <QuietLink
                     key={c.slug}
                     href={`/buy/${c.slug}`}
                     className="block border border-[#E8E8E8] p-5 hover:border-black transition-colors bg-white"
@@ -846,7 +849,7 @@ export default async function BuySuburbPage({ params }: Props) {
                     <h3 className="text-lg font-black text-black mb-2">{c.name}</h3>
                     <p className="text-xs text-[#6B6B6B] mb-3">Median {c.medianPrice}</p>
                     <span className="text-xs font-semibold text-black">Buyer guide →</span>
-                  </Link>
+                  </QuietLink>
                 ))}
               </div>
             </div>

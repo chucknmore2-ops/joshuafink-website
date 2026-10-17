@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import QuietLink from '@/components/QuietLink'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
@@ -26,7 +27,7 @@ export default function Navbar() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-neutral-200">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex-shrink-0">
+        <QuietLink href="/" className="flex-shrink-0">
           <Image
             src="/compass-re-logo-black.webp"
             alt="Compass Real Estate"
@@ -36,12 +37,12 @@ export default function Navbar() {
             className="h-7 w-auto min-[1150px]:h-6 xl:h-8"
             priority
           />
-        </Link>
+        </QuietLink>
 
         {/* Desktop nav */}
         <div className="hidden min-[1150px]:flex items-center gap-3 xl:gap-4">
           {navLinks.map((link) => (
-            <Link
+            <QuietLink
               key={link.href}
               href={link.href}
               className={`whitespace-nowrap text-sm font-medium tracking-wide transition-colors duration-150 hover:text-black ${
@@ -51,7 +52,7 @@ export default function Navbar() {
               }`}
             >
               {link.label}
-            </Link>
+            </QuietLink>
           ))}
         </div>
 
@@ -107,7 +108,7 @@ export default function Navbar() {
       {menuOpen && (
         <div className="min-[1150px]:hidden bg-white border-t border-neutral-200 px-4 pb-4 pt-2">
           {navLinks.map((link) => (
-            <Link
+            <QuietLink
               key={link.href}
               href={link.href}
               onClick={() => setMenuOpen(false)}
@@ -116,7 +117,7 @@ export default function Navbar() {
               }`}
             >
               {link.label}
-            </Link>
+            </QuietLink>
           ))}
           <div className="mt-4 flex flex-col gap-3">
             <Link

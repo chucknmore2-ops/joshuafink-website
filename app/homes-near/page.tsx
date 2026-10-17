@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
+import QuietLink from '@/components/QuietLink'
 import { schools, getSchoolSuburb } from '@/lib/schools'
 
 const SITE = 'https://www.joshuafink.com'
@@ -96,7 +96,7 @@ export default function HomesNearHubPage() {
             {list.map((s) => {
               const suburb = getSchoolSuburb(s)
               return (
-                <Link
+                <QuietLink
                   key={s.slug}
                   href={`/homes-near/${s.slug}`}
                   className="block border border-[#E8E8E8] p-6 hover:border-black transition-colors bg-white group"
@@ -111,7 +111,7 @@ export default function HomesNearHubPage() {
                       {suburb.displayName} · citywide median {suburb.medianPrice}
                     </p>
                   )}
-                </Link>
+                </QuietLink>
               )
             })}
           </div>

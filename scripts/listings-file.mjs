@@ -100,6 +100,22 @@ export function openHouseFromCardText(cardText) {
  * Unresolved cards fail the job without writing so yesterday's file stays live.
  * Zero cards / nothing resolved keeps the existing file (exit 0).
  */
+/**
+ * True when two generated listing files differ only by the sync clock.
+ * A daily Compass check that finds the same inventory should not commit,
+ * because that commit is a production deploy and it also moves every
+ * listing's lastVerified (they all reference listingsSyncedAt).
+ */
+export function stripListingTimestamp(source) {
+  return String(source)
+    .replace(/Last synced: .*/g, 'Last synced: TIMESTAMP')
+    .replace(/listingsSyncedAt = "[^"]*"/g, 'listingsSyncedAt = "TIMESTAMP"');
+}
+
+export function listingSyncIsTimestampOnly(before, after) {
+  return stripListingTimestamp(before) === stripListingTimestamp(after);
+}
+
 export function decideFetchImagesWrite({ resolvedCount, unresolvedCount }) {
   if (unresolvedCount > 0) {
     return { write: false, exitCode: 1, reason: 'unresolved-cards' };

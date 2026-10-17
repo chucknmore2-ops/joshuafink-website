@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import QuietLink from '@/components/QuietLink'
 import { notFound } from 'next/navigation'
 import {
   getNeighborhood,
@@ -21,6 +22,8 @@ import { isAvailable } from '@/app/listings/page'
 type Props = {
   params: Promise<{ slug: string }>
 }
+
+export const dynamicParams = false
 
 export async function generateStaticParams() {
   return getAllNeighborhoodSlugs().map((slug) => ({ slug }))
@@ -792,7 +795,7 @@ export default async function NeighborhoodPage({ params }: Props) {
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {related.map((r) => (
-                  <Link
+                  <QuietLink
                     key={r.slug}
                     href={`/neighborhoods/${r.slug}`}
                     className="group block bg-neutral-50 border border-neutral-200 p-6 transition-all duration-200 hover:bg-white hover:shadow-md hover:-translate-y-0.5"
@@ -810,7 +813,7 @@ export default async function NeighborhoodPage({ params }: Props) {
                         Read guide →
                       </span>
                     </div>
-                  </Link>
+                  </QuietLink>
                 ))}
               </div>
               <div className="mt-10">

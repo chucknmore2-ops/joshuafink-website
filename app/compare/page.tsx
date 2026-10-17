@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
+import QuietLink from '@/components/QuietLink'
 import { FEATURED_PAIRS } from '@/lib/compare'
 import { getSuburb } from '@/lib/suburbs'
 
@@ -72,7 +72,7 @@ export default function CompareHubPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {pairs.map((p) => (
-              <Link
+              <QuietLink
                 key={p.slug}
                 href={`/compare/${p.slug}`}
                 className="block border border-[#E8E8E8] p-6 hover:border-black transition-colors bg-white group"
@@ -97,7 +97,7 @@ export default function CompareHubPage() {
                   </div>
                 </div>
                 <p className="text-xs text-[#A0A0A0] mt-4">Read the comparison →</p>
-              </Link>
+              </QuietLink>
             ))}
           </div>
         </div>

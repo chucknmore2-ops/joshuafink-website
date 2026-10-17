@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import Link from 'next/link'
+import QuietLink from '@/components/QuietLink'
 import type { Listing } from '@/lib/listings'
 import { getSuburb, getSuburbSlugForListing } from '@/lib/suburbs'
 import { listingDetailPath } from '@/lib/listing-detail'
@@ -91,7 +91,7 @@ export default function ListingCard({ listing, featured }: Props) {
         {/* Primary click target — cover the image with a link to the on-site
             detail page (active + indexable sold). */}
         {detailHref && (
-          <Link
+          <QuietLink
             href={detailHref}
             className="absolute inset-0 z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-inset"
             aria-label={`View details for ${listing.address}`}
@@ -115,12 +115,12 @@ export default function ListingCard({ listing, featured }: Props) {
             {formatPrice(listing.price)}
           </p>
           {detailHref ? (
-            <Link
+            <QuietLink
               href={detailHref}
               className="text-sm font-semibold text-black mt-1 block underline-offset-4 hover:underline"
             >
               {addressDisplay}
-            </Link>
+            </QuietLink>
           ) : (
             <p className="text-sm font-semibold text-black mt-1">{addressDisplay}</p>
           )}
@@ -159,18 +159,18 @@ export default function ListingCard({ listing, featured }: Props) {
 
         {suburbSlug && suburbName && (
           <div className="mt-auto mb-3 flex flex-wrap gap-x-4 gap-y-1 text-xs">
-            <Link
+            <QuietLink
               href={`/buy/${suburbSlug}`}
               className="text-black font-semibold underline-offset-4 hover:underline"
             >
               Browse {suburbName} homes →
-            </Link>
-            <Link
+            </QuietLink>
+            <QuietLink
               href={`/cash-offer/${suburbSlug}`}
               className="text-neutral-500 underline-offset-4 hover:underline hover:text-black"
             >
               {suburbSlug === 'nashville-tn' ? 'Nashville cash offer →' : 'Cash offer →'}
-            </Link>
+            </QuietLink>
           </div>
         )}
 
@@ -178,13 +178,13 @@ export default function ListingCard({ listing, featured }: Props) {
           {/* On-site detail page when one exists. Otherwise SMS is the primary
               CTA so we do not leak the visitor off-site. */}
           {detailHref ? (
-            <Link
+            <QuietLink
               href={detailHref}
               className="text-center text-sm font-semibold bg-black text-white py-2.5 rounded-full tracking-wide transition-all duration-200 hover:bg-neutral-800"
               data-cta="listing-card-details"
             >
               View Details →
-            </Link>
+            </QuietLink>
           ) : (
             <TrackedTelLink
               href={`sms:+16155512727?body=${encodeURIComponent(

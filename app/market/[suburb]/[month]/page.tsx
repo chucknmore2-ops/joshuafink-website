@@ -18,6 +18,8 @@ type Props = {
   params: Promise<{ suburb: string; month: string }>
 }
 
+export const dynamicParams = false
+
 export async function generateStaticParams() {
   return cityMonthParams()
 }

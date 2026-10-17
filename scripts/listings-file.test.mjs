@@ -18,6 +18,7 @@ import {
   firstSeenForListing,
   openHouseFromCardText,
   renderActiveListingsFile,
+  listingSyncIsTimestampOnly,
 } from './listings-file.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -204,6 +205,44 @@ test('openHouseFromCardText returns only a line Compass showed', () => {
     openHouseFromCardText('Active\nOpen House Sat 1-3\n$409,900'),
     'Open House Sat 1-3',
   );
+});
+
+test('listing sync timestamp bumps are not a meaningful diff', () => {
+  const before = renderActiveListingsFile(
+    [{
+      address: '1 Main St',
+      city: 'Nashville, TN 37201',
+      price: 100000,
+      status: 'Active',
+      compassUrl: 'https://www.compass.com/homedetails/1-main/',
+    }],
+    '2026-10-16T12:00:00.000Z',
+    'https://www.compass.com/agents/joshua-fink/',
+  );
+  const same = renderActiveListingsFile(
+    [{
+      address: '1 Main St',
+      city: 'Nashville, TN 37201',
+      price: 100000,
+      status: 'Active',
+      compassUrl: 'https://www.compass.com/homedetails/1-main/',
+    }],
+    '2026-10-17T12:00:00.000Z',
+    'https://www.compass.com/agents/joshua-fink/',
+  );
+  const priceChange = renderActiveListingsFile(
+    [{
+      address: '1 Main St',
+      city: 'Nashville, TN 37201',
+      price: 110000,
+      status: 'Active',
+      compassUrl: 'https://www.compass.com/homedetails/1-main/',
+    }],
+    '2026-10-17T12:00:00.000Z',
+    'https://www.compass.com/agents/joshua-fink/',
+  );
+  assert.equal(listingSyncIsTimestampOnly(before, same), true);
+  assert.equal(listingSyncIsTimestampOnly(before, priceChange), false);
 });
 
 test('decideFetchImagesWrite writes when every card resolved (scraped or salvaged)', () => {

@@ -6,7 +6,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { listings } from './listings.ts'
 import { soldListings } from './sold-listings.ts'
-import { getSiteUrlCatalog } from './site-urls.ts'
+import { getSiteUrlCatalog, getSiteUrlsModifiedSince } from './site-urls.ts'
 import { listingDetailPath, listingDetailSlugs } from './listing-detail.ts'
 
 test('every listing detail slug is in the sitemap catalog exactly once', () => {
@@ -57,6 +57,28 @@ test('sitemap lastmod uses real content dates and omits pages without one', () =
   assert.equal(privacy?.lastModified, undefined)
   const blog = catalog.find((entry) => entry.path.startsWith('/blog/'))
   assert.ok(blog?.lastModified)
+})
+
+test('IndexNow selects only URLs with a real lastmod inside the window', () => {
+  const catalog = getSiteUrlCatalog()
+  const recent = getSiteUrlsModifiedSince(new Date('2026-10-16T00:00:00.000Z'))
+  assert.ok(recent.includes('https://www.joshuafink.com/cash-offer/nashville-tn'))
+  assert.equal(recent.includes('https://www.joshuafink.com/cash-offer/franklin-tn'), false)
+  assert.equal(recent.includes('https://www.joshuafink.com/privacy'), false)
+  assert.ok(recent.length < catalog.length)
+  assert.ok(recent.every((url) => url.startsWith('https://www.joshuafink.com')))
+})
+
+test('sitemap lastmod is not stamped with the build clock', () => {
+  const now = Date.now()
+  const catalog = getSiteUrlCatalog()
+  for (const entry of catalog) {
+    if (!entry.lastModified) continue
+    assert.ok(
+      Math.abs(entry.lastModified.getTime() - now) > 60 * 60 * 1000,
+      `${entry.path} lastmod is within an hour of now, which is how a build-time stamp looks`,
+    )
+  }
 })
 
 test('core GEO pages stay in the catalog', () => {

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import QuietLink from '@/components/QuietLink'
 import { Fragment } from 'react'
 import { blogDateToIso, getPostBySlug, getAllSlugs, getRelatedPosts, getAuditTier, type BlogPost } from '@/lib/blog'
 import { linkifyLocations } from '@/lib/linkify-neighborhoods'
@@ -17,6 +18,8 @@ const SITE_URL = 'https://www.joshuafink.com'
 const AUTHOR_NAME = 'Joshua Fink'
 const AUTHOR_URL = `${SITE_URL}/about`
 const PUBLISHER_LOGO = `${SITE_URL}/compass-logo-black.png`
+
+export const dynamicParams = false
 
 export async function generateStaticParams() {
   return getAllSlugs().map((slug) => ({ slug }))
@@ -466,7 +469,7 @@ export default function BlogPostPage({ params }: Props) {
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                   {otherPosts.map((p) => (
-                    <Link
+                    <QuietLink
                       key={p.slug}
                       href={`/blog/${p.slug}`}
                       className="border border-[#E8E8E8] p-5 rounded-2xl hover:shadow-md transition-shadow group"
@@ -475,7 +478,7 @@ export default function BlogPostPage({ params }: Props) {
                       <p className="text-sm font-bold text-black leading-snug group-hover:underline">
                         {p.title}
                       </p>
-                    </Link>
+                    </QuietLink>
                   ))}
                 </div>
               </div>
@@ -487,7 +490,7 @@ export default function BlogPostPage({ params }: Props) {
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                   {mentionedGuides.map((g) => (
-                    <Link
+                    <QuietLink
                       key={g.slug}
                       href={`/neighborhoods/${g.slug}`}
                       className="border border-[#E8E8E8] p-5 rounded-2xl hover:shadow-md transition-shadow group"
@@ -496,7 +499,7 @@ export default function BlogPostPage({ params }: Props) {
                       <p className="text-sm font-bold text-black leading-snug group-hover:underline">
                         {g.name}
                       </p>
-                    </Link>
+                    </QuietLink>
                   ))}
                 </div>
               </div>

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import QuietLink from '@/components/QuietLink'
 import { notFound } from 'next/navigation'
 import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated, suburbCityGeo, yoyColor, yoyMovement } from '@/lib/suburbs'
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
@@ -14,6 +15,8 @@ import FranklinWhoToHire from '@/components/FranklinWhoToHire'
 type Props = {
   params: Promise<{ suburb: string }>
 }
+
+export const dynamicParams = false
 
 export async function generateStaticParams() {
   return getAllSuburbSlugs().map((slug) => ({ suburb: slug }))
@@ -367,7 +370,7 @@ export default async function SuburbPage({ params }: Props) {
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {cityGuides.map((g) => (
-                  <Link
+                  <QuietLink
                     key={g.slug}
                     href={`/neighborhoods/${g.slug}`}
                     className="block border border-[#E8E8E8] p-6 hover:border-black transition-colors bg-white"
@@ -381,7 +384,7 @@ export default async function SuburbPage({ params }: Props) {
                       <span className="font-semibold text-black">{g.priceBand}</span>
                       <span className="text-[#A0A0A0]">Read guide →</span>
                     </div>
-                  </Link>
+                  </QuietLink>
                 ))}
               </div>
             </div>

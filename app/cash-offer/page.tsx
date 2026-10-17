@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
+import QuietLink from '@/components/QuietLink'
 import CashOfferForm from './CashOfferForm'
 import TrustBadges from '@/components/TrustBadges'
 import ReviewStrip from '@/components/ReviewStrip'
@@ -345,14 +345,14 @@ export default function CashOfferPage() {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {cityLinks.map(({ slug, name }) => (
-              <Link
+              <QuietLink
                 key={slug}
                 href={`/cash-offer/${slug}`}
                 className="rounded-2xl border border-neutral-200 bg-white px-5 py-4 text-sm font-semibold text-black transition-all duration-200 hover:bg-black hover:text-white hover:border-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
               >
                 {slug === 'nashville-tn' ? 'Cash Offer in Nashville, TN' : `Sell My House Fast in ${name}, TN`}{' '}
                 <span aria-hidden="true">→</span>
-              </Link>
+              </QuietLink>
             ))}
           </div>
         </div>

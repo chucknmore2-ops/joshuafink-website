@@ -53,13 +53,12 @@ User-agent: Amazonbot
 Allow: /
 Disallow: /api/
 
+# Training-only crawlers. These are not search or answer engines.
 User-agent: CCBot
-Allow: /
-Disallow: /api/
+Disallow: /
 
 User-agent: Bytespider
-Allow: /
-Disallow: /api/
+Disallow: /
 
 User-agent: anthropic-ai
 Allow: /
@@ -88,6 +87,39 @@ Allow: /
 Disallow: /api/
 
 User-agent: cohere-training-data-crawler
+Disallow: /
+
+# SEO scrapers. They are not used for search results or AI answers.
+# robots.txt is voluntary. A Vercel firewall bot rule would stop the ones
+# that ignore this file before they generate ISR reads. Firewall settings
+# are unchanged here.
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+# Search and answer crawlers stay allowed. Googlebot and Bingbot match the
+# default stanza above. Claude-SearchBot is named so it is not confused with
+# a training crawler.
+User-agent: Googlebot
+Allow: /
+Disallow: /api/
+
+User-agent: Bingbot
+Allow: /
+Disallow: /api/
+
+User-agent: Claude-SearchBot
 Allow: /
 Disallow: /api/
 
