@@ -43,7 +43,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     buildYears: 'Early 2000s to present (still actively developing)',
     hoa: 'Active HOA with monthly dues; covers common areas, pools, trails, and town-center upkeep. Optional golf and social memberships available.',
     schoolNotes:
-      'Westhaven is generally zoned to Williamson County Schools — Pearre Creek Elementary, Hillsboro Middle, and Independence High School being the most common assignments. School zones can change at the district level, so always confirm against the current Williamson County Schools zoning map for the specific address.',
+      'Westhaven is generally zoned to Williamson County Schools — Pearre Creek Elementary, Hillsboro Middle, and Independence High School being the most common assignments. School zones can change at the district level. Confirm the assignment for the exact address with Franklin Special School District and Williamson County Schools before you write an offer.',
     amenities: [
       'Westhaven Golf Club (private, members and resident play)',
       'Multiple resort-style pools and a lap pool',
@@ -75,7 +75,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
       },
       {
         q: 'What schools are zoned to Westhaven?',
-        a: 'Most Westhaven addresses are zoned to Williamson County Schools — typically Pearre Creek Elementary, Hillsboro Middle, and Independence High School — but zoning can change. Always verify the current zoning for the specific address you are considering before writing an offer.',
+        a: 'Most Westhaven addresses are discussed as Williamson County Schools — typically Pearre Creek Elementary, Hillsboro Middle, and Independence High School — but zoning can change. Confirm the assignment for the exact address with Franklin Special School District and Williamson County Schools before you write an offer.',
       },
       {
         q: 'Does Westhaven have an HOA, and what does it cover?',
@@ -110,7 +110,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     buildYears: '1980s–present (condos and townhomes near the commercial core; 1990s–2000s single-family and newer infill)',
     hoa: 'No single Cool Springs HOA. Condo and townhome buildings typically have monthly associations; many nearby single-family streets have their own HOA or none at all. Confirm dues, reserves, and rental rules for the specific address.',
     schoolNotes:
-      'Most Cool Springs addresses sit in Williamson County Schools and are commonly discussed as part of the Centennial High School corridor. Elementary and middle assignments change by street — and some nearby Franklin pockets feed other high schools — so always confirm the current Williamson County Schools zoning map for the exact address before you write an offer.',
+      'Most Cool Springs addresses sit in Williamson County Schools and are commonly discussed as part of the Centennial High School corridor. Elementary and middle assignments change by street, and some nearby Franklin pockets feed other high schools. Confirm the assignment for the exact address with Franklin Special School District and Williamson County Schools before you write an offer.',
     amenities: [
       'Cool Springs Galleria and surrounding retail',
       'Corporate office campuses and daily employment base',
@@ -142,7 +142,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
       },
       {
         q: 'What schools are zoned to Cool Springs?',
-        a: 'Most of the Cool Springs residential pockets sit in Williamson County Schools and are commonly part of the Centennial High School corridor. Elementary and middle schools vary by street, and a few nearby Franklin addresses feed other high schools. Always verify the current WCS zoning map for the exact property before you write.',
+        a: 'Most of the Cool Springs residential pockets sit in Williamson County Schools and are commonly part of the Centennial High School corridor. Elementary and middle schools vary by street, and a few nearby Franklin addresses feed other high schools. Confirm the assignment for the exact address with Franklin Special School District and Williamson County Schools before you write an offer.',
       },
       {
         q: 'Does Cool Springs have an HOA?',
@@ -572,7 +572,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     ],
     whyBullets: [
       'Gated and quiet matters at this price point: At $2M+, buyers are paying for privacy and security as much as square footage. Governors Club is one of very few gated golf communities in the immediate Nashville area.',
-      'Negotiation matters more, not less: Luxury homes have wider bid-ask spreads and more inspection give. Joshua\'s 97%+ list-to-sale ratio at this tier means real dollars at the closing table.',
+      'Negotiation matters more, not less: Luxury homes have wider bid-ask spreads and more inspection give. Joshua prices and negotiates for top dollar, and at this tier that is real money at the closing table.',
       'Off-market is normal here: A meaningful share of Governors Club transactions never hit public MLS. Joshua\'s Compass network and direct relationships with neighborhood owners surface opportunities buyers using Zillow will never see.',
     ],
     faqs: [
@@ -753,7 +753,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     buildYears: 'Early-to-mid 2000s, with a small number of newer custom infill builds',
     hoa: 'Active HOA with annual dues; covers the pools, clubhouse, common areas, and community events. Generally considered reasonable for the amenity level.',
     schoolNotes:
-      "McKay's Mill is zoned to Williamson County Schools — typically Clovercroft Elementary, Woodland Middle, and Page High School (zoning can vary by section of the community). Always verify current zoning for the specific address.",
+      "McKay's Mill is commonly discussed as Williamson County Schools — typically Clovercroft Elementary, Woodland Middle, and Page High School (zoning can vary by section of the community). Confirm the assignment for the exact address with Franklin Special School District and Williamson County Schools before you write an offer.",
     amenities: [
       'Multiple resort-style pools',
       'Clubhouse with social events',
@@ -785,7 +785,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
       },
       {
         q: "What schools are zoned to McKay's Mill?",
-        a: "McKay's Mill is generally zoned to Williamson County Schools — most often Clovercroft Elementary, Woodland Middle, and Page High School, though zoning varies by specific section. Always confirm against the current Williamson County Schools zoning map for the exact address.",
+        a: "McKay's Mill is generally discussed as Williamson County Schools — most often Clovercroft Elementary, Woodland Middle, and Page High School, though zoning varies by specific section. Confirm the assignment for the exact address with Franklin Special School District and Williamson County Schools before you write an offer.",
       },
       {
         q: "Does McKay's Mill have an HOA?",
@@ -820,7 +820,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     buildYears: 'Late 1990s through mid-2000s, with selected custom infill',
     hoa: 'Active HOA with annual dues; covers the pools, clubhouse, tennis, common-area landscaping, and community events. Generally considered reasonable for the amenity package.',
     schoolNotes:
-      'Fieldstone Farms is zoned to Williamson County Schools — typically Johnson Elementary, Freedom Middle, and Franklin High School (zoning can vary by section of the community). Williamson County Schools regularly rank among the strongest in Tennessee, and the zoning is a meaningful piece of the Fieldstone Farms resale story.',
+      'Fieldstone Farms is commonly discussed as Johnson Elementary, Freedom Middle, and Franklin High School, and the assignment can vary by section. Johnson Elementary and Freedom Middle are Franklin Special School District schools. Franklin High is a Williamson County high school. Confirm the assignment for the exact address with Franklin Special School District and Williamson County Schools before you write an offer.',
     amenities: [
       'Multiple resort-style pools',
       'Clubhouse with active social programming',
@@ -848,7 +848,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
       },
       {
         q: 'What schools are zoned to Fieldstone Farms?',
-        a: 'Fieldstone Farms is generally zoned to Williamson County Schools — most often Johnson Elementary, Freedom Middle, and Franklin High School — though zoning varies by specific section. Always confirm against the current Williamson County Schools zoning map for the exact address before writing an offer.',
+        a: 'Buyers usually hear Johnson Elementary, Freedom Middle, and Franklin High School, and the assignment can vary by section. Johnson Elementary and Freedom Middle are Franklin Special School District schools. Franklin High is a Williamson County high school. Confirm the assignment for the exact address with Franklin Special School District and Williamson County Schools before you write an offer.',
       },
       {
         q: 'Does Fieldstone Farms have an HOA, and what does it cover?',
@@ -887,7 +887,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     buildYears: 'Early 2010s to present (still actively developing)',
     hoa: 'Active HOA with monthly dues; covers common areas, town-center upkeep, pools, and amenity maintenance. Townhome and condo sub-associations layer in additional dues for exterior maintenance — confirm by section before purchase.',
     schoolNotes:
-      'Berry Farms is generally zoned to Williamson County Schools — typically Trinity Elementary, Hillsboro Middle, and Independence High School (zoning can vary by section and address). WCS schools rank among the strongest in Tennessee. Always verify the current zoning for the specific home you\'re considering.',
+      'Berry Farms is generally discussed as Williamson County Schools — typically Trinity Elementary, Hillsboro Middle, and Independence High School (zoning can vary by section and address). Confirm the assignment for the exact address with Franklin Special School District and Williamson County Schools before you write an offer.',
     amenities: [
       'Berry Farms Town Center — restaurants, coffee, retail, professional offices',
       'Community pools',
@@ -915,7 +915,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
       },
       {
         q: 'What schools are zoned to Berry Farms?',
-        a: 'Berry Farms is generally zoned to Williamson County Schools — most often Trinity Elementary, Hillsboro Middle, and Independence High School — though zoning varies by section. Always confirm against the current Williamson County Schools zoning map for the exact address.',
+        a: 'Berry Farms is generally discussed as Williamson County Schools — most often Trinity Elementary, Hillsboro Middle, and Independence High School — though zoning varies by section. Confirm the assignment for the exact address with Franklin Special School District and Williamson County Schools before you write an offer.',
       },
       {
         q: 'Is Berry Farms still being built out?',
@@ -1088,7 +1088,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
     buildYears: 'Mid-2010s through present, still actively building',
     hoa: 'Active HOA with monthly dues; covers common areas and community standards. Modest for the price point. No club component.',
     schoolNotes:
-      'The Highlands at Ladd Park is typically zoned to Williamson County Schools — common assignments include Pearre Creek Elementary, Hillsboro Middle, and Independence High School, but zoning varies by specific section and address. Always confirm current zoning against the Williamson County Schools map.',
+      'The Highlands at Ladd Park is typically discussed as Williamson County Schools — common assignments include Pearre Creek Elementary, Hillsboro Middle, and Independence High School, but zoning varies by specific section and address. Confirm the assignment for the exact address with Franklin Special School District and Williamson County Schools before you write an offer.',
     amenities: [
       'Larger-than-typical lots for newer Franklin construction',
       'Modern home stock with current finishes',
@@ -1120,7 +1120,7 @@ export const neighborhoods: Record<string, Neighborhood> = {
       },
       {
         q: 'What schools are zoned to The Highlands at Ladd Park?',
-        a: 'Most addresses are zoned to Williamson County Schools — typically Pearre Creek Elementary, Hillsboro Middle, and Independence High School — though zoning varies by section. Always verify current zoning for the specific address before writing an offer.',
+        a: 'Most addresses are discussed as Williamson County Schools — typically Pearre Creek Elementary, Hillsboro Middle, and Independence High School — though zoning varies by section. Confirm the assignment for the exact address with Franklin Special School District and Williamson County Schools before you write an offer.',
       },
       {
         q: 'How does The Highlands compare to Westhaven?',

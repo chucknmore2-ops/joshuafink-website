@@ -45,7 +45,7 @@ export const GEO_QUERIES: GeoQuery[] = [
   { id: 'sell-home-fast-nashville', prompt: 'How do I sell my home fast in Nashville, TN?', targetPath: '/cash-offer/nashville-tn' },
   { id: 'cash-offer-franklin', prompt: 'Can I get a cash offer for my house in Franklin, TN?', targetPath: '/cash-offer/franklin-tn' },
   { id: 'price-brentwood', prompt: 'What is the average home price in Brentwood, TN in 2026?', targetPath: '/market/brentwood-tn' },
-  { id: 'neighborhoods-franklin', prompt: 'What are the best neighborhoods in Franklin, TN for families?', targetPath: '/neighborhoods' },
+  { id: 'neighborhoods-franklin', prompt: 'What are the best neighborhoods in Franklin, TN for families?', targetPath: '/neighborhoods/franklin-tn' },
   { id: 'relocate-middle-tn', prompt: 'Realtor recommendations for relocating to Middle Tennessee', targetPath: '/moving-to-middle-tennessee' },
   { id: 'buy-nolensville', prompt: 'Who should I hire to buy a home in Nolensville, TN?', targetPath: '/buy/nolensville-tn' },
   { id: 'compass-nashville', prompt: 'Best Compass real estate agent in the Nashville area', targetPath: '/about' },

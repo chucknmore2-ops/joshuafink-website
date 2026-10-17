@@ -1578,7 +1578,7 @@ Franklin isn't just a suburb of Nashville. It's a destination in its own right �
 
 **History.** Franklin was the site of one of the Civil War's bloodiest battles in 1864. The Carter House and Carnton are world-class historic sites right in the heart of town. This history gives Franklin a depth and sense of place that newer communities simply don't have.
 
-**Parks and outdoors.** The Harpeth River winds through the area, offering kayaking, fishing, and scenic walks. Pinkerton Park, Jim Warren Park, and miles of greenway trails give residents plenty of room to breathe.
+**City parks and outdoors.** The Harpeth River winds through the area, offering kayaking, fishing, and scenic walks. Pinkerton Park, Jim Warren Park, and miles of greenway trails give residents plenty of room to breathe.
 
 ## The Real Estate Market in Franklin
 
@@ -1593,6 +1593,8 @@ The market is competitive but not irrational. Well-priced homes in good conditio
 
 ## Neighborhoods to Know
 
+The sourced comparison of these areas is the [Franklin neighborhoods guide](/neighborhoods/franklin-tn). The notes below are orientation. Each subdivision that has a guide is linked from that page.
+
 **Downtown Franklin / Historic District** — Premium. Walkable. Waiting lists for the best properties. Historic homes mixed with newer infill construction.
 
 **Westhaven** — Master-planned community with a town center, pool, golf course, and events calendar. Popular with families relocating from out of state. Prices from $600K into the millions.
@@ -1605,9 +1607,7 @@ The market is competitive but not irrational. Well-priced homes in good conditio
 
 ## Schools in Franklin
 
-Franklin is served by Williamson County Schools, one of the top-ranked public school districts in Tennessee. Schools like Franklin High School, Independence High School, and Battle Ground Academy (private) are consistently excellent.
-
-If schools are a priority — and for most families they are — your agent should verify which school zone applies to any specific address before you make an offer.
+Franklin public schools are not one district. Franklin Special School District serves pre-kindergarten through 8th grade inside the city's Ninth Special District. Williamson County Schools serves many other Franklin addresses and the high schools, including Franklin High School and Independence High School. Battle Ground Academy is a private school. Confirm the assignment for the exact address with Franklin Special School District and Williamson County Schools before you make an offer.
 
 ## Cost of Living in Franklin
 
@@ -1642,7 +1642,7 @@ Let's find your Franklin home.
     dateModified: "March 25, 2026",
     excerpt: "Thinking about moving to Franklin, TN? Explore schools, population growth, home prices, neighborhoods, and local development trends in this 2025 real estate guide.",
     content: `
-If you're considering a move in Middle Tennessee, [Franklin](/buy/franklin-tn) keeps showing up for a reason. Buyers looking at Nashville often end up touring homes here because it offers a different balance of schools, space, commute, and long-term upside. For some, it's about getting more house for the money. For others, it's about neighborhood feel, school options, or a clearer lifestyle fit for the next 5-10 years. Either way, understanding Franklin at a local level — not just through national ranking lists — can help you make a smarter move.
+If you're considering a move in Middle Tennessee, [Franklin](/buy/franklin-tn) keeps showing up for a reason. The side-by-side neighborhood comparison, with school districts and the citywide price, is the [Franklin neighborhoods guide](/neighborhoods/franklin-tn). Buyers looking at Nashville often end up touring homes here because it offers a different balance of schools, space, commute, and long-term upside. For some, it's about getting more house for the money. For others, it's about neighborhood feel, school options, or a clearer lifestyle fit for the next 5-10 years. Either way, understanding Franklin at a local level — not just through national ranking lists — can help you make a smarter move.
 
 ## Overview
 
@@ -1652,7 +1652,7 @@ From an agent's perspective, one of the biggest advantages is optionality. You c
 
 ## Schools
 
-Schools are a major reason families prioritize Franklin. Williamson County Schools: Franklin High School, Centennial High School, Poplar Grove K-4, Freedom Middle, and nearby Ravenwood/Brentwood zone options in the county.
+Schools are a major reason families prioritize Franklin. Franklin Special School District serves pre-kindergarten through 8th grade, including Poplar Grove Elementary and Freedom Middle. Williamson County Schools runs the high schools, including Franklin High and Centennial, and also serves many Franklin addresses for the full K–12 path. Nearby Ravenwood and Brentwood zones are Williamson County Schools. Confirm the assignment for the exact address with Franklin Special School District and Williamson County Schools.
 
 A few practical notes for buyers:
 

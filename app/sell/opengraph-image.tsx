@@ -96,17 +96,17 @@ export default async function Image() {
         >
           <div style={{ display: 'flex', gap: 48 }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: 38, fontWeight: 900 }}>97%</span>
+              <span style={{ fontSize: 32, fontWeight: 900 }}>Top dollar</span>
               <span
                 style={{
                   fontSize: 14,
-                  letterSpacing: '0.2em',
+                  letterSpacing: '0.12em',
                   textTransform: 'uppercase',
                   color: 'rgba(255,255,255,0.55)',
                   marginTop: 2,
                 }}
               >
-                List-to-Sale Price
+                Priced and negotiated
               </span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column' }}>

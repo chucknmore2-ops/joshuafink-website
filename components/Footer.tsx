@@ -124,6 +124,7 @@ export default function Footer() {
                 { href: '/buy/smyrna-tn', label: 'Buy in Smyrna' },
                 { href: '/buy/la-vergne-tn', label: 'Buy in La Vergne' },
                 { href: '/neighborhoods', label: 'Neighborhood Guides' },
+                { href: '/neighborhoods/franklin-tn', label: 'Franklin Neighborhoods' },
               ].map((link) => (
                 <li key={link.href}>
                   <Link
