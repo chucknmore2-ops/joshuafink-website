@@ -169,7 +169,7 @@ export default function ListingCard({ listing, featured }: Props) {
               href={`/cash-offer/${suburbSlug}`}
               className="text-neutral-500 underline-offset-4 hover:underline hover:text-black"
             >
-              Cash offer →
+              {suburbSlug === 'nashville-tn' ? 'Nashville cash offer →' : 'Cash offer →'}
             </Link>
           </div>
         )}

@@ -5,23 +5,24 @@ import TrackedTelLink from '@/components/TrackedTelLink'
 import TrustBadges from '@/components/TrustBadges'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 import { reviewStats } from '@/lib/reviews'
+import { AGENT_SAME_AS } from '@/lib/agent-profile'
 
 export const metadata: Metadata = {
   alternates: { canonical: 'https://www.joshuafink.com/sell' },
-  title: 'Sell Your House Fast in Nashville, TN | Joshua Fink Group',
+  title: 'Sell Your Home in Middle Tennessee | Free Valuation',
   description:
-    'How to sell your house fast in Nashville, TN: a free home valuation and expert guidance from Joshua Fink at Compass — avg. 18 days on market. Serving Nashville, Franklin, Brentwood, Spring Hill, and all of Middle Tennessee.',
+    'Free home valuation from Joshua Fink at Compass. Listing strategy for Franklin, Brentwood, Nashville, Spring Hill, and the rest of Middle Tennessee.',
   keywords: [
-    'sell my house fast Nashville TN',
-    'sell house fast Nashville',
-    'how to sell a house fast in Tennessee',
-    'sell my home Nashville',
-    'Nashville real estate agent',
+    'sell my house Middle Tennessee',
+    'home valuation Middle Tennessee',
+    'sell house fast Tennessee',
+    'Compass listing agent Middle Tennessee',
+    'Joshua Fink',
   ],
   openGraph: {
-    title: 'Sell Your House Fast in Nashville, TN | Joshua Fink Group',
+    title: 'Sell Your Home in Middle Tennessee | Free Valuation',
     description:
-      'Get a free, no-obligation home valuation from Joshua Fink — top-rated Compass agent in Middle Tennessee. Fast offers, local expertise, real results.',
+      'Free, no-obligation home valuation from Joshua Fink at Compass. Local pricing and a listing plan across Middle Tennessee.',
     url: 'https://www.joshuafink.com/sell',
     siteName: 'Joshua Fink Group',
     type: 'website',
@@ -170,15 +171,7 @@ export default function SellPage() {
       addressRegion: 'TN',
       addressCountry: 'US',
     },
-    sameAs: [
-      'https://www.facebook.com/profile.php?id=100064076493905',
-      'https://www.instagram.com/joshuafinkgroup',
-      'https://www.linkedin.com/in/joshuafinkgroup/',
-      'https://x.com/JoshuaFinkGroup',
-      'https://www.youtube.com/channel/UCc6j1NWgJeb00pT5xsenz3g',
-      'https://www.compass.com/agents/joshua-fink/',
-      'https://www.zillow.com/profile/JoshuaFinkGroup',
-    ],
+    sameAs: [...AGENT_SAME_AS],
     aggregateRating: {
       '@type': 'AggregateRating',
       ratingValue: reviewStats.rating.toFixed(1),

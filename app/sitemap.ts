@@ -8,12 +8,12 @@ import { getSiteUrlCatalog, absoluteUrl } from '@/lib/site-urls'
 // can never drift apart.
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date()
-
   return getSiteUrlCatalog().map((entry) => ({
     url: absoluteUrl(entry.path),
     priority: entry.priority,
     changeFrequency: entry.changeFrequency,
-    lastModified: entry.lastModified ?? now,
+    // Omit lastmod when the page has no real content date. A shared build
+    // timestamp on every URL teaches crawlers to ignore lastmod.
+    ...(entry.lastModified ? { lastModified: entry.lastModified } : {}),
   }))
 }

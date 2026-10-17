@@ -239,7 +239,7 @@ export const blogPosts: BlogPost[] = [
     content: `
 **Quick answer:** Price to the newest comps, not to last spring and not to what you need the number to be. In September 2026, Greater Nashville REALTORS® reported a nine-county residential median of **$510,000** (+4.1% from $490,000 a year earlier), an average list-to-contract time of **57 days**, **2,885** closed sales, **15,536** active listings, **2,045** pending sales, a condominium median of **$331,780**, and **5.7** months of supply. Those figures were published October 5, 2026. The full walkthrough is the [Seller's Guide](/guide/seller).
 
-Joshua Fink is an Affiliate Broker with Compass Real Estate, licensed since 2008, and sells 40+ homes a year in Middle Tennessee. Office: Compass, 8119 Isabella Lane, Suite 105, Brentwood, TN 37027. TREC #351484. Call or text [615-551-2727](tel:6155512727).
+Joshua Fink is an Affiliate Broker with Compass Real Estate, licensed since 2008, and sells 40+ homes a year in Middle Tennessee. Office: Compass, 8119 Isabella Lane Suite 105, Brentwood, TN 37027. TREC #351484. Call or text [615-551-2727](tel:6155512727).
 
 ## The September 2026 market sellers are pricing into
 

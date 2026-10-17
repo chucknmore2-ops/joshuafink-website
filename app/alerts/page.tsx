@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import ListingAlertsSignup from '@/components/ListingAlertsSignup'
 import TrackedTelLink from '@/components/TrackedTelLink'
+import { OFFICE_ADDRESS } from '@/lib/office'
 
 export const metadata: Metadata = {
   title: 'New listing alerts',
@@ -28,8 +29,7 @@ export default function AlertsPage() {
         </div>
         <p className="mt-8 text-sm text-[#666] leading-relaxed">
           Joshua Fink, Affiliate Broker, Compass<br />
-          8119 Isabella Lane, Suite 105<br />
-          Brentwood, TN 37027<br />
+          {OFFICE_ADDRESS}<br />
           <TrackedTelLink href="tel:6155512727" className="underline" data-cta="alerts-page-call">
             615-551-2727
           </TrackedTelLink>

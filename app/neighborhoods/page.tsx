@@ -4,6 +4,7 @@ import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import { neighborhoods } from '@/lib/neighborhoods'
 import { reviewStats } from '@/lib/reviews'
+import { AGENT_SAME_AS } from '@/lib/agent-profile'
 import SoldPropertyExperience from '@/components/SoldPropertyExperience'
 import { publishedSoldListings } from '@/lib/sold-proof'
 
@@ -71,7 +72,7 @@ export default function NeighborhoodsIndexPage() {
         '@id': 'https://www.joshuafink.com/#agent',
         address: {
           '@type': 'PostalAddress',
-          streetAddress: '8119 Isabella Lane, Suite 105',
+          streetAddress: '8119 Isabella Lane Suite 105',
           addressLocality: 'Brentwood',
           addressRegion: 'TN',
           postalCode: '37027',
@@ -88,15 +89,7 @@ export default function NeighborhoodsIndexPage() {
           addressRegion: 'TN',
           addressCountry: 'US',
         },
-        sameAs: [
-          'https://www.facebook.com/profile.php?id=100064076493905',
-          'https://www.instagram.com/joshuafinkgroup',
-          'https://www.linkedin.com/in/joshuafinkgroup/',
-          'https://x.com/JoshuaFinkGroup',
-          'https://www.youtube.com/channel/UCc6j1NWgJeb00pT5xsenz3g',
-          'https://www.compass.com/agents/joshua-fink/',
-          'https://www.zillow.com/profile/JoshuaFinkGroup',
-        ],
+        sameAs: [...AGENT_SAME_AS],
         aggregateRating: {
           '@type': 'AggregateRating',
           ratingValue: reviewStats.rating.toFixed(1),
@@ -114,7 +107,7 @@ export default function NeighborhoodsIndexPage() {
         parentOrganization: { '@id': 'https://www.joshuafink.com/#agent' },
         address: {
           '@type': 'PostalAddress',
-          streetAddress: '8119 Isabella Lane, Suite 105',
+          streetAddress: '8119 Isabella Lane Suite 105',
           addressLocality: 'Brentwood',
           addressRegion: 'TN',
           postalCode: '37027',

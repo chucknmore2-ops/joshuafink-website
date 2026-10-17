@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import TrackedTelLink from '@/components/TrackedTelLink'
+import { OFFICE_ADDRESS } from '@/lib/office'
 
 export default function Footer() {
   const year = new Date().getFullYear()
@@ -17,6 +18,7 @@ export default function Footer() {
               Joshua Fink<br />
               Affiliate Broker | Middle Tennessee<br />
               Compass Real Estate<br />
+              {OFFICE_ADDRESS}<br />
               TN License #351484
             </p>
             <div className="mt-5 space-y-2 text-sm">
@@ -146,7 +148,7 @@ export default function Footer() {
                 { href: '/sell', label: 'Free Home Valuation' },
                 { href: '/guide/seller', label: "Free Seller's Guide" },
                 { href: '/cash-offer', label: 'Cash Offer in 24h' },
-                { href: '/cash-offer/nashville-tn', label: 'Sell My Home Fast Nashville' },
+                { href: '/cash-offer/nashville-tn', label: 'Cash Offer in Nashville, TN' },
                 { href: '/sell/franklin-tn', label: 'Sell in Franklin' },
                 { href: '/sell/brentwood-tn', label: 'Sell in Brentwood' },
                 { href: '/sell/spring-hill-tn', label: 'Sell in Spring Hill' },

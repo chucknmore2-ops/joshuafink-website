@@ -55,6 +55,16 @@ export type CashOfferCityContent = {
   /** Optional related-reading links rendered on this city's cash-offer page only. */
   relatedReading?: CashOfferRelatedLink[]
   /**
+   * ISO day this city's prose was last edited. Feeds WebPage dateModified and
+   * the sitemap lastmod. Omit to use cashOfferContentLastUpdated.
+   */
+  contentUpdated?: string
+  /**
+   * Extra city-only market paragraph rendered above the neighborhood guides.
+   * Reuse figures already published on the site. Do not add new numbers.
+   */
+  marketNote?: string
+  /**
    * Optional "what is a fair cash offer here?" FAQ block. Rendered as its own
    * section on /cash-offer/[city] and folded into the page's single FAQPage
    * JSON-LD (one FAQPage per page). Reuse figures already published on the
@@ -189,25 +199,33 @@ const cityContent: Record<string, CashOfferCityContent> = {
       'Need to sell your home fast in Nashville? This is the most varied market in Middle TN — and the most common place for cash situations: inherited homes, tired rentals, pre-foreclosure, vacant houses, and properties that need more work than a retail buyer will take on. A cash offer lets you sell any of them as-is, without waiting on a traditional listing.',
     localAngle:
       "Across Davidson County, Nashville's $475,538 median (Redfin, as of October 5, 2026) spans everything from updated East Nashville bungalows to dated homes in Madison, Antioch, and Donelson that are hard to sell traditionally. Cash is the cleanest exit for landlords done with tenants, heirs settling an estate, or owners facing foreclosure — Joshua buys in any condition, anywhere in the metro.",
+    headline: {
+      lead: 'Cash Offer',
+      accent: 'in Nashville, TN',
+    },
+    contentUpdated: '2026-10-17',
+    marketNote:
+      "Davidson County is not one housing market. The citywide median sale price is $475,538, with 64 days on market and $272.16 per square foot, down 0.52% year over year (Redfin, as of October 5, 2026). Davidson County's April 1, 2020 Census count was 715,884. The U.S. Census Bureau estimates 745,904 residents as of July 1, 2025, a 4.2% increase from the April 1, 2020 estimates base (U.S. Census Bureau QuickFacts; Population Estimates, Vintage 2025). The neighborhood guides on this site publish these price bands: East Nashville $450K – $1.2M+, 12 South $700K – $1.8M+, Germantown $500K – $1.5M+, Sylvan Park $550K – $1.3M+, The Gulch $400K – $1.5M+ (condos), and Green Hills: No published median. A cash offer follows the block and the condition, not the citywide midpoint. Joshua also buys in Madison, Antioch, Donelson, Bordeaux, and Hermitage.",
     seo: {
-      title: 'Sell My House Fast Nashville | Sell My Home Fast for Cash',
+      title: 'Cash Offer in Nashville, TN | Sell My House Fast',
       description:
-        'Sell my home fast in Nashville for cash — any condition. Fair offer in 24 hours, close in as little as 7 days. Licensed Compass broker (TREC #351484). No repairs, no commissions. 218+ five-star reviews.',
-      ogTitle: 'Sell My Home Fast in Nashville, TN — Cash Offer in 24 Hours',
+        'Cash offer in Nashville, TN — any condition, Davidson County. Fair offer in 24 hours, close in as little as 7 days. Licensed Compass broker (TREC #351484). No repairs, no commissions.',
+      ogTitle: 'Cash Offer in Nashville, TN — Sell My House Fast',
       ogDescription:
-        'Need to sell your house fast in Nashville? Fair cash offer in 24 hours. Close in as little as 7 days. Licensed Compass broker — cash or traditional listing, your call. 615-551-2727.',
+        'Fair cash offer on your Nashville, TN home in 24 hours. Close in as little as 7 days. As-is, no showings, no commissions. Call or text 615-551-2727.',
       keywords: [
-        'sell my home fast Nashville',
+        'cash offer Nashville TN',
+        'Nashville TN cash offer',
         'sell my house fast Nashville',
         'sell my house fast Nashville TN',
+        'sell my home fast Nashville',
         'sell my home fast Nashville TN',
         'we buy houses Nashville TN',
         'cash home buyer Nashville',
-        'cash offer for my home Nashville',
         'sell house as-is Nashville',
         'Joshua Fink',
       ],
-      eyebrow: 'Sell My Home Fast · Davidson County',
+      eyebrow: 'Nashville, TN · Cash Offer',
     },
     differentiator:
       "Most “sell my house fast Nashville” results are cash-buyer websites. Joshua is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate — 218+ five-star reviews, and he has been licensed since 2008 in Middle Tennessee. He can buy your Nashville home for cash or list it for full market value, and he shows you both numbers in writing before you choose.",
@@ -626,6 +644,9 @@ export function getAllCashOfferCitySlugs(): string[] {
 // update when refreshing this file's content. Feeds the WebPage `dateModified`
 // on /cash-offer/[city], a freshness signal these pages previously lacked.
 export const cashOfferContentLastUpdated = '2026-10-05'
+
+/** Hub page /cash-offer was retitled off Nashville on this day. */
+export const cashOfferHubLastUpdated = '2026-10-17'
 
 /** Lightweight list for nav/grid linking (slug + display name), in declared order. */
 export function getCashOfferCityLinks(): Array<{ slug: string; name: string }> {

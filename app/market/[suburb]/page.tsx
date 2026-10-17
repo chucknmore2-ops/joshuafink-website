@@ -161,7 +161,7 @@ export default async function MarketSuburbPage({ params }: Props) {
     parentOrganization: { '@id': `${SITE}/#agent` },
     address: {
       '@type': 'PostalAddress',
-      streetAddress: '8119 Isabella Lane, Suite 105',
+      streetAddress: '8119 Isabella Lane Suite 105',
       addressLocality: 'Brentwood',
       addressRegion: 'TN',
       postalCode: '37027',

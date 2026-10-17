@@ -2,6 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { getAllCashOfferCitySlugs, getCashOfferCity, cashOfferContentLastUpdated, cashOfferSeo, cashOfferPath } from './cash-offer-cities.ts'
 import { suburbs, citywideStatsCitation, formatStatsDate, suburbStatsAsOf } from './suburbs.ts'
+import { neighborhoods } from './neighborhoods.ts'
 import { blogPosts } from './blog.ts'
 
 /** Stale cash-offer ballparks that disagreed with live /buy/[suburb] Redfin medians. */
@@ -146,18 +147,23 @@ test('only Nashville ships the fair-cash-offer FAQ block for now', () => {
   }
 })
 
-test('Nashville cash-offer SEO targets both house and home sell-fast queries', () => {
+test('Nashville cash-offer SEO leads with cash offer and keeps sell-fast queries', () => {
   const city = getCashOfferCity('nashville-tn')
   assert.ok(city)
   const seo = cashOfferSeo(city)
 
-  assert.match(seo.title, /Sell My House Fast Nashville/)
-  assert.match(seo.title, /Sell My Home Fast/)
-  assert.match(seo.description, /sell my home fast in Nashville/i)
-  assert.match(seo.ogTitle, /Sell My Home Fast in Nashville/)
-  assert.match(seo.eyebrow, /Sell My Home Fast/)
+  assert.equal(seo.title, 'Cash Offer in Nashville, TN | Sell My House Fast')
+  assert.match(seo.title, /Cash Offer in Nashville, TN/)
+  assert.match(seo.title, /Sell My House Fast/)
+  assert.doesNotMatch(seo.title, /Sell My House Fast Nashville/)
+  assert.match(seo.description, /Cash offer in Nashville, TN/)
+  assert.match(seo.ogTitle, /Cash Offer in Nashville, TN/)
+  assert.match(seo.eyebrow, /Nashville, TN · Cash Offer/)
+  assert.ok(seo.keywords.includes('cash offer Nashville TN'))
   assert.ok(seo.keywords.includes('sell my home fast Nashville'))
   assert.ok(seo.keywords.includes('sell my house fast Nashville'))
+  assert.equal(city.headline?.lead, 'Cash Offer')
+  assert.equal(city.headline?.accent, 'in Nashville, TN')
 
   assert.match(city.intro, /sell your home fast in Nashville/)
   assert.match(city.localAngle, /\$475,538/)
@@ -185,6 +191,37 @@ test('Nashville cash-offer SEO targets both house and home sell-fast queries', (
 
   assert.ok((city.relatedReading ?? []).some((l) => l.href.includes('cash-offer-vs-ibuyer')))
   assert.equal(cashOfferPath('nashville-tn'), '/cash-offer/nashville-tn')
+})
+
+test('Nashville market note reuses published Redfin, Census, and neighborhood bands', () => {
+  const city = getCashOfferCity('nashville-tn')
+  assert.ok(city?.marketNote)
+  const note = city.marketNote
+  const nashville = suburbs['nashville-tn']
+
+  assert.match(note, new RegExp(nashville.medianPrice.replace(/[$,]/g, (ch) => `\\${ch}`)))
+  assert.match(note, new RegExp(`${nashville.avgDaysOnMarket} days`))
+  assert.match(note, /\$272\.16/)
+  assert.equal(nashville.pricePerSqft, 272.16)
+  assert.match(note, /down 0\.52%/)
+  assert.equal(nashville.yoyChange, '-0.52%')
+  assert.match(note, /Redfin, as of October 5, 2026/)
+  assert.match(note, /715,884/)
+  assert.match(note, /745,904/)
+  assert.match(note, /4\.2%/)
+  assert.match(note, /U\.S\. Census Bureau QuickFacts/)
+
+  for (const slug of [
+    'east-nashville-tn',
+    '12-south-nashville-tn',
+    'germantown-nashville-tn',
+    'sylvan-park-nashville-tn',
+    'the-gulch-nashville-tn',
+    'green-hills-nashville-tn',
+  ]) {
+    const band = neighborhoods[slug].priceBand.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    assert.match(note, new RegExp(band), slug)
+  }
 })
 
 test('Franklin cash-offer still uses the shared template strings (no mass city SEO rollout)', () => {
