@@ -43,6 +43,22 @@ test('active listing pages stay in the sitemap at daily frequency', () => {
   assert.equal(entry!.changeFrequency, 'daily')
 })
 
+test('sitemap lastmod uses real content dates and omits pages without one', () => {
+  const catalog = getSiteUrlCatalog()
+  const stamped = catalog.filter((entry) => entry.lastModified)
+  const days = new Set(stamped.map((entry) => entry.lastModified!.toISOString().slice(0, 10)))
+  assert.ok(days.size > 1, 'lastmod should not be one shared build timestamp')
+
+  const nashville = catalog.find((entry) => entry.path === '/cash-offer/nashville-tn')
+  assert.equal(nashville?.lastModified?.toISOString(), '2026-10-17T12:00:00.000Z')
+  const franklinCash = catalog.find((entry) => entry.path === '/cash-offer/franklin-tn')
+  assert.equal(franklinCash?.lastModified?.toISOString(), '2026-10-05T12:00:00.000Z')
+  const privacy = catalog.find((entry) => entry.path === '/privacy')
+  assert.equal(privacy?.lastModified, undefined)
+  const blog = catalog.find((entry) => entry.path.startsWith('/blog/'))
+  assert.ok(blog?.lastModified)
+})
+
 test('core GEO pages stay in the catalog', () => {
   const paths = new Set(getSiteUrlCatalog().map((e) => e.path))
   assert.ok(paths.has('/market/brentwood-tn'))

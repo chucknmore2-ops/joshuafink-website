@@ -12,14 +12,17 @@
  * (lib/send-email.ts) plus a hosted one-click unsubscribe.
  */
 
+import { OFFICE_ADDRESS, OFFICE_LOCALITY, OFFICE_POSTAL_CODE, OFFICE_REGION, OFFICE_STREET } from '@/lib/office'
+
 export const ALERT_SITE = 'https://www.joshuafink.com'
 
 export const COMPASS_MAILING_ADDRESS = {
   agent: 'Joshua Fink',
   role: 'Affiliate Broker',
   firm: 'Compass',
-  street: '8119 Isabella Lane, Suite 105',
-  cityLine: 'Brentwood, TN 37027',
+  street: OFFICE_STREET,
+  cityLine: `${OFFICE_LOCALITY}, ${OFFICE_REGION} ${OFFICE_POSTAL_CODE}`,
+  full: OFFICE_ADDRESS,
   phone: '615-551-2727',
   license: 'TREC #351484',
 } as const
@@ -284,8 +287,7 @@ export function canSpamFooter(unsubscribeHref: string): string {
   <div style="background:#f5f5f5;padding:20px 32px;font-size:12px;color:#666;border-top:1px solid #e8e8e8;line-height:1.6;">
     <p style="margin:0;">${escapeHtml(office.agent)}, ${escapeHtml(office.role)}</p>
     <p style="margin:0;">${escapeHtml(office.firm)} · ${escapeHtml(office.phone)} · ${escapeHtml(office.license)}</p>
-    <p style="margin:0;">${escapeHtml(office.street)}</p>
-    <p style="margin:0 0 12px;">${escapeHtml(office.cityLine)}</p>
+    <p style="margin:0 0 12px;">${escapeHtml(office.full)}</p>
     <p style="margin:0;"><a href="${escapeHtml(unsubscribeHref)}" style="color:#666;">Unsubscribe from listing alerts</a></p>
   </div>`
 }

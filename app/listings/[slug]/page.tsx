@@ -352,7 +352,7 @@ export default async function ListingDetailPage({ params }: Props) {
                     {suburbName} market report →
                   </Link>
                   <Link href={`/cash-offer/${suburbSlug}`} className="text-neutral-500 underline-offset-4 hover:underline hover:text-black">
-                    Selling first? Get a cash offer →
+                    {suburbSlug === 'nashville-tn' ? 'Nashville cash offer →' : 'Selling first? Get a cash offer →'}
                   </Link>
                 </>
               )}

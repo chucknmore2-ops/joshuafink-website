@@ -5,6 +5,7 @@ import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated, suburbCityGeo, yo
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
 import { linkifyNeighborhoods } from '@/lib/linkify-neighborhoods'
 import { reviewStats } from '@/lib/reviews'
+import { AGENT_SAME_AS } from '@/lib/agent-profile'
 import { cashOfferPath } from '@/lib/cash-offer-cities'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
@@ -92,15 +93,7 @@ export default async function SuburbPage({ params }: Props) {
           `${suburb.displayName} home valuation`,
           'Middle Tennessee real estate',
         ],
-        sameAs: [
-          'https://www.facebook.com/profile.php?id=100064076493905',
-          'https://www.instagram.com/joshuafinkgroup',
-          'https://www.linkedin.com/in/joshuafinkgroup/',
-          'https://x.com/JoshuaFinkGroup',
-          'https://www.youtube.com/channel/UCc6j1NWgJeb00pT5xsenz3g',
-          'https://www.compass.com/agents/joshua-fink/',
-          'https://www.zillow.com/profile/JoshuaFinkGroup',
-        ],
+        sameAs: [...AGENT_SAME_AS],
         aggregateRating: {
           '@type': 'AggregateRating',
           ratingValue: reviewStats.rating.toFixed(1),
@@ -120,7 +113,7 @@ export default async function SuburbPage({ params }: Props) {
         // business location (map-pack eligibility).
         address: {
           '@type': 'PostalAddress',
-          streetAddress: '8119 Isabella Lane, Suite 105',
+          streetAddress: '8119 Isabella Lane Suite 105',
           addressLocality: 'Brentwood',
           addressRegion: 'TN',
           postalCode: '37027',

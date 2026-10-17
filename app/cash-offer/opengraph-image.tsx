@@ -3,7 +3,7 @@ import { ImageResponse } from 'next/og'
 export const runtime = 'edge'
 export const contentType = 'image/png'
 export const size = { width: 1200, height: 630 }
-export const alt = 'We Buy Houses Nashville — Cash Offer in 24 Hours | Joshua Fink'
+export const alt = 'Cash Offers in Middle Tennessee — Fair Offer in 24 Hours | Joshua Fink'
 
 export default async function Image() {
   return new ImageResponse(

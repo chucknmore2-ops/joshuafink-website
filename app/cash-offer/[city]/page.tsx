@@ -138,7 +138,7 @@ export default async function CashOfferCityPage({ params }: Props) {
             name: seo.title,
             url,
             datePublished: '2026-01-15',
-            dateModified: cashOfferContentLastUpdated,
+            dateModified: city.contentUpdated ?? cashOfferContentLastUpdated,
             inLanguage: 'en-US',
             author: {
               '@type': 'Person',
@@ -429,6 +429,11 @@ export default async function CashOfferCityPage({ params }: Props) {
             <h2 className="text-3xl font-black text-black tracking-tight mb-8">
               Selling in a Specific {city.name} Neighborhood?
             </h2>
+            {city.marketNote ? (
+              <p className="text-neutral-700 text-base leading-relaxed mb-8 max-w-4xl">
+                {linkifyNeighborhoods(city.marketNote, slug)}
+              </p>
+            ) : null}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {guides.slice(0, 6).map((g) => (
                 <Link

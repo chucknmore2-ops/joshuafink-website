@@ -266,7 +266,7 @@ export default function SellerGuidePage() {
               Affiliate Broker licensed since 2008 who sells 40+ homes a year in Middle Tennessee.
             </p>
             <p className="text-sm mt-4 leading-relaxed" style={{ color: '#A0A0A0' }}>
-              Compass · 8119 Isabella Lane, Suite 105, Brentwood, TN 37027 · TREC #351484 ·{' '}
+              Compass · 8119 Isabella Lane Suite 105, Brentwood, TN 37027 · TREC #351484 ·{' '}
               <TrackedTelLink href="tel:6155512727" className="underline underline-offset-4" data-cta="seller-guide-hero-call">
                 615-551-2727
               </TrackedTelLink>
@@ -680,7 +680,7 @@ export default function SellerGuidePage() {
               The fastest path to clarity is a 30-minute call. Tell Joshua about your home and
               timeline and he&apos;ll give you a comp-backed number and an honest read on whether
               now is the right time to list — even if the answer is not yet. Compass, 8119
-              Isabella Lane, Suite 105, Brentwood, TN 37027.
+              Isabella Lane Suite 105, Brentwood, TN 37027.
             </p>
             <div className="flex flex-col sm:flex-row gap-3">
               <TrackedTelLink

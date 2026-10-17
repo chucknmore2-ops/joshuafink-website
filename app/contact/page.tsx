@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import ContactForm from './ContactForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
+import { OFFICE_ADDRESS } from '@/lib/office'
 
 export const metadata: Metadata = {
   alternates: { canonical: 'https://www.joshuafink.com/contact' },
@@ -68,6 +69,13 @@ export default function ContactPage() {
                 >
                   joshua@joshuafink.com
                 </a>
+              </div>
+
+              <div className="border-l-2 border-black pl-5">
+                <p className="text-xs text-neutral-400 uppercase tracking-widest font-semibold mb-1">
+                  Office
+                </p>
+                <p className="text-base font-semibold text-black">{OFFICE_ADDRESS}</p>
               </div>
 
               <div className="border-l-2 border-black pl-5">
