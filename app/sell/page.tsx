@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 }
 
 const stats = [
-  { value: '97%', label: 'List-to-Sale Price' },
+  { value: 'Top dollar', label: 'Priced and negotiated' },
   { value: '18', label: 'Avg. Days on Market' },
   { value: '$50M+', label: 'In Sales Volume' },
   { value: '5★', label: 'Avg. Client Rating' },

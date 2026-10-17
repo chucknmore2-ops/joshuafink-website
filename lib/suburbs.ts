@@ -106,7 +106,7 @@ export const suburbs: Record<string, Suburb> = {
     whyBullets: [
       'Luxury listing experience: Joshua markets Brentwood homes with professional HDR photography, 3D virtual tours, and targeted digital ads — the standard buyers at this price point expect and the presentation that generates competitive offers.',
       'Executive relocation network: A significant share of Brentwood buyers are corporate transferees with company relocation packages. Joshua\'s connections with relo coordinators keep your listing in front of buyers who are pre-approved and motivated.',
-      'Negotiation at a high-dollar level: At $1.4M+, each point of negotiation represents $14,000+ to your bottom line. Joshua\'s track record of 97%+ list-to-sale ratios means you\'re not leaving money on the table.',
+      'Negotiation at a high-dollar level: At $1.4M+, each point of negotiation represents $14,000+ to your bottom line. Joshua prices and negotiates for top dollar.',
     ],
     faqs: [
       {
