@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 const faqs = [
   {
     q: 'What are the best neighborhoods in Franklin, TN for families?',
-    a: 'For families, the strongest Franklin, TN subdivisions are Westhaven (walkable master-planned community with a golf course and town center, $650K–$2.5M+), McKay\'s Mill (large, established family subdivision with multiple pools, $650K–$1.2M), Fieldstone Farms (mature trees and bigger lots than newer builds, $650K–$1.1M), Berry Farms (newer walkable town center on the south side, $550K–$1.8M), and The Highlands at Ladd Park (newer construction on larger-than-builder lots, $900K–$2M). All five are zoned to Williamson County Schools, one of the top-rated districts in Tennessee. Each has its own dedicated guide below with exact school assignments, HOA details, and current pricing.',
+    a: 'Start with the Franklin neighborhoods guide at /neighborhoods/franklin-tn. It compares Westhaven, McKay\'s Mill, Fieldstone Farms, Berry Farms, The Highlands at Ladd Park, and Cool Springs, and it separates Franklin Special District from Williamson County Schools. Each subdivision still has its own guide on this page for housing and HOA detail. The Franklin guide is the comparison. These cards are the individual communities.',
   },
   {
     q: 'What is the best Middle Tennessee neighborhood for families?',
@@ -265,6 +265,14 @@ export default function NeighborhoodsIndexPage() {
                 >
                   Sell your {city.split(',')[0]} home →
                 </Link>
+                {items[0].citySlug === 'franklin-tn' && (
+                  <Link
+                    href="/neighborhoods/franklin-tn"
+                    className="text-sm font-bold px-5 py-3 tracking-wide border-2 border-black text-black hover:bg-black hover:text-white transition-colors"
+                  >
+                    Franklin neighborhoods for families →
+                  </Link>
+                )}
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {items.map((n) => (

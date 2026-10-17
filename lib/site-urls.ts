@@ -54,6 +54,9 @@ export function getSiteUrlCatalog(): SiteUrlEntry[] {
     { path: '/about', priority: 0.8, changeFrequency: 'monthly' },
     { path: '/blog', priority: 0.8, changeFrequency: 'weekly' },
     { path: '/neighborhoods', priority: 0.85, changeFrequency: 'weekly' },
+    // Static chooser. Not a subdivision slug, so it is not emitted by the
+    // neighborhood loop below. Sits beside app/neighborhoods/[slug].
+    { path: '/neighborhoods/franklin-tn', priority: 0.85, changeFrequency: 'monthly' },
     { path: '/reviews', priority: 0.7, changeFrequency: 'monthly' },
     { path: '/contact', priority: 0.7, changeFrequency: 'monthly' },
     { path: '/alerts', priority: 0.5, changeFrequency: 'monthly' },

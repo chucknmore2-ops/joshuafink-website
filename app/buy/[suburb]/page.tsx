@@ -514,6 +514,31 @@ export default async function BuySuburbPage({ params }: Props) {
 
         {slug === 'franklin-tn' && <FranklinWhoToHire />}
 
+        {slug === 'franklin-tn' && (
+          <div className="bg-[#F5F5F5] border-b border-[#E8E8E8]">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+              <div className="max-w-3xl">
+                <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-2">
+                  Choosing a neighborhood
+                </p>
+                <h2 className="text-2xl font-black text-black tracking-tight mb-3">
+                  Compare Franklin neighborhoods before you tour
+                </h2>
+                <p className="text-sm text-[#444] leading-relaxed">
+                  This page is how to buy in Franklin. The neighborhood guide compares Westhaven, McKay&apos;s Mill, Fieldstone Farms, Berry Farms, The Highlands at Ladd Park, and Cool Springs, and it covers Franklin Special District, Williamson County Schools, city parks, commute, and the same citywide price.
+                </p>
+              </div>
+              <Link
+                href="/neighborhoods/franklin-tn"
+                className="inline-block text-sm font-bold px-6 py-4 tracking-wide text-center shrink-0"
+                style={{ backgroundColor: '#C41E3A', color: '#FFFFFF' }}
+              >
+                Franklin neighborhoods for families
+              </Link>
+            </div>
+          </div>
+        )}
+
         {/* About the Market */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">

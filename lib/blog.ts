@@ -1593,6 +1593,8 @@ The market is competitive but not irrational. Well-priced homes in good conditio
 
 ## Neighborhoods to Know
 
+The sourced comparison of these areas is the [Franklin neighborhoods guide](/neighborhoods/franklin-tn). The notes below are orientation. Each subdivision that has a guide is linked from that page.
+
 **Downtown Franklin / Historic District** — Premium. Walkable. Waiting lists for the best properties. Historic homes mixed with newer infill construction.
 
 **Westhaven** — Master-planned community with a town center, pool, golf course, and events calendar. Popular with families relocating from out of state. Prices from $600K into the millions.
@@ -1642,7 +1644,7 @@ Let's find your Franklin home.
     dateModified: "March 25, 2026",
     excerpt: "Thinking about moving to Franklin, TN? Explore schools, population growth, home prices, neighborhoods, and local development trends in this 2025 real estate guide.",
     content: `
-If you're considering a move in Middle Tennessee, [Franklin](/buy/franklin-tn) keeps showing up for a reason. Buyers looking at Nashville often end up touring homes here because it offers a different balance of schools, space, commute, and long-term upside. For some, it's about getting more house for the money. For others, it's about neighborhood feel, school options, or a clearer lifestyle fit for the next 5-10 years. Either way, understanding Franklin at a local level — not just through national ranking lists — can help you make a smarter move.
+If you're considering a move in Middle Tennessee, [Franklin](/buy/franklin-tn) keeps showing up for a reason. The side-by-side neighborhood comparison, with school districts and the citywide price, is the [Franklin neighborhoods guide](/neighborhoods/franklin-tn). Buyers looking at Nashville often end up touring homes here because it offers a different balance of schools, space, commute, and long-term upside. For some, it's about getting more house for the money. For others, it's about neighborhood feel, school options, or a clearer lifestyle fit for the next 5-10 years. Either way, understanding Franklin at a local level — not just through national ranking lists — can help you make a smarter move.
 
 ## Overview
 
