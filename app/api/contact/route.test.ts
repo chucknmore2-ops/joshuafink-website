@@ -49,7 +49,12 @@ function mockFetch(sheetBody: string, contentType: string) {
   }) as typeof fetch
 }
 
+let submitLeadCount = 0
 async function submitLead() {
+  // Each call uses its own address. More than 3 submits of one email in the
+  // process-wide rate-limit window are quarantined, and this helper is used
+  // by several delivery tests.
+  submitLeadCount += 1
   const { POST } = await import('./route.ts')
   const res = await POST(
     new NextRequest('http://localhost/api/contact', {
@@ -60,7 +65,7 @@ async function submitLead() {
       },
       body: JSON.stringify({
         name: 'Route Test Lead',
-        email: 'lead@example.com',
+        email: `lead${submitLeadCount}@example.com`,
         body: 'Checking that sheet delivery is reported truthfully.',
         source: 'route-test',
       }),
@@ -192,7 +197,7 @@ test('a real visitor lead still emails Joshua a New Lead subject', async () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: 'Jane Doe',
-          email: 'jane@example.com',
+          email: 'jane.visitor@example.com',
           body: 'I would like to sell my home in Franklin.',
           source: 'contact-form',
         }),
@@ -239,7 +244,7 @@ test('a native form POST (urlencoded) is accepted without consuming the body twi
         'Content-Type': 'application/x-www-form-urlencoded',
         'x-healthcheck-secret': 'test-cron-secret',
       },
-      body: 'name=Jane+Doe&email=jane%40example.com&body=Hello+from+a+no-JS+submit',
+      body: 'name=Jane+Doe&email=jane.urlencoded%40example.com&body=Hello+from+a+no-JS+submit',
     })
   )
   assert.equal(res.status, 200)
@@ -921,4 +926,166 @@ test('more than 12 submits in a minute from one IP are told to call', async () =
     lastStatus = res.status
   }
   assert.equal(lastStatus, 429)
+})
+
+test('the Oct 2026 bot phone is sheet-only: no New Lead email, no auto-reply, no Pushover', async () => {
+  const captured = mockDeliveryChannels()
+  process.env.RESEND_API_KEY = 're_test_key'
+  process.env.PUSHOVER_TOKEN = 'po_test_token'
+  process.env.PUSHOVER_USER = 'po_test_user'
+  try {
+    const { status, json } = await postContact({
+      name: 'Test',
+      phone: '+7999 0000000',
+      email: 'stranger.bot@gmail.com',
+      body: 'Test',
+      source: 'homepage',
+      _loaded: String(Date.now() - 45_000),
+    }, '198.51.100.70')
+    assert.equal(status, 200)
+    assert.deepEqual(json, { ok: true })
+    assert.equal(captured.some((c) => c.url.includes('api.resend.com')), false)
+    assert.equal(captured.some((c) => c.url.includes('api.pushover.net')), false)
+    const sheet = JSON.parse(captured.find((c) => c.url.includes('script.google.com'))!.body)
+    assert.equal(sheet.blocked_reason, 'fake_phone')
+    assert.equal(sheet.status, 'spam')
+    assert.equal(sheet.phone, '+7999 0000000')
+    assert.equal(sheet.email, 'stranger.bot@gmail.com')
+  } finally {
+    delete process.env.RESEND_API_KEY
+    delete process.env.PUSHOVER_TOKEN
+    delete process.env.PUSHOVER_USER
+  }
+})
+
+test('a Test / blank message is sheet-only and does not auto-reply the stranger', async () => {
+  const captured = mockDeliveryChannels()
+  process.env.RESEND_API_KEY = 're_test_key'
+  process.env.PUSHOVER_TOKEN = 'po_test_token'
+  process.env.PUSHOVER_USER = 'po_test_user'
+  try {
+    const { status, json } = await postContact({
+      name: 'Test',
+      phone: '615-555-0142',
+      email: 'another.stranger@company.com',
+      body: '',
+      source: 'contact-page',
+      _loaded: String(Date.now() - 45_000),
+    }, '198.51.100.71')
+    assert.equal(status, 200)
+    assert.deepEqual(json, { ok: true })
+    assert.equal(captured.some((c) => c.url.includes('api.resend.com')), false)
+    assert.equal(captured.some((c) => c.url.includes('api.pushover.net')), false)
+    const sheet = JSON.parse(captured.find((c) => c.url.includes('script.google.com'))!.body)
+    assert.equal(sheet.blocked_reason, 'test_submission')
+    assert.equal(sheet.status, 'spam')
+  } finally {
+    delete process.env.RESEND_API_KEY
+    delete process.env.PUSHOVER_TOKEN
+    delete process.env.PUSHOVER_USER
+  }
+})
+
+test('a real US lead still gets a New Lead email, a submitter auto-reply, and Pushover', async () => {
+  const captured = mockDeliveryChannels()
+  process.env.RESEND_API_KEY = 're_test_key'
+  process.env.PUSHOVER_TOKEN = 'po_test_token'
+  process.env.PUSHOVER_USER = 'po_test_user'
+  try {
+    const { status, json } = await postContact({
+      name: 'Sarah Whitfield',
+      phone: '770-555-0142',
+      email: 'sarah.real.lead@example.com',
+      body: 'We are relocating to Franklin and would like to see homes.',
+      source: 'homepage',
+      _loaded: String(Date.now() - 45_000),
+    }, '198.51.100.72')
+    assert.equal(status, 200)
+    assert.equal(json.ok, true)
+    const emails = captured.filter((c) => c.url.includes('api.resend.com')).map((c) => JSON.parse(c.body))
+    const toJosh = emails.find((e) => /New Lead/.test(e.subject))
+    const autoReply = emails.find((e) => /Got your message/.test(e.subject))
+    assert.ok(toJosh)
+    assert.equal(toJosh.to[0], 'joshua@joshuafink.com')
+    assert.ok(autoReply)
+    assert.equal(autoReply.to[0], 'sarah.real.lead@example.com')
+    assert.ok(captured.some((c) => c.url.includes('api.pushover.net')))
+    const sheet = JSON.parse(captured.find((c) => c.url.includes('script.google.com'))!.body)
+    assert.equal(sheet.blocked_reason, undefined)
+  } finally {
+    delete process.env.RESEND_API_KEY
+    delete process.env.PUSHOVER_TOKEN
+    delete process.env.PUSHOVER_USER
+  }
+})
+
+test('a fourth submit from one IP is blocked silently with no email or Pushover', async () => {
+  process.env.RESEND_API_KEY = 're_test_key'
+  process.env.PUSHOVER_TOKEN = 'po_test_token'
+  process.env.PUSHOVER_USER = 'po_test_user'
+  try {
+    for (let i = 1; i <= 4; i++) {
+      const captured = mockDeliveryChannels()
+      const { status, json } = await postContact({
+        name: 'Sarah Whitfield',
+        phone: '615-555-0142',
+        email: `rate-ip-${i}@example.com`,
+        body: 'We are looking at homes in Franklin and would like to talk.',
+        source: 'homepage',
+        _loaded: String(Date.now() - 30_000),
+      }, '198.51.100.40')
+      assert.equal(status, 200, `submit ${i}`)
+      assert.equal(json.ok, true)
+      const emailed = captured.some((c) => c.url.includes('api.resend.com'))
+      const pushed = captured.some((c) => c.url.includes('api.pushover.net'))
+      if (i < 4) {
+        assert.equal(emailed, true, `submit ${i} should email`)
+        assert.equal(pushed, true, `submit ${i} should push`)
+      } else {
+        assert.equal(emailed, false)
+        assert.equal(pushed, false)
+        const sheet = JSON.parse(captured.find((c) => c.url.includes('script.google.com'))!.body)
+        assert.equal(sheet.blocked_reason, 'ip_rate_limit')
+        assert.equal(sheet.status, 'spam')
+      }
+    }
+  } finally {
+    delete process.env.RESEND_API_KEY
+    delete process.env.PUSHOVER_TOKEN
+    delete process.env.PUSHOVER_USER
+  }
+})
+
+test('a fourth submit of one email from different IPs is blocked silently', async () => {
+  process.env.RESEND_API_KEY = 're_test_key'
+  process.env.PUSHOVER_TOKEN = 'po_test_token'
+  process.env.PUSHOVER_USER = 'po_test_user'
+  try {
+    for (let i = 1; i <= 4; i++) {
+      const captured = mockDeliveryChannels()
+      const { status, json } = await postContact({
+        name: 'Sarah Whitfield',
+        phone: '615-555-0188',
+        email: 'repeat-buyer@example.com',
+        body: 'Following up on homes in Brentwood.',
+        source: 'contact-page',
+        _loaded: String(Date.now() - 30_000),
+      }, `198.51.100.8${i}`)
+      assert.equal(status, 200, `submit ${i}`)
+      assert.equal(json.ok, true)
+      if (i < 4) {
+        assert.equal(captured.some((c) => c.url.includes('api.resend.com')), true)
+      } else {
+        assert.equal(captured.some((c) => c.url.includes('api.resend.com')), false)
+        assert.equal(captured.some((c) => c.url.includes('api.pushover.net')), false)
+        const sheet = JSON.parse(captured.find((c) => c.url.includes('script.google.com'))!.body)
+        assert.equal(sheet.blocked_reason, 'email_rate_limit')
+        assert.equal(sheet.status, 'spam')
+      }
+    }
+  } finally {
+    delete process.env.RESEND_API_KEY
+    delete process.env.PUSHOVER_TOKEN
+    delete process.env.PUSHOVER_USER
+  }
 })

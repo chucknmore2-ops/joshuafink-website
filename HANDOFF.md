@@ -84,12 +84,17 @@ form (SuburbLeadForm / SellForm / ContactForm / CashOfferForm)
 **Classification rules that must not be broken** (`lib/classify-lead.ts`):
 
 - **Quarantine is not a delete.** Honeypot, a submit faster than 3 seconds
-  (client mount timestamp), or a combined spam score of 5+ skips email,
-  Pushover, the auto-reply, and the downstream webhooks. The row is written
-  to the sheet's **Blocked** tab with `blocked_reason`, and the visitor still
-  sees success so bots don't learn they were stopped. One weak signal is not
-  enough: a Zillow link, a long or international name, a non-US phone, or a
-  message in another language without a scam phrase is still delivered.
+  (client mount timestamp), a combined spam score of 5+, an obviously fake
+  phone (country code +7, `79990000000`, or 10 zeros in a row), a name that
+  is exactly "test" with a blank or "test" message, or more than 3 submissions
+  in 10 minutes from the same IP or the same email. Quarantine skips email
+  (including the submitter auto-reply), Pushover, and the downstream webhooks.
+  The row is written to the sheet's **Blocked** tab with `blocked_reason`, and
+  the visitor still sees success so bots don't learn they were stopped. One
+  weak signal is not enough: a Zillow link, a long or international name, a
+  non-US phone that is not country code +7, or a message in another language
+  without a scam phrase is still delivered. A 10-digit US number whose area
+  code starts with 7 (731, 770) is not treated as +7.
 - `invalid` = something the human can fix (no name, 4-digit phone, cash-offer
   with no address). Returns a **visible** 400 so they can correct it. Never silent.
 - `suspect` = one weak signal, or a few that don't add up to a quarantine.
@@ -112,7 +117,7 @@ form (SuburbLeadForm / SellForm / ContactForm / CashOfferForm)
 - **Pushover** — `PUSHOVER_TOKEN` / `PUSHOVER_USER`. This is both the new-lead
   phone alert and the emergency last resort. See landmine #2.
 - **Google Sheet** — Apps Script web app at `GOOGLE_SHEET_WEBHOOK_URL`. Tabs:
-  **CRM** (real leads), **Blocked** (honeypot, too-fast, and scored spam), **System** (daily test lead).
+  **CRM** (real leads), **Blocked** (honeypot, too-fast, fake phone, test submissions, rate limit, and scored spam), **System** (daily test lead).
   The script answers HTTP 200 for everything, so the route believes the *body*,
   not the status. See `docs/google-sheet-lead-log.md`.
 - **ClickUp** — OFF. Skipped unless `CLICKUP_LEADS_ENABLED=true` *and*

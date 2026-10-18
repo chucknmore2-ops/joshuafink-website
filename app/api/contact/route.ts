@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { classifyLead } from '@/lib/classify-lead'
+import { recordEmailSubmission, recordIpSubmission } from '@/lib/lead-rate-limit'
 import { botChallengeMode } from '@/lib/bot-challenge'
 import { ensureLeadAttribution, LEAD_ATTRIBUTION_FIELDS } from '@/lib/attribution'
 import { sendEmail, activeEmailProvider, fetchWithTimeout } from '@/lib/send-email'
@@ -523,55 +524,16 @@ async function sendEmergencyPushover(
 // ---------------------------------------------------------------------------
 
 // A successful lead fires a priority-1 Pushover — the level that deliberately
-// bypasses Joshua's quiet hours. Unauthenticated and unlimited, that is a
-// loudspeaker anyone on the internet can hold down: a trivial curl loop makes
-// the phone unusable and, far worse, buries real lead alerts in the noise.
-//
-// The threshold is set where no human can reach it. A person filling in a form
-// carefully might submit two or three times in a minute after a typo; nobody
-// submits twelve. So a legitimate lead is never turned away — this only catches
-// automation, and it fails toward accepting rather than rejecting.
-//
-// Deliberately in-memory: serverless instances are per-region and recycle, so
-// this is a speed bump rather than a wall, and a distributed flood would need
-// Redis to stop properly. It costs nothing, adds no dependency, and removes the
-// single-source case that is actually easy to pull off.
-const FLOOD_MAX_PER_WINDOW = 12
-const FLOOD_WINDOW_MS = 60_000
-// Longer window than the hard flood cap. Five or more in ten minutes adds a
-// scoring signal (see classifyLead). It does not, by itself, quarantine a
-// normal lead — a household submitting a few forms still gets through, tagged
-// at most. In-memory, so it is per serverless instance, same as the flood cap.
-const RATE_WINDOW_MS = 10 * 60_000
-const submissionTimes = new Map<string, number[]>()
+// bypasses Joshua's quiet hours. The hard cap (more than 12 in 60 seconds
+// from one IP) is a visible 429. Separately, more than 3 submissions in 10
+// minutes from one IP or one email is quarantined to the Blocked tab with
+// no email and no Pushover. Both counters live in lib/lead-rate-limit.ts
+// (in-memory, per serverless instance — there is no shared store on Hobby).
 
 function clientIp(req: NextRequest): string {
   const forwarded = req.headers.get('x-forwarded-for')
   if (forwarded) return forwarded.split(',')[0].trim()
   return req.headers.get('x-real-ip') ?? 'unknown'
-}
-
-/**
- * Records this hit. `flooded` is the hard cap (more than 12 in 60 seconds).
- * `recent` is how many hits this IP has in the last 10 minutes, including
- * this one, and is passed to the scorer.
- */
-function recordSubmission(ip: string, now: number = Date.now()): { flooded: boolean; recent: number } {
-  // Prune every caller, not just this one, so the map cannot grow without bound
-  // across a long-lived instance. forEach rather than for-of: this tsconfig
-  // targets below ES2015, so iterating a Map directly needs downlevelIteration.
-  const stale: string[] = []
-  submissionTimes.forEach((times, key) => {
-    const live = times.filter((t: number) => now - t < RATE_WINDOW_MS)
-    if (live.length === 0) stale.push(key)
-    else submissionTimes.set(key, live)
-  })
-  stale.forEach((key) => submissionTimes.delete(key))
-  const hits = submissionTimes.get(ip) ?? []
-  hits.push(now)
-  submissionTimes.set(ip, hits)
-  const inFloodWindow = hits.filter((t: number) => now - t < FLOOD_WINDOW_MS).length
-  return { flooded: inFloodWindow > FLOOD_MAX_PER_WINDOW, recent: hits.length }
 }
 
 async function maybeSubscribeListingAlert(
@@ -607,7 +569,7 @@ export async function POST(req: NextRequest) {
   noteBotChallengeConfig()
 
   const ip = clientIp(req)
-  const pace = recordSubmission(ip)
+  const pace = recordIpSubmission(ip)
   if (pace.flooded) {
     console.warn(`Contact API: flood limit hit by ${ip} — rejecting without notifying`)
     return NextResponse.json(
@@ -650,6 +612,9 @@ export async function POST(req: NextRequest) {
       lead.email = ''
     }
     applyAlertFields(lead)
+    // Count every address, including a submit that will later be rejected as
+    // invalid, so a bot cannot reset the window by omitting its name.
+    const recentEmailSubmissions = recordEmailSubmission(lead.email)
     // Alert signups ask for an email, not a name. The sheet and Pushover
     // still need a name cell, and classifyLead rejects a blank one.
     if (!(lead.name || '').trim() && (lead.source === 'listing-alerts' || lead.source === 'alerts') && lead.email.trim()) {
@@ -666,10 +631,11 @@ export async function POST(req: NextRequest) {
 
     // ---------- Classify ----------
     // No address to key on (some test clients, a stripped proxy header) must
-    // not share one bucket for the soft rate signal. The hard 12/minute cap
-    // above still applies to "unknown".
+    // not share one bucket for the IP rate limit. The hard 12/minute cap
+    // above still applies to "unknown". Per-email limiting still applies.
     const verdict = classifyLead(lead, {
-      recentSubmissions: ip === 'unknown' ? 1 : pace.recent,
+      recentSubmissions: ip === 'unknown' ? 0 : pace.recent,
+      recentEmailSubmissions,
     })
 
     if (verdict.kind === 'bot' || verdict.kind === 'spam') {
