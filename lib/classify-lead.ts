@@ -37,10 +37,16 @@ const TRUSTED_LINK_HOSTS = [
 // A lead gets exactly one of five verdicts.
 //
 //   bot     → honeypot filled. Quarantine: sheet only, fake success.
-//   spam    → high-confidence junk (submitted in under 3 seconds with a real
-//             client timestamp, or several independent signals at once).
-//             Same quarantine as bot: no email, no Pushover, no auto-reply.
-//             The row still lands on the sheet's Blocked tab.
+//   spam    → high-confidence junk. Same quarantine as bot: no email, no
+//             Pushover, no auto-reply. The row still lands on the sheet's
+//             Blocked tab. High-confidence means any of:
+//               submitted in under 3 seconds with a real client timestamp
+//               several independent signals at once (score >= 5)
+//               an obviously fake phone (country code +7, the 79990000000
+//                 bot number, or 10 or more zeros in a row)
+//               the name is exactly "test" and the message is blank or "test"
+//               more than 3 submissions in the route's window from one IP
+//                 or one email address
 //   invalid → the human left out something we genuinely need. Visible 400 so
 //             they can fix it and resubmit. NEVER a silent drop.
 //   suspect → one weak signal, or a couple that don't add up. DELIVERED,
@@ -49,8 +55,9 @@ const TRUSTED_LINK_HOSTS = [
 //   clean   → delivered normally.
 //
 // One weak signal must not quarantine. A pasted listing link, a long surname,
-// a disposable address with a real phone, or a message in another script
-// without a scam phrase all still reach Joshua.
+// a disposable address with a real phone, a non-US number that is not country
+// code +7, or a message in another script without a scam phrase all still
+// reach Joshua. A 10-digit US number whose area code starts with 7 is not +7.
 const QUARANTINE_SCORE = 5
 const SUSPECT_SCORE = 2
 const TOO_FAST_MS = 3000
@@ -68,7 +75,6 @@ const SIGNAL_POINTS: Record<string, number> = {
   phone_sequential: 2,
   non_us_phone: 1,
   mixed_token: 1,
-  rate_limit: 2,
   // Missing timestamp adds weight only alongside other signals. Alone it is
   // not even a tag: no-JS submits, the daily healthcheck, and a stale cached
   // page can all omit it.
@@ -88,7 +94,6 @@ const SIGNAL_ORDER = [
   'phone_sequential',
   'non_us_phone',
   'mixed_token',
-  'rate_limit',
   'missing_form_time',
 ]
 
@@ -115,16 +120,26 @@ export type LeadVerdict =
   | { kind: 'invalid'; reason: string; message: string }
   | { kind: 'suspect'; reason: string }
 
+/** More than this many hits in the route's window quarantines on its own. */
+const RATE_QUARANTINE_AT = 4
+
 export type ClassifyOptions = {
   /** Clock for the too-fast check. Defaults to Date.now(). */
   now?: number
   /**
    * How many submissions this IP has made in the recent window, including
-   * this one. The route supplies it. Omitted in unit tests unless a case
-   * is about rate limiting. Five or more adds weight; it never quarantines
-   * a normal lead by itself.
+   * this one. The route supplies it from the in-memory limiter. Omitted in
+   * unit tests unless a case is about rate limiting. The 4th hit quarantines;
+   * three do not. The route passes 0 when it has no client IP, so strangers
+   * behind a missing address do not share one bucket.
    */
   recentSubmissions?: number
+  /**
+   * How many submissions this email address has made in the same window,
+   * including this one. Same threshold as the IP count. 0 when the lead
+   * left no address.
+   */
+  recentEmailSubmissions?: number
 }
 
 export function classifyLead(
@@ -170,6 +185,17 @@ export function classifyLead(
     }
   }
 
+  // Obvious fakes from the Oct 2026 form wave. Checked before the too-fast
+  // rule so the Blocked tab shows the content reason even when the bot also
+  // submits immediately. These quarantine on their own. A normal US number,
+  // including area codes that start with 7, is not in this set.
+  if (isObviouslyFakePhone(lead.phone || '')) {
+    return { kind: 'spam', reason: 'fake_phone' }
+  }
+  if (isTestSubmission(lead)) {
+    return { kind: 'spam', reason: 'test_submission' }
+  }
+
   // Timing. The hidden `_loaded` value is stamped in a useEffect when the
   // form mounts in the browser (components/LeadFormGuards.tsx) — never during
   // render. A statically prerendered page therefore does not bake the build
@@ -186,6 +212,11 @@ export function classifyLead(
   const timing = readTiming(lead._loaded, now)
   if (timing === 'too_fast') {
     return { kind: 'spam', reason: 'too_fast' }
+  }
+
+  const rateReason = rateLimitReason(options)
+  if (rateReason) {
+    return { kind: 'spam', reason: rateReason }
   }
 
   const signals = new Set<string>()
@@ -233,18 +264,15 @@ export function classifyLead(
   if (hasGibberishBody(lead.body || '')) signals.add('gibberish_body')
   if (hasMixedToken(lead.body || '')) signals.add('mixed_token')
 
-  if ((options.recentSubmissions ?? 0) >= 5) signals.add('rate_limit')
-
-  const contentIds = SIGNAL_ORDER.filter((id) => signals.has(id) && id !== 'missing_form_time' && id !== 'rate_limit')
+  const contentIds = SIGNAL_ORDER.filter((id) => signals.has(id) && id !== 'missing_form_time')
   const contentScore = contentIds.reduce((sum, id) => sum + SIGNAL_POINTS[id], 0)
-  const rateScore = signals.has('rate_limit') ? SIGNAL_POINTS.rate_limit : 0
   // Missing time never supplies the points that cross into quarantine on its
   // own. A no-JS visitor writing in Russian still gets delivered.
-  const quarantineScore = contentScore + rateScore
+  const quarantineScore = contentScore
 
   const ordered = SIGNAL_ORDER.filter((id) => {
     if (!signals.has(id)) return false
-    if (id === 'missing_form_time' && contentIds.length === 0 && !signals.has('rate_limit')) return false
+    if (id === 'missing_form_time' && contentIds.length === 0) return false
     return true
   })
 
@@ -252,12 +280,47 @@ export function classifyLead(
     return { kind: 'spam', reason: ordered.join('+') }
   }
 
-  if (contentScore >= SUSPECT_SCORE || signals.has('rate_limit')) {
-    const suspectIds = ordered.filter((id) => id !== 'missing_form_time' || contentIds.length > 0 || signals.has('rate_limit'))
+  if (contentScore >= SUSPECT_SCORE) {
+    const suspectIds = ordered.filter((id) => id !== 'missing_form_time' || contentIds.length > 0)
     return { kind: 'suspect', reason: suspectIds.join('+') }
   }
 
   return { kind: 'clean' }
+}
+
+function rateLimitReason(options: ClassifyOptions): string | null {
+  const reasons: string[] = []
+  if ((options.recentSubmissions ?? 0) >= RATE_QUARANTINE_AT) reasons.push('ip_rate_limit')
+  if ((options.recentEmailSubmissions ?? 0) >= RATE_QUARANTINE_AT) reasons.push('email_rate_limit')
+  return reasons.length > 0 ? reasons.join('+') : null
+}
+
+/**
+ * Phones that are not a real US lead. US numbers are 10 digits, or 11
+ * starting with country code 1. Area codes 731 (Jackson, TN) and 770
+ * (Atlanta) start with 7 and must stay deliverable.
+ *
+ *   79990000000 / +7999 0000000   the Oct 2026 bot number
+ *   +7… or 11+ digits starting 7  country code +7 (Russia / Kazakhstan)
+ *   10 or more zeros in a row      0000000000, +1 000 000 0000, and the like
+ */
+function isObviouslyFakePhone(raw: string): boolean {
+  const digits = (raw || '').replace(/\D/g, '')
+  if (!digits) return false
+  if (digits === '79990000000') return true
+  if (/0{10,}/.test(digits)) return true
+  const compact = (raw || '').trim().replace(/[\s().-]/g, '')
+  if (compact.startsWith('+7')) return true
+  if (digits.length >= 11 && digits.startsWith('7')) return true
+  return false
+}
+
+/** Name is exactly "test" and the message is empty or exactly "test". */
+function isTestSubmission(lead: Record<string, string>): boolean {
+  const name = (lead.name || '').trim().toLowerCase()
+  if (name !== 'test') return false
+  const message = (lead.body || '').trim().toLowerCase()
+  return message === '' || message === 'test'
 }
 
 function readTiming(raw: string | undefined, now: number): 'too_fast' | 'missing' | 'ok' {

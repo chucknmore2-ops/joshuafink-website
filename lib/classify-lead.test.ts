@@ -8,8 +8,11 @@
 //
 // A single weak signal may tag a lead. It must not quarantine one.
 // Quarantine (kind 'spam' or 'bot') is honeypot, a submit faster than 3
-// seconds, or several independent signals adding up. Those rows are kept
-// on the sheet and do not email or Pushover.
+// seconds, several independent signals adding up, an obviously fake phone
+// (+7, 79990000000, or 10 zeros in a row), a name that is exactly "test"
+// with a blank or "test" message, or more than 3 submissions in the window
+// from one IP or one email. Those rows are kept on the sheet and do not
+// email or Pushover. A 10-digit US number is never a +7 hit.
 
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
@@ -292,19 +295,41 @@ test('a non-US phone alone is still a normal lead', () => {
   assert.equal(v.kind, 'clean')
 })
 
-test('five submits from one IP tag a normal lead and do not quarantine it', () => {
-  const v = classifyLead(lead(), { recentSubmissions: 5 })
-  assert.equal(v.kind, 'suspect')
-  assert.equal(v.reason, 'rate_limit')
+test('three submits from one IP stay a normal lead', () => {
+  const v = classifyLead(lead(), { recentSubmissions: 3, recentEmailSubmissions: 3 })
+  assert.equal(v.kind, 'clean')
 })
 
-test('repeated submits do not quarantine a lead that also has one weak signal', () => {
+test('a fourth submit from one IP is quarantined on its own', () => {
+  const v = classifyLead(lead(), { recentSubmissions: 4 })
+  assert.equal(v.kind, 'spam')
+  assert.equal(v.reason, 'ip_rate_limit')
+})
+
+test('a fourth submit from one email is quarantined on its own', () => {
+  const v = classifyLead(lead(), { recentEmailSubmissions: 4 })
+  assert.equal(v.kind, 'spam')
+  assert.equal(v.reason, 'email_rate_limit')
+})
+
+test('ip and email rate limits are both named when both are over the cap', () => {
+  const v = classifyLead(lead(), { recentSubmissions: 4, recentEmailSubmissions: 5 })
+  assert.equal(v.kind, 'spam')
+  assert.equal(v.reason, 'ip_rate_limit+email_rate_limit')
+})
+
+test('a fixable mistake stays a visible error even past the rate cap', () => {
+  const v = classifyLead(lead({ name: '' }), { recentSubmissions: 9, recentEmailSubmissions: 9 })
+  assert.equal(v.kind, 'invalid')
+})
+
+test('one weak signal plus three submits is still only a tag', () => {
   const v = classifyLead(
     lead({ body: 'see https://peskartyhrt.buzz/x' }),
-    { recentSubmissions: 6 },
+    { recentSubmissions: 3 },
   )
-  assert.notEqual(v.kind, 'spam')
   assert.equal(v.kind, 'suspect')
+  assert.equal(v.reason, 'spam_url')
 })
 
 test('a scam phrase plus a non-Latin script is enough to quarantine', () => {
@@ -312,4 +337,121 @@ test('a scam phrase plus a non-Latin script is enough to quarantine', () => {
     body: 'Вам перевод 137698 руб. получить тут',
   }))
   assert.equal(v.kind, 'spam')
+})
+
+// ---------------------------------------------------------------------------
+// Oct 2026 "Test" / +79990000000 wave. Quarantine the phone and the
+// test/blank pair. Do not quarantine a real US number or a real message.
+// ---------------------------------------------------------------------------
+
+test('the +79990000000 bot number is quarantined in every stored shape', () => {
+  for (const phone of [
+    '+79990000000',
+    '+7999 0000000',
+    '+7 999 000-00-00',
+    '+7 (999) 000-00-00',
+    '79990000000',
+    '7 999 000 00 00',
+  ]) {
+    const v = classifyLead(lead({
+      name: 'Test',
+      phone,
+      email: 'someone.real@gmail.com',
+      body: 'Test',
+    }))
+    assert.equal(v.kind, 'spam', phone)
+    assert.equal(v.kind === 'spam' ? v.reason : '', 'fake_phone', phone)
+  }
+})
+
+test('any country-code +7 number is quarantined on a US-only site', () => {
+  for (const phone of ['+7 495 123 45 67', '+74951234567', '74951234567']) {
+    const v = classifyLead(lead({
+      name: 'Irina Petrova',
+      phone,
+      body: 'We are moving to Franklin and would like to see homes.',
+    }))
+    assert.equal(v.kind, 'spam', phone)
+    assert.equal(v.kind === 'spam' ? v.reason : '', 'fake_phone', phone)
+  }
+})
+
+test('ten or more zeros in a row is an obviously fake phone', () => {
+  for (const phone of ['0000000000', '000-000-0000', '+1 000 000 0000', '10000000000', '6150000000000']) {
+    const v = classifyLead(lead({ phone, body: 'Please call me about Franklin.' }))
+    assert.equal(v.kind, 'spam', phone)
+    assert.equal(v.kind === 'spam' ? v.reason : '', 'fake_phone', phone)
+  }
+})
+
+test('US numbers are not treated as +7 or as a zero-run, including area codes that start with 7', () => {
+  for (const phone of [
+    '615-555-0142',
+    '(615) 551-2727',
+    '+1 615 555 0142',
+    '1-615-555-0142',
+    '731-555-0199', // Jackson, TN
+    '770-555-0142', // Atlanta — 10 digits starting with 7
+    '+1 (770) 555-0142',
+    '6150000000', // seven zeros, under the 10-zero rule
+  ]) {
+    const v = classifyLead(lead({
+      phone,
+      body: 'We would like to tour homes in Franklin this weekend.',
+    }))
+    assert.equal(v.kind, 'clean', phone)
+  }
+})
+
+test('a name that is exactly test with a blank or test message is quarantined', () => {
+  for (const body of ['', '   ', 'Test', ' test ', 'TEST']) {
+    const v = classifyLead(lead({
+      name: 'Test',
+      phone: '615-555-0142',
+      email: 'real.person@gmail.com',
+      body,
+    }))
+    assert.equal(v.kind, 'spam', JSON.stringify(body))
+    assert.equal(v.kind === 'spam' ? v.reason : '', 'test_submission', JSON.stringify(body))
+  }
+  const cased = classifyLead(lead({ name: '  TeSt  ', phone: '615-555-0142', body: '' }))
+  assert.equal(cased.kind, 'spam')
+  assert.equal(cased.kind === 'spam' ? cased.reason : '', 'test_submission')
+})
+
+test('test in only the name or only the message still delivers', () => {
+  const named = classifyLead(lead({
+    name: 'Test',
+    phone: '615-555-0142',
+    body: 'Hi Joshua, we want to see homes in Brentwood.',
+  }))
+  assert.equal(named.kind, 'clean')
+
+  const messaged = classifyLead(lead({
+    name: 'Sarah Whitfield',
+    body: 'test',
+  }))
+  assert.equal(messaged.kind, 'clean')
+
+  const longerName = classifyLead(lead({
+    name: 'Test Smith',
+    body: '',
+  }))
+  assert.equal(longerName.kind, 'clean')
+
+  const punctuated = classifyLead(lead({
+    name: 'Test',
+    phone: '615-555-0142',
+    body: 'Test.',
+  }))
+  assert.equal(punctuated.kind, 'clean')
+})
+
+test('a fake phone wins over the test-name rule and over the rate cap', () => {
+  const v = classifyLead(
+    lead({ name: 'Test', phone: '+79990000000', body: 'Test' }),
+    { recentSubmissions: 8, recentEmailSubmissions: 8 },
+  )
+  assert.equal(v.kind, 'spam')
+  assert.equal(v.reason, 'fake_phone')
 })
