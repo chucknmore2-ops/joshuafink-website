@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-10-17T12:03:44.486Z
+// AUTO-GENERATED — Last synced: 2026-10-18T12:32:39.695Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-sold.mjs
 
