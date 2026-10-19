@@ -15,6 +15,7 @@ const SCRIPT_SRC = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render
 const TOKEN_FIELD = 'cf-turnstile-response'
 const TOKEN_WAIT_MS = 4_000
 
+// Keys are configured in Vercel as of 2026-10-19.
 const SITE_KEY = (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '').trim()
 
 type TurnstileRenderOptions = {
