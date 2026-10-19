@@ -1,3 +1,5 @@
+import { applyMarketConditionSentence, MARKET_CONDITION } from './market-lean'
+
 export type Suburb = {
   slug: string
   name: string
@@ -102,7 +104,9 @@ export const suburbs: Record<string, Suburb> = {
     pricePerSqft: 356.22,
     yoyChange: '+5.1%',
     description:
-      'Brentwood, Tennessee carries a reputation as one of the wealthiest ZIP codes in the South — and the data backs it up. With a 2026 median home price of $1,424,058 and some of the highest-performing schools in the state, Brentwood attracts executives, professionals, and families who want space, safety, and community. The market here rewards sellers who present correctly: buyers at this price point have high expectations for condition, finishes, and marketing. Working with the right agent isn\'t just helpful in Brentwood — it directly impacts your final number. Inventory remains tight relative to demand, keeping the market squarely in seller-favoring territory. Population is not what is loosening that inventory: the April 1, 2020 Census counted 45,373 residents, and the U.S. Census Bureau estimates 45,313 as of July 1, 2025, a change of -0.1% from the April 1, 2020 estimates base (U.S. Census Bureau QuickFacts; Population Estimates, Vintage 2025).',
+      'Brentwood, Tennessee carries a reputation as one of the wealthiest ZIP codes in the South — and the data backs it up. With a 2026 median home price of $1,424,058 and some of the highest-performing schools in the state, Brentwood attracts executives, professionals, and families who want space, safety, and community. The market here rewards sellers who present correctly: buyers at this price point have high expectations for condition, finishes, and marketing. Working with the right agent isn\'t just helpful in Brentwood — it directly impacts your final number. ' +
+      MARKET_CONDITION +
+      ' Population is not what is loosening that inventory: the April 1, 2020 Census counted 45,373 residents, and the U.S. Census Bureau estimates 45,313 as of July 1, 2025, a change of -0.1% from the April 1, 2020 estimates base (U.S. Census Bureau QuickFacts; Population Estimates, Vintage 2025).',
     whyBullets: [
       'Luxury listing experience: Joshua markets Brentwood homes with professional HDR photography, 3D virtual tours, and targeted digital ads — the standard buyers at this price point expect and the presentation that generates competitive offers.',
       'Executive relocation network: A significant share of Brentwood buyers are corporate transferees with company relocation packages. Joshua\'s connections with relo coordinators keep your listing in front of buyers who are pre-approved and motivated.',
@@ -721,6 +725,10 @@ export const suburbs: Record<string, Suburb> = {
     schoolDistrict: 'Rutherford County Schools',
     commuteNote: '20-30 min to Nashville via I-24 (traffic dependent)',
   },
+}
+
+for (const suburb of Object.values(suburbs)) {
+  applyMarketConditionSentence(suburb)
 }
 
 // Single source of truth for when the hard-coded medianPrice/avgDaysOnMarket/
