@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, FormEvent } from 'react'
 import { captureAttribution, getAttribution } from '@/lib/attribution'
 import LeadFormGuards from '@/components/LeadFormGuards'
+import { ensureTurnstileToken } from '@/components/TurnstileWidget'
 import { trackLeadFormError } from '@/lib/lead-form'
 import TrackedTelLink from '@/components/TrackedTelLink'
 
@@ -41,16 +42,18 @@ export default function CashOfferForm({ source = 'cash-offer', cityName }: CashO
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setState('submitting')
-    setErrorMsg('')
-
     const form = e.currentTarget
     const data: Record<string, FormDataEntryValue | string> = {
       ...Object.fromEntries(new FormData(form).entries()),
       ...getAttribution(),
     }
 
+    setState('submitting')
+    setErrorMsg('')
+
     try {
+      const token = await ensureTurnstileToken(form)
+      if (token) data['cf-turnstile-response'] = token
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

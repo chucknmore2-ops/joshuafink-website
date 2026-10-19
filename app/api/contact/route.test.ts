@@ -30,6 +30,8 @@ delete process.env.CLICKUP_LEADS_ENABLED
 delete process.env.PUSHOVER_TOKEN
 delete process.env.PUSHOVER_USER
 delete process.env.RESEND_API_KEY
+delete process.env.TURNSTILE_SECRET_KEY
+delete process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
 
 const realFetch = globalThis.fetch
 after(() => {
@@ -639,6 +641,12 @@ function mockDeliveryChannels() {
     if (url.includes('api.pushover.net')) {
       return new Response('{"status":1}', { status: 200, headers: { 'Content-Type': 'application/json' } })
     }
+    if (url.includes('challenges.cloudflare.com')) {
+      return new Response('{"success":true,"error-codes":[]}', {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
     return new Response('{}', { status: 200 })
   }) as typeof fetch
   return captured
@@ -1087,5 +1095,272 @@ test('a fourth submit of one email from different IPs is blocked silently', asyn
     delete process.env.RESEND_API_KEY
     delete process.env.PUSHOVER_TOKEN
     delete process.env.PUSHOVER_USER
+  }
+})
+
+// ---------------------------------------------------------------------------
+// Turnstile. Keys unset (the default above) leaves every earlier test on the
+// existing spam filter. These cases turn the keys on.
+// ---------------------------------------------------------------------------
+
+const TURNSTILE_PASS_SECRET = '1x0000000000000000000000000000000AA'
+const TURNSTILE_SITE_KEY = '1x00000000000000000000BB'
+const TURNSTILE_DUMMY = 'XXXX.DUMMY.TOKEN.XXXX'
+
+function enableTurnstile() {
+  process.env.TURNSTILE_SECRET_KEY = TURNSTILE_PASS_SECRET
+  process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY = TURNSTILE_SITE_KEY
+}
+
+function disableTurnstile() {
+  delete process.env.TURNSTILE_SECRET_KEY
+  delete process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
+}
+
+test('a missing Turnstile token is sheet-only and does not call siteverify', async () => {
+  const captured = mockDeliveryChannels()
+  process.env.RESEND_API_KEY = 're_test_key'
+  process.env.PUSHOVER_TOKEN = 'po_test_token'
+  process.env.PUSHOVER_USER = 'po_test_user'
+  enableTurnstile()
+  try {
+    const { status, json } = await postContact({
+      name: 'Test',
+      phone: '+7999 0000000',
+      email: 'stranger.bot@gmail.com',
+      body: 'Test',
+      source: 'homepage',
+      _loaded: String(Date.now() - 45_000),
+    }, '198.51.100.80')
+    assert.equal(status, 200)
+    assert.deepEqual(json, { ok: true })
+    assert.equal(captured.some((c) => c.url.includes('challenges.cloudflare.com')), false)
+    assert.equal(captured.some((c) => c.url.includes('api.resend.com')), false)
+    assert.equal(captured.some((c) => c.url.includes('api.pushover.net')), false)
+    const sheet = JSON.parse(captured.find((c) => c.url.includes('script.google.com'))!.body)
+    assert.equal(sheet.blocked_reason, 'turnstile_failed')
+    assert.equal(sheet.status, 'spam')
+    assert.equal('cf-turnstile-response' in sheet, false)
+  } finally {
+    disableTurnstile()
+    delete process.env.RESEND_API_KEY
+    delete process.env.PUSHOVER_TOKEN
+    delete process.env.PUSHOVER_USER
+  }
+})
+
+test('a passing dummy token still delivers a phone-only lead and strips the token', async () => {
+  const captured = mockDeliveryChannels()
+  process.env.RESEND_API_KEY = 're_test_key'
+  process.env.PUSHOVER_TOKEN = 'po_test_token'
+  process.env.PUSHOVER_USER = 'po_test_user'
+  enableTurnstile()
+  try {
+    const { status, json } = await postContact({
+      name: 'Sam Rivera',
+      phone: '615-555-0142',
+      email: '',
+      body: 'Please call me about homes in Brentwood.',
+      lead_type: 'buyer',
+      suburb: 'Brentwood',
+      source: 'market-brentwood-midpage',
+      _loaded: String(Date.now() - 20_000),
+      'cf-turnstile-response': TURNSTILE_DUMMY,
+    }, '198.51.100.81')
+    assert.equal(status, 200)
+    assert.equal(json.ok, true)
+    const verify = captured.find((c) => c.url.includes('challenges.cloudflare.com'))
+    assert.ok(verify)
+    const verifyBody = JSON.parse(verify.body)
+    assert.equal(verifyBody.secret, TURNSTILE_PASS_SECRET)
+    assert.equal(verifyBody.response, TURNSTILE_DUMMY)
+    assert.ok(captured.findIndex((c) => c.url.includes('challenges.cloudflare.com')) < captured.findIndex((c) => c.url.includes('api.resend.com')))
+    assert.ok(captured.some((c) => c.url.includes('api.pushover.net')))
+    const sheet = JSON.parse(captured.find((c) => c.url.includes('script.google.com'))!.body)
+    assert.equal(sheet.blocked_reason, undefined)
+    assert.equal(sheet.name, 'Sam Rivera')
+    assert.equal(sheet.phone, '615-555-0142')
+    assert.equal(sheet.email, '')
+    assert.equal('cf-turnstile-response' in sheet, false)
+    const emails = captured.filter((c) => c.url.includes('api.resend.com')).map((c) => JSON.parse(c.body))
+    assert.equal(emails.some((email) => String(email.html).includes(TURNSTILE_DUMMY)), false)
+  } finally {
+    disableTurnstile()
+    delete process.env.RESEND_API_KEY
+    delete process.env.PUSHOVER_TOKEN
+    delete process.env.PUSHOVER_USER
+  }
+})
+
+test('a rejected Turnstile token is quiet and does not alert', async () => {
+  const captured: { url: string; body: string }[] = []
+  globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input)
+    captured.push({ url, body: String(init?.body ?? '') })
+    if (url.includes('challenges.cloudflare.com')) {
+      return new Response(JSON.stringify({ success: false, 'error-codes': ['invalid-input-response'] }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+    if (url.includes('script.google.com')) {
+      return new Response('{"ok":true}', { status: 200, headers: { 'Content-Type': 'application/json' } })
+    }
+    return new Response('{}', { status: 200 })
+  }) as typeof fetch
+  process.env.RESEND_API_KEY = 're_test_key'
+  process.env.PUSHOVER_TOKEN = 'po_test_token'
+  process.env.PUSHOVER_USER = 'po_test_user'
+  enableTurnstile()
+  try {
+    const { status, json } = await postContact({
+      name: 'Sarah Whitfield',
+      phone: '615-555-0142',
+      email: 'sarah.turnstile.fail@example.com',
+      body: 'We want to sell our Franklin home.',
+      source: 'sell-page',
+      _loaded: String(Date.now() - 30_000),
+      'cf-turnstile-response': TURNSTILE_DUMMY,
+    }, '198.51.100.82')
+    assert.equal(status, 200)
+    assert.deepEqual(json, { ok: true })
+    assert.equal(captured.some((c) => c.url.includes('api.resend.com')), false)
+    assert.equal(captured.some((c) => c.url.includes('api.pushover.net')), false)
+    const sheet = JSON.parse(captured.find((c) => c.url.includes('script.google.com'))!.body)
+    assert.equal(sheet.blocked_reason, 'turnstile_failed')
+  } finally {
+    disableTurnstile()
+    delete process.env.RESEND_API_KEY
+    delete process.env.PUSHOVER_TOKEN
+    delete process.env.PUSHOVER_USER
+  }
+})
+
+test('a siteverify network error lets a real lead through and still quarantines a fake phone', async () => {
+  function failingVerify() {
+    const captured: { url: string; body: string }[] = []
+    globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input)
+      captured.push({ url, body: String(init?.body ?? '') })
+      if (url.includes('challenges.cloudflare.com')) throw new Error('network down')
+      if (url.includes('script.google.com')) {
+        return new Response('{"ok":true}', { status: 200, headers: { 'Content-Type': 'application/json' } })
+      }
+      if (url.includes('api.resend.com')) {
+        return new Response('{"id":"email-1"}', { status: 200, headers: { 'Content-Type': 'application/json' } })
+      }
+      if (url.includes('api.pushover.net')) {
+        return new Response('{"status":1}', { status: 200, headers: { 'Content-Type': 'application/json' } })
+      }
+      return new Response('{}', { status: 200 })
+    }) as typeof fetch
+    return captured
+  }
+
+  process.env.RESEND_API_KEY = 're_test_key'
+  process.env.PUSHOVER_TOKEN = 'po_test_token'
+  process.env.PUSHOVER_USER = 'po_test_user'
+  enableTurnstile()
+  try {
+    const real = failingVerify()
+    const delivered = await postContact({
+      name: 'Sarah Whitfield',
+      phone: '615-555-0142',
+      email: 'sarah.turnstile.open@example.com',
+      body: 'We are relocating to Franklin and would like to see homes.',
+      source: 'homepage',
+      _loaded: String(Date.now() - 30_000),
+      'cf-turnstile-response': TURNSTILE_DUMMY,
+    }, '198.51.100.83')
+    assert.equal(delivered.status, 200)
+    assert.equal(delivered.json.ok, true)
+    assert.equal(real.some((c) => c.url.includes('api.resend.com')), true)
+    assert.equal(real.some((c) => c.url.includes('api.pushover.net')), true)
+    const realSheet = JSON.parse(real.find((c) => c.url.includes('script.google.com'))!.body)
+    assert.equal(realSheet.blocked_reason, undefined)
+
+    const bot = failingVerify()
+    const quarantined = await postContact({
+      name: 'Test',
+      phone: '79990000000',
+      email: 'another.stranger@company.com',
+      body: 'Test',
+      source: 'contact-page',
+      _loaded: String(Date.now() - 30_000),
+      'cf-turnstile-response': TURNSTILE_DUMMY,
+    }, '198.51.100.84')
+    assert.equal(quarantined.status, 200)
+    assert.equal(quarantined.json.ok, true)
+    assert.equal(bot.some((c) => c.url.includes('api.resend.com')), false)
+    assert.equal(bot.some((c) => c.url.includes('api.pushover.net')), false)
+    const botSheet = JSON.parse(bot.find((c) => c.url.includes('script.google.com'))!.body)
+    assert.equal(botSheet.blocked_reason, 'fake_phone')
+  } finally {
+    disableTurnstile()
+    delete process.env.RESEND_API_KEY
+    delete process.env.PUSHOVER_TOKEN
+    delete process.env.PUSHOVER_USER
+  }
+})
+
+test('the healthcheck test lead skips Turnstile when the keys are set', async () => {
+  const captured = mockDeliveryChannels()
+  process.env.RESEND_API_KEY = 're_test_key'
+  process.env.PUSHOVER_TOKEN = 'po_test_token'
+  process.env.PUSHOVER_USER = 'po_test_user'
+  enableTurnstile()
+  try {
+    const { POST } = await import('./route.ts')
+    const res = await POST(
+      new NextRequest('https://www.joshuafink.com/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-healthcheck-secret': 'test-cron-secret',
+        },
+        body: JSON.stringify({
+          name: 'SYSTEM TEST — morning healthcheck',
+          lead_type: 'system-test',
+          source: 'morning-healthcheck',
+          body: 'Automated daily test of the lead delivery channels.',
+        }),
+      })
+    )
+    assert.equal(res.status, 200)
+    const json = await res.json()
+    assert.equal(json.ok, true)
+    assert.equal(captured.some((c) => c.url.includes('challenges.cloudflare.com')), false)
+    const sheet = JSON.parse(captured.find((c) => c.url.includes('script.google.com'))!.body)
+    assert.equal(sheet.system_test, 'true')
+    assert.equal(sheet.blocked_reason, undefined)
+    assert.equal(captured.some((c) => c.url.includes('api.pushover.net')), true)
+    assert.equal(captured.some((c) => c.url.includes('api.resend.com')), false)
+  } finally {
+    disableTurnstile()
+    delete process.env.RESEND_API_KEY
+    delete process.env.PUSHOVER_TOKEN
+    delete process.env.PUSHOVER_USER
+  }
+})
+
+test('a fixable name is a 400 and does not spend the Turnstile token', async () => {
+  const captured = mockDeliveryChannels()
+  enableTurnstile()
+  try {
+    const { status, json } = await postContact({
+      name: 'J',
+      phone: '615-555-0142',
+      email: 'short.name.turnstile@example.com',
+      body: 'Looking in Franklin.',
+      source: 'contact-page',
+      _loaded: String(Date.now() - 20_000),
+      'cf-turnstile-response': TURNSTILE_DUMMY,
+    }, '198.51.100.85')
+    assert.equal(status, 400)
+    assert.equal(json.ok, undefined)
+    assert.equal(captured.some((c) => c.url.includes('challenges.cloudflare.com')), false)
+    assert.equal(captured.some((c) => c.url.includes('script.google.com')), false)
+  } finally {
+    disableTurnstile()
   }
 })

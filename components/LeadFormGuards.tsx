@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import TurnstileWidget from '@/components/TurnstileWidget'
 
 /**
  * Shared spam traps for every lead form.
@@ -54,6 +55,8 @@ export default function LeadFormGuards() {
         />
       </div>
       <input type="hidden" name="_loaded" value={startedAt} autoComplete="off" />
+      {/* Zero-size host. Renders nothing until NEXT_PUBLIC_TURNSTILE_SITE_KEY is set. */}
+      <TurnstileWidget />
     </>
   )
 }
