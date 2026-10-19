@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-10-18T12:31:28.737Z
+// AUTO-GENERATED — Last synced: 2026-10-19T15:22:59.910Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -32,7 +32,7 @@ export interface Listing {
 
 // Mirrors the header timestamp so server components can compute sync staleness
 // without parsing comments. Updated by scripts/fetch-images.mjs each sync.
-export const listingsSyncedAt = "2026-10-18T12:31:28.737Z";
+export const listingsSyncedAt = "2026-10-19T15:22:59.910Z";
 
 export const listings: Listing[] = [
   {
@@ -246,12 +246,12 @@ export const listings: Listing[] = [
   },
   {
     address: "4874 Sparta Pike",
-    city: "Watertown, TN 37184 | MLS #3319962",
+    city: "Watertown, TN 37184",
     price: 314500,
     beds: 3,
     baths: 1,
     sqft: 1248,
-    status: "Active",
+    status: "Active Under Contract",
     compassUrl: "https://www.compass.com/homedetails/4874-Sparta-Pike-Watertown-TN-37184/TMU6R_pid/",
     imageUrl: "https://www.compass.com/m/9271db1e1cbdb146eb498cd63a192c09a438f39c3b9627023b0cbda6f044a677/2048x1536.webp",
     photoUrls: [
