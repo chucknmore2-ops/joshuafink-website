@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { suburbs } from './suburbs.ts'
-import { marketConditionSentence, marketLean, type MarketLeanInput } from './market-lean.ts'
+import { marketConditionPhrase, marketConditionSentence, marketLean, type MarketLeanInput } from './market-lean.ts'
 
 const CENSUS =
   'Population is not what is loosening that inventory: the April 1, 2020 Census counted 45,373 residents, and the U.S. Census Bureau estimates 45,313 as of July 1, 2025, a change of -0.1% from the April 1, 2020 estimates base (U.S. Census Bureau QuickFacts; Population Estimates, Vintage 2025).'
@@ -36,13 +36,23 @@ test('marketLean is the market report rule for days on market and price change',
     [{ avgDaysOnMarket: 40, yoyChange: '+12.43%' }, 'Balanced / Buyer-Friendly'],
     [{ avgDaysOnMarket: 20, yoyChange: '+1%' }, 'Balanced / Buyer-Friendly'],
   ]
+  const phrase: Record<string, string> = {
+    'Strong Seller Market': "a strong seller's market",
+    'Seller-Favored': 'a seller-favoring market',
+    'Balanced / Buyer-Friendly': 'a balanced to buyer-friendly market',
+    'Healthy / Balanced': 'a healthy, balanced market',
+    Balanced: 'a balanced market',
+  }
   for (const [input, lean] of cases) {
     assert.equal(marketLean(input).lean, lean)
-    const sentence = marketConditionSentence(input)
-    assert.equal(sentence, `The market is currently ${lean.toLowerCase()}.`)
+    assert.equal(marketConditionPhrase(lean), phrase[lean])
+    const sentence = marketConditionSentence({ ...input, name: 'Brentwood' })
+    assert.equal(sentence, `Brentwood is currently ${phrase[lean]}.`)
+    assert.doesNotMatch(sentence, /\//)
     assert.doesNotMatch(sentence, /\d/)
   }
   assert.equal(marketLean(null).lean, 'Balanced')
+  assert.equal(marketConditionPhrase('Balanced'), 'a balanced market')
 })
 
 test('Brentwood context sentence follows the same label as the summary', () => {
@@ -53,7 +63,8 @@ test('Brentwood context sentence follows the same label as the summary', () => {
   assert.equal(brentwood.avgDaysOnMarket, 63)
   assert.equal(brentwood.yoyChange, '+5.1%')
   assert.equal(lean.lean, 'Balanced / Buyer-Friendly')
-  assert.equal(sentence, 'The market is currently balanced / buyer-friendly.')
+  assert.equal(sentence, 'Brentwood is currently a balanced to buyer-friendly market.')
+  assert.doesNotMatch(sentence, /\//)
   assert.equal(brentwood.description.split(sentence).length - 1, 1)
   assert.doesNotMatch(brentwood.description, /seller-favoring/)
   assert.doesNotMatch(brentwood.description, /Inventory remains tight relative to demand/)

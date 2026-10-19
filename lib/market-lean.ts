@@ -23,12 +23,30 @@ export function marketLean(s: MarketLeanInput | null | undefined): { lean: strin
 // exists, so the sentence reads that record's own days on market and YoY.
 export const MARKET_CONDITION = '{{marketCondition}}'
 
-/** One sentence. Uses the label only — no extra stats. */
-export function marketConditionSentence(s: MarketLeanInput): string {
-  return `The market is currently ${marketLean(s).lean.toLowerCase()}.`
+// Prose for the context paragraph. The summary badge keeps `marketLean().lean`
+// (including the slash). These phrases are the same labels written as a sentence.
+const MARKET_PHRASE: Record<string, string> = {
+  'Strong Seller Market': "a strong seller's market",
+  'Seller-Favored': 'a seller-favoring market',
+  'Balanced / Buyer-Friendly': 'a balanced to buyer-friendly market',
+  'Healthy / Balanced': 'a healthy, balanced market',
+  Balanced: 'a balanced market',
 }
 
-export function applyMarketConditionSentence<T extends MarketLeanInput & { description: string }>(suburb: T): T {
+export function marketConditionPhrase(lean: string): string {
+  const phrase = MARKET_PHRASE[lean]
+  if (!phrase) throw new Error(`No prose phrase for market label: ${lean}`)
+  return phrase
+}
+
+/** One sentence for the context paragraph. No extra stats, no slash label. */
+export function marketConditionSentence(s: MarketLeanInput & { name: string }): string {
+  return `${s.name} is currently ${marketConditionPhrase(marketLean(s).lean)}.`
+}
+
+export function applyMarketConditionSentence<
+  T extends MarketLeanInput & { description: string; name: string },
+>(suburb: T): T {
   if (!suburb.description.includes(MARKET_CONDITION)) return suburb
   suburb.description = suburb.description.split(MARKET_CONDITION).join(marketConditionSentence(suburb))
   return suburb
