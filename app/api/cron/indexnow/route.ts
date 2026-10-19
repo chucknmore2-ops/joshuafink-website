@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getAllSiteUrls } from '@/lib/site-urls'
+import { getSiteUrlCatalog, getSiteUrlsModifiedSince, INDEXNOW_LOOKBACK_MS } from '@/lib/site-urls'
 
 export const dynamic = 'force-dynamic'
 
@@ -11,10 +11,11 @@ const INDEXNOW_KEY = '7e3a8b9c4d5f6a2e1b0c9d8e7f5a4b3c'
 // Hardcoded upstream — never accept request-controlled values here (SSRF).
 const INDEXNOW_ENDPOINT = 'https://api.indexnow.org/indexnow'
 
-// URL set comes from lib/site-urls.ts — the same source the XML sitemap uses —
-// so every indexable page (cash-offer cities, neighborhood guides, school
-// pages, market reports, comparisons) gets submitted, not just a hand-kept
-// subset. Add new page types in lib/site-urls.ts, not here.
+// URL set comes from lib/site-urls.ts — the same source the XML sitemap uses.
+// Only URLs with a real lastmod inside the lookback window are submitted.
+// A nightly ping of all ~264 URLs was recrawling pages that had not changed.
+// Add new page types in lib/site-urls.ts, and set lastModified when the
+// content actually changes, or IndexNow will not hear about them.
 
 export async function GET(request: Request) {
   const expected = process.env.CRON_SECRET
@@ -34,7 +35,18 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 
-  const urlList = getAllSiteUrls()
+  const since = new Date(Date.now() - INDEXNOW_LOOKBACK_MS)
+  const urlList = getSiteUrlsModifiedSince(since)
+  const catalog = getSiteUrlCatalog().length
+
+  if (urlList.length === 0) {
+    return NextResponse.json({
+      submitted: 0,
+      catalog,
+      since: since.toISOString(),
+      at: new Date().toISOString(),
+    })
+  }
 
   const payload = {
     // MUST match the host of every URL in urlList. IndexNow silently ignores
@@ -65,6 +77,8 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       submitted: urlList.length,
+      catalog,
+      since: since.toISOString(),
       status: res.status,
       at: new Date().toISOString(),
     })

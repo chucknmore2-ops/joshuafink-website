@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { blogDateToUtcDate, blogPosts } from '@/lib/blog'
 
 export const dynamic = 'force-static'
-export const revalidate = 3600 // 1 hour
+export const revalidate = 86400 // 1 day — blog posts change with a deploy, not hourly
 
 const SITE = 'https://www.joshuafink.com'
 const FEED_TITLE = 'Joshua Fink | Compass Real Estate — Middle Tennessee Blog'
@@ -70,7 +70,7 @@ ${items}
     status: 200,
     headers: {
       'Content-Type': 'application/rss+xml; charset=utf-8',
-      'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+      'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800',
     },
   })
 }

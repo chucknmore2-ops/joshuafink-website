@@ -1,9 +1,10 @@
 name: Instant IndexNow on content change
 
 # Triggers the /api/cron/indexnow endpoint immediately after Vercel deploys a
-# change to blog/listing/suburb data. Today the nightly cron catches content
-# changes within 24 hours; this workflow shortens that to ~5 minutes so new
-# blog posts + listings reach Bing / Yandex within the same day.
+# change to blog/listing/suburb data. The endpoint submits only catalog URLs
+# whose real lastmod is inside the last 30 hours, not the full sitemap.
+# The nightly cron is the same filter, so a page that missed this ping is
+# still submitted overnight if its lastmod is inside that window.
 #
 # REQUIRED GitHub repo secret:
 #   CRON_SECRET — must match the value in Vercel project env. Set at:

@@ -33,10 +33,9 @@ export interface SiteUrlEntry {
  *
  * Both the XML sitemap (`app/sitemap.ts`) and the IndexNow submitter
  * (`app/api/cron/indexnow/route.ts`) derive their URL sets from this list so
- * the two can never drift. Previously IndexNow hand-maintained a shorter list
- * and silently omitted cash-offer cities, neighborhood guides, school pages,
- * market reports and comparison pages from instant Bing/Yandex submission —
- * those pages were in the sitemap but never got the fast-indexing ping.
+ * the two can never drift. IndexNow submits only entries whose lastModified
+ * falls inside its lookback window. A page with no lastModified stays in the
+ * sitemap and is not pinged until it has a real content date.
  *
  * When you add a new programmatic page type, add it here once and both
  * consumers pick it up automatically.
@@ -201,7 +200,25 @@ export function absoluteUrl(path: string): string {
   return path === '/' ? SITE_ORIGIN : `${SITE_ORIGIN}${path}`
 }
 
-/** Absolute URLs for every catalog entry — used by the IndexNow submitter. */
+/** Absolute URLs for every catalog entry. */
 export function getAllSiteUrls(): string[] {
   return getSiteUrlCatalog().map((entry) => absoluteUrl(entry.path))
+}
+
+/**
+ * IndexNow lookback. The cron runs at 02:00 UTC. Thirty hours covers that
+ * run plus a deploy that lands just after the previous night's ping, without
+ * resubmitting the whole catalog.
+ */
+export const INDEXNOW_LOOKBACK_MS = 30 * 60 * 60 * 1000
+
+/**
+ * Catalog URLs whose real lastmod is at or after `since`. Pages with no
+ * lastmod are omitted — a missing date means we do not know they changed.
+ */
+export function getSiteUrlsModifiedSince(since: Date): string[] {
+  const cutoff = since.getTime()
+  return getSiteUrlCatalog()
+    .filter((entry) => entry.lastModified != null && entry.lastModified.getTime() >= cutoff)
+    .map((entry) => absoluteUrl(entry.path))
 }

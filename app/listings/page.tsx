@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
+import QuietLink from '@/components/QuietLink'
 import ListingCard from '@/components/ListingCard'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
@@ -171,30 +171,30 @@ export default function ListingsPage() {
               {cityLinks.map(({ slug, name, guide }) => (
                 <li key={slug} className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                   <span className="font-bold text-black">{name}:</span>
-                  <Link
+                  <QuietLink
                     href={`/buy/${slug}`}
                     className="text-black underline-offset-4 hover:underline"
                   >
                     Homes for sale
-                  </Link>
+                  </QuietLink>
                   {guide && (
                     <>
                       <span aria-hidden className="text-neutral-300">·</span>
-                      <Link
+                      <QuietLink
                         href={`/neighborhoods/${guide.slug}`}
                         className="text-black underline-offset-4 hover:underline"
                       >
                         {guide.name} guide
-                      </Link>
+                      </QuietLink>
                     </>
                   )}
                   <span aria-hidden className="text-neutral-300">·</span>
-                  <Link
+                  <QuietLink
                     href={`/cash-offer/${slug}`}
                     className="text-black underline-offset-4 hover:underline"
                   >
                     {slug === 'nashville-tn' ? 'Nashville cash offer' : 'Cash offer'}
-                  </Link>
+                  </QuietLink>
                 </li>
               ))}
             </ul>

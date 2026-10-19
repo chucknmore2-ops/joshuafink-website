@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "ignoreCommand": "node scripts/vercel-ignore-command.mjs",
   "crons": [
     {
       "path": "/api/cron/indexnow",

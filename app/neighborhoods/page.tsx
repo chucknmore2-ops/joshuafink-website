@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import QuietLink from '@/components/QuietLink'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import { neighborhoods } from '@/lib/neighborhoods'
@@ -269,7 +270,7 @@ export default function NeighborhoodsIndexPage() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {items.map((n) => (
-                  <Link
+                  <QuietLink
                     key={n.slug}
                     href={`/neighborhoods/${n.slug}`}
                     className="block border border-[#E8E8E8] p-6 hover:border-black transition-colors bg-white"
@@ -283,7 +284,7 @@ export default function NeighborhoodsIndexPage() {
                       <span className="font-semibold text-black">{n.priceBand}</span>
                       <span className="text-[#A0A0A0]">Read guide →</span>
                     </div>
-                  </Link>
+                  </QuietLink>
                 ))}
               </div>
             </div>

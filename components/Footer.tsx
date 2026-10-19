@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import QuietLink from '@/components/QuietLink'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import { OFFICE_ADDRESS } from '@/lib/office'
 
@@ -127,12 +127,12 @@ export default function Footer() {
                 { href: '/neighborhoods/franklin-tn', label: 'Franklin Neighborhoods' },
               ].map((link) => (
                 <li key={link.href}>
-                  <Link
+                  <QuietLink
                     href={link.href}
                     className="text-sm text-[#A0A0A0] hover:text-white transition-colors"
                   >
                     {link.label}
-                  </Link>
+                  </QuietLink>
                 </li>
               ))}
             </ul>
@@ -165,12 +165,12 @@ export default function Footer() {
                 { href: '/sell/la-vergne-tn', label: 'Sell in La Vergne' },
               ].map((link) => (
                 <li key={link.href}>
-                  <Link
+                  <QuietLink
                     href={link.href}
                     className="text-sm text-[#A0A0A0] hover:text-white transition-colors"
                   >
                     {link.label}
-                  </Link>
+                  </QuietLink>
                 </li>
               ))}
             </ul>
@@ -193,12 +193,12 @@ export default function Footer() {
                 { href: '/privacy', label: 'Privacy Policy' },
               ].map((link) => (
                 <li key={link.href}>
-                  <Link
+                  <QuietLink
                     href={link.href}
                     className="text-sm text-[#A0A0A0] hover:text-white transition-colors"
                   >
                     {link.label}
-                  </Link>
+                  </QuietLink>
                 </li>
               ))}
             </ul>

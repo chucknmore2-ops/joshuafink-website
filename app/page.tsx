@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import QuietLink from '@/components/QuietLink'
 import ListingCard from '@/components/ListingCard'
 import CinematicHero from '@/components/CinematicHero'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
@@ -350,30 +351,30 @@ export default function HomePage() {
                 key={slug}
                 className="rounded-2xl border border-neutral-200 bg-white px-5 py-4 text-sm"
               >
-                <Link
+                <QuietLink
                   href={`/buy/${slug}`}
                   className="block font-semibold text-black hover:underline"
                 >
                   {label}
-                </Link>
-                <Link
+                </QuietLink>
+                <QuietLink
                   href={`/sell/${slug}`}
                   className="mt-1 block text-xs text-neutral-500 hover:text-black"
                 >
                   Sell your home →
-                </Link>
-                <Link
+                </QuietLink>
+                <QuietLink
                   href={`/cash-offer/${slug}`}
                   className="mt-1 block text-xs text-neutral-500 hover:text-black"
                 >
                   {slug === 'nashville-tn' ? 'Nashville cash offer →' : 'Get a cash offer →'}
-                </Link>
-                <Link
+                </QuietLink>
+                <QuietLink
                   href="/neighborhoods"
                   className="mt-1 block text-xs text-neutral-500 hover:text-black"
                 >
                   Neighborhood guides →
-                </Link>
+                </QuietLink>
               </div>
             ))}
           </div>
@@ -412,20 +413,20 @@ export default function HomePage() {
                 ['sylvan-park-nashville-tn', 'Sylvan Park (Nashville)'],
                 ['the-gulch-nashville-tn', 'The Gulch (Nashville)'],
               ].map(([slug, label]) => (
-                <Link
+                <QuietLink
                   key={slug}
                   href={`/neighborhoods/${slug}`}
                   className="rounded-full border border-neutral-200 bg-white px-4 py-2 text-xs font-semibold text-black transition-colors hover:bg-black hover:text-white hover:border-black"
                 >
                   {label}
-                </Link>
+                </QuietLink>
               ))}
-              <Link
+              <QuietLink
                 href="/neighborhoods"
                 className="rounded-full border border-black bg-black px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-white hover:text-black"
               >
                 All neighborhood guides →
-              </Link>
+              </QuietLink>
             </div>
           </div>
         </div>
