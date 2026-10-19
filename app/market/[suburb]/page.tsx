@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { marketLean } from '@/lib/market-lean'
 import { getSuburb, getAllSuburbSlugs, marketStatsLastUpdated, marketStatsSource, suburbs, yoyColor, yoyMovement, yoyValue, formatStatsDate } from '@/lib/suburbs'
 import { cashOfferPath } from '@/lib/cash-offer-cities'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
@@ -45,17 +46,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: 'article',
     },
   }
-}
-
-// Derive seller/buyer leaning from DOM + YoY signal. Keeps the UI honest and
-// hyperlocal rather than a one-size-fits-all "great time to sell" message.
-function marketLean(s: ReturnType<typeof getSuburb>) {
-  if (!s) return { lean: 'Balanced', tone: '#A0A0A0' as const }
-  const yoy = parseFloat(s.yoyChange.replace('%', '').replace('+', '')) || 0
-  if (s.avgDaysOnMarket <= 22 && yoy >= 4) return { lean: 'Strong Seller Market', tone: '#16a34a' as const }
-  if (s.avgDaysOnMarket <= 30 && yoy >= 3) return { lean: 'Seller-Favored', tone: '#16a34a' as const }
-  if (s.avgDaysOnMarket >= 40 || yoy < 2) return { lean: 'Balanced / Buyer-Friendly', tone: '#0A1628' as const }
-  return { lean: 'Healthy / Balanced', tone: '#0A1628' as const }
 }
 
 function neighborSuburbs(slug: string) {
