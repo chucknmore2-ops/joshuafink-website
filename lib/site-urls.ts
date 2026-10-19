@@ -24,8 +24,27 @@ export interface SiteUrlEntry {
   path: string
   priority: number
   changeFrequency: ChangeFrequency
-  /** Only set where a real modification date exists (blog posts). */
+  /** Only set where a real modification date exists. */
   lastModified?: Date
+}
+
+function parseContentInstant(raw: string | undefined): Date | undefined {
+  if (!raw) return undefined
+  const parsed = new Date(raw.trim())
+  return Number.isNaN(parsed.getTime()) ? undefined : parsed
+}
+
+/**
+ * Sitemap lastmod for one listing. Uses the date stored on that home:
+ * the sync that last changed its public fields, or the first sync that
+ * saw it. Never listingsSyncedAt — that clock moves for every row when
+ * any listing in the file changes.
+ */
+export function listingSitemapLastModified(
+  listing: { contentUpdated?: string; firstSeen?: string } | undefined,
+): Date | undefined {
+  if (!listing) return undefined
+  return parseContentInstant(listing.contentUpdated) ?? parseContentInstant(listing.firstSeen)
 }
 
 /**
@@ -163,6 +182,8 @@ export function getSiteUrlCatalog(): SiteUrlEntry[] {
   // These capture address-level search intent on joshuafink.com instead of
   // ceding it to compass.com. Active inventory turns over fast (daily);
   // sold proof pages change only when the Compass sold sync rewrites the file.
+  // lastmod is this home's own date. Sold cards have no stored date, so they
+  // stay undated instead of borrowing the active-inventory sync clock.
   const listingDetailPages: SiteUrlEntry[] = Array.from(listingDetailSlugs).map((slug) => {
     const listing = getListingBySlug(slug)
     const sold = listing ? isSoldStatus(listing.status) : false
@@ -170,7 +191,7 @@ export function getSiteUrlCatalog(): SiteUrlEntry[] {
       path: `/listings/${slug}`,
       priority: sold ? 0.65 : 0.7,
       changeFrequency: sold ? 'monthly' : 'daily',
-      lastModified: listing?.lastVerified ? new Date(listing.lastVerified) : undefined,
+      lastModified: listingSitemapLastModified(listing),
     }
   })
 

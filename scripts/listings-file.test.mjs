@@ -16,6 +16,7 @@ import {
   salvagePriorListing,
   decideFetchImagesWrite,
   firstSeenForListing,
+  contentUpdatedForListing,
   openHouseFromCardText,
   renderActiveListingsFile,
   listingSyncIsTimestampOnly,
@@ -198,6 +199,37 @@ test('firstSeenForListing keeps the original sync time', () => {
   );
 });
 
+test('contentUpdatedForListing does not copy the sync clock onto an unchanged listing', () => {
+  const sync = '2026-10-19T15:22:59.910Z';
+  const prior = {
+    address: '511 Wanda Dr',
+    city: 'Nashville, TN 37210',
+    price: 414500,
+    status: 'Active Under Contract',
+    firstSeen: '2026-03-20T14:01:35.000Z',
+  };
+  const same = {
+    address: '511 Wanda Dr',
+    city: 'Nashville, TN 37210',
+    price: 414500,
+    status: 'Active Under Contract',
+  };
+  assert.equal(contentUpdatedForListing(prior, same, sync), undefined);
+  assert.equal(contentUpdatedForListing(null, same, sync), undefined);
+  assert.equal(
+    contentUpdatedForListing({ ...prior, contentUpdated: '2026-10-06T15:02:04.000Z' }, same, sync),
+    '2026-10-06T15:02:04.000Z',
+  );
+  assert.equal(
+    contentUpdatedForListing(prior, { ...same, status: 'Active Under Contract', price: 400000 }, sync),
+    sync,
+  );
+  assert.equal(
+    contentUpdatedForListing(prior, { ...same, status: 'Active' }, sync),
+    sync,
+  );
+});
+
 test('openHouseFromCardText returns only a line Compass showed', () => {
   assert.equal(openHouseFromCardText(''), '');
   assert.equal(openHouseFromCardText('Active\n3 beds'), '');
@@ -286,6 +318,31 @@ test('renderActiveListingsFile writes a capped photoUrls array the loader can re
   assert.equal(listing.address, '1 Main St');
   assert.equal(listing.firstSeen, '2026-05-11T12:00:26.000Z');
   assert.equal(listing.openHouse, 'Open House Sat 1-3');
+  assert.equal(listing.contentUpdated, undefined);
   assert.match(file, /firstSeen\?: string/);
+  assert.match(file, /contentUpdated\?: string/);
   assert.match(file, /openHouse\?: string/);
+  assert.equal(file.includes('contentUpdated: '), false);
+});
+
+test('renderActiveListingsFile keeps a per-listing contentUpdated', () => {
+  const file = renderActiveListingsFile(
+    [{
+      address: '4874 Sparta Pike',
+      city: 'Watertown, TN 37184',
+      price: 314500,
+      status: 'Active Under Contract',
+      compassUrl: 'https://www.compass.com/homedetails/4874-sparta/',
+      firstSeen: '2026-10-06T15:02:04.000Z',
+      contentUpdated: '2026-10-19T15:22:59.910Z',
+    }],
+    '2026-10-19T15:22:59.910Z',
+    'https://www.compass.com/agents/joshua-fink/',
+  );
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'listings-content-updated-'));
+  const out = path.join(dir, 'listings.ts');
+  fs.writeFileSync(out, file);
+  const listing = loadExistingListingsMap(out, 'listings').values().next().value;
+  assert.equal(listing.contentUpdated, '2026-10-19T15:22:59.910Z');
+  assert.equal(listing.firstSeen, '2026-10-06T15:02:04.000Z');
 });

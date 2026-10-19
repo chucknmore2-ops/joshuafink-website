@@ -21,6 +21,7 @@ import {
   salvagePriorListing,
   decideFetchImagesWrite,
   firstSeenForListing,
+  contentUpdatedForListing,
   openHouseFromCardText,
   normalizeCompassUrl,
   renderActiveListingsFile,
@@ -238,6 +239,9 @@ async function main() {
   for (const l of listings) {
     const prior = priorByUrl.get(normalizeCompassUrl(l.compassUrl));
     l.firstSeen = firstSeenForListing(prior, timestamp);
+    const contentUpdated = contentUpdatedForListing(prior, l, timestamp);
+    if (contentUpdated) l.contentUpdated = contentUpdated;
+    else delete l.contentUpdated;
   }
   const tsContent = renderActiveListingsFile(listings, timestamp, COMPASS_URL);
 

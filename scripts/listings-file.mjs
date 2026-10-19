@@ -80,6 +80,54 @@ export function firstSeenForListing(prior, syncTimestamp) {
   return syncTimestamp;
 }
 
+const LISTING_CONTENT_FIELDS = [
+  'address',
+  'city',
+  'price',
+  'beds',
+  'baths',
+  'sqft',
+  'acres',
+  'status',
+  'note',
+  'imageUrl',
+  'openHouse',
+];
+
+/** Public fields that change the listing page. Ignores sync bookkeeping. */
+function listingContentToken(listing) {
+  if (!listing || typeof listing !== 'object') return '';
+  const fields = LISTING_CONTENT_FIELDS.map((key) => {
+    const value = listing[key];
+    if (value === undefined || value === null || value === '') return '';
+    return String(value);
+  });
+  const photos = Array.isArray(listing.photoUrls) ? listing.photoUrls : [];
+  return JSON.stringify([...fields, photos]);
+}
+
+export function listingContentChanged(prior, listing) {
+  if (!prior) return true;
+  return listingContentToken(prior) !== listingContentToken(listing);
+}
+
+/**
+ * When this listing's public fields last changed.
+ * A new listing omits the field — firstSeen is that date.
+ * An unchanged listing keeps a prior contentUpdated and does not inherit
+ * the shared sync clock. A real field change is stamped with this sync.
+ * Returns undefined when there is nothing new to write.
+ */
+export function contentUpdatedForListing(prior, listing, syncTimestamp) {
+  if (!prior) return undefined;
+  if (!listingContentChanged(prior, listing)) {
+    const kept = typeof prior.contentUpdated === 'string' ? prior.contentUpdated.trim() : '';
+    if (kept && !Number.isNaN(Date.parse(kept))) return kept;
+    return undefined;
+  }
+  return syncTimestamp;
+}
+
 /**
  * Open-house line from a Compass card, or '' when the card doesn't say so.
  * Does not invent a date or time.
@@ -132,6 +180,8 @@ const PHOTO_URL_CAP = 30;
 /**
  * Render lib/listings.ts. photoUrls is optional and capped. lastVerified stays
  * a reference to listingsSyncedAt so every row shares the file's sync time.
+ * contentUpdated is per listing and is omitted until that listing's public
+ * fields actually change.
  */
 export function renderActiveListingsFile(listings, timestamp, sourceUrl) {
   const listingsCode = listings.map((l) => {
@@ -153,6 +203,7 @@ export function renderActiveListingsFile(listings, timestamp, sourceUrl) {
     }
     if (l.openHouse) parts.push(`    openHouse: ${JSON.stringify(l.openHouse)}`);
     if (l.firstSeen) parts.push(`    firstSeen: ${JSON.stringify(l.firstSeen)}`);
+    if (l.contentUpdated) parts.push(`    contentUpdated: ${JSON.stringify(l.contentUpdated)}`);
     parts.push(`    lastVerified: listingsSyncedAt`);
     return `  {\n${parts.join(',\n')},\n  }`;
   }).join(',\n');
@@ -182,6 +233,9 @@ export interface Listing {
   // ISO timestamp of the first Compass sync that included this listing.
   // Preserved across later syncs. Not a list date and not a market stat.
   firstSeen?: string;
+  // ISO timestamp of the last sync that changed this listing's public fields.
+  // Omitted until a change after firstSeen. Not the shared listingsSyncedAt clock.
+  contentUpdated?: string;
   // Open-house line copied from the Compass card when one is shown.
   openHouse?: string;
 }
