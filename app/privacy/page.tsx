@@ -15,7 +15,7 @@ export default function PrivacyPage() {
         <div className="max-w-7xl mx-auto">
           <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">Legal</p>
           <h1 className="text-5xl font-black tracking-tight">Privacy Policy</h1>
-          <p className="text-[#A0A0A0] text-lg mt-2">Last updated: September 2, 2026</p>
+          <p className="text-[#A0A0A0] text-lg mt-2">Last updated: October 19, 2026</p>
         </div>
       </div>
 
@@ -32,12 +32,12 @@ export default function PrivacyPage() {
 
         <h2 className="text-xl font-black text-black mt-8 mb-4">Cookies</h2>
         <p className="text-[#444] leading-relaxed mb-4">
-          This website may use cookies to improve your browsing experience. You can disable cookies in your browser settings at any time.
+          This website may use cookies to improve your browsing experience. You can disable cookies in your browser settings at any time. Lead forms may also use Cloudflare Turnstile, which sets its own cookie to tell a person from an automated submission.
         </p>
 
         <h2 className="text-xl font-black text-black mt-8 mb-4">Third-Party Services</h2>
         <p className="text-[#444] leading-relaxed mb-4">
-          Contact and inquiry forms on this site are submitted to the site&apos;s own systems, which deliver them by email and to internal lead tools so we can respond to your inquiry. Listings are sourced from Compass Real Estate. If you check the listing-alert box, we email you about new Compass listings and price drops. Every one of those emails has a one-click unsubscribe. We do not add you to that list unless the box is checked, or you click yes on a permission email.
+          Contact and inquiry forms on this site are submitted to the site&apos;s own systems, which deliver them by email and to internal lead tools so we can respond to your inquiry. When the spam check is turned on, the form also sends a verification token to Cloudflare (Turnstile) along with the IP address of the submission. Cloudflare uses that only to say whether the submission looks automated. Listings are sourced from Compass Real Estate. If you check the listing-alert box, we email you about new Compass listings and price drops. Every one of those emails has a one-click unsubscribe. We do not add you to that list unless the box is checked, or you click yes on a permission email.
         </p>
 
         <h2 className="text-xl font-black text-black mt-8 mb-4">Contact</h2>

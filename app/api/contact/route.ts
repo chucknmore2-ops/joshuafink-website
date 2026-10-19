@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { classifyLead } from '@/lib/classify-lead'
 import { recordEmailSubmission, recordIpSubmission } from '@/lib/lead-rate-limit'
 import { botChallengeMode } from '@/lib/bot-challenge'
+import { TURNSTILE_FIELD, verifyTurnstile } from '@/lib/turnstile'
 import { ensureLeadAttribution, LEAD_ATTRIBUTION_FIELDS } from '@/lib/attribution'
 import { sendEmail, activeEmailProvider, fetchWithTimeout } from '@/lib/send-email'
 import { applyAlertFields, listingAlertOptIn } from '@/lib/listing-alerts'
@@ -302,7 +303,7 @@ async function forwardToJoshua(lead: Record<string, string>, testMode = false): 
     // Empty attribution cells (a direct visitor has no gclid) would add a
     // couple dozen blank rows. Non-empty values still render. Other fields
     // keep their previous "show even if blank" behavior.
-    .filter(([k, v]) => !k.startsWith('_') && k !== 'website' && !(ATTRIBUTION_FIELD_SET.has(k) && v.trim() === ''))
+    .filter(([k, v]) => !k.startsWith('_') && k !== 'website' && k !== TURNSTILE_FIELD && !(ATTRIBUTION_FIELD_SET.has(k) && v.trim() === ''))
     .map(([k, v]) => `<tr><td style="padding:6px 12px;color:#666;font-size:13px;width:140px;vertical-align:top;">${escapeHtml(k)}</td><td style="padding:6px 12px;font-size:13px;">${escapeHtml(v)}</td></tr>`)
     .join('')
 
@@ -347,7 +348,7 @@ async function pushToSheet(
   // Apps Script appends any of them that the CRM tab doesn't have yet;
   // it does not depend on key order.
   const clean = Object.fromEntries(
-    Object.entries(lead).filter(([k]) => !k.startsWith('_') && k !== 'website')
+    Object.entries(lead).filter(([k]) => !k.startsWith('_') && k !== 'website' && k !== TURNSTILE_FIELD)
   )
 
   const payload: Record<string, string> = {
@@ -555,9 +556,13 @@ function noteBotChallengeConfig(): void {
   const mode = botChallengeMode()
   if (mode === 'off' || botChallengeWarned) return
   botChallengeWarned = true
-  // The flag is recognized so a later change can enforce Turnstile or BotID.
-  // There is no widget on the forms, so this must not drop or challenge anyone.
-  console.warn(`LEAD_BOT_CHALLENGE=${mode} is not enforced (no widget on the forms). Spam scoring still applies.`)
+  // Turnstile is enforced by TURNSTILE_SECRET_KEY + NEXT_PUBLIC_TURNSTILE_SITE_KEY,
+  // not by this flag. BotID is still a no-op.
+  if (mode === 'turnstile') {
+    console.warn('LEAD_BOT_CHALLENGE=turnstile is ignored. Turnstile runs only when both Turnstile keys are set.')
+    return
+  }
+  console.warn(`LEAD_BOT_CHALLENGE=${mode} is not enforced. Spam scoring still applies.`)
 }
 
 export async function POST(req: NextRequest) {
@@ -607,6 +612,10 @@ export async function POST(req: NextRequest) {
     const lead = Object.fromEntries(
       Object.entries(form).map(([k, v]) => [k, String(v)])
     ) as Record<string, string>
+    // Pull the token off the lead before any log, email, or sheet row.
+    // Classification still sees the honeypot and the mount timestamp.
+    const turnstileToken = (lead[TURNSTILE_FIELD] || '').trim()
+    delete lead[TURNSTILE_FIELD]
 
     if (!lead.email) {
       lead.email = ''
@@ -638,6 +647,43 @@ export async function POST(req: NextRequest) {
       recentEmailSubmissions,
     })
 
+    if (verdict.kind === 'invalid') {
+      // A real person with a fixable mistake. Tell them, so they can correct it
+      // — every form already renders `error`. Checked before Turnstile so a
+      // typo does not spend a single-use token.
+      console.log(`Lead rejected as invalid (${verdict.reason}): ${JSON.stringify(lead)}`)
+      return NextResponse.json({ error: verdict.message }, { status: 400 })
+    }
+
+    // Healthcheck test mode — see CRON_SECRET above. A wrong or absent header
+    // is simply a normal visitor lead; nothing leaks whether the secret matched.
+    // The daily SYSTEM TEST posts with no widget, so it skips Turnstile.
+    const isHealthcheck =
+      CRON_SECRET !== '' && req.headers.get('x-healthcheck-secret') === CRON_SECRET
+
+    // Turnstile runs before any sheet write, email, Pushover, or auto-reply.
+    // Honeypot, speed, content, fake-phone, and rate-limit rules still run
+    // below for a lead that passes, or when siteverify itself is unreachable.
+    if (!isHealthcheck) {
+      const turnstile = await verifyTurnstile({
+        token: turnstileToken,
+        remoteIp: ip === 'unknown' ? undefined : ip,
+      })
+      if (!turnstile.ok) {
+        // Quiet failure: same {ok:true} as the honeypot, so a bot learns
+        // nothing. Sheet only — no email, Pushover, auto-reply, or webhooks.
+        console.log(`Lead quarantined (turnstile/${turnstile.reason}): ${JSON.stringify(lead)}`)
+        const quarantined = await pushToSheet(lead, turnstile.reason)
+        if (quarantined.configured && !quarantined.ok) {
+          console.error(`Quarantine sheet write failed (${turnstile.reason}): ${quarantined.detail}`)
+        }
+        return NextResponse.json({ ok: true })
+      }
+      if (!turnstile.skipped && turnstile.failOpen) {
+        console.warn('Turnstile siteverify unavailable; lead continuing to the spam filter')
+      }
+    }
+
     if (verdict.kind === 'bot' || verdict.kind === 'spam') {
       // Honeypot, too-fast, or a high content score. Log the WHOLE submission —
       // if this ever fires on a real person (a browser can autofill the hidden
@@ -657,13 +703,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true })
     }
 
-    if (verdict.kind === 'invalid') {
-      // A real person with a fixable mistake. Tell them, so they can correct it
-      // — every form already renders `error`.
-      console.log(`Lead rejected as invalid (${verdict.reason}): ${JSON.stringify(lead)}`)
-      return NextResponse.json({ error: verdict.message }, { status: 400 })
-    }
-
     if (verdict.kind === 'suspect') {
       // Deliver it anyway, tagged. This field flows automatically into the lead
       // email and the Google Sheet (both enumerate lead fields), and is called
@@ -672,11 +711,6 @@ export async function POST(req: NextRequest) {
       lead.suspected_spam = verdict.reason
       console.log(`Lead flagged as suspect (${verdict.reason}), delivering anyway: ${JSON.stringify(lead)}`)
     }
-
-    // Healthcheck test mode — see CRON_SECRET above. A wrong or absent header
-    // is simply a normal visitor lead; nothing leaks whether the secret matched.
-    const isHealthcheck =
-      CRON_SECRET !== '' && req.headers.get('x-healthcheck-secret') === CRON_SECRET
 
     // ---------- Fire all Joshua-facing channels in parallel ----------
     // Each of these resolves to a ChannelResult and never throws, so we can

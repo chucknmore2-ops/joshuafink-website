@@ -31,9 +31,10 @@ They should roughly agree. What a mismatch means:
 - **CRM rows > GA4** → fine; GA4 misses ad-blocked visitors.
 - **A real person in Blocked** → read `blocked_reason`. `honeypot` means the
   hidden field was filled (often a browser autofill). `too_fast` means the
-  form was sent in under 3 seconds. Anything else is the spam score (a link
-  plus a scam phrase, for example). Call them if they look real, then say so,
-  because the rule may need changing.
+  form was sent in under 3 seconds. `turnstile_failed` means the spam check
+  rejected the submission before any alert. Anything else is the spam score
+  (a link plus a scam phrase, for example). Call them if they look real, then
+  say so, because the rule may need changing.
 - **Both near zero** → it's a traffic/conversion problem, not a plumbing one.
   The plumbing is proven daily by the System tab's test row (sheet +
   Pushover). The test lead does not email the inbox.

@@ -69,7 +69,12 @@ Do not build a second endpoint.
 form (SuburbLeadForm / SellForm / ContactForm / CashOfferForm)
   → POST /api/contact
   → lib/classify-lead.ts      clean | suspect | invalid | bot | spam
-  → invalid:                  400, the visitor can fix it
+  → invalid:                  400, the visitor can fix it (Turnstile token not spent)
+  → Turnstile, only when BOTH NEXT_PUBLIC_TURNSTILE_SITE_KEY and
+    TURNSTILE_SECRET_KEY are set (healthcheck secret skips this):
+       missing or rejected token → Blocked tab, reason turnstile_failed,
+                                   200 {ok:true}, no email, no Pushover
+       siteverify timeout/network/Cloudflare error → fail open, continue
   → bot or spam:              Blocked tab only, then 200 {ok:true}
                               (no email, no Pushover, no webhooks)
   → clean or suspect:
@@ -117,7 +122,7 @@ form (SuburbLeadForm / SellForm / ContactForm / CashOfferForm)
 - **Pushover** — `PUSHOVER_TOKEN` / `PUSHOVER_USER`. This is both the new-lead
   phone alert and the emergency last resort. See landmine #2.
 - **Google Sheet** — Apps Script web app at `GOOGLE_SHEET_WEBHOOK_URL`. Tabs:
-  **CRM** (real leads), **Blocked** (honeypot, too-fast, fake phone, test submissions, rate limit, and scored spam), **System** (daily test lead).
+  **CRM** (real leads), **Blocked** (honeypot, too-fast, fake phone, test submissions, rate limit, scored spam, and `turnstile_failed`), **System** (daily test lead).
   The script answers HTTP 200 for everything, so the route believes the *body*,
   not the status. See `docs/google-sheet-lead-log.md`.
 - **ClickUp** — OFF. Skipped unless `CLICKUP_LEADS_ENABLED=true` *and*
@@ -138,7 +143,9 @@ RESEND_API_KEY  EMAIL_FROM  GOOGLE_SHEET_WEBHOOK_URL  SHEET_WEBHOOK_SECRET
 PUSHOVER_TOKEN  PUSHOVER_USER  CRON_SECRET  ADMIN_PASSWORD  DATABASE_URL
 NEXT_PUBLIC_GA_ID  LEAD_CHANNEL_TIMEOUT_MS
 N8N_WEBHOOK_BASE  CASH_OFFER_WEBHOOK_BASE  BUYER_LEAD_WEBHOOK_BASE
-LEAD_BOT_CHALLENGE   (optional, default off — turnstile or botid later; not enforced)
+NEXT_PUBLIC_TURNSTILE_SITE_KEY  TURNSTILE_SECRET_KEY
+  (both required or Turnstile is skipped; Invisible or Managed widget)
+LEAD_BOT_CHALLENGE   (optional, ignored — Turnstile is gated by the two keys above)
 IG_BUSINESS_ACCOUNT_ID  IG_ACCESS_TOKEN
 LINKEDIN_CLIENT_ID  LINKEDIN_CLIENT_SECRET  LINKEDIN_REDIRECT_URI
 LINKEDIN_ACCESS_TOKEN  LINKEDIN_AUTHOR_URN  LINKEDIN_TOKEN_EXPIRES_AT_MS

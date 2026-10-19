@@ -23,6 +23,9 @@ export interface Listing {
   // ISO timestamp of the first Compass sync that included this listing.
   // Preserved across later syncs. Not a list date and not a market stat.
   firstSeen?: string;
+  // ISO timestamp of the last sync that changed this listing's public fields.
+  // Omitted until a change after firstSeen. Not the shared listingsSyncedAt clock.
+  contentUpdated?: string;
   // Open-house line copied from the Compass card when one is shown.
   openHouse?: string;
 }
