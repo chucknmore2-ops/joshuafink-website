@@ -5,7 +5,7 @@ import { suburbs } from './suburbs.ts'
 import { marketConditionPhrase, marketConditionSentence, marketLean, type MarketLeanInput } from './market-lean.ts'
 
 const CENSUS =
-  'Population is not what is loosening that inventory: the April 1, 2020 Census counted 45,373 residents, and the U.S. Census Bureau estimates 45,313 as of July 1, 2025, a change of -0.1% from the April 1, 2020 estimates base (U.S. Census Bureau QuickFacts; Population Estimates, Vintage 2025).'
+  'Population is essentially flat: the April 1, 2020 Census counted 45,373 residents, and the U.S. Census Bureau estimates 45,313 as of July 1, 2025, a change of -0.1% from the April 1, 2020 estimates base (U.S. Census Bureau QuickFacts; Population Estimates, Vintage 2025).'
 
 // Explicit market-condition claims. "Rewards sellers who present correctly"
 // and "first-time-buyer-friendly" are not a citywide lean, so they stay out.
@@ -69,8 +69,9 @@ test('Brentwood context sentence follows the same label as the summary', () => {
   assert.doesNotMatch(brentwood.description, /seller-favoring/)
   assert.doesNotMatch(brentwood.description, /Inventory remains tight relative to demand/)
   assert.doesNotMatch(brentwood.description, /\{\{marketCondition\}\}/)
+  assert.doesNotMatch(brentwood.description, /loosening that inventory/)
   assert.match(brentwood.description, /Working with the right agent isn't just helpful in Brentwood/)
-  assert.ok(brentwood.description.includes(CENSUS), 'census population line should be unchanged')
+  assert.ok(brentwood.description.includes(CENSUS), 'census figures and citation stay, with the flat-population lead-in')
   assert.ok(
     brentwood.description.indexOf(sentence) < brentwood.description.indexOf(CENSUS),
     'condition sentence stays ahead of the census line',
