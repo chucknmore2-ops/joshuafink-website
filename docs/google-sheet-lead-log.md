@@ -11,8 +11,10 @@ sent in under 3 seconds, a high content score (the Russian "перевод /
 руб" leads with an off-site link are the current example), an obviously fake
 phone (`fake_phone`: country code +7, `79990000000`, or 10 zeros in a row),
 a name that is exactly "test" with a blank or "test" message
-(`test_submission`), and more than 3 submissions in 10 minutes from one IP
-or one email (`ip_rate_limit`, `email_rate_limit`). A single weak
+(`test_submission`), more than 3 submissions in 10 minutes from one IP
+or one email (`ip_rate_limit`, `email_rate_limit`), and a missing or
+rejected Cloudflare Turnstile token (`turnstile_failed`, only once both
+Turnstile env vars are set). A single weak
 signal does not land here: those leads still go to **CRM**, tagged in
 `suspected_spam`, and still email and Pushover. The honeypot can misfire on
 a real person whose browser autofills the hidden field, and a fast human can
@@ -290,8 +292,8 @@ do not type them in. A tab that already has `traffic_source` through
 
 The **Blocked** tab has the same columns except `status` is replaced by
 `blocked_reason` (e.g. `honeypot`, `too_fast`, `fake_phone`,
-`test_submission`, `ip_rate_limit`, `email_rate_limit`, or
-`non_latin+spam_phrase+spam_url`). Nothing else fires for these rows — no
+`test_submission`, `ip_rate_limit`, `email_rate_limit`,
+`turnstile_failed`, or `non_latin+spam_phrase+spam_url`). Nothing else fires for these rows — no
 Pushover or email, and no auto-reply to the address on the row — so the tab
 is skim-at-your-leisure. The site sends
 `blocked_reason` for every quarantined row. The script already in this file

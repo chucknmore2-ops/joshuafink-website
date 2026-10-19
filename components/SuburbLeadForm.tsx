@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, FormEvent, ReactNode } from 'react'
 import { captureAttribution, getAttribution } from '@/lib/attribution'
 import LeadFormGuards from '@/components/LeadFormGuards'
+import { ensureTurnstileToken } from '@/components/TurnstileWidget'
 import { MISSING_CONTACT_MESSAGE, missingContact, trackLeadFormError } from '@/lib/lead-form'
 
 type Props = {
@@ -59,6 +60,8 @@ export default function SuburbLeadForm({ children, successTitle, successMessage,
     setErrorMsg('')
 
     try {
+      const token = await ensureTurnstileToken(form)
+      if (token) data['cf-turnstile-response'] = token
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
