@@ -230,6 +230,14 @@ export default async function NeighborhoodPage({ params }: Props) {
             <p className="text-lg mt-5 max-w-3xl leading-relaxed" style={{ color: '#A0A0A0' }}>
               {n.intro}
             </p>
+            {n.slug === 'green-hills-nashville-tn' && (
+              <p className="text-sm mt-4 max-w-3xl leading-relaxed" style={{ color: '#A0A0A0' }}>
+                <Link href="/blog/living-in-green-hills-nashville-tn-guide" className="underline">
+                  Living in Green Hills guide
+                </Link>
+                {' '}— the longer relocation write-up. Census, Redfin, and GNAR figures there are citywide or nine-county, not a Green Hills price.
+              </p>
+            )}
             <div className="mt-8 flex flex-col sm:flex-row gap-4">
               {hasCityListings ? (
                 <Link
