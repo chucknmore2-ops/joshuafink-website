@@ -18,6 +18,7 @@ import GnarRegionalSnapshot from '@/components/GnarRegionalSnapshot'
 import FranklinWhoToHire from '@/components/FranklinWhoToHire'
 import { showsGnarRegionalSnapshot } from '@/lib/market-snapshot'
 import { cashOfferPath } from '@/lib/cash-offer-cities'
+import { closingGroupsForSuburb } from '@/lib/closings'
 
 type Props = {
   params: Promise<{ suburb: string }>
@@ -205,6 +206,7 @@ export default async function BuySuburbPage({ params }: Props) {
     'smyrna-tn': ['la-vergne-tn', 'murfreesboro-tn', 'nashville-tn', 'mount-juliet-tn', 'nolensville-tn'],
     'la-vergne-tn': ['smyrna-tn', 'murfreesboro-tn', 'nashville-tn', 'mount-juliet-tn', 'nolensville-tn'],
   }
+  const soldInCity = closingGroupsForSuburb(slug)
   const nearbyCities: Suburb[] = (nearbyByCity[slug] ?? [])
     .map((s) => getSuburb(s))
     .filter((s): s is Suburb => Boolean(s))
@@ -560,6 +562,15 @@ export default async function BuySuburbPage({ params }: Props) {
                 >
                   Free Buyer Consultation
                 </Link>
+                {soldInCity.map((group) => (
+                  <a
+                    key={group.anchor}
+                    href={`/sold#${group.anchor}`}
+                    className="inline-block border border-black text-black text-sm font-bold px-6 py-3 tracking-wide hover:bg-black hover:text-white transition-colors text-center"
+                  >
+                    {`See homes Josh has sold in ${suburb.name} →`}
+                  </a>
+                ))}
               </div>
             </div>
 
