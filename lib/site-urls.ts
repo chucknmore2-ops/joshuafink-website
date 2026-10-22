@@ -7,6 +7,7 @@ import { getAllSchoolSlugs } from '@/lib/schools'
 import { getListingBySlug, isSoldStatus, listingDetailSlugs } from '@/lib/listing-detail'
 import { cityMonthParams, cityMonthPath } from '@/lib/city-gnar-months'
 import { marketSnapshots } from '@/lib/market-snapshot'
+import { SOLD_PATH, closingsLastModified } from '@/lib/closings'
 
 export const SITE_ORIGIN = 'https://www.joshuafink.com'
 
@@ -76,6 +77,8 @@ export function getSiteUrlCatalog(): SiteUrlEntry[] {
   const core: SiteUrlEntry[] = [
     { path: '/', priority: 1.0, changeFrequency: 'weekly' },
     { path: '/listings', priority: 0.9, changeFrequency: 'daily' },
+    // MLS closings. lastmod is the newest close date in lib/closings-data.ts.
+    { path: SOLD_PATH, priority: 0.8, changeFrequency: 'monthly', lastModified: closingsLastModified() },
     { path: '/buy', priority: 0.9, changeFrequency: 'weekly' },
     { path: '/sell', priority: 0.9, changeFrequency: 'weekly', lastModified: noonUtc('2026-10-17') },
     { path: '/cash-offer', priority: 0.9, changeFrequency: 'monthly', lastModified: noonUtc(cashOfferHubLastUpdated) },

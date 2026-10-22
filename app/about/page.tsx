@@ -5,6 +5,13 @@ import { reviews, reviewStats, reviewDateToIso } from '@/lib/reviews'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 import GoogleReviewCTA from '@/components/GoogleReviewCTA'
 import TrackedTelLink from '@/components/TrackedTelLink'
+import {
+  closingCountLabel,
+  closingDateSpan,
+  closingGroups,
+  closings,
+  formatCloseMonthYear,
+} from '@/lib/closings'
 
 export const metadata: Metadata = {
   alternates: { canonical: 'https://www.joshuafink.com/about' },
@@ -117,6 +124,8 @@ function buildProfileSchema() {
 }
 
 export default function AboutPage() {
+  const soldGroups = closingGroups()
+  const soldSpan = closingDateSpan()
   const schema = buildProfileSchema()
   const faqSchema = buildFaqSchema()
   const breadcrumb = buildBreadcrumbSchema([
@@ -301,6 +310,41 @@ export default function AboutPage() {
               </p>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div className="bg-white border-t border-[#E8E8E8] py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
+            Recent Closings
+          </p>
+          <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-black mb-4">
+            Homes Josh has sold, by city
+          </h2>
+          <p className="text-[#444] max-w-3xl leading-relaxed mb-8">
+            {closings.length} closed Tennessee sales, {formatCloseMonthYear(soldSpan.earliest)}{' '}
+            through {formatCloseMonthYear(soldSpan.latest)}. The number by each city is the count
+            of those closings.
+          </p>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {soldGroups.map((group) => (
+              <li key={group.anchor}>
+                <a
+                  href={`/sold#${group.anchor}`}
+                  className="flex items-center justify-between gap-4 border border-[#E8E8E8] px-4 py-3 text-sm font-semibold text-black hover:border-black"
+                >
+                  <span>{`See homes Josh has sold in ${group.city}`}</span>
+                  <span className="text-[#6B6B6B]">{closingCountLabel(group.closings.length)}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <Link
+            href="/sold"
+            className="inline-block mt-8 bg-black text-white text-sm font-bold px-6 py-3 tracking-wide hover:bg-[#222] transition-colors"
+          >
+            All recent closings
+          </Link>
         </div>
       </div>
 

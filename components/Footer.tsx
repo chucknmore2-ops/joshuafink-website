@@ -184,6 +184,7 @@ export default function Footer() {
             <ul className="space-y-2">
               {[
                 { href: '/about', label: 'About Joshua' },
+                { href: '/sold', label: 'Recent Closings' },
                 { href: '/reviews', label: 'Client Reviews' },
                 { href: '/blog', label: 'Blog' },
                 { href: '/market', label: 'Market Reports' },
