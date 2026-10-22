@@ -1,0 +1,56 @@
+name: Sheet lead backfill
+
+# Writes leads that failed to reach the Google Sheet once the Apps Script
+# is healthy again. Vercel Hobby allows two cron jobs and both slots are
+# taken (indexnow, listing-alerts), so this uses GitHub Actions the same
+# way geo-audit and the social posts do.
+#
+# Required repository secret (already set for the other cron routes):
+#   CRON_SECRET — must match the Vercel env. The route itself reads
+#   DATABASE_URL and GOOGLE_SHEET_WEBHOOK_URL from Vercel, not from Actions.
+
+on:
+  schedule:
+    # Hourly, offset from the top of the hour so it does not pile onto
+    # indexnow (02:00) or listing-alerts (13:30).
+    - cron: '25 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sheet-lead-backfill
+  cancel-in-progress: false
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Drain queued sheet leads
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$CRON_SECRET" ]; then
+            echo "::error::CRON_SECRET is not set in repo secrets."
+            exit 1
+          fi
+
+          # www, not the apex: joshuafink.com 307s to www and curl would
+          # drop Authorization across that redirect.
+          CRON_URL="https://www.joshuafink.com/api/cron/sheet-lead-backfill"
+          response=$(curl -sS --max-time 70 -w "\n%{http_code}" \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            "$CRON_URL" || true)
+          status=$(printf '%s\n' "$response" | tail -n1)
+          body=$(printf '%s\n' "$response" | sed '$d')
+          echo "HTTP $status"
+          echo "$body"
+          if [ "$status" != "200" ]; then
+            echo "::error::Sheet lead backfill returned HTTP $status"
+            exit 1
+          fi

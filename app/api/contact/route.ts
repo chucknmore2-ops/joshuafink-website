@@ -6,6 +6,8 @@ import { TURNSTILE_FIELD, verifyTurnstile } from '@/lib/turnstile'
 import { ensureLeadAttribution, LEAD_ATTRIBUTION_FIELDS } from '@/lib/attribution'
 import { sendEmail, activeEmailProvider, fetchWithTimeout } from '@/lib/send-email'
 import { applyAlertFields, listingAlertOptIn } from '@/lib/listing-alerts'
+import { deliverSheetLead } from '@/lib/sheet-lead-write'
+import { currentSheetLeadStore } from '@/lib/sheet-lead-queue'
 
 // Lead notifiers use fetchWithTimeout (LEAD_CHANNEL_TIMEOUT_MS, default 6s)
 // in parallel. 30s leaves room for the emergency Pushover fallback without
@@ -60,6 +62,8 @@ type ChannelResult = {
   configured: boolean
   ok: boolean
   detail?: string
+  /** Sheet append failed and the lead is in the Postgres queue for backfill. */
+  queued?: boolean
 }
 
 const skip = (channel: string, detail?: string): ChannelResult => ({
@@ -326,6 +330,14 @@ async function forwardToJoshua(lead: Record<string, string>, testMode = false): 
 // Google Sheet lead log — free, no CRM subscription. Appends one row per lead
 // via a Google Apps Script Web App. Works from Vercel with no auth/OAuth.
 // No-ops safely until GOOGLE_SHEET_WEBHOOK_URL is set.
+//
+// A transient Sheets failure (timeout, 429, 5xx, "Service Spreadsheets")
+// is retried with a short exponential backoff inside the 30s function limit.
+// If it still does not confirm, the same payload is saved to Postgres
+// (DATABASE_URL) and /api/cron/sheet-lead-backfill writes it later. Email
+// and Pushover are started in the same Promise.all, so they are not waiting
+// on those retries. Blocked-tab routing is unchanged: blockedReason still
+// becomes blocked_reason + status spam, and this path still does not email.
 // ---------------------------------------------------------------------------
 
 async function pushToSheet(
@@ -337,62 +349,14 @@ async function pushToSheet(
   // "System" tab (same mechanism as Blocked) instead of the real CRM tab.
   testMode = false,
 ): Promise<ChannelResult> {
-  if (!GOOGLE_SHEET_WEBHOOK_URL) {
-    console.log('Google Sheet: skipping — GOOGLE_SHEET_WEBHOOK_URL not set')
-    return skip('sheet')
-  }
-
-  // Drop internal fields (honeypot + timing) before logging. Attribution
-  // keys are ordinary lead fields — utm_*, click ids, first/last touch,
-  // landing_page, referrer, page_url — and must stay in the payload. The
-  // Apps Script appends any of them that the CRM tab doesn't have yet;
-  // it does not depend on key order.
-  const clean = Object.fromEntries(
-    Object.entries(lead).filter(([k]) => !k.startsWith('_') && k !== 'website' && k !== TURNSTILE_FIELD)
-  )
-
-  const payload: Record<string, string> = {
-    ...clean,
-    // Normalize the lead type across the different forms into one column.
-    lead_type: lead.subject || lead.lead_type || '',
-    received_at: new Date().toISOString(),
-    // blocked_reason is what the deployed Apps Script already routes to the
-    // Blocked tab. status: spam is a marker for a script that only writes the
-    // CRM tab and copies whatever status it is sent.
-    ...(blockedReason ? { blocked_reason: blockedReason, status: 'spam' } : {}),
-    ...(testMode ? { system_test: 'true' } : {}),
-    ...(SHEET_WEBHOOK_SECRET ? { secret: SHEET_WEBHOOK_SECRET } : {}),
-  }
-
-  try {
-    const res = await fetchWithTimeout(GOOGLE_SHEET_WEBHOOK_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-      redirect: 'follow', // Apps Script Web Apps 302 to a googleusercontent host
-    })
-    if (!res.ok) {
-      console.error('Google Sheet: non-OK response', res.status)
-      return { channel: 'sheet', configured: true, ok: false, detail: `HTTP ${res.status}` }
-    }
-    // The Apps Script answers HTTP 200 for every outcome —
-    // its own failures arrive as {ok:false, error:...}, and a broken
-    // deployment serves a 200 "Authorization required" HTML page. Only a
-    // parseable {ok:true} body proves the row actually landed.
-    const data = await res.json().catch(() => null)
-    if (!data || data.ok !== true) {
-      const detail = data
-        ? String(data.error || 'script reported ok:false')
-        : 'non-JSON response (broken deployment?)'
-      console.error('Google Sheet: script did not confirm the row:', detail)
-      return { channel: 'sheet', configured: true, ok: false, detail }
-    }
-    console.log(`Google Sheet: logged lead for ${lead.name || 'Unknown'}`)
-    return { channel: 'sheet', configured: true, ok: true }
-  } catch (err) {
-    console.error('Google Sheet push error:', err)
-    return { channel: 'sheet', configured: true, ok: false, detail: String(err) }
-  }
+  return deliverSheetLead({
+    lead,
+    blockedReason,
+    testMode,
+    webhookUrl: process.env.GOOGLE_SHEET_WEBHOOK_URL || GOOGLE_SHEET_WEBHOOK_URL,
+    secret: process.env.SHEET_WEBHOOK_SECRET || SHEET_WEBHOOK_SECRET,
+    store: currentSheetLeadStore(),
+  })
 }
 
 // ---------------------------------------------------------------------------
@@ -779,23 +743,28 @@ export async function POST(req: NextRequest) {
     // A lead "reached Joshua" if any Joshua-facing channel succeeded.
     const joshuaChannels = [clickupRes, joshuaEmailRes, sheetRes, pushoverRes]
     const delivered = joshuaChannels.some((r) => r.configured && r.ok)
+    // A queued sheet row is not "delivered" — the morning test lead must still
+    // page when the sheet itself is down — but the lead is durable, so the
+    // visitor is not told to call unless the queue save failed too.
+    const sheetQueued = sheetRes.queued === true
     const failedChannels = joshuaChannels
       .filter((r) => r.configured && !r.ok)
       .map((r) => `${r.channel}${r.detail ? `(${r.detail})` : ''}`)
 
     if (!delivered) {
       // Nothing got through. Log the full lead so it's recoverable from Vercel
-      // logs, then fire the emergency Pushover as a last resort.
+      // logs, then fire the emergency Pushover as a last resort. Email and
+      // the normal Pushover already ran above, in parallel with the sheet.
       console.error(
         'CRITICAL: lead not delivered to any Joshua channel',
-        JSON.stringify({ lead, failedChannels })
+        JSON.stringify({ lead, failedChannels, sheetQueued })
       )
       // A test lead must never fire the priority-2 siren — the healthcheck
       // going red (CI/chat) is the paging path, and the 502 below still
       // carries the per-channel results.
       const rescued = isHealthcheck ? false : await sendEmergencyPushover(lead, failedChannels)
 
-      if (!rescued) {
+      if (!rescued && !sheetQueued) {
         // Truly nowhere for the lead to land. Tell the visitor so they can call
         // directly instead of walking away thinking the message was received.
         return NextResponse.json(
@@ -807,8 +776,8 @@ export async function POST(req: NextRequest) {
           { status: 502 }
         )
       }
-      // The emergency alert reached Joshua's phone — treat as delivered so the
-      // visitor still sees the success screen (which also shows the number).
+      // The emergency alert reached Joshua's phone, or the lead is in the
+      // sheet queue. Either way the visitor still sees the success screen.
     } else if (failedChannels.length > 0) {
       // Partial failure — the lead is safe, but note which channels dropped it.
       console.warn(`Contact API: lead delivered with degraded channels: ${failedChannels.join(', ')}`)
