@@ -44,8 +44,11 @@ async function sheetQueueCounts(): Promise<{
     const counts = await countSheetLeadQueue()
     if (!counts) return { configured: true, queued: null, failed: null }
     return { configured: true, queued: counts.queued, failed: counts.failed }
-  } catch {
-    console.error('healthcheck sheet queue count failed')
+  } catch (err) {
+    const message = (err instanceof Error ? err.message : String(err))
+      .replace(/postgres(?:ql)?:\/\/\S+/gi, 'postgres://redacted')
+      .slice(0, 300)
+    console.error('healthcheck sheet queue count failed:', message)
     return { configured: true, queued: null, failed: null }
   }
 }

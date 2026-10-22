@@ -4,12 +4,13 @@
 
 import { Pool } from 'pg'
 import { LISTING_VIDEO_JOB, LISTING_VIDEO_KIND, LISTING_VIDEO_SEED_JOB } from './listing-video'
+import { pgSsl } from '@/lib/db-ssl'
 
 export function createListingVideoPool(databaseUrl: string): Pool {
   return new Pool({
     connectionString: databaseUrl,
     max: 1,
-    ssl: databaseUrl.includes('railway') ? { rejectUnauthorized: false } : undefined,
+    ssl: pgSsl(databaseUrl),
   })
 }
 
