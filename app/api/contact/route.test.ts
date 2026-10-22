@@ -14,6 +14,7 @@
 import { test, after } from 'node:test'
 import assert from 'node:assert/strict'
 import { NextRequest } from 'next/server'
+import { createMemorySheetLeadStore, useSheetLeadStoreForTests } from '@/lib/sheet-lead-queue.ts'
 
 // Env is read at module load in route.ts, so it must be set before the first
 // dynamic import below. The sheet is deliberately the ONLY configured channel:
@@ -21,9 +22,15 @@ import { NextRequest } from 'next/server'
 process.env.GOOGLE_SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/test-deployment/exec'
 process.env.CRON_SECRET = 'test-cron-secret'
 // Keep the per-channel fetch timeout short so the hung-channel test below
-// finishes in milliseconds instead of the production ~6s.
+// finishes in milliseconds instead of the production ~6s. Sheet retries use
+// the same cap; a zero backoff keeps the three attempts from adding sleep.
 process.env.LEAD_CHANNEL_TIMEOUT_MS = '250'
+process.env.SHEET_RETRY_BASE_MS = '0'
 delete process.env.SHEET_WEBHOOK_SECRET
+// A developer DATABASE_URL must not turn a failed sheet into a queued 200
+// and write a test lead into the real queue.
+const ORIGINAL_DATABASE_URL = process.env.DATABASE_URL
+delete process.env.DATABASE_URL
 delete process.env.CLICKUP_API_TOKEN
 delete process.env.CLICKUP_LEADS_LIST_ID
 delete process.env.CLICKUP_LEADS_ENABLED
@@ -36,6 +43,9 @@ delete process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
 const realFetch = globalThis.fetch
 after(() => {
   globalThis.fetch = realFetch
+  useSheetLeadStoreForTests(undefined)
+  if (ORIGINAL_DATABASE_URL === undefined) delete process.env.DATABASE_URL
+  else process.env.DATABASE_URL = ORIGINAL_DATABASE_URL
 })
 
 // The route also fires best-effort n8n / FlipIntel webhooks, but only when
@@ -1362,5 +1372,116 @@ test('a fixable name is a 400 and does not spend the Turnstile token', async () 
     assert.equal(captured.some((c) => c.url.includes('script.google.com')), false)
   } finally {
     disableTurnstile()
+  }
+})
+
+test('a dead sheet is retried, then queued, and email plus Pushover still send', async () => {
+  const store = createMemorySheetLeadStore()
+  useSheetLeadStoreForTests(store)
+  process.env.SHEET_WEBHOOK_SECRET = 'sheet-secret'
+  process.env.RESEND_API_KEY = 're_test_key'
+  process.env.PUSHOVER_TOKEN = 'po_test_token'
+  process.env.PUSHOVER_USER = 'po_test_user'
+  const captured: { url: string; body: string }[] = []
+  globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input)
+    captured.push({ url, body: String(init?.body ?? '') })
+    if (url.includes('script.google.com')) {
+      return new Response('upstream', { status: 503 })
+    }
+    if (url.includes('api.resend.com')) {
+      return new Response('{"id":"email-1"}', { status: 200, headers: { 'Content-Type': 'application/json' } })
+    }
+    if (url.includes('api.pushover.net')) {
+      return new Response('{"status":1}', { status: 200, headers: { 'Content-Type': 'application/json' } })
+    }
+    return new Response('{}', { status: 200 })
+  }) as typeof fetch
+  try {
+    const { POST } = await import('./route.ts')
+    const res = await POST(
+      new NextRequest('http://localhost/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-forwarded-for': '203.0.113.220' },
+        body: JSON.stringify({
+          name: 'Maria Santos',
+          email: 'maria.sheet.queue@example.com',
+          phone: '615-555-0177',
+          body: 'We would like to talk about selling our Franklin home.',
+          source: 'contact-page',
+          _loaded: String(Date.now() - 30_000),
+        }),
+      })
+    )
+    assert.equal(res.status, 200)
+    const sheetCalls = captured.filter((c) => c.url.includes('script.google.com'))
+    assert.equal(sheetCalls.length, 3)
+    const ids = sheetCalls.map((c) => JSON.parse(c.body).lead_id as string)
+    assert.equal(ids[0], ids[1])
+    assert.equal(ids[1], ids[2])
+    assert.equal(JSON.parse(sheetCalls[0].body).secret, 'sheet-secret')
+    const saved = store.saved(ids[0])
+    assert.ok(saved)
+    assert.equal(saved.email, 'maria.sheet.queue@example.com')
+    assert.equal('secret' in saved, false)
+
+    const emails = captured.filter((c) => c.url.includes('api.resend.com'))
+    assert.ok(emails.length >= 1)
+    const subjects = emails.map((e) => JSON.parse(e.body).subject as string)
+    assert.ok(subjects.some((s) => /New Lead/.test(s)))
+    assert.ok(captured.some((c) => c.url.includes('api.pushover.net')))
+  } finally {
+    delete process.env.SHEET_WEBHOOK_SECRET
+    delete process.env.RESEND_API_KEY
+    delete process.env.PUSHOVER_TOKEN
+    delete process.env.PUSHOVER_USER
+    useSheetLeadStoreForTests(undefined)
+  }
+})
+
+test('a honeypot whose sheet write fails is queued and still sends no email or Pushover', async () => {
+  const store = createMemorySheetLeadStore()
+  useSheetLeadStoreForTests(store)
+  process.env.RESEND_API_KEY = 're_test_key'
+  process.env.PUSHOVER_TOKEN = 'po_test_token'
+  process.env.PUSHOVER_USER = 'po_test_user'
+  const captured: { url: string; body: string }[] = []
+  globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input)
+    captured.push({ url, body: String(init?.body ?? '') })
+    if (url.includes('script.google.com')) return new Response('no', { status: 503 })
+    return new Response('{}', { status: 200 })
+  }) as typeof fetch
+  try {
+    const { status, json } = await postContact({
+      name: 'Helen Barker',
+      phone: '615-555-0188',
+      email: 'helen.honeypot.queue@example.com',
+      body: 'We want to sell in Brentwood.',
+      source: 'contact-page',
+      website: 'http://spam.example',
+      _loaded: String(Date.now() - 20_000),
+    }, '203.0.113.221')
+    assert.equal(status, 200)
+    assert.deepEqual(json, { ok: true })
+    assert.equal(captured.some((c) => c.url.includes('api.resend.com')), false)
+    assert.equal(captured.some((c) => c.url.includes('api.pushover.net')), false)
+    const counts = await store.counts()
+    assert.equal(counts?.queued, 1)
+    const sheetCalls = captured.filter((c) => c.url.includes('script.google.com'))
+    assert.ok(sheetCalls.length >= 1)
+    const sent = JSON.parse(sheetCalls[0].body)
+    assert.equal(sent.blocked_reason, 'honeypot')
+    assert.equal(sent.status, 'spam')
+    const saved = store.saved(sent.lead_id)
+    assert.ok(saved)
+    assert.equal(saved.blocked_reason, 'honeypot')
+    assert.equal(saved.email, 'helen.honeypot.queue@example.com')
+    assert.equal('website' in saved, false)
+  } finally {
+    delete process.env.RESEND_API_KEY
+    delete process.env.PUSHOVER_TOKEN
+    delete process.env.PUSHOVER_USER
+    useSheetLeadStoreForTests(undefined)
   }
 })

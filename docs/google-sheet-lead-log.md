@@ -62,8 +62,10 @@ sheet is lost.
    This keeps the same `/exec` URL, so nothing in Vercel changes.
 
 The first lead after that deploy appends any missing headers to the right of
-the current header row. Columns A–L stay where they are. The `Blocked` and
-`System` tabs are auto-created on the first submission that needs them.
+the current header row, including `lead_id`. Columns A–L stay where they are.
+Until that version is deployed, a retry that timed out after the row was
+actually written can append a second copy. The `Blocked` and `System` tabs
+are auto-created on the first submission that needs them.
 
 ## Optional: shared secret (extra spam protection)
 
@@ -85,6 +87,10 @@ Paste this whole script over the Apps Script project. It is the script to deploy
 // The daily healthcheck's test lead arrives tagged `system_test` and goes to
 // a "System" tab (auto-created), keeping the CRM tab real-leads-only.
 //
+// Each row carries lead_id. A retry or the backfill job sends the same id.
+// If that id is already in the tab, the script returns ok without appending,
+// so a write that succeeded after our fetch timed out is not stored twice.
+//
 // Columns A–L are the original header and are never reordered or inserted
 // into. On a tab that already has a header row, any name in the lists below
 // that is not already present is appended to the right. An empty tab gets
@@ -105,7 +111,8 @@ var CRM_HEADERS = [
   'last_gclid', 'last_gbraid', 'last_wbraid', 'last_fbclid',
   'last_referrer', 'last_landing_page',
   'page_url',
-  'alert_opt_in'
+  'alert_opt_in',
+  'lead_id'
 ];
 
 // Blocked tab: column B is blocked_reason instead of status. Every other
@@ -121,7 +128,8 @@ var BLOCKED_HEADERS = [
   'last_gclid', 'last_gbraid', 'last_wbraid', 'last_fbclid',
   'last_referrer', 'last_landing_page',
   'page_url',
-  'alert_opt_in'
+  'alert_opt_in',
+  'lead_id'
 ];
 
 function ensureHeaders(sheet, desired) {
@@ -164,6 +172,22 @@ function ensureHeaders(sheet, desired) {
   return existing;
 }
 
+function leadAlreadyLogged(sheet, headers, leadId) {
+  if (leadId == null || String(leadId) === '') return false;
+  var col = -1;
+  for (var i = 0; i < headers.length; i++) {
+    if (headers[i] === 'lead_id') { col = i; break; }
+  }
+  if (col < 0) return false;
+  var last = sheet.getLastRow();
+  if (last < 2) return false;
+  var values = sheet.getRange(2, col + 1, last - 1, 1).getValues();
+  for (var r = 0; r < values.length; r++) {
+    if (String(values[r][0] || '') === String(leadId)) return true;
+  }
+  return false;
+}
+
 function doPost(e) {
   try {
     var data = JSON.parse(e.postData.contents);
@@ -179,6 +203,9 @@ function doPost(e) {
     var name = blocked ? 'Blocked' : (systemTest ? 'System' : 'CRM');
     var sheet = ss.getSheetByName(name) || ss.insertSheet(name);
     var headers = ensureHeaders(sheet, desired);
+    if (leadAlreadyLogged(sheet, headers, data.lead_id)) {
+      return json({ ok: true, duplicate: true });
+    }
 
     var row = headers.map(function (h) {
       if (!h) return '';
@@ -255,7 +282,7 @@ bathrooms · utm_source · utm_medium · utm_campaign · utm_term · utm_content
 gclid · gbraid · wbraid · fbclid · last_utm_source · last_utm_medium ·
 last_utm_campaign · last_utm_term · last_utm_content · last_gclid · last_gbraid ·
 last_wbraid · last_fbclid · last_referrer · last_landing_page · page_url ·
-alert_opt_in`
+alert_opt_in · lead_id`
 
 - **status** defaults to `New`. This is your tracking column — change it to
   `Called`, `Showing`, `Under Contract`, `Closed`, `Dead`, etc.
@@ -282,6 +309,38 @@ alert_opt_in`
   in **budget** and the city in **suburb**.
 - **alert_opt_in** is `yes` when the visitor checked the listing-email box.
   Anything else means they were not added to the email list.
+- **lead_id** is a stable id the site generates once per submission. Retries
+  and the backfill job send the same value. If it is already in the tab, the
+  script answers `{ok:true, duplicate:true}` and does not append again.
+
+## If the sheet write fails
+
+The site retries a transient failure (timeout, HTTP 429/5xx, or a
+Spreadsheet service error) with a short exponential backoff. That budget
+stays inside the contact function's 30 second limit. Email and Pushover
+are sent in parallel with those retries, including when the append never
+confirms.
+
+If the append still does not confirm, the lead is inserted into the
+existing Railway Postgres (`DATABASE_URL`, table `sheet_lead_queue`). The
+webhook secret is not stored in that row. Honeypot, too-fast, Turnstile,
+and other Blocked-tab leads are queued the same way and still do not email
+or Pushover.
+
+`GET /api/cron/sheet-lead-backfill` (Bearer `CRON_SECRET`) writes queued
+rows once the sheet answers `{ok:true}`. A row already claimed by another
+run is skipped (`FOR UPDATE SKIP LOCKED`). The same `lead_id` makes a
+second append a no-op after the Apps Script above is deployed. Vercel
+Hobby only keeps two cron slots, and both are taken, so this route is
+called hourly by GitHub Actions (`.github/workflows/sheet-lead-backfill.yml`),
+not by a third Vercel cron.
+
+`GET /api/healthcheck` includes `sheetQueue.queued` and `sheetQueue.failed`.
+`queued` is rows not yet confirmed in the sheet. `failed` is rows the
+script rejected and backfill stopped retrying. An outage stays in `queued`.
+`configured: false` means `DATABASE_URL` is unset. The uptime check still
+only requires `status: ok`. The morning test lead still pages when the
+sheet channel itself fails.
 
 ### Headers on a sheet that already has rows
 
@@ -307,8 +366,11 @@ never something to act on.
 ## How it connects (code)
 
 `app/api/contact/route.ts` → `pushToSheet(lead)` POSTs the lead JSON to
-`GOOGLE_SHEET_WEBHOOK_URL`. It runs on every non-spam submission and no-ops
-safely when the env var is unset, so it's harmless to deploy before setup.
+`GOOGLE_SHEET_WEBHOOK_URL` (`lib/sheet-lead-write.ts` does the retry). It
+runs on every non-spam submission and no-ops safely when the env var is
+unset, so it's harmless to deploy before setup. A confirmed failure is
+saved by `lib/sheet-lead-queue.ts` and replayed by
+`/api/cron/sheet-lead-backfill`.
 Honeypot, too-fast, and high-score spam all call `pushToSheet(lead, reason)` —
 the extra `blocked_reason` field is what routes the row to the Blocked tab.
 The payload also includes `status: "spam"` so an older script that ignores

@@ -70,6 +70,10 @@ export const SHEET_APPENDED_COLUMNS = [
   'last_landing_page',
   'page_url',
   'alert_opt_in',
+  // Stable id for retry and backfill. The Apps Script skips a second append
+  // when this value is already in the column, so a timed-out write that
+  // actually landed is not stored twice.
+  'lead_id',
 ] as const
 
 export const SHEET_CRM_COLUMNS = [...SHEET_BASE_COLUMNS, ...SHEET_APPENDED_COLUMNS] as const

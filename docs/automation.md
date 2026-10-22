@@ -13,6 +13,7 @@ Scheduled automation for joshuafink.com. This doc is the one-stop reference for 
 | Instagram post | GitHub Actions `social-autopost.yml` | `0 14 * * 3` (Wed) | 9am Wednesdays | `CRON_SECRET`, `BUFFER_API_KEY`, `BUFFER_IG_CHANNEL_ID` (GitHub secrets). Graph stays off (`IG_AUTOPOST=buffer`). |
 | **Monthly market update** (LinkedIn + GBP; Facebook via Railway) | GitHub Actions + Railway autoposter | when the GNAR snapshot merges | typically the 6th–8th | `CRON_SECRET`, `DATABASE_URL` (post_log read), plus the `LINKEDIN_*` / `GBP_*` vars above. Facebook uses the autoposter's Page token, not Vercel. |
 | Compass listings sync | GitHub Actions | `0 8 * * *` (daily) | 3am CT | None (uses Playwright against public page) |
+| Sheet lead backfill | GitHub Actions `sheet-lead-backfill.yml` | `25 * * * *` (hourly) | hourly | `CRON_SECRET` (already a repo secret). The route reads Vercel `DATABASE_URL` and `GOOGLE_SHEET_WEBHOOK_URL`. Not a Vercel cron — Hobby only allows two, and both slots are taken. |
 
 ## Vercel env vars
 

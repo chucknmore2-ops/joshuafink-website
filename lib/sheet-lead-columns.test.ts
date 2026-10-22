@@ -41,6 +41,10 @@ test('the Apps Script keeps columns A–L and appends attribution after them', (
 
   assert.match(script, /function ensureHeaders/)
   assert.match(script, /existing\.concat\(missing\)/)
+  assert.match(script, /function leadAlreadyLogged/)
+  assert.match(script, /duplicate: true/)
   assert.equal(script.includes('deleteColumn'), false)
   assert.equal(script.includes('.clear('), false)
+  assert.equal(SHEET_CRM_COLUMNS[SHEET_CRM_COLUMNS.length - 1], 'lead_id')
+  assert.equal(SHEET_BLOCKED_COLUMNS[SHEET_BLOCKED_COLUMNS.length - 1], 'lead_id')
 })
