@@ -215,6 +215,102 @@ const marketUpdatePosts: BlogPost[] = marketSnapshots.map(buildMarketUpdatePost)
 export const blogPosts: BlogPost[] = [
   ...marketUpdatePosts,
   {
+    slug: "living-in-green-hills-nashville-tn-guide",
+    title: "Living in Green Hills, Nashville: Schools, Streets & Real Estate Guide [2026]",
+    date: "October 22, 2026",
+    dateModified: "October 22, 2026",
+    excerpt:
+      "Green Hills is a Nashville neighborhood on Hillsboro Pike, not its own city. Julia Green Elementary is a 2020 National Blue Ribbon School. This guide uses Census, Redfin, and September GNAR figures only where they actually apply.",
+    category: "Relocation",
+    faq: [
+      {
+        q: "How much do homes in Green Hills, Nashville cost in 2026?",
+        a: "This site has no published Redfin or Greater Nashville REALTORS® median for Green Hills, so this guide does not quote one. The Nashville citywide median is $475,538 (Redfin, as of October 5, 2026). The September 2026 nine-county residential median was $510,000 (Greater Nashville REALTORS®, published October 5, 2026). Neither number is a Green Hills price. Joshua pulls closed comps for the specific street.",
+      },
+      {
+        q: "What school does Green Hills feed into?",
+        a: "Julia Green Elementary, at 3500 Hobbs Road, is a 2020 U.S. Department of Education National Blue Ribbon School and the zone school for Green Hills and Belle Meade. MNPS's 2026–27 pathway map places it in the Hillsboro Cluster with John Trotwood Moore Middle School and Hillsboro High School. A November 12, 2024 board agenda moved 28 students in a small section east of Hillsboro Pike from Julia Green to Percy Priest Elementary for 2025–26, with grandfathering for students already enrolled. Confirm the address with MNPS before writing an offer.",
+      },
+      {
+        q: "Does the Census publish a Green Hills population?",
+        a: "No. Green Hills is not an incorporated city or a census-designated place. The Census figures on this page are for Nashville-Davidson: 715,884 on April 1, 2020, and an estimate of 745,904 as of July 1, 2025 (U.S. Census Bureau QuickFacts; Population Estimates, Vintage 2025). They are not a Green Hills headcount.",
+      },
+    ],
+    content: `
+If you are weighing Nashville neighborhoods, [Green Hills](/neighborhoods/green-hills-nashville-tn) is the name people use for an established area south of downtown on Hillsboro Pike, next to the Mall at Green Hills, with a zoned elementary that holds a national award. It is a neighborhood inside Nashville, not a separate city. That is why the counts below are labeled citywide or nine-county, and why this page does not invent a Green Hills price.
+
+## Overview
+
+Green Hills sits south of downtown Nashville on Hillsboro Pike (U.S. 431). Belle Meade is to the west, Forest Hills is to the south, and Hillsboro Village is directly north across I-440. Vanderbilt, Belmont, and Lipscomb are nearby. Metro Planning says there is no definitive map of Nashville neighborhood boundaries — the lines come from residents and are advisory — so this guide does not treat any street box as official. A commonly used extent runs from I-440 south to Harding Place and from Estes Road east to Lealand Lane, roughly the northern half of ZIP 37215. Mail still says Nashville.
+
+The retail corridor and the houses are different products. The Mall at Green Hills and Hill Center sit on Hillsboro Pike. The streets around them mix older houses with later infill. The [Green Hills neighborhood guide](/neighborhoods/green-hills-nashville-tn) is the address-level overview. This post is the longer relocation read.
+
+## Schools
+
+[Julia Green Elementary](/homes-near/julia-green-elementary-nashville-tn), at 3500 Hobbs Road, Nashville, TN 37215, is a 2020 U.S. Department of Education National Blue Ribbon School. The Department's award profile calls it the zone school for the Green Hills and Belle Meade neighborhoods and an International Baccalaureate World School. The Tennessee Department of Education listed Julia Green among the seven Tennessee schools recognized as 2020 National Blue Ribbon Schools.
+
+MNPS's 2026–27 pathway map places Julia Green Elementary in the Hillsboro Cluster with John Trotwood Moore Middle School and Hillsboro High School, grouped with Percy Priest Elementary and Waverly-Belmont Elementary. On November 12, 2024 the board agenda recommended moving 28 students from a small section east of Hillsboro Pike from Julia Green to Percy Priest Elementary, with grandfathering for students already enrolled, for 2025–26. Confirm the address in the MNPS zone finder before you write an offer. The pathway map is a cluster diagram, not a substitute for that lookup.
+
+A few practical notes for buyers:
+
+- School assignment here is address-specific. The 28-student section east of Hillsboro Pike is the reason to check before you tour.
+- A Blue Ribbon citation is about Julia Green. It is not a test-score table, and this guide does not add proficiency percentages on top of the award.
+- The middle and high school on the 2026–27 Hillsboro Cluster pathway are John Trotwood Moore and Hillsboro High. Still confirm the address.
+
+## Population & Growth
+
+Green Hills is not an incorporated city and not a census-designated place, so the Census Bureau does not publish a Green Hills population. The figures that exist are for Nashville-Davidson. Davidson County's April 1, 2020 Census count was 715,884. The U.S. Census Bureau estimates 745,904 residents as of July 1, 2025, a 4.2% increase from the April 1, 2020 estimates base (U.S. Census Bureau QuickFacts; Population Estimates, Vintage 2025). Those are citywide counts. They are not a headcount of this neighborhood.
+
+## Cost of Living
+
+There is no published Redfin or Greater Nashville REALTORS® median for Green Hills in this site's data, so this guide does not quote a neighborhood price. The Nashville citywide median sale price is $475,538, with a median of $272.16 per square foot, a median of 64 days on market, and a year-over-year change of -0.52% (Redfin, as of October 5, 2026). On the same Redfin pull, Franklin's median is $862,929 and Brentwood's is $1,424,058. None of those three numbers is a Green Hills price. Current citywide figures are on the [Nashville market report](/market/nashville-tn).
+
+A few things that change the monthly cost of a specific house, without a neighborhood-wide dollar figure attached:
+
+- Davidson County property tax on that address
+- HOA dues, if the street or building has them — confirm for the address
+- The drive you actually make. This guide does not publish a minutes-to-downtown number
+
+## Housing Market
+
+Greater Nashville REALTORS® reported a nine-county residential median of $510,000 for September 2026, up 4.1% from $490,000 a year earlier, an average list-to-contract time of 57 days, and 5.7 months of supply. The release was published October 5, 2026. The nine counties are Davidson, Cheatham, Dickson, Maury, Robertson, Rutherford, Sumner, Williamson, and Wilson. That is not a Green Hills read. The same figures are in the [September 2026 market update](/blog/middle-tennessee-market-update-september-2026).
+
+Two things buyers should know going in:
+
+- A citywide or nine-county median will not price a Green Hills street. Joshua pulls closed comps for the block.
+- Nashville's median of 64 days on market (Redfin, as of October 5, 2026) is also citywide. It is not a Green Hills pace.
+
+## Local News & Development
+
+The documented change in this area is the school-zone edit above. The November 12, 2024 MNPS board agenda recommended moving 28 students in a small section east of Hillsboro Pike from Julia Green Elementary to Percy Priest Elementary for 2025–26, with grandfathering for students already enrolled. The agenda tied that move to capacity at the new Percy Priest building. This guide does not add a construction count or a price forecast on top of that vote.
+
+## Why Green Hills
+
+The reason to look here is the Hillsboro Pike location and the school assignment, checked at the address. I usually walk clients through three things before they commit:
+
+1. **School zone verification** — Does this address still feed Julia Green, or the Percy Priest section east of Hillsboro Pike?
+2. **The street, not the name** — Older houses and later infill sit near the same retail corridor. The house and the lot are what you are buying.
+3. **Five-year fit** — The Census counts above are Nashville-Davidson, not this neighborhood. Will this street still fit how you live?
+
+## Ready to Buy or Sell in Green Hills?
+
+Joshua Fink is an Affiliate Broker with Compass Real Estate, licensed since 2008, and sells 40+ homes a year in Middle Tennessee. Office: Compass, 8119 Isabella Lane Suite 105, Brentwood, TN 37027. TREC #351484. Call or text [615-551-2727](tel:6155512727), or [send a note](/contact).
+
+Current Nashville listings are on the [homes for sale](/listings) page. The city buyer page is [Buy in Nashville](/buy/nashville-tn).
+
+## Sources
+
+- [U.S. Department of Education — Julia Green Elementary, 2020 National Blue Ribbon School](https://nationalblueribbonschools.ed.gov/awardwinners/winning/20tn103pu_julia_green_elementary_school.html/)
+- [Tennessee Department of Education — seven Tennessee schools recognized, September 28, 2020](https://www.tn.gov/education/news/2020/9/28/seven-tennessee-schools-recognized-as-national-blue-ribbon-schools-.html)
+- [MNPS pathways for 2026–2027](https://resources.finalsite.net/images/v1782854605/mnpsorg/bgvjc4xm3swpjqnzzmiu/2026-27_ClusterPathways-All.pdf) (updated June 30, 2026)
+- [MNPS board agenda, November 12, 2024](https://resources.finalsite.net/images/v1758311767/mnpsorg/mc3iitr6fdwz9oujngmy/111224AGENDA.pdf) — Hillsboro proposal, 28 students
+- [Metro Nashville Planning — Neighborhoods](https://www.nashville.gov/departments/planning/long-range-planning/neighborhoods) — no definitive neighborhood boundary
+- [U.S. Census Bureau QuickFacts — Nashville-Davidson (balance), Tennessee](https://www.census.gov/quickfacts/fact/table/nashvilledavidsonbalancetennessee/PST045224) — citywide population cited above, not a Green Hills count
+- [Redfin Data Center](https://www.redfin.com/news/data-center/) — Nashville, Franklin, and Brentwood medians on this site as of October 5, 2026
+- [Greater Nashville REALTORS®, September 2026](https://www.greaternashvillerealtors.org/news/september-homes-sales-continued-to-show-mixed-results-across-counties-and-price-points)
+    `.trim(),
+  },
+  {
     slug: "middle-tennessee-sellers-guide-2026",
     title: "The 2026 Middle Tennessee Seller's Guide",
     date: "October 7, 2026",
@@ -5419,7 +5515,7 @@ const RELATED_STOPWORDS = new Set([
 const RELATED_LOCATION_TOKENS = [
   'franklin', 'brentwood', 'spring hill', 'nolensville', 'thompson',
   'murfreesboro', 'columbia', 'mount juliet', 'hendersonville', 'smyrna',
-  'gallatin', 'lebanon', 'la vergne', 'antioch', 'madison',
+  'gallatin', 'lebanon', 'la vergne', 'antioch', 'madison', 'green hills',
 ]
 
 function _tokenizeTitle(text: string): string[] {
