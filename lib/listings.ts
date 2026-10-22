@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-10-19T15:22:59.910Z
+// AUTO-GENERATED — Last synced: 2026-10-22T13:37:12.933Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -32,7 +32,7 @@ export interface Listing {
 
 // Mirrors the header timestamp so server components can compute sync staleness
 // without parsing comments. Updated by scripts/fetch-images.mjs each sync.
-export const listingsSyncedAt = "2026-10-19T15:22:59.910Z";
+export const listingsSyncedAt = "2026-10-22T13:37:12.933Z";
 
 export const listings: Listing[] = [
   {
@@ -122,45 +122,6 @@ export const listings: Listing[] = [
       "https://www.compass.com/m/839193932a7492e3992107a0ed33c80eae8f15468b0404004e68744617e3ef3c/2048x1536.webp",
     ],
     firstSeen: "2026-05-11T12:00:26.000Z",
-    lastVerified: listingsSyncedAt,
-  },
-  {
-    address: "1100 Gibson Dr",
-    city: "Madison, TN 37115",
-    price: 389900,
-    beds: 3,
-    baths: 2,
-    sqft: 1378,
-    status: "Active Under Contract",
-    compassUrl: "https://www.compass.com/homedetails/1100-Gibson-Dr-Madison-TN-37115/SJV0E_pid/",
-    imageUrl: "https://www.compass.com/m/11e587962d972824bcfa83986a2a18c8b7991d767be1f8ec6b0cb060ef148290/2048x1536.webp",
-    photoUrls: [
-      "https://www.compass.com/m/11e587962d972824bcfa83986a2a18c8b7991d767be1f8ec6b0cb060ef148290/2048x1536.webp",
-      "https://www.compass.com/m/db1cfe607c2fd168fa967bf51dfd9068684ace2b793bce30d491ee75098e59a4/2048x1536.webp",
-      "https://www.compass.com/m/edcaebc65b4b13ecd89e5e266fbb7b66ed6c2f6694c2d7724da0822ff3d49561/2048x1536.webp",
-      "https://www.compass.com/m/de801a8d24f0dee3a9faab423392ce78c45189587192714ed559636ed7f248b2/2048x1536.webp",
-      "https://www.compass.com/m/e0c1eac78ae44fccaff9bcb93924521e332940df05f28958798f4577fa1f8110/2048x1536.webp",
-      "https://www.compass.com/m/873364ea6c7caedef6a04d7f4ff7d854880ca1a27dedd2895ca3d249723476c8/2048x1536.webp",
-      "https://www.compass.com/m/ed77bf9bf7a81fbd95d7aa91bab9a7a0d2639a4aaf8957dddd49621e28f45672/2048x1536.webp",
-      "https://www.compass.com/m/6a96debbbc5cea306ece9ab192b9beae30626137173d4e63121a6caf455a601d/2048x1536.webp",
-      "https://www.compass.com/m/07dd29251242fd018e9b0e16c177e55f6190ca3731cb0bd9dae7a7a49f85ccc4/2048x1536.webp",
-      "https://www.compass.com/m/04ca5b076277d5e383153a4d0d2ae5f4d0dba0f87b47112fef4e36e8945f367d/2048x1536.webp",
-      "https://www.compass.com/m/49d9e238ec7ce4c60f01762b4449af870d09964f244cec074eaab20fcf6d22c1/2048x1536.webp",
-      "https://www.compass.com/m/eeaa719d1164f1b5ecbfa167bafbb194e627993d5ac1a2f45a7c50bbd1e1b066/2048x1536.webp",
-      "https://www.compass.com/m/452cd58ba6627327cca89f71dd38e3571e5d42ca7819a61cadfad92e2443e231/2048x1536.webp",
-      "https://www.compass.com/m/0dab06a0f0a2d1194002ea3fe8a3d7ea8f622a4d6e5369aba09386910839e63f/2048x1536.webp",
-      "https://www.compass.com/m/55bfd2666d7ecd6e9225abcdd841e0bc352820ef56ed73f73249c0dbc88d12bb/2048x1536.webp",
-      "https://www.compass.com/m/0fb28d0dfc410f12ed5ed1fddca1d16626e7e034d14c38d05ae773e7c656219a/2048x1536.webp",
-      "https://www.compass.com/m/b267dbe373eb81e5c73e9e69da6bb43d691117186af2f5fb88a3e6d2dc2b4f8c/2048x1536.webp",
-      "https://www.compass.com/m/e439c1ecd09c51fbbc5f822d90915ae8f93425736dcea4cab0066c3c79a05560/2048x1536.webp",
-      "https://www.compass.com/m/2106068b5d123c1f19e934dd7f7ee68d7b7c193a3babe18ea7bd5e549aa42765/2048x1536.webp",
-      "https://www.compass.com/m/22e7c26e99cc343c5e506ccd82827b014763a41aaee6a821ac9e20396e598304/2048x1536.webp",
-      "https://www.compass.com/m/2e5a508f93fc121cdce310778d005a1e857b69bb55406a72a47430edbe9caabd/2048x1536.webp",
-      "https://www.compass.com/m/cedc981153d2a5f6dbf316370b79b729aa2b8e345ba80e245d6b087b067cd516/2048x1536.webp",
-      "https://www.compass.com/m/4ef4bccd85433f7f6bd5483a32fc04447b198f8c6d3d6be621a4fc705ba0615a/2048x1536.webp",
-      "https://www.compass.com/m/d34e204f923201206dc81703d86846c998229b8212265620bcd8a770441b9b77/2048x1536.webp",
-    ],
-    firstSeen: "2026-09-05T11:47:43.000Z",
     lastVerified: listingsSyncedAt,
   },
   {
