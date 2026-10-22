@@ -1,6 +1,7 @@
 import 'server-only';
 import { Pool } from 'pg';
 import type { GeoResultRow } from './geo-score';
+import { pgSsl } from '@/lib/db-ssl'
 
 // Postgres layer for the GEO visibility tracker. Mirrors the fail-soft pooling
 // pattern in lib/admin-db.ts: no DATABASE_URL → silent no-op; query errors are
@@ -19,7 +20,7 @@ function getPool(): Pool | null {
     global.__jf_geo_pool = new Pool({
       connectionString: url,
       max: 1,
-      ssl: url.includes('railway') ? { rejectUnauthorized: false } : undefined,
+      ssl: pgSsl(url),
     });
   }
   return global.__jf_geo_pool;

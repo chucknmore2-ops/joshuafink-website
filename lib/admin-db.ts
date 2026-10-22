@@ -1,5 +1,6 @@
 import "server-only";
 import { Pool } from "pg";
+import { pgSsl } from "@/lib/db-ssl"
 
 declare global {
   // eslint-disable-next-line no-var
@@ -13,7 +14,7 @@ function getPool(): Pool | null {
     global.__jf_admin_pool = new Pool({
       connectionString: url,
       max: 1,
-      ssl: url.includes("railway") ? { rejectUnauthorized: false } : undefined,
+      ssl: pgSsl(url),
     });
   }
   return global.__jf_admin_pool;

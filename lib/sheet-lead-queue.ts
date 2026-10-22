@@ -1,4 +1,5 @@
 import { Pool } from 'pg'
+import { pgSsl } from '@/lib/db-ssl'
 
 // Durable copy of a lead whose Google Sheet append did not confirm.
 // Same Railway Postgres as listing alerts and /admin (DATABASE_URL). No new
@@ -76,10 +77,10 @@ function getPool(): Pool | null {
     global.__jf_sheet_lead_pool = new Pool({
       connectionString: url,
       max: 1,
-      connectionTimeoutMillis: 2_000,
+      connectionTimeoutMillis: 8_000,
       idleTimeoutMillis: 1_000,
       allowExitOnIdle: true,
-      ssl: url.includes('railway') ? { rejectUnauthorized: false } : undefined,
+      ssl: pgSsl(url),
     })
   }
   return global.__jf_sheet_lead_pool

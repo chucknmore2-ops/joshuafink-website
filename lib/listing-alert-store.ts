@@ -1,5 +1,6 @@
 import { randomBytes } from 'crypto'
 import { Pool } from 'pg'
+import { pgSsl } from '@/lib/db-ssl'
 import {
   isPlausibleEmail,
   parseOptionalPrice,
@@ -25,7 +26,7 @@ function getPool(): Pool | null {
     global.__jf_alert_pool = new Pool({
       connectionString: url,
       max: 1,
-      ssl: url.includes('railway') ? { rejectUnauthorized: false } : undefined,
+      ssl: pgSsl(url),
     })
   }
   return global.__jf_alert_pool
