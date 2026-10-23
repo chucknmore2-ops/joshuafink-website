@@ -41,6 +41,7 @@ export async function GET(request: Request) {
       failed: 0,
       released: 0,
       stopped: false,
+      detail: null,
       remaining: null,
     })
   }
@@ -52,6 +53,11 @@ export async function GET(request: Request) {
       store,
       budgetMs: SHEET_BACKFILL_BUDGET_MS,
     })
+    if (report.detail) {
+      console.error(
+        `sheet backfill incomplete: written=${report.written} released=${report.released} stopped=${report.stopped} detail=${report.detail}`,
+      )
+    }
     return NextResponse.json({ ok: true, configured: true, ...report })
   } catch (err) {
     console.error(

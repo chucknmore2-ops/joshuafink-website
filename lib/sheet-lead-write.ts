@@ -11,6 +11,14 @@ import {
 // /api/cron/sheet-lead-backfill (maxDuration 60).
 export const SHEET_WRITE_BUDGET_MS = 18_000
 export const SHEET_BACKFILL_BUDGET_MS = 45_000
+/**
+ * One Apps Script round trip, not the contact form's 6s channel cap.
+ * A healthy append often takes several seconds (the script cold-starts,
+ * follows Google's redirect, then scans the lead_id column). The old
+ * backfill cap of 12s, split into 6s tries, aborted that call, called it
+ * an outage, and never started the next queued row.
+ */
+export const SHEET_BACKFILL_ATTEMPT_MS = 20_000
 export const SHEET_MAX_ATTEMPTS = 3
 export const SHEET_BACKOFF_BASE_MS = 200
 export const SHEET_BACKOFF_CAP_MS = 1_000
@@ -280,7 +288,43 @@ export type SheetBackfillReport = {
   failed: number
   released: number
   stopped: boolean
+  /** Why the last row did not confirm. Null when every claimed row was written. */
+  detail: string | null
   remaining: { queued: number; failed: number } | null
+}
+
+/** Strip anything that could be a connection string or a lead field echoed by a script error. */
+export function redactSheetDetail(detail: string): string {
+  return detail
+    .replace(/postgres(?:ql)?:\/\/\S+/gi, 'postgres://redacted')
+    .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, '[email]')
+    .replace(/\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b/g, '[phone]')
+    .slice(0, 240)
+}
+
+/**
+ * How long the next queued lead may spend talking to Apps Script.
+ * One attempt: two short tries inside a 12s cap both die before a slow
+ * append returns, and the job then looks like it drained nothing.
+ */
+export function sheetBackfillLeadBudget(remainingMs: number): { budgetMs: number; timeoutMs: number } {
+  const budgetMs = Math.max(0, Math.min(SHEET_BACKFILL_ATTEMPT_MS, remainingMs))
+  return { budgetMs, timeoutMs: budgetMs }
+}
+
+/**
+ * Stop the batch only when another row would fail the same way for a
+ * reason retrying will not fix (bad secret, HTML instead of the script,
+ * rate limit, or an HTTP error). A timeout or a dropped socket is one
+ * call. The contact route's longer budget often confirms that same lead
+ * a moment later, and the other queued rows were never tried.
+ */
+export function sheetFailureStopsBackfill(input: { scope: 'global' | 'row' | 'ok'; detail?: string }): boolean {
+  if (input.scope !== 'global') return false
+  const detail = input.detail || ''
+  if (detail === 'timeout') return false
+  if (/econnreset|socket hang up|fetch failed|network error|the operation was aborted/i.test(detail)) return false
+  return true
 }
 
 export async function backfillSheetLeads(options: {
@@ -304,32 +348,46 @@ export async function backfillSheetLeads(options: {
   let failed = 0
   let released = 0
   let stopped = false
+  let detail: string | null = null
   let processed = 0
+  // Transient failures may be retried once after the other rows. A second
+  // claim of the same id means every other row has been tried too, and
+  // spinning would only burn the budget (or, in tests, the lead cap).
+  const transientTries = new Map<string, number>()
 
   while (processed < maxLeads) {
     if (budgetMs - (now() - started) < 1_000) break
     const claimed = await options.store.claim(1)
     if (claimed.length === 0) break
     const row = claimed[0]
+    if ((transientTries.get(row.id) ?? 0) >= 2) {
+      await options.store.release(row.id, detail || 'already tried this run')
+      break
+    }
     processed += 1
 
     if (!row.payload) {
-      await options.store.markFailed(row.id, 'queued payload was unreadable')
+      const failure = 'queued payload was unreadable'
+      await options.store.markFailed(row.id, failure)
       failed += 1
+      detail = failure
       continue
     }
 
     const remaining = budgetMs - (now() - started)
+    const leadBudget = sheetBackfillLeadBudget(remaining)
     const result = await postSheetPayload({
       url: options.webhookUrl,
+      // The queue id is the lead_id the script dedupes on. A retry that
+      // timed out after the row landed comes back duplicate and is not appended.
       payload: { ...row.payload, lead_id: row.id },
       secret: options.secret,
       fetchImpl: options.fetchImpl,
       sleep: options.sleep,
       now,
-      budgetMs: Math.min(12_000, remaining),
-      timeoutMs: options.timeoutMs,
-      maxAttempts: options.maxAttempts,
+      budgetMs: leadBudget.budgetMs,
+      timeoutMs: options.timeoutMs ?? leadBudget.timeoutMs,
+      maxAttempts: options.maxAttempts ?? 1,
       backoffBaseMs: options.backoffBaseMs,
     })
 
@@ -339,22 +397,32 @@ export async function backfillSheetLeads(options: {
       continue
     }
 
-    const detail = result.detail || 'sheet write failed'
-    if (result.scope === 'global') {
-      await options.store.release(row.id, detail)
+    const failure = redactSheetDetail(result.detail || 'sheet write failed')
+    detail = failure
+    // The id is the queue key, not the lead's name or email.
+    console.error(`sheet backfill: ${row.id} not confirmed (${failure})`)
+
+    if (sheetFailureStopsBackfill({ scope: result.scope, detail: result.detail })) {
+      await options.store.release(row.id, failure)
       released += 1
       stopped = true
       break
     }
-    if (row.attempts >= SHEET_ROW_FAIL_LIMIT) {
-      await options.store.markFailed(row.id, detail)
-      failed += 1
-    } else {
-      await options.store.release(row.id, detail)
+    if (result.scope === 'global') {
+      transientTries.set(row.id, (transientTries.get(row.id) ?? 0) + 1)
+      await options.store.release(row.id, failure)
       released += 1
+      continue
     }
+    if (row.attempts < SHEET_ROW_FAIL_LIMIT) {
+      await options.store.release(row.id, failure)
+      released += 1
+      continue
+    }
+    await options.store.markFailed(row.id, failure)
+    failed += 1
   }
 
-  const remaining = await options.store.counts()
-  return { written, failed, released, stopped, remaining }
+  const remainingCounts = await options.store.counts()
+  return { written, failed, released, stopped, detail, remaining: remainingCounts }
 }
