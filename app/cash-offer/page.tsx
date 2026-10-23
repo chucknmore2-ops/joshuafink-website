@@ -350,7 +350,7 @@ export default function CashOfferPage() {
                 href={`/cash-offer/${slug}`}
                 className="rounded-2xl border border-neutral-200 bg-white px-5 py-4 text-sm font-semibold text-black transition-all duration-200 hover:bg-black hover:text-white hover:border-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
               >
-                {slug === 'nashville-tn' ? 'Cash Offer in Nashville, TN' : `Sell My House Fast in ${name}, TN`}{' '}
+                {slug === 'nashville-tn' ? 'We Buy Houses in Nashville' : `Sell My House Fast in ${name}, TN`}{' '}
                 <span aria-hidden="true">→</span>
               </QuietLink>
             ))}

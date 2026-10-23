@@ -304,7 +304,7 @@ export default async function SuburbPage({ params }: Props) {
                   className="inline-block text-sm font-bold px-6 py-3 tracking-wide transition-colors text-center"
                   style={{ backgroundColor: '#0A1628', color: '#FFFFFF' }}
                 >
-                  Prefer a Cash Offer?
+                  {slug === 'nashville-tn' ? 'We Buy Houses in Nashville' : 'Prefer a Cash Offer?'}
                 </Link>
               </div>
             </div>

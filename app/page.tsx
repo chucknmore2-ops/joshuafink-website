@@ -367,7 +367,7 @@ export default function HomePage() {
                   href={`/cash-offer/${slug}`}
                   className="mt-1 block text-xs text-neutral-500 hover:text-black"
                 >
-                  {slug === 'nashville-tn' ? 'Nashville cash offer →' : 'Get a cash offer →'}
+                  {slug === 'nashville-tn' ? 'We Buy Houses in Nashville →' : 'Get a cash offer →'}
                 </QuietLink>
                 <QuietLink
                   href="/neighborhoods"

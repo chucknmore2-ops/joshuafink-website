@@ -72,6 +72,14 @@ export type CashOfferCityContent = {
    * framing — never new numbers.
    */
   fairOfferFaqs?: CashOfferFaq[]
+  /**
+   * Short FAQ rendered near the top of /cash-offer/[city] and folded into the
+   * page's single FAQPage JSON-LD. Keep questions distinct from faqs and
+   * fairOfferFaqs. Reuse claims already published on the page.
+   */
+  quickFaqs?: CashOfferFaq[]
+  /** Visible lead sentence above quickFaqs. */
+  quickAnswerIntro?: string
 }
 
 export type CashOfferFaq = {
@@ -196,31 +204,33 @@ const cityContent: Record<string, CashOfferCityContent> = {
     slug: 'nashville-tn',
     areas: 'East Nashville, Wedgewood-Houston, Madison, Antioch, Donelson, and the urban core',
     intro:
-      'Need to sell your home fast in Nashville? This is the most varied market in Middle TN — and the most common place for cash situations: inherited homes, tired rentals, pre-foreclosure, vacant houses, and properties that need more work than a retail buyer will take on. A cash offer lets you sell any of them as-is, without waiting on a traditional listing.',
+      'We Buy Houses in Nashville. Need to sell your home fast in Nashville? This is the most varied market in Middle TN — and the most common place for cash situations: inherited homes, tired rentals, pre-foreclosure, vacant houses, and properties that need more work than a retail buyer will take on. A cash offer lets you sell any of them as-is, without waiting on a traditional listing.',
     localAngle:
       "Across Davidson County, Nashville's $475,538 median (Redfin, as of October 5, 2026) spans everything from updated East Nashville bungalows to dated homes in Madison, Antioch, and Donelson that are hard to sell traditionally. Cash is the cleanest exit for landlords done with tenants, heirs settling an estate, or owners facing foreclosure — Joshua buys in any condition, anywhere in the metro.",
     headline: {
-      lead: 'Cash Offer',
-      accent: 'in Nashville, TN',
+      lead: 'We Buy Houses',
+      accent: 'in Nashville',
     },
-    contentUpdated: '2026-10-17',
+    contentUpdated: '2026-10-23',
     marketNote:
       "Davidson County is not one housing market. The citywide median sale price is $475,538, with 64 days on market and $272.16 per square foot, down 0.52% year over year (Redfin, as of October 5, 2026). Davidson County's April 1, 2020 Census count was 715,884. The U.S. Census Bureau estimates 745,904 residents as of July 1, 2025, a 4.2% increase from the April 1, 2020 estimates base (U.S. Census Bureau QuickFacts; Population Estimates, Vintage 2025). The neighborhood guides on this site publish these price bands: East Nashville $450K – $1.2M+, 12 South $700K – $1.8M+, Germantown $500K – $1.5M+, Sylvan Park $550K – $1.3M+, The Gulch $400K – $1.5M+ (condos), and Green Hills: No published median. A cash offer follows the block and the condition, not the citywide midpoint. Joshua also buys in Madison, Antioch, Donelson, Bordeaux, and Hermitage.",
     seo: {
-      title: 'Cash Offer in Nashville, TN | Sell My House Fast',
+      title: 'We Buy Houses in Nashville | Cash Offer in 24 Hours',
       description:
-        'Cash offer in Nashville, TN — any condition, Davidson County. Fair offer in 24 hours, close in as little as 7 days. Licensed Compass broker (TREC #351484). No repairs, no commissions.',
-      ogTitle: 'Cash Offer in Nashville, TN — Sell My House Fast',
+        'We Buy Houses in Nashville — any condition, no fees, no repairs. Fair cash offer in 24 hours from a licensed Compass broker (TREC #351484). Close in 7 days.',
+      ogTitle: 'We Buy Houses in Nashville | Cash Offer in 24 Hours',
       ogDescription:
-        'Fair cash offer on your Nashville, TN home in 24 hours. Close in as little as 7 days. As-is, no showings, no commissions. Call or text 615-551-2727.',
+        'We Buy Houses in Nashville — any condition, no fees, no repairs. Fair cash offer in 24 hours from a licensed Compass broker. Close in 7 days. Call or text 615-551-2727.',
       keywords: [
+        'we buy houses in Nashville',
+        'we buy houses Nashville',
+        'we buy houses Nashville TN',
         'cash offer Nashville TN',
         'Nashville TN cash offer',
         'sell my house fast Nashville',
         'sell my house fast Nashville TN',
         'sell my home fast Nashville',
         'sell my home fast Nashville TN',
-        'we buy houses Nashville TN',
         'cash home buyer Nashville',
         'sell house as-is Nashville',
         'Joshua Fink',
@@ -292,6 +302,26 @@ const cityContent: Record<string, CashOfferCityContent> = {
       {
         q: 'How can I tell if a Nashville cash offer is fair?',
         a: "Ask for the math. A fair offer shows the after-repair value, the comps behind it, and the repair estimate, so you can check each piece yourself. Joshua puts that in writing next to a traditional-listing estimate, because he also lists homes with Compass. If an offer comes with no comps and no repair breakdown, compare it against a second opinion before you sign — you're never obligated to accept.",
+      },
+    ],
+    quickAnswerIntro:
+      'We Buy Houses in Nashville. These four answers cover how fast you can close, what you pay in fees, selling as-is, and how a cash offer compares with listing.',
+    quickFaqs: [
+      {
+        q: 'How fast can you buy a house in Nashville?',
+        a: 'You get a no-obligation cash offer within 24 hours. If you accept, you can close in as little as 7 days, or on a later date you choose. There is no lender and no appraisal. A Tennessee title attorney clears title and schedules closing.',
+      },
+      {
+        q: 'Do you charge fees to buy a house in Nashville?',
+        a: 'No. There is no agent commission, no closing cost charged to you, and no hidden fee. Joshua covers the closing costs. The cash offer you accept is the amount you walk away with.',
+      },
+      {
+        q: 'Will you buy my Nashville house as-is?',
+        a: 'Yes. You make zero repairs, do zero cleaning, and host zero showings. Joshua buys Nashville homes as-is, including fire or water damage, mold, foundation issues, code violations, hoarder conditions, and tenant-occupied rentals. Condition is priced into the offer up front.',
+      },
+      {
+        q: 'How does a cash offer compare with listing my Nashville house?',
+        a: 'A cash offer typically runs 70–85% of after-repair market value. You trade some retail price for speed and certainty: no commission, no repairs, and no showings. If the home is in good shape and you can wait 30–90 days, listing usually nets more. Joshua shows you both numbers in writing before you choose, because he also lists homes with Compass.',
       },
     ],
     faqs: [

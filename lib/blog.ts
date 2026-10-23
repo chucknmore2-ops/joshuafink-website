@@ -3010,7 +3010,7 @@ Joshua Fink buys homes for cash throughout Nashville and Middle Tennessee. If yo
     slug: "we-buy-houses-nashville-how-it-works",
     title: "We Buy Houses Nashville — How Cash Offers Actually Work",
     date: "April 6, 2026",
-    dateModified: "April 19, 2026",
+    dateModified: "October 23, 2026",
     category: "Selling",
     auditTier: "fix",
     disclosure: "Joshua Fink is a licensed Tennessee Affiliate Broker with Compass Real Estate (Tennessee Real Estate Commission). In cash-offer transactions Joshua may act as a principal buyer or partner with a vetted local investor; his licensee status and role in each transaction are disclosed in writing at offer time as required under TREC Rule 1260-02-.12 and TCA \u00a7 62-13-403. Cash offers are typically 70\u201385% of after-repair market value \u2014 the tradeoff is speed, certainty, and zero repairs, disclosed up-front so sellers can choose knowingly.",
@@ -3086,10 +3086,10 @@ A good rule of thumb: take your home's as-is market value, subtract what you'd p
 
 ## Get Your Cash Offer Today
 
-Joshua Fink buys houses for cash throughout Nashville and all of Middle Tennessee. No commissions, no closing costs, no repairs. Fair offer in 24 hours. Close in 7 days or on your schedule.
+Joshua Fink [buys houses in Nashville](/cash-offer/nashville-tn) for cash, and across the rest of Middle Tennessee. No commissions, no closing costs, no repairs. Fair offer in 24 hours. Close in 7 days or on your schedule.
 
 📞 **[615-551-2727](tel:6155512727)** — Call or text anytime
-🏠 **[Get your Nashville cash offer →](/cash-offer/nashville-tn)**
+🏠 **[We Buy Houses in Nashville →](/cash-offer/nashville-tn)**
     `.trim(),
   },
   {
