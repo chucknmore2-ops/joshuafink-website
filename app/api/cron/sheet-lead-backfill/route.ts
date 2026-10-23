@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic'
 export const maxDuration = 60
 
 // Vercel Hobby allows two cron jobs and both slots are already used
-// (indexnow, listing-alerts). GitHub Actions calls this route hourly.
+// (indexnow, listing-alerts). GitHub Actions calls this route at :10 and :40.
 // Auth matches the other /api/cron/* routes: Authorization: Bearer CRON_SECRET.
 
 function authorize(request: Request): NextResponse | null {
