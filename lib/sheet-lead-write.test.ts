@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { createMemorySheetLeadStore } from './sheet-lead-queue.ts'
 import {
+  SHEET_BACKFILL_ATTEMPT_MS,
   SHEET_BACKFILL_BUDGET_MS,
   SHEET_ROW_FAIL_LIMIT,
   SHEET_WRITE_BUDGET_MS,
@@ -11,7 +12,10 @@ import {
   classifySheetFailure,
   deliverSheetLead,
   postSheetPayload,
+  redactSheetDetail,
   sheetBackoffMs,
+  sheetBackfillLeadBudget,
+  sheetFailureStopsBackfill,
 } from './sheet-lead-write.ts'
 
 const URL = 'https://script.google.com/macros/s/test-deployment/exec'
@@ -219,6 +223,7 @@ test('backfill writes a queued lead once and will not claim it again', async () 
     budgetMs: 10_000,
   })
   assert.equal(first.written, 1)
+  assert.equal(first.detail, null)
   assert.equal(posts, 1)
   assert.equal(first.remaining?.queued, 0)
   const second = await backfillSheetLeads({
@@ -254,8 +259,82 @@ test('a sheet outage releases the row and does not start the next one', async ()
   assert.equal(posts, 1)
   assert.equal(report.stopped, true)
   assert.equal(report.written, 0)
+  assert.equal(report.detail, 'HTTP 503')
   assert.equal(report.remaining?.queued, 2)
   assert.equal(report.remaining?.failed, 0)
+})
+
+test('a timeout puts that row back and still writes the next one', async () => {
+  const store = createMemorySheetLeadStore()
+  await store.enqueue({ id: 'slow', payload: { lead_id: 'slow', name: 'Slow', email: 'slow@example.com' } })
+  await store.enqueue({ id: 'next', payload: { lead_id: 'next', name: 'Next', email: 'next@example.com' } })
+  const posted: string[] = []
+  const report = await backfillSheetLeads({
+    webhookUrl: URL,
+    store,
+    now: () => 0,
+    sleep: async () => undefined,
+    budgetMs: 45_000,
+    fetchImpl: (async (_input: RequestInfo | URL, init?: RequestInit) => {
+      const body = JSON.parse(String(init?.body ?? '')) as { lead_id: string }
+      posted.push(body.lead_id)
+      if (body.lead_id === 'slow') throw new Error('timeout')
+      return new Response('{"ok":true}', { status: 200, headers: { 'Content-Type': 'application/json' } })
+    }) as typeof fetch,
+  })
+  assert.deepEqual(posted, ['slow', 'next', 'slow'])
+  assert.equal(report.written, 1)
+  assert.equal(report.released, 2)
+  assert.equal(report.failed, 0)
+  assert.equal(report.stopped, false)
+  assert.equal(report.detail, 'timeout')
+  assert.equal(report.remaining?.queued, 1)
+  assert.ok(posted.filter((id) => id === 'slow').length < 3)
+})
+
+test('a timed-out write that actually landed is marked written on the duplicate reply', async () => {
+  const store = createMemorySheetLeadStore()
+  await store.enqueue({ id: 'landed', payload: { lead_id: 'landed', name: 'Ada', email: 'ada@example.com' } })
+  let calls = 0
+  const fetchImpl = (async () => {
+    calls += 1
+    if (calls === 1) throw new Error('timeout')
+    return new Response('{"ok":true,"duplicate":true}', {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }) as typeof fetch
+  const report = await backfillSheetLeads({
+    webhookUrl: URL,
+    store,
+    fetchImpl,
+    now: () => 0,
+    sleep: async () => undefined,
+    budgetMs: 45_000,
+  })
+  // Nothing else is queued, so the same run retries the row. The script's
+  // duplicate answer means the timed-out attempt had already appended it.
+  assert.equal(report.written, 1)
+  assert.equal(report.released, 1)
+  assert.equal(report.detail, 'timeout')
+  assert.equal(report.remaining?.queued, 0)
+  assert.equal(calls, 2)
+})
+
+test('backfill gives each lead one Apps Script-sized attempt', () => {
+  const plan = sheetBackfillLeadBudget(SHEET_BACKFILL_BUDGET_MS)
+  assert.equal(plan.budgetMs, SHEET_BACKFILL_ATTEMPT_MS)
+  assert.equal(plan.timeoutMs, SHEET_BACKFILL_ATTEMPT_MS)
+  assert.ok(SHEET_BACKFILL_ATTEMPT_MS >= 20_000)
+  assert.ok(SHEET_BACKFILL_ATTEMPT_MS < SHEET_BACKFILL_BUDGET_MS)
+  assert.equal(sheetBackfillLeadBudget(5_000).timeoutMs, 5_000)
+  assert.equal(sheetFailureStopsBackfill({ scope: 'global', detail: 'timeout' }), false)
+  assert.equal(sheetFailureStopsBackfill({ scope: 'global', detail: 'TypeError: fetch failed' }), false)
+  assert.equal(sheetFailureStopsBackfill({ scope: 'global', detail: 'HTTP 503' }), true)
+  assert.equal(sheetFailureStopsBackfill({ scope: 'global', detail: 'bad secret' }), true)
+  assert.equal(sheetFailureStopsBackfill({ scope: 'global', detail: 'non-JSON response (broken deployment?)' }), true)
+  assert.equal(sheetFailureStopsBackfill({ scope: 'row', detail: 'timeout' }), false)
+  assert.equal(redactSheetDetail('failed for ada@example.com at 615-555-0100 postgres://user:pw@host/db'), 'failed for [email] at [phone] postgres://redacted')
 })
 
 test('a duplicate response during backfill marks the lead written', async () => {
@@ -346,6 +425,11 @@ test('retry and backfill budgets fit the route time limits and do not add a Verc
   assert.equal(vercel.includes('sheet-lead-backfill'), false)
   assert.match(workflow, /CRON_SECRET/)
   assert.match(workflow, /api\/cron\/sheet-lead-backfill/)
+  assert.match(workflow, /wrote 0 of/)
+  assert.equal(backfill.includes('sendPushover'), false)
+  assert.equal(backfill.includes('forwardToJoshua'), false)
+  assert.equal(backfill.includes('sendAutoReply'), false)
+  assert.equal(backfill.includes('Resend'), false)
   const parallel = contact.slice(contact.indexOf('await Promise.all(['), contact.indexOf('await Promise.all([') + 700)
   assert.match(parallel, /forwardToJoshua/)
   assert.match(parallel, /pushToSheet/)

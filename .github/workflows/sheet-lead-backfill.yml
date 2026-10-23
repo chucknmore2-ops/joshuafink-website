@@ -54,3 +54,14 @@ jobs:
             echo "::error::Sheet lead backfill returned HTTP $status"
             exit 1
           fi
+
+          # A 200 that wrote nothing while rows are still queued is the
+          # stall from 2026-10-23: one short timeout was treated as success.
+          written=$(printf '%s' "$body" | jq -r '.written // 0')
+          queued=$(printf '%s' "$body" | jq -r 'if .remaining == null then 0 else (.remaining.queued // 0) end')
+          configured=$(printf '%s' "$body" | jq -r '.configured // false')
+          detail=$(printf '%s' "$body" | jq -r '.detail // empty')
+          if [ "$configured" = "true" ] && [ "$written" = "0" ] && [ "$queued" != "0" ]; then
+            echo "::error::Backfill wrote 0 of $queued queued leads (${detail:-no detail})"
+            exit 1
+          fi
