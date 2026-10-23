@@ -314,7 +314,7 @@ Current Nashville listings are on the [homes for sale](/listings) page. The city
     slug: "middle-tennessee-sellers-guide-2026",
     title: "The 2026 Middle Tennessee Seller's Guide",
     date: "October 7, 2026",
-    dateModified: "October 7, 2026",
+    dateModified: "October 23, 2026",
     excerpt:
       "How to price, prep, and close a Middle Tennessee home in 2026, with the September Greater Nashville REALTORS® figures and Redfin city medians as of October 5, 2026. Written by Joshua Fink at Compass, licensed since 2008.",
     category: "For Sellers",
@@ -361,7 +361,7 @@ A new listing gets a burst of attention in the first two weeks that it does not 
 
 Tennessee closings are handled by attorneys or title companies and typically take 30–45 days from contract. Sellers generally pay 1–2% in closing costs on top of commission. The [net-sheet breakdown](/blog/cost-to-sell-home-tennessee-2026-net-sheet) lists the line items. Verify any wire instructions by phone with the title company, using a number you already have.
 
-If the timeline will not stretch for a traditional listing, compare a cash offer with the retail number before you choose. Start at [cash offer](/cash-offer), including [Nashville](/cash-offer/nashville-tn) and [Franklin](/cash-offer/franklin-tn).
+If the timeline will not stretch for a traditional listing, compare a cash offer with the retail number before you choose. Start at [cash offer](/cash-offer). If the house is in Nashville, see [we buy houses in Nashville](/cash-offer/nashville-tn). In Williamson County, see [Franklin](/cash-offer/franklin-tn). In Maury County, you can [sell your house fast in Columbia, TN](/cash-offer/columbia-tn).
 
 Buying the next house at the same time? The [Buyer's Guide](/guide/buyer) covers that side. The long version of this post is the [2026 Seller's Guide](/guide/seller).
     `.trim(),
@@ -515,7 +515,7 @@ I'm happy to pull the exact closed comps for your block and give you an honest r
     slug: "avoid-foreclosure-nashville-tennessee",
     title: "How to Avoid Foreclosure in Nashville & Middle Tennessee: Your Options in 2026",
     date: "May 28, 2026",
-    dateModified: "May 28, 2026",
+    dateModified: "October 23, 2026",
     excerpt: "If you have fallen behind on your mortgage in Nashville or anywhere in Middle Tennessee, you still have more options than you might think. This is a calm, practical guide to what foreclosure is, why acting early matters, and the realistic paths to protect your equity and your credit.",
     category: "Selling",
     disclosure: "This article is for general educational purposes only and is not legal, tax, or financial advice — consult a licensed Tennessee attorney and your loan servicer about your specific situation. Joshua Fink is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate and may act as a principal buyer or partner with a local investor in a cash transaction; his licensed status is disclosed in writing at offer time. Cash offers are typically 70–85% of after-repair market value.",
@@ -556,7 +556,7 @@ Sometimes there simply is not enough time for a traditional sale, or the house n
 
 Let me be completely transparent about the tradeoff, because you deserve straight numbers. An investor cash offer is **typically 70–85% of the after-repair market value** of the home. You are trading some price for speed and certainty. If you have time and equity, listing traditionally will usually net you more. If you are out of time, that certainty can be worth a great deal — because a completed sale almost always beats a completed foreclosure on your credit and your peace of mind.
 
-I buy homes for cash across Middle Tennessee, and I disclose my licensed broker status in writing at offer time. You can learn how it works on my [cash-offer page](/cash-offer), and I have city-specific information for places like [Nashville](/cash-offer/nashville-tn), [Murfreesboro](/cash-offer/murfreesboro-tn), [Franklin](/cash-offer/franklin-tn), [Columbia](/cash-offer/columbia-tn), and [Gallatin](/cash-offer/gallatin-tn).
+I buy homes for cash across Middle Tennessee, and I disclose my licensed broker status in writing at offer time. You can learn how it works on my [cash-offer page](/cash-offer), including [Murfreesboro](/cash-offer/murfreesboro-tn), [Franklin](/cash-offer/franklin-tn), and [Gallatin](/cash-offer/gallatin-tn). If you are in Nashville, see [we buy houses in Nashville](/cash-offer/nashville-tn). If you are in Columbia, you can [sell your house fast in Columbia, TN](/cash-offer/columbia-tn).
 
 ## If You Owe More Than the Home Is Worth: Short Sale
 
@@ -583,7 +583,7 @@ If you would like a calm, no-pressure conversation about where you stand and wha
     slug: "selling-inherited-house-nashville-tennessee",
     title: "Selling an Inherited House in Nashville & Middle Tennessee: A Probate-to-Closing Guide",
     date: "June 2, 2026",
-    dateModified: "June 2, 2026",
+    dateModified: "October 23, 2026",
     excerpt: "Inheriting a house in Middle Tennessee brings grief and a long to-do list at the same time. Here is a calm, practical walk-through of probate basics, coordinating with siblings, and the three real paths to selling.",
     category: "Selling",
     disclosure: "This article is for general educational purposes only and is not legal, tax, or financial advice — consult a licensed Tennessee probate attorney and a tax professional about your specific situation. Joshua Fink is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate and may act as a principal buyer or partner with a local investor in a cash transaction; his licensed status is disclosed in writing at offer time. Cash offers are typically 70–85% of after-repair market value.",
@@ -628,7 +628,7 @@ There is no single right answer. Here are the three I walk families through.
 
 **1. Clean it out and list it traditionally for top dollar.** If the home is in reasonable shape, or you have the time, money, and a local family member to manage repairs and showings, listing on the open market usually nets the most. You'll clear out belongings, make the place presentable, and let buyers compete. I do this every day as a Compass agent, and you can start with a free, no-pressure valuation on my [home valuation page](/sell) to see what the house could bring.
 
-**2. Sell as-is for cash and split the proceeds cleanly.** This is the path a lot of inherited-home families choose, and here is the honest tradeoff. An investor cash offer is typically **70–85% of the after-repair market value** — you are trading some price for speed, certainty, and zero work. In exchange: no repairs, no cleanout, no showings, no agent commissions, and a closing date you pick. You can [request a cash offer here](/cash-offer), and I serve the whole region, including [Nashville](/cash-offer/nashville-tn), [Hendersonville](/cash-offer/hendersonville-tn), [Gallatin](/cash-offer/gallatin-tn), [Murfreesboro](/cash-offer/murfreesboro-tn), and [Columbia](/cash-offer/columbia-tn).
+**2. Sell as-is for cash and split the proceeds cleanly.** This is the path a lot of inherited-home families choose, and here is the honest tradeoff. An investor cash offer is typically **70–85% of the after-repair market value** — you are trading some price for speed, certainty, and zero work. In exchange: no repairs, no cleanout, no showings, no agent commissions, and a closing date you pick. You can [request a cash offer here](/cash-offer). I serve the whole region, including [Hendersonville](/cash-offer/hendersonville-tn), [Gallatin](/cash-offer/gallatin-tn), and [Murfreesboro](/cash-offer/murfreesboro-tn). In Nashville, see [we buy houses in Nashville](/cash-offer/nashville-tn). In Columbia, you can [sell your house for cash in Columbia, TN](/cash-offer/columbia-tn).
 
 The part families don't expect: you take **fully as-is.** Keep the photos, the furniture you want, Grandpa's tools — and leave **everything else** right where it sits. No dumpster, no estate-sale company, no scrubbing. We handle the cleanout. For a lot of out-of-town heirs, not having to fly back to empty a house is the whole reason they call.
 
@@ -657,7 +657,7 @@ You can reach me directly at [615-551-2727](tel:6155512727) or [joshua@joshuafin
     slug: "sell-rental-property-fast-nashville",
     title: "How to Sell a Rental Property Fast in Nashville & Middle Tennessee: A Landlord's Exit Guide",
     date: "June 5, 2026",
-    dateModified: "June 5, 2026",
+    dateModified: "October 23, 2026",
     excerpt: "Tired of managing a rental in Middle Tennessee? Here's how to weigh selling vacant and updated for top dollar against an as-is or occupied sale for speed, plus how a cash close works fast.",
     category: "Selling",
     disclosure: "This article is for general educational purposes only and is not legal, tax, or financial advice — consult a CPA and a licensed Tennessee attorney about your specific situation, including tenant leases and tax consequences. Joshua Fink is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate and may act as a principal buyer or partner with a local investor in a cash transaction; his licensed status is disclosed in writing at offer time. Cash offers are typically 70–85% of after-repair market value.",
@@ -732,7 +732,7 @@ To be upfront about the trade-off: an investor cash offer is typically **70–85
 
 - **Tired student rentals near MTSU in Murfreesboro** — high-turnover units that have taken years of wear. Owners often want out before the next lease cycle. [Sell your Murfreesboro rental for cash](/cash-offer/murfreesboro-tn).
 - **Commuter rentals in La Vergne and Smyrna** — solid properties whose out-of-area owners are simply done managing from a distance. [La Vergne cash offers](/cash-offer/la-vergne-tn) and [Smyrna cash offers](/cash-offer/smyrna-tn) are both common.
-- **Nashville rentals** in neighborhoods that have appreciated hard, where owners want to capture equity now. See [Nashville cash offers](/cash-offer/nashville-tn).
+- **Nashville rentals** in neighborhoods that have appreciated hard, where owners want to capture equity now. See [we buy houses in Nashville](/cash-offer/nashville-tn).
 
 ## Let's Figure Out Your Best Exit
 
@@ -745,7 +745,7 @@ Prefer to talk it through? Call or text me at [615-551-2727](tel:6155512727), or
     slug: "sell-house-as-is-middle-tennessee",
     title: "Selling Your House As-Is in Middle Tennessee: What It Really Means (and What It Doesn't)",
     date: "June 6, 2026",
-    dateModified: "June 6, 2026",
+    dateModified: "October 23, 2026",
     excerpt: "As-is means you won't make repairs — not that you can skip the Tennessee disclosure or hide problems. Here's a plain-English breakdown of your two as-is routes and which one actually nets you more.",
     category: "Selling",
     disclosure: "This article is for general educational purposes only and is not legal advice — selling as-is does not eliminate a Tennessee seller's obligation to disclose known material defects; consult your agent or a licensed Tennessee attorney. Joshua Fink is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate and may act as a principal buyer or partner with a local investor in a cash transaction; his licensed status is disclosed in writing at offer time. Cash offers are typically 70–85% of after-repair market value.",
@@ -805,7 +805,7 @@ The other route is selling directly to a cash buyer — which is something I do 
 - **No financing or appraisal risk** — cash means no lender, so no appraisal gap or loan denial blowing up the deal.
 - **Fast, certain close** — often in a couple of weeks, on a date you choose.
 
-I buy directly in places like [Nashville](/cash-offer/nashville-tn), [Franklin](/cash-offer/franklin-tn), [Columbia](/cash-offer/columbia-tn), and [Spring Hill](/cash-offer/spring-hill-tn), and you can start a [cash offer here](/cash-offer).
+I buy directly in [Franklin](/cash-offer/franklin-tn), [Spring Hill](/cash-offer/spring-hill-tn), and the rest of the region. If the house is in Nashville, see [we buy houses in Nashville](/cash-offer/nashville-tn). If it is in Columbia, you can [sell your house fast in Columbia, TN](/cash-offer/columbia-tn). Start with a [cash offer here](/cash-offer) either way.
 
 ## The Honest Tradeoff
 
@@ -837,7 +837,7 @@ Call or text me at [615-551-2727](tel:6155512727), email [joshua@joshuafink.com]
     slug: "cash-home-sale-timeline-tennessee",
     title: "How Fast Can You Really Sell a House for Cash in Tennessee? The 7-Day Timeline Explained",
     date: "June 8, 2026",
-    dateModified: "June 8, 2026",
+    dateModified: "October 23, 2026",
     excerpt: "A cash sale can close in as little as 7 days when title is clean, because there's no lender, no appraisal, and no repair haggling. Here's the honest day-by-day timeline and what can slow it down.",
     category: "Selling",
     disclosure: "This article is for general educational purposes only and is not legal advice — a licensed Tennessee title or closing attorney handles title and closing; consult them about your specific situation. Joshua Fink is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate and may act as a principal buyer or partner with a local investor in a cash transaction; his licensed status is disclosed in writing at offer time. Cash offers are typically 70–85% of after-repair market value.",
@@ -900,7 +900,7 @@ Fast doesn't have to mean rushed. Plenty of my sellers don't actually want to cl
 
 You set the timeline that works for you. The 7-day option is there when you need speed; it's not a requirement.
 
-I buy across Middle Tennessee — including [Nashville](/cash-offer/nashville-tn), [Franklin](/cash-offer/franklin-tn), [Brentwood](/cash-offer/brentwood-tn), [Spring Hill](/cash-offer/spring-hill-tn), and [Mount Juliet](/cash-offer/mount-juliet-tn) — and I'm happy to walk you through what your specific timeline would realistically look like.
+I buy across Middle Tennessee — [Franklin](/cash-offer/franklin-tn), [Brentwood](/cash-offer/brentwood-tn), [Spring Hill](/cash-offer/spring-hill-tn), and [Mount Juliet](/cash-offer/mount-juliet-tn) included. If the house is in Nashville, see [we buy houses in Nashville](/cash-offer/nashville-tn). Farther south, you can [sell your house fast in Columbia, TN](/cash-offer/columbia-tn). I'm happy to walk you through what your specific timeline would realistically look like.
 
 ## Ready to See Your Number?
 
@@ -1077,7 +1077,7 @@ Brentwood is an incredible place to call home, and the right neighborhood depend
     slug: "how-to-sell-home-fast-middle-tennessee",
     title: "How to Sell Your Home Fast in Middle Tennessee",
     date: "February 22, 2026",
-    dateModified: "February 22, 2026",
+    dateModified: "October 23, 2026",
     excerpt:
       "Speed and price don't have to be mutually exclusive. With the right preparation, pricing strategy, and marketing, you can sell your Middle Tennessee home quickly — and for top dollar.",
     content: `
@@ -1126,13 +1126,15 @@ If you've priced correctly and marketed well, you may receive multiple offers �
 - **Escalation clauses** — if multiple offers come in, know how to evaluate these
 
 Selling fast and selling smart aren't competing goals. With the right preparation and the right agent in your corner, you can achieve both. Reach out if you're thinking about listing — I'd love to walk you through what your home is worth in today's market.
+
+If preparation and a listing timeline will not work — repairs, an estate, or a date you cannot move — there is a cash path. In Davidson County, see [we buy houses in Nashville](/cash-offer/nashville-tn). In Maury County, you can [sell your house fast in Columbia, TN](/cash-offer/columbia-tn). Both are as-is offers from a licensed Compass broker, with a number in 24 hours and a close in as little as 7 days.
     `.trim(),
   },
   {
     slug: 'homes-for-sale-columbia-tn',
     title: 'Homes for Sale in Columbia, TN: What Buyers Need to Know in 2025',
     date: 'March 21, 2026',
-    dateModified: 'March 21, 2026',
+    dateModified: 'October 23, 2026',
     excerpt:
       'Columbia, TN is one of Middle Tennessee\'s fastest-growing cities. Here\'s what buyers need to know about the local market, top neighborhoods, and how to find the best deals.',
     content: `
@@ -1171,6 +1173,8 @@ New construction is active throughout the area, with several builders offering s
 **Act decisively.** The best homes in Columbia don't sit. If you find something that checks your boxes, be ready to move.
 
 Columbia, TN is one of the best opportunities in Middle Tennessee right now — the window for truly affordable pricing won't stay open forever. If you'd like to explore what's available or want a personalized tour of the market, reach out. I'd love to help.
+
+Already own in Columbia and need to sell instead? You can [sell your house fast in Columbia, TN](/cash-offer/columbia-tn).
     `.trim(),
   },
   {
@@ -2281,7 +2285,7 @@ If you want a custom game plan for Murfreesboro — including school-zone target
     slug: "living-in-columbia-tn-guide",
     title: "Living in Columbia, TN: Schools, Growth & Real Estate Guide [2025]",
     date: "March 25, 2026",
-    dateModified: "March 25, 2026",
+    dateModified: "October 23, 2026",
     excerpt: "Thinking about moving to Columbia, TN? Explore schools, population growth, home prices, neighborhoods, and local development trends in this 2025 real estate guide.",
     content: `
 If you're considering a move in Middle Tennessee, [Columbia](/buy/columbia-tn) keeps showing up for a reason. Buyers looking at Nashville often end up touring homes here because it offers a different balance of schools, space, commute, and long-term upside. For some, it's about getting more house for the money. For others, it's about neighborhood feel, school options, or a clearer lifestyle fit for the next 5-10 years. Either way, understanding Columbia at a local level — not just through national ranking lists — can help you make a smarter move.
@@ -2358,6 +2362,8 @@ When those three align, Columbia can be one of the strongest long-term ownership
 Whether you're relocating, upsizing, downsizing, or preparing to list, working with a local strategy matters. Joshua Fink and the Joshua Fink Group at Compass Realty help clients buy and sell across the Nashville suburbs with data-backed pricing, neighborhood-level guidance, and strong negotiation support.
 
 If you want a custom game plan for Columbia — including school-zone targeting, commute analysis, and off-market/new-construction options — connect at **joshuafink.com** or call **615-551-2727**.
+
+If you already own and need a date more than a listing, you can [sell your house fast in Columbia, TN](/cash-offer/columbia-tn).
 
 ## Sources
 - [U.S. Census Bureau – Columbia city, Tennessee](https://www.census.gov/quickfacts/fact/table/columbiacitytennessee/PST045224)
@@ -3010,7 +3016,7 @@ Joshua Fink buys homes for cash throughout Nashville and Middle Tennessee. If yo
     slug: "we-buy-houses-nashville-how-it-works",
     title: "We Buy Houses Nashville — How Cash Offers Actually Work",
     date: "April 6, 2026",
-    dateModified: "April 19, 2026",
+    dateModified: "October 23, 2026",
     category: "Selling",
     auditTier: "fix",
     disclosure: "Joshua Fink is a licensed Tennessee Affiliate Broker with Compass Real Estate (Tennessee Real Estate Commission). In cash-offer transactions Joshua may act as a principal buyer or partner with a vetted local investor; his licensee status and role in each transaction are disclosed in writing at offer time as required under TREC Rule 1260-02-.12 and TCA \u00a7 62-13-403. Cash offers are typically 70\u201385% of after-repair market value \u2014 the tradeoff is speed, certainty, and zero repairs, disclosed up-front so sellers can choose knowingly.",
@@ -3089,14 +3095,14 @@ A good rule of thumb: take your home's as-is market value, subtract what you'd p
 Joshua Fink buys houses for cash throughout Nashville and all of Middle Tennessee. No commissions, no closing costs, no repairs. Fair offer in 24 hours. Close in 7 days or on your schedule.
 
 📞 **[615-551-2727](tel:6155512727)** — Call or text anytime
-🏠 **[Get your Nashville cash offer →](/cash-offer/nashville-tn)**
+🏠 **[We buy houses in Nashville →](/cash-offer/nashville-tn)**
     `.trim(),
   },
   {
     slug: "traditional-sale-vs-cash-offer-nashville",
     title: "Traditional Sale vs. Cash Offer: What Nashville Homeowners Need to Know",
     date: "April 6, 2026",
-    dateModified: "April 6, 2026",
+    dateModified: "October 23, 2026",
     excerpt: "Should you list your Nashville home traditionally or sell for cash? Here's an honest comparison of timelines, costs, and net proceeds to help you decide.",
     content: `
 When it's time to sell your home in Nashville, you have two main paths: list it traditionally with an agent or sell directly to a cash buyer. Both have their place — the right choice depends on your situation, timeline, and priorities.
@@ -3176,7 +3182,7 @@ Joshua Fink is both a licensed Compass agent who can list your home traditionall
 If you need to sell your home fast in Nashville, start with a no-obligation cash number and compare it to a traditional listing:
 
 📞 **[615-551-2727](tel:6155512727)** — Call or text for a free, no-obligation comparison
-🏠 **[Get your Nashville cash offer →](/cash-offer/nashville-tn)**
+🏠 **[We buy houses in Nashville →](/cash-offer/nashville-tn)**
 🏠 **[Compare cash vs. iBuyer vs. listing →](/blog/cash-offer-vs-ibuyer-vs-listing-middle-tennessee)**
     `.trim(),
   },
@@ -5102,7 +5108,7 @@ If you want help checking a specific address against the zone you're targeting, 
     slug: "cash-offer-vs-ibuyer-vs-listing-middle-tennessee",
     title: "Cash Offer vs. iBuyer vs. Listing: Which Is Right for Your Middle Tennessee Home?",
     date: "August 12, 2026",
-    dateModified: "August 12, 2026",
+    dateModified: "October 23, 2026",
     excerpt:
       "Three ways to sell, three very different numbers at the bottom. Here's an honest comparison of a local cash offer, a national iBuyer, and a traditional listing — what each actually nets you, and the situations where each one is genuinely the right call.",
     category: "Selling",
@@ -5173,7 +5179,7 @@ Their criteria and their market coverage genuinely do change, so treat any offer
 
 When the house needs work you can't or won't do, when the timeline is the point, or when the situation is complicated — inherited property, tenants in place, a divorce with a hard deadline, foreclosure moving faster than a listing could close. These are the cases where a listing's higher gross price is theoretical because the house won't show well, won't pass a lender's appraisal, or won't sell before the deadline that's actually driving you.
 
-The [cash offer pages for Nashville](/cash-offer/nashville-tn) and [Murfreesboro](/cash-offer/murfreesboro-tn) explain how the process runs here, and the [traditional sale vs. cash offer comparison](/blog/traditional-sale-vs-cash-offer-nashville) goes deeper on the tradeoff.
+See [we buy houses in Nashville](/cash-offer/nashville-tn) and the [Murfreesboro cash offer](/cash-offer/murfreesboro-tn) for how the process runs here, and the [traditional sale vs. cash offer comparison](/blog/traditional-sale-vs-cash-offer-nashville) for the tradeoff.
 
 ## When Listing Is Almost Always Right
 
@@ -5193,7 +5199,7 @@ If you're leaning this direction, the [Nashville seller page](/sell/nashville-tn
 
 There's no universally right answer — there's a right answer for your house, your timeline, and your situation. Most sellers in good condition with time should list. Sellers with a repair problem, a deadline problem, or a complicated situation often do better with a cash sale even after the discount. The only genuinely wrong move is choosing without seeing all three numbers.
 
-I'll give you the honest comparison either way, including the listing number when it's the better deal for you. Start with a [Nashville cash offer](/cash-offer/nashville-tn), or reach out: [615-551-2727](tel:6155512727) or [joshua@joshuafink.com](mailto:joshua@joshuafink.com).
+I'll give you the honest comparison either way, including the listing number when it's the better deal for you. Start with [we buy houses in Nashville](/cash-offer/nashville-tn), or [sell your house for cash in Columbia, TN](/cash-offer/columbia-tn), or reach out: [615-551-2727](tel:6155512727) or [joshua@joshuafink.com](mailto:joshua@joshuafink.com).
     `.trim(),
   },
   {
