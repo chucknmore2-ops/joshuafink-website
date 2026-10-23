@@ -606,8 +606,10 @@ export default function SellerGuidePage() {
             <li className="flex items-start gap-2">
               <span style={{ color: '#C41E3A' }} className="mt-1">→</span>
               <span>
-                <Link href="/cash-offer/nashville-tn" className="underline">Nashville cash offer</Link>
-                {' '}and{' '}
+                <Link href="/cash-offer/nashville-tn" className="underline">We buy houses in Nashville</Link>
+                ,{' '}
+                <Link href="/cash-offer/columbia-tn" className="underline">sell your house fast in Columbia, TN</Link>
+                , and a{' '}
                 <Link href="/cash-offer/franklin-tn" className="underline">Franklin cash offer</Link>.
               </span>
             </li>

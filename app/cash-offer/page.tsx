@@ -75,7 +75,7 @@ const faqs = [
   },
   {
     q: 'How does selling my house for cash work in Middle Tennessee?',
-    a: "It's simple: fill out our form or call us, and we'll review your property and make a fair, no-obligation cash offer within 24 hours. If you accept, you pick the closing date — as fast as 7 days. We handle all the paperwork and pay all closing costs. You walk away with cash. A Nashville house has its own page at joshuafink.com/cash-offer/nashville-tn.",
+    a: "It's simple: fill out our form or call us, and we'll review your property and make a fair, no-obligation cash offer within 24 hours. If you accept, you pick the closing date — as fast as 7 days. We handle all the paperwork and pay all closing costs. You walk away with cash. Nashville and Columbia each have their own page on this site if the house is in one of those cities.",
   },
   {
     q: 'What types of properties do you buy?',
@@ -339,7 +339,15 @@ export default function CashOfferPage() {
               Serving every suburb across <span className="font-display italic font-semibold">Middle Tennessee</span>
             </h2>
             <p className="text-neutral-600 leading-relaxed">
-              Offers are priced off real local comps — not a national algorithm. Tap your city below for a local cash-offer page built around your market.
+              Offers are priced off real local comps — not a national algorithm.{' '}
+              <QuietLink href="/cash-offer/nashville-tn" className="font-semibold text-black underline underline-offset-4">
+                We buy houses in Nashville
+              </QuietLink>
+              , or{' '}
+              <QuietLink href="/cash-offer/columbia-tn" className="font-semibold text-black underline underline-offset-4">
+                sell your house fast in Columbia, TN
+              </QuietLink>
+              . Tap your city below for the local page.
             </p>
           </div>
 
@@ -350,7 +358,11 @@ export default function CashOfferPage() {
                 href={`/cash-offer/${slug}`}
                 className="rounded-2xl border border-neutral-200 bg-white px-5 py-4 text-sm font-semibold text-black transition-all duration-200 hover:bg-black hover:text-white hover:border-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
               >
-                {slug === 'nashville-tn' ? 'Cash Offer in Nashville, TN' : `Sell My House Fast in ${name}, TN`}{' '}
+                {slug === 'nashville-tn'
+                  ? 'We buy houses in Nashville'
+                  : slug === 'columbia-tn'
+                    ? 'Sell your house for cash in Columbia, TN'
+                    : `Sell My House Fast in ${name}, TN`}{' '}
                 <span aria-hidden="true">→</span>
               </QuietLink>
             ))}

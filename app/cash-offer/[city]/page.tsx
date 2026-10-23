@@ -39,7 +39,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const url = `https://www.joshuafink.com/cash-offer/${slug}`
   const seo = cashOfferSeo(city)
   return {
-    title: seo.title,
+    // Per-city absolute titles skip the layout suffix so the query and the
+    // click hook fit in the snippet. Other cities keep the shared template.
+    title: seo.absoluteTitle ? { absolute: seo.title } : seo.title,
     description: seo.description,
     keywords: seo.keywords,
     alternates: { canonical: url },
@@ -314,7 +316,11 @@ export default async function CashOfferCityPage({ params }: Props) {
             We Buy in Any Situation
           </p>
           <h2 className="text-3xl sm:text-4xl font-black text-black text-center tracking-tight mb-10">
-            Whatever You&apos;re Going Through in {city.name} — <span className="font-display italic font-semibold">We Can Help</span>
+            {city.situationsHeading ?? (
+              <>
+                Whatever You&apos;re Going Through in {city.name} — <span className="font-display italic font-semibold">We Can Help</span>
+              </>
+            )}
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {situations.map((s) => (
@@ -520,7 +526,11 @@ export default async function CashOfferCityPage({ params }: Props) {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3 text-center">Common Questions</p>
         <h2 className="text-4xl sm:text-5xl font-black text-black tracking-tight mb-14 text-center">
-          Selling Your {city.name} Home for <span className="font-display italic font-semibold">Cash</span>
+          {city.faqHeading ?? (
+            <>
+              Selling Your {city.name} Home for <span className="font-display italic font-semibold">Cash</span>
+            </>
+          )}
         </h2>
         <div className="space-y-8">
           {allFaqs.map((faq) => (
