@@ -19,6 +19,13 @@ export const SHEET_BACKFILL_BUDGET_MS = 45_000
  * an outage, and never started the next queued row.
  */
 export const SHEET_BACKFILL_ATTEMPT_MS = 20_000
+/**
+ * After a contact's own append confirms quickly, write one queued row
+ * before the response returns. A slow append skips this so the contact
+ * function stays inside its 30s limit. This does not send email or Pushover.
+ */
+export const SHEET_OPPORTUNISTIC_DRAIN_MS = 8_000
+export const SHEET_OPPORTUNISTIC_DRAIN_LEADS = 1
 export const SHEET_MAX_ATTEMPTS = 3
 export const SHEET_BACKOFF_BASE_MS = 200
 export const SHEET_BACKOFF_CAP_MS = 1_000
@@ -78,6 +85,12 @@ export function classifySheetFailure(input: {
   if (input.httpStatus !== undefined && RETRY_HTTP.has(input.httpStatus)) {
     return { transient: true, scope: 'global' }
   }
+  // 404 is Google's front door, not the Apps Script (the script answers
+  // HTTP 200 JSON even when it throws). One queued payload returned 404
+  // after two others in the same run had already appended, and treating
+  // that as a sheet-wide failure left the rest of the queue untried.
+  // Other 4xx still means this deployment is the wrong target.
+  if (input.httpStatus === 404) return { transient: false, scope: 'row' }
   if (input.httpStatus !== undefined && input.httpStatus >= 400 && input.httpStatus < 500) {
     return { transient: false, scope: 'global' }
   }
@@ -236,6 +249,9 @@ export async function deliverSheetLead(options: {
     return skip()
   }
 
+  const now = options.now ?? Date.now
+  const started = now()
+  const store = options.store === undefined ? currentSheetLeadStore() : options.store
   const payload = buildSheetPayload(options.lead, {
     blockedReason: options.blockedReason,
     testMode: options.testMode,
@@ -247,7 +263,7 @@ export async function deliverSheetLead(options: {
     secret: options.secret,
     fetchImpl: options.fetchImpl,
     sleep: options.sleep,
-    now: options.now,
+    now,
     budgetMs: options.budgetMs,
     timeoutMs: options.timeoutMs,
     maxAttempts: options.maxAttempts,
@@ -256,6 +272,29 @@ export async function deliverSheetLead(options: {
 
   if (result.ok) {
     console.log(`Google Sheet: logged lead for ${options.lead.name || 'Unknown'}`)
+    const elapsed = now() - started
+    if (store && elapsed < SHEET_OPPORTUNISTIC_DRAIN_MS) {
+      try {
+        const drained = await backfillSheetLeads({
+          webhookUrl: options.webhookUrl,
+          secret: options.secret,
+          store,
+          budgetMs: SHEET_OPPORTUNISTIC_DRAIN_MS,
+          maxLeads: SHEET_OPPORTUNISTIC_DRAIN_LEADS,
+          now,
+          sleep: options.sleep,
+          fetchImpl: options.fetchImpl,
+          maxAttempts: 1,
+          backoffBaseMs: options.backoffBaseMs,
+        })
+        if (drained.written > 0) {
+          console.log(`Google Sheet: drained ${drained.written} queued lead on a confirmed contact`)
+        }
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err)
+        console.error('Google Sheet: opportunistic drain failed:', redactSheetDetail(message))
+      }
+    }
     return {
       channel: 'sheet',
       configured: true,
@@ -265,7 +304,6 @@ export async function deliverSheetLead(options: {
   }
 
   console.error('Google Sheet: script did not confirm the row:', result.detail)
-  const store = options.store === undefined ? currentSheetLeadStore() : options.store
   let queued = false
   if (store) {
     queued = await store.enqueue({ id: payload.lead_id, payload })
@@ -315,9 +353,10 @@ export function sheetBackfillLeadBudget(remainingMs: number): { budgetMs: number
 /**
  * Stop the batch only when another row would fail the same way for a
  * reason retrying will not fix (bad secret, HTML instead of the script,
- * rate limit, or an HTTP error). A timeout or a dropped socket is one
- * call. The contact route's longer budget often confirms that same lead
- * a moment later, and the other queued rows were never tried.
+ * rate limit, or an HTTP error other than 404). HTTP 404 is classified
+ * as one row. A timeout or a dropped socket is one call. The contact
+ * route's longer budget often confirms that same lead a moment later,
+ * and the other queued rows were never tried.
  */
 export function sheetFailureStopsBackfill(input: { scope: 'global' | 'row' | 'ok'; detail?: string }): boolean {
   if (input.scope !== 'global') return false
@@ -354,7 +393,12 @@ export async function backfillSheetLeads(options: {
   // claim of the same id means every other row has been tried too, and
   // spinning would only burn the budget (or, in tests, the lead cap).
   const transientTries = new Map<string, number>()
+  // An HTTP 404 stays claimed until this run ends. Releasing it immediately
+  // would claim it again, spend the fail limit, and mark a flaky Google
+  // response as failed before the other rows were written.
+  const held404: { id: string; error: string }[] = []
 
+  try {
   while (processed < maxLeads) {
     if (budgetMs - (now() - started) < 1_000) break
     const claimed = await options.store.claim(1)
@@ -414,6 +458,10 @@ export async function backfillSheetLeads(options: {
       released += 1
       continue
     }
+    if (result.detail === 'HTTP 404' && row.attempts < SHEET_ROW_FAIL_LIMIT) {
+      held404.push({ id: row.id, error: failure })
+      continue
+    }
     if (row.attempts < SHEET_ROW_FAIL_LIMIT) {
       await options.store.release(row.id, failure)
       released += 1
@@ -421,6 +469,12 @@ export async function backfillSheetLeads(options: {
     }
     await options.store.markFailed(row.id, failure)
     failed += 1
+  }
+  } finally {
+    for (const item of held404) {
+      await options.store.release(item.id, item.error)
+      released += 1
+    }
   }
 
   const remainingCounts = await options.store.counts()

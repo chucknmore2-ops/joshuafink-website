@@ -331,17 +331,30 @@ or Pushover.
 rows once the sheet answers `{ok:true}`. Each lead gets one 20 second
 attempt. That is long enough for the Apps Script cold start and the
 `lead_id` scan. A timeout or a dropped connection puts that row back and
-the job continues with the next one. A bad secret, an HTML page, or an
-HTTP error releases the current row and stops, so a dead sheet is not
-hammered. The response includes `detail` (no lead fields) when a row did
-not confirm. A row already claimed by another run is skipped (`FOR UPDATE
-SKIP LOCKED`). The same `lead_id` makes a second append a no-op after the
-Apps Script above is deployed, including when the first attempt timed out
-after the row had already landed. Backfill does not send email or
-Pushover. Vercel Hobby only keeps two cron slots, and both are taken, so
-this route is called hourly by GitHub Actions
+the job continues with the next one. An HTTP 404 is Google's front door,
+not the script, and it is treated as that one row: the job keeps going,
+and the row is marked failed only after it has been claimed three times.
+A bad secret, an HTML page, or any other HTTP error releases the current
+row and stops, so a dead sheet is not hammered. The response includes
+`detail` (no lead fields) when a row did not confirm. A row already
+claimed by another run is skipped (`FOR UPDATE SKIP LOCKED`). The same
+`lead_id` makes a second append a no-op after the Apps Script above is
+deployed, including when the first attempt timed out after the row had
+already landed. Backfill does not send email or Pushover.
+
+A contact whose own append confirms in under 8 seconds also writes one
+queued row before the response returns. A slower append skips that so
+the contact function stays inside its 30 second limit. That extra write
+does not send email or Pushover.
+
+Vercel Hobby only keeps two cron slots, and both are taken, so this route
+is called by GitHub Actions
 (`.github/workflows/sheet-lead-backfill.yml`), not by a third Vercel cron.
-The Action fails when the queue is non-empty and the run wrote nothing.
+The Action runs at :10 and :40. Each run may call the route up to three
+times, which is enough for a short queue to finish when one call runs out
+of time. The Action fails when the queue is non-empty and the run wrote
+nothing. A later pass that only has a single 404 left does not fail the
+job if an earlier pass already wrote rows.
 
 `GET /api/healthcheck` includes `sheetQueue.queued` and `sheetQueue.failed`.
 `queued` is rows not yet confirmed in the sheet. `failed` is rows the
