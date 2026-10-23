@@ -354,3 +354,30 @@ test('the sold page, about page, and buy pages point at the city anchors', () =>
 
   assert.match(validator, /'\/sold'/)
 })
+
+test('the Nashville cash-offer page counts closed Tennessee sales in Nashville', () => {
+  const page = readFileSync(new URL('../app/cash-offer/[city]/page.tsx', import.meta.url), 'utf8')
+  assert.match(page, /closingGroupsForSuburb/)
+  assert.match(page, /group\.city === 'Nashville'/)
+  assert.match(page, /row\.city === 'Nashville' && row\.state === 'TN' && row\.status === 'Closed'/)
+  assert.match(page, /Josh has closed \$\{nashvilleClosedCount\}/)
+  assert.match(page, /\/sold#\$\{nashvilleGroup\.anchor\}/)
+  assert.match(page, /See homes Josh has sold in \$\{nashvilleGroup\.city\} →/)
+  assert.match(page, /Compass Real Estate/)
+  assert.doesNotMatch(page, /Parks/)
+  assert.doesNotMatch(page, /Josh has closed \d+/)
+  assert.doesNotMatch(page, /clientName|sellerName|buyerName|ownerName/i)
+
+  const group = closingGroupsForSuburb('nashville-tn').find((candidate) => candidate.city === 'Nashville')
+  assert.ok(group)
+  assert.equal(group.anchor, 'nashville')
+  const count = group.closings.filter(
+    (row) => row.city === 'Nashville' && row.state === 'TN' && row.status === 'Closed',
+  ).length
+  assert.equal(count, group.closings.length)
+  assert.equal(count, CITY_COUNTS.Nashville)
+  assert.equal(
+    closingGroupsForSuburb('franklin-tn').some((candidate) => candidate.city === 'Nashville'),
+    false,
+  )
+})

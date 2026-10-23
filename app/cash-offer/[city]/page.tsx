@@ -17,6 +17,7 @@ import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
 import { linkifyNeighborhoods } from '@/lib/linkify-neighborhoods'
 import { reviewStats } from '@/lib/reviews'
 import { getSuburb } from '@/lib/suburbs'
+import { closingGroupsForSuburb } from '@/lib/closings'
 
 const SITE = 'https://www.joshuafink.com'
 
@@ -117,6 +118,14 @@ export default async function CashOfferCityPage({ params }: Props) {
   const schemaFaqs = [...fairOfferFaqs, ...allFaqs]
   const guides = getNeighborhoodsByCitySlug(slug)
   const otherCities = getCashOfferCityLinks().filter((c) => c.slug !== slug)
+  // Same city groups as /buy/[suburb]. The number is the count of closed
+  // Tennessee sales whose city is Nashville — the rows behind /sold#nashville.
+  const nashvilleGroup = closingGroupsForSuburb(slug).find((group) => group.city === 'Nashville')
+  const nashvilleClosedCount = nashvilleGroup
+    ? nashvilleGroup.closings.filter(
+        (row) => row.city === 'Nashville' && row.state === 'TN' && row.status === 'Closed',
+      ).length
+    : 0
 
   const breadcrumb = buildBreadcrumbSchema([
     { name: 'Home', href: '/' },
@@ -344,6 +353,31 @@ export default async function CashOfferCityPage({ params }: Props) {
             </div>
           </div>
         </div>
+      ) : null}
+
+      {nashvilleGroup && nashvilleClosedCount > 0 ? (
+        <section
+          aria-labelledby="nashville-closings-proof"
+          className="bg-white border-y border-neutral-200"
+        >
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
+              Recent Closings · Compass Real Estate
+            </p>
+            <h2
+              id="nashville-closings-proof"
+              className="text-2xl sm:text-3xl font-black text-black tracking-tight"
+            >
+              {`Josh has closed ${nashvilleClosedCount} ${nashvilleClosedCount === 1 ? 'home' : 'homes'} in ${nashvilleGroup.city}`}
+            </h2>
+            <a
+              href={`/sold#${nashvilleGroup.anchor}`}
+              className="inline-block mt-5 border border-black text-black text-sm font-bold px-6 py-3 tracking-wide hover:bg-black hover:text-white transition-colors text-center"
+            >
+              {`See homes Josh has sold in ${nashvilleGroup.city} →`}
+            </a>
+          </div>
+        </section>
       ) : null}
 
       {/* Social proof */}
