@@ -4,7 +4,10 @@
  * Production deploys wipe the ISR cache. Skip them when the commit cannot
  * change the rendered site: docs, GitHub workflows, content-engine config,
  * scripts, or a Compass listing sync that only moved the sync clock.
- * Preview deployments still build.
+ *
+ * Non-production deploys still build, except automated listing branches
+ * whose VERCEL_GIT_COMMIT_REF matches /^(sync-listings|listing-video)\//.
+ * Those preview builds are skipped. Production, including main, is unchanged.
  *
  * Safe default is exit 1. A crash or a missing git SHA builds.
  */
@@ -22,6 +25,19 @@ const SKIP_PREFIXES = [
 ];
 
 const LISTING_FILES = new Set(['lib/listings.ts', 'lib/sold-listings.ts']);
+
+// Automated Compass sync and listing-video PRs do not need a preview deploy.
+const NON_PRODUCTION_SKIP_REF = /^(sync-listings|listing-video)\//;
+
+/**
+ * @param {string | undefined} vercelEnv
+ * @param {string | undefined} commitRef
+ * @returns {boolean} true when this non-production build should be skipped
+ */
+export function shouldSkipNonProductionBuild(vercelEnv, commitRef) {
+  if ((vercelEnv || '') === 'production') return false;
+  return NON_PRODUCTION_SKIP_REF.test(commitRef || '');
+}
 
 export function isDeploySkippablePath(file) {
   if (file.endsWith('.md')) return true;
@@ -52,8 +68,14 @@ function git(args) {
   return execSync(`git ${args}`, { encoding: 'utf8' });
 }
 
-function main() {
+export function main() {
   if ((process.env.VERCEL_ENV || '') !== 'production') {
+    if (shouldSkipNonProductionBuild(process.env.VERCEL_ENV, process.env.VERCEL_GIT_COMMIT_REF)) {
+      console.log(
+        `Skipping build: VERCEL_GIT_COMMIT_REF=${process.env.VERCEL_GIT_COMMIT_REF || ''} on VERCEL_ENV=${process.env.VERCEL_ENV || 'unset'}.`,
+      );
+      return 0;
+    }
     console.log(`Building: VERCEL_ENV=${process.env.VERCEL_ENV || 'unset'} is not production.`);
     return 1;
   }

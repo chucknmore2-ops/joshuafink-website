@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import localFont from 'next/font/local'
 import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
@@ -142,6 +143,7 @@ export default function RootLayout({
           <AttributionCapture />
         </Suspense>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
