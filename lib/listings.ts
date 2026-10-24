@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-10-22T13:37:12.933Z
+// AUTO-GENERATED — Last synced: 2026-10-24T00:01:19.367Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -32,9 +32,51 @@ export interface Listing {
 
 // Mirrors the header timestamp so server components can compute sync staleness
 // without parsing comments. Updated by scripts/fetch-images.mjs each sync.
-export const listingsSyncedAt = "2026-10-22T13:37:12.933Z";
+export const listingsSyncedAt = "2026-10-24T00:01:19.367Z";
 
 export const listings: Listing[] = [
+  {
+    address: "261 Towes Ln",
+    city: "Clarksville, TN 37043 | MLS #3626290",
+    price: 419900,
+    beds: 4,
+    baths: 3,
+    sqft: 2174,
+    status: "Active",
+    compassUrl: "https://www.compass.com/homedetails/261-Towes-Ln-Clarksville-TN-37043/T6VNV_pid/",
+    imageUrl: "https://www.compass.com/m/63ac5f4be9ffc93985466d32b00f57e460f38f60eb0afe6617deffb8f44f3eae/2048x1536.webp",
+    photoUrls: [
+      "https://www.compass.com/m/63ac5f4be9ffc93985466d32b00f57e460f38f60eb0afe6617deffb8f44f3eae/2048x1536.webp",
+      "https://www.compass.com/m/6ce638376d3ee897e249bc635056b908ac74ed461dbae5e083ff201b7e9ae164/2048x1536.webp",
+      "https://www.compass.com/m/ffae090354779eb3cae30ee5c3349a6beb2ac399e9dbebbbc0ca79330fc8a270/2048x1536.webp",
+      "https://www.compass.com/m/75518b116fa0b7c5a2b1c30d62dc5131b5c2ea13a05130ed4d1168edf0de0189/2048x1536.webp",
+      "https://www.compass.com/m/cad70415fd91be767c37e4fa7271263f08d9c2c2f39269ccf9d1d6756d55af84/2048x1536.webp",
+      "https://www.compass.com/m/92452dc6a7909201c7c31c2c2c6981b1a4e5a16b753e3e2be0687ce9f5971db8/2048x1536.webp",
+      "https://www.compass.com/m/6ef01fd0e606c8c2a3b953f10978c723ca7e389e18e06b2ed332c277c5f8d6cf/2048x1536.webp",
+      "https://www.compass.com/m/ec62d61bc10ded0ec1457b92f87cad94240575a68ae68da3ef0541a633bd9b3e/2048x1536.webp",
+      "https://www.compass.com/m/a1b04997eaf6b5156ae72edc9ad4466e4f0e309c3a52ef88b7e2209801d68bdb/2048x1536.webp",
+      "https://www.compass.com/m/1249500fad23331c5db28c2fb649c394712e3b762b069242897513c389d7827d/2048x1536.webp",
+      "https://www.compass.com/m/17ed84939815d84e069ae4f2ca3763aca3472df70e25ec6da2d3df3e04ddd749/2048x1536.webp",
+      "https://www.compass.com/m/a1c7834a419bacf2d018f8cb6ed010b21b71d7180b79c67b496ef1070610683f/2048x1536.webp",
+      "https://www.compass.com/m/9888e26cf911a376c5b2e785318365eebae0866c9560419bb28de05aa36e61cc/2048x1536.webp",
+      "https://www.compass.com/m/bd0538a3cb19416aa946dd071b176d560378735b1061399e99c2e7b8ddac7098/2048x1536.webp",
+      "https://www.compass.com/m/3d7809dcceb8aabab4308540ac7f69e711b3560ac02b4916dbf2b1ad4f64a3a5/2048x1536.webp",
+      "https://www.compass.com/m/caa75c2daa52c2af63810ca66ae6879a430e514b40dcae6512b79ae162695310/2048x1536.webp",
+      "https://www.compass.com/m/afd89671a6eea945d0a0ed27af1499b5a5629f178a37beb5b6389ddec34b2d6f/2048x1536.webp",
+      "https://www.compass.com/m/1e1ea7cd7df9898bef3166a89b0d51906e68d9bd6b6823a267bc46e2aafc0772/2048x1536.webp",
+      "https://www.compass.com/m/f049b9d5342859e883d412ad3762fee91af91cb9d2176dceab0e68323a8229a0/2048x1536.webp",
+      "https://www.compass.com/m/aa806334b6ff8b5d0a1e85547a008a1669dbff5126f9e232224f0734da28b67f/2048x1536.webp",
+      "https://www.compass.com/m/d33ef94e4446d7a808a19020961c4bc5deb275db8c209a29323d118dc6f3d988/2048x1536.webp",
+      "https://www.compass.com/m/5043eb4551f73c981a3dbda8790747fb19857bf32bf4959e0ec2709c957a7afd/2048x1536.webp",
+      "https://www.compass.com/m/e506c137bec301338d5e1845aaad358d11c32d534c23a75fbd0942926a04623d/2048x1536.webp",
+      "https://www.compass.com/m/7ab15249aae0484675927a7fe71f34d79e6bafef95059e5e0bec69ef76a545eb/2048x1536.webp",
+      "https://www.compass.com/m/f7b34cc1efbc2a7905c70f582386543b1c028bbfbe76156389075eb4eaff118d/2048x1536.webp",
+      "https://www.compass.com/m/af12346e95d712777ee2a8cdd9f3ae56c355159a840443cf9c226d51a8d24b3c/2048x1536.webp",
+      "https://www.compass.com/m/79aa503ac293c266c7476fe90bf83197dd1fee500b28407086c6637ecdf30686/2048x1536.webp",
+    ],
+    firstSeen: "2026-10-24T00:01:19.367Z",
+    lastVerified: listingsSyncedAt,
+  },
   {
     address: "511 Wanda Dr",
     city: "Nashville, TN 37210",
