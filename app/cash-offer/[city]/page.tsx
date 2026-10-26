@@ -39,7 +39,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const url = `https://www.joshuafink.com/cash-offer/${slug}`
   const seo = cashOfferSeo(city)
   return {
-    title: seo.title,
+    // Per-city absolute titles skip the layout suffix so the query and the
+    // click hook fit in the snippet. Other cities keep the shared template.
+    title: seo.absoluteTitle ? { absolute: seo.title } : seo.title,
     description: seo.description,
     keywords: seo.keywords,
     alternates: { canonical: url },
@@ -115,10 +117,7 @@ export default async function CashOfferCityPage({ params }: Props) {
   // section, but folded into the one FAQPage below so the page never ships
   // two competing FAQPage entities.
   const fairOfferFaqs = city.fairOfferFaqs ?? []
-  const quickFaqs = city.quickFaqs ?? []
-  // One FAQPage for the page. Quick answers, the fair-offer block, and the
-  // long FAQ are the same entities visitors can read.
-  const schemaFaqs = [...quickFaqs, ...fairOfferFaqs, ...allFaqs]
+  const schemaFaqs = [...fairOfferFaqs, ...allFaqs]
   const guides = getNeighborhoodsByCitySlug(slug)
   const otherCities = getCashOfferCityLinks().filter((c) => c.slug !== slug)
   // Same city groups as /buy/[suburb]. The number is the count of closed
@@ -324,32 +323,6 @@ export default async function CashOfferCityPage({ params }: Props) {
         </section>
       ) : null}
 
-      {quickFaqs.length > 0 && city.quickAnswerIntro ? (
-        <section
-          id="quick-answers"
-          aria-labelledby="quick-answers-heading"
-          className="bg-neutral-50 border-b border-neutral-200 py-16 px-4 sm:px-6 lg:px-8"
-        >
-          <div className="max-w-4xl mx-auto">
-            <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
-              Quick answers
-            </p>
-            <h2 id="quick-answers-heading" className="text-3xl sm:text-4xl font-black text-black tracking-tight mb-4">
-              Before you call
-            </h2>
-            <p className="text-neutral-700 text-base leading-relaxed mb-10">{city.quickAnswerIntro}</p>
-            <div className="space-y-8">
-              {quickFaqs.map((faq) => (
-                <div key={faq.q} className="border-b border-neutral-200 pb-6">
-                  <h3 className="text-lg font-black text-black mb-2">{faq.q}</h3>
-                  <p className="text-sm text-neutral-600 leading-relaxed">{faq.a}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      ) : null}
-
       {/* Local angle */}
       <div className="bg-neutral-50 py-16 px-4 sm:px-6 lg:px-8 border-b border-neutral-200">
         <div className="max-w-4xl mx-auto">
@@ -381,7 +354,11 @@ export default async function CashOfferCityPage({ params }: Props) {
             We Buy in Any Situation
           </p>
           <h2 className="text-3xl sm:text-4xl font-black text-black text-center tracking-tight mb-10">
-            Whatever You&apos;re Going Through in {city.name} — <span className="font-display italic font-semibold">We Can Help</span>
+            {city.situationsHeading ?? (
+              <>
+                Whatever You&apos;re Going Through in {city.name} — <span className="font-display italic font-semibold">We Can Help</span>
+              </>
+            )}
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {situations.map((s) => (
@@ -562,7 +539,11 @@ export default async function CashOfferCityPage({ params }: Props) {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3 text-center">Common Questions</p>
         <h2 className="text-4xl sm:text-5xl font-black text-black tracking-tight mb-14 text-center">
-          Selling Your {city.name} Home for <span className="font-display italic font-semibold">Cash</span>
+          {city.faqHeading ?? (
+            <>
+              Selling Your {city.name} Home for <span className="font-display italic font-semibold">Cash</span>
+            </>
+          )}
         </h2>
         <div className="space-y-8">
           {allFaqs.map((faq) => (

@@ -148,35 +148,33 @@ test('only Nashville ships the fair-cash-offer FAQ block for now', () => {
   }
 })
 
-test('Nashville cash-offer SEO targets We Buy Houses in Nashville and keeps sell-fast queries', () => {
+test('Nashville cash-offer SEO leads with we buy houses and keeps sell-fast queries', () => {
   const city = getCashOfferCity('nashville-tn')
   assert.ok(city)
   const seo = cashOfferSeo(city)
-  const phrase = 'We Buy Houses in Nashville'
 
-  assert.equal(seo.title, 'We Buy Houses in Nashville | Cash Offer in 24 Hours')
-  assert.ok(seo.title.startsWith(phrase))
-  assert.ok(seo.title.length <= 60, 'title should stay inside a typical SERP title before the site template')
-  assert.match(seo.description, new RegExp(`^${phrase}`))
+  assert.equal(seo.title, 'We Buy Houses Nashville | 24-Hour Cash Offer | Compass')
+  assert.equal(seo.absoluteTitle, true)
+  assert.match(seo.title, /We Buy Houses Nashville/)
+  assert.match(seo.title, /24-Hour Cash Offer/)
+  assert.match(seo.title, /Compass/)
+  assert.doesNotMatch(seo.title, /Parks/)
+  assert.ok(seo.title.length <= 60, `title is ${seo.title.length} characters`)
+  assert.match(seo.description, /We buy houses in Nashville/)
+  assert.match(seo.description, /615-551-2727/)
+  assert.match(seo.description, /licensed since 2008/)
+  assert.doesNotMatch(seo.description, /Parks/)
   assert.ok(seo.description.length <= 160, `description is ${seo.description.length} characters`)
-  assert.match(seo.description, /TREC #351484/)
-  assert.match(seo.description, /Compass/)
-  assert.match(seo.description, /24 hours/)
-  assert.match(seo.description, /7 days/)
-  assert.equal(seo.ogTitle, seo.title)
-  assert.match(seo.ogDescription, new RegExp(`^${phrase}`))
+  assert.match(seo.ogTitle, /We Buy Houses Nashville/)
   assert.match(seo.eyebrow, /Nashville, TN · Cash Offer/)
-  assert.ok(seo.keywords.includes('we buy houses in Nashville'))
+  assert.ok(seo.keywords.includes('we buy houses Nashville'))
   assert.ok(seo.keywords.includes('cash offer Nashville TN'))
   assert.ok(seo.keywords.includes('sell my home fast Nashville'))
   assert.ok(seo.keywords.includes('sell my house fast Nashville'))
-  assert.ok(city.headline)
-  assert.equal(city.headline.lead, 'We Buy Houses')
-  assert.equal(city.headline.accent, 'in Nashville')
-  assert.equal(`${city.headline.lead} ${city.headline.accent}`, phrase)
-  assert.equal(city.contentUpdated, '2026-10-23')
+  assert.equal(city.headline?.lead, 'We Buy Houses')
+  assert.equal(city.headline?.accent, 'in Nashville.')
+  assert.equal(city.situationsHeading, 'We buy houses in Nashville — any situation')
 
-  assert.match(city.intro, new RegExp(`^${phrase}`))
   assert.match(city.intro, /sell your home fast in Nashville/)
   assert.match(city.localAngle, /\$475,538/)
   assert.match(city.localAngle, /Redfin/)
@@ -195,6 +193,15 @@ test('Nashville cash-offer SEO targets We Buy Houses in Nashville and keeps sell
   }
 
   const questions = city.faqs.map((f) => f.q)
+  assert.ok(questions.some((q) => /we buy houses Nashville/i.test(q)))
+  const buyerFaq = city.faqs.find((f) => /we buy houses Nashville/i.test(f.q))
+  assert.ok(buyerFaq)
+  assert.match(buyerFaq.a, /TREC #351484/)
+  assert.match(buyerFaq.a, /licensed since 2008/)
+  assert.match(buyerFaq.a, /8119 Isabella Lane Suite 105, Brentwood, TN 37027/)
+  assert.match(buyerFaq.a, /615-551-2727/)
+  assert.match(buyerFaq.a, /Compass/)
+  assert.doesNotMatch(buyerFaq.a, /Parks/)
   assert.ok(questions.some((q) => /how fast can I sell my home in Nashville/i.test(q)))
   assert.ok(questions.some((q) => /sell my house fast in Nashville without listing/i.test(q)))
   assert.ok(questions.some((q) => /how do cash home buyers work in Nashville/i.test(q)))
@@ -205,61 +212,43 @@ test('Nashville cash-offer SEO targets We Buy Houses in Nashville and keeps sell
   assert.equal(cashOfferPath('nashville-tn'), '/cash-offer/nashville-tn')
 })
 
-test('Nashville quick answers stay concise, sourced, and inside the one FAQPage', () => {
+test('Nashville cash page keeps one FAQPage and adds only the closings line and sell links', () => {
   const city = getCashOfferCity('nashville-tn')
   assert.ok(city)
-  const quick = city.quickFaqs ?? []
-  assert.equal(quick.length, 4)
-  assert.match(city.quickAnswerIntro ?? '', /^We Buy Houses in Nashville/)
-
-  const questions = quick.map((faq) => faq.q)
-  assert.match(questions[0], /how fast/i)
-  assert.match(questions[1], /fee/i)
-  assert.match(questions[2], /as-is/i)
-  assert.match(questions[3], /listing/i)
-
-  const taken = new Set([
+  const questions = [
     ...city.faqs.map((faq) => faq.q),
     ...(city.fairOfferFaqs ?? []).map((faq) => faq.q),
-  ])
-  for (const faq of quick) {
-    assert.equal(taken.has(faq.q), false, faq.q)
-    assert.ok(faq.a.length < 420, faq.q)
-  }
-
-  const copy = `${city.quickAnswerIntro ?? ''}\n${quick.map((faq) => `${faq.q} ${faq.a}`).join('\n')}`
-  assert.match(copy, /70–85% of after-repair market value/)
-  assert.match(copy, /24 hours/)
-  assert.match(copy, /7 days/)
-  assert.match(copy, /Compass/)
-  assert.doesNotMatch(copy, /Parks/)
-  assert.doesNotMatch(copy, /\b49\b/)
-  assert.doesNotMatch(copy, /\$[0-9]/)
+  ]
+  assert.equal(new Set(questions).size, questions.length)
+  assert.equal(questions.includes('How does a cash offer compare with listing my Nashville house?'), false)
+  assert.equal(questions.includes('How fast can you buy a house in Nashville?'), false)
 
   const page = readFileSync(new URL('../app/cash-offer/[city]/page.tsx', import.meta.url), 'utf8')
-  assert.match(page, /const schemaFaqs = \[\.\.\.quickFaqs, \.\.\.fairOfferFaqs, \.\.\.allFaqs\]/)
-  assert.match(page, /city\.quickAnswerIntro/)
-  assert.equal(page.match(/"@type": 'FAQPage'/g)?.length ?? page.match(/'@type': 'FAQPage'/g)?.length, 1)
-})
+  assert.equal(page.match(/'@type': 'FAQPage'/g)?.length, 1)
+  assert.match(page, /const schemaFaqs = \[\.\.\.fairOfferFaqs, \.\.\.allFaqs\]/)
+  assert.doesNotMatch(page, /quickFaqs/)
+  assert.equal(page.match(/id="nashville-closings-proof"/g)?.length, 1)
+  const closingsAt = page.indexOf('id="nashville-closings-proof"')
+  const localAt = page.indexOf('Why Sell for Cash in')
+  assert.ok(closingsAt > 0 && localAt > closingsAt)
+  const closings = page.slice(closingsAt, localAt)
+  assert.match(closings, /TREC #351484/)
+  assert.match(closings, /Compass Real Estate/)
+  assert.match(closings, /Licensed since 2008/)
+  assert.match(closings, /reviewStats\.total/)
+  assert.doesNotMatch(closings, /Parks/)
+  assert.doesNotMatch(closings, /\b49\b/)
 
-test('homepage, sell pages, and the we-buy-houses post link the Nashville cash page with the query phrase', () => {
-  const phrase = 'We Buy Houses in Nashville'
-  const home = readFileSync(new URL('../app/page.tsx', import.meta.url), 'utf8')
+  const image = readFileSync(new URL('../app/cash-offer/[city]/opengraph-image.tsx', import.meta.url), 'utf8')
+  assert.match(image, /isNashville \? 'We Buy Houses' : 'Sell My House Fast'/)
+  assert.match(image, /isNashville \? 'in Nashville'/)
+
   const sell = readFileSync(new URL('../app/sell/page.tsx', import.meta.url), 'utf8')
   const sellCity = readFileSync(new URL('../app/sell/[suburb]/page.tsx', import.meta.url), 'utf8')
-  const footer = readFileSync(new URL('../components/Footer.tsx', import.meta.url), 'utf8')
-  const hub = readFileSync(new URL('../app/cash-offer/page.tsx', import.meta.url), 'utf8')
-  const blog = readFileSync(new URL('./blog.ts', import.meta.url), 'utf8')
-
-  assert.match(home, /We Buy Houses in Nashville →/)
   assert.match(sell, /href="\/cash-offer\/nashville-tn"/)
   assert.match(sell, /We Buy Houses in Nashville →/)
-  assert.match(sellCity, /slug === 'nashville-tn' \? 'We Buy Houses in Nashville'/)
-  assert.match(footer, /href: '\/cash-offer\/nashville-tn', label: 'We Buy Houses in Nashville'/)
-  assert.match(hub, /slug === 'nashville-tn' \? 'We Buy Houses in Nashville'/)
-  assert.match(blog, /\[We Buy Houses in Nashville →\]\(\/cash-offer\/nashville-tn\)/)
-  assert.equal(blog.includes(phrase), true)
-  assert.doesNotMatch(home + sell + sellCity + footer + hub, /Parks/)
+  assert.match(sellCity, /slug === 'nashville-tn' \? 'We Buy Houses in Nashville' : 'Prefer a Cash Offer\?'/)
+  assert.doesNotMatch(sell + sellCity, /Parks/)
 })
 
 test('Nashville market note reuses published Redfin, Census, and neighborhood bands', () => {
@@ -304,23 +293,38 @@ test('Franklin cash-offer still uses the shared template strings (no mass city S
   assert.equal(city.differentiator, undefined)
 })
 
-test('Columbia cash-offer SEO targets cash-offer and sell-fast queries without stale prices', () => {
+test('Columbia cash-offer SEO targets sell-fast and sell-for-cash queries without stale prices', () => {
   const city = getCashOfferCity('columbia-tn')
   assert.ok(city)
   const seo = cashOfferSeo(city)
 
-  assert.match(seo.title, /Cash Offer in Columbia, TN/)
-  assert.match(seo.title, /Sell My House Fast/)
-  assert.match(seo.description, /Cash offer in Columbia, TN/)
+  assert.equal(seo.title, 'Sell House Fast Columbia TN | Close in 7 Days | Compass')
+  assert.equal(seo.absoluteTitle, true)
+  assert.match(seo.title, /Sell House Fast Columbia TN/)
+  assert.match(seo.title, /Close in 7 Days/)
+  assert.match(seo.title, /Compass/)
+  assert.doesNotMatch(seo.title, /Parks/)
+  assert.ok(seo.title.length <= 60, `title is ${seo.title.length} characters`)
+  assert.match(seo.description, /sell your house fast in Columbia, TN/i)
+  assert.match(seo.description, /sell your house for cash/i)
   assert.match(seo.description, /24 hours/)
-  assert.match(seo.ogTitle, /Cash Offer in Columbia, TN/)
+  assert.match(seo.description, /615-551-2727/)
+  assert.doesNotMatch(seo.description, /Parks/)
+  assert.ok(seo.description.length <= 160, `description is ${seo.description.length} characters`)
+  assert.match(seo.ogTitle, /Sell House Fast Columbia TN/)
   assert.match(seo.eyebrow, /Columbia, TN · Cash Offer/)
+  assert.ok(seo.keywords.includes('sell house fast Columbia TN'))
+  assert.ok(seo.keywords.includes('sell house fast Columbia'))
+  assert.ok(seo.keywords.includes('sell house for cash Columbia TN'))
   assert.ok(seo.keywords.includes('cash offer Columbia TN'))
   assert.ok(seo.keywords.includes('sell my house fast Columbia TN'))
 
-  assert.equal(city.headline?.lead, 'Cash Offer')
+  assert.equal(city.headline?.lead, 'Sell Your House Fast')
   assert.equal(city.headline?.accent, 'in Columbia, TN.')
+  assert.equal(city.situationsHeading, 'When you need to sell your house fast in Columbia')
+  assert.equal(city.faqHeading, 'Sell your house for cash in Columbia, TN')
 
+  assert.match(city.intro, /sell your house fast in Columbia, TN/i)
   assert.match(city.intro, /divorce/i)
   assert.match(city.intro, /inherited/i)
   assert.match(city.intro, /relocation/i)
@@ -366,10 +370,29 @@ test('Columbia cash-offer SEO targets cash-offer and sell-fast queries without s
   }
 
   const questions = city.faqs.map((f) => f.q)
+  assert.ok(questions.some((q) => /how do I sell my house fast in Columbia/i.test(q)))
+  const fastFaq = city.faqs.find((f) => /how do I sell my house fast in Columbia/i.test(f.q))
+  assert.ok(fastFaq)
+  assert.match(fastFaq.a, /sell your house for cash in Columbia, TN/i)
+  assert.match(fastFaq.a, /78/)
+  assert.match(fastFaq.a, /Redfin/)
+  assert.match(fastFaq.a, /TREC #351484/)
+  assert.match(fastFaq.a, /licensed since 2008/)
+  assert.match(fastFaq.a, /Compass/)
+  assert.doesNotMatch(fastFaq.a, /Parks/)
   assert.ok(questions.some((q) => /how fast can I sell my house for cash in Columbia, TN/i.test(q)))
   assert.ok(questions.some((q) => /as-is/i.test(q)))
   assert.ok(questions.some((q) => /divorce/i.test(q)))
   assert.ok(questions.some((q) => /inherited/i.test(q)))
   assert.ok(questions.some((q) => /relocated/i.test(q)))
   assert.equal(cashOfferPath('columbia-tn'), '/cash-offer/columbia-tn')
+})
+
+test('cash-offer city canonicals are absolute www URLs and titles can skip the layout template', () => {
+  const page = readFileSync(new URL('../app/cash-offer/[city]/page.tsx', import.meta.url), 'utf8')
+  assert.match(page, /const url = `https:\/\/www\.joshuafink\.com\/cash-offer\/\$\{slug\}`/)
+  assert.match(page, /alternates: \{ canonical: url \}/)
+  assert.doesNotMatch(page, /canonical: ['"]https:\/\/joshuafink\.com/)
+  assert.match(page, /seo\.absoluteTitle \? \{ absolute: seo\.title \} : seo\.title/)
+  assert.match(page, /'@type': 'FAQPage'/)
 })

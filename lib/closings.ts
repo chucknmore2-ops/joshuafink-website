@@ -165,6 +165,49 @@ export function closingGroupsForSuburb(slug: string): CityClosings[] {
   return closingGroups().filter((group) => getSuburbSlugForListing(group.city) === slug)
 }
 
+export type CityClosingProof = {
+  city: string
+  count: number
+  /** Same /sold#city anchor the sold page and city pages already use. */
+  href: string
+}
+
+/** Closed Tennessee sales for one city, from the same rows as /sold. */
+export function cityClosingProof(city: string): CityClosingProof {
+  const group = closingGroups().find((candidate) => candidate.city === city)
+  if (!group) throw new Error(`no Tennessee closings for ${city}`)
+  const count = group.closings.filter(
+    (row) => row.city === city && row.state === 'TN' && row.status === 'Closed',
+  ).length
+  return {
+    city: group.city,
+    count,
+    href: `${SOLD_PATH}#${group.anchor}`,
+  }
+}
+
+/**
+ * In-body closings proof for /cash-offer and /moving-to-middle-tennessee.
+ * The total is every row behind /sold (each one is asserted Tennessee and
+ * Closed). Named cities stay Nashville, Brentwood, and Franklin — the same
+ * three the proof sentence publishes — and each count is computed here.
+ */
+export function tennesseeClosingsProof(): {
+  total: number
+  soldHref: typeof SOLD_PATH
+  cities: readonly [CityClosingProof, CityClosingProof, CityClosingProof]
+} {
+  return {
+    total: closings.length,
+    soldHref: SOLD_PATH,
+    cities: [
+      cityClosingProof('Nashville'),
+      cityClosingProof('Brentwood'),
+      cityClosingProof('Franklin'),
+    ],
+  }
+}
+
 export function closingSideCounts(): Record<ClosingSide, number> {
   return {
     'Represented buyer': closings.filter((row) => row.side === 'Represented buyer').length,

@@ -328,6 +328,17 @@ export default function HomePage() {
               buyers and sellers make smarter moves. Explore local guides for pricing trends,
               school zones, commute patterns, and where opportunity is strongest right now.
             </p>
+            <p className="text-neutral-600 leading-relaxed mt-4">
+              Need to sell without listing?{' '}
+              <Link href="/cash-offer/nashville-tn" className="font-semibold text-black underline underline-offset-4">
+                We buy houses in Nashville
+              </Link>
+              , and you can{' '}
+              <Link href="/cash-offer/columbia-tn" className="font-semibold text-black underline underline-offset-4">
+                sell your house fast in Columbia, TN
+              </Link>
+              .
+            </p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -367,7 +378,11 @@ export default function HomePage() {
                   href={`/cash-offer/${slug}`}
                   className="mt-1 block text-xs text-neutral-500 hover:text-black"
                 >
-                  {slug === 'nashville-tn' ? 'We Buy Houses in Nashville →' : 'Get a cash offer →'}
+                  {slug === 'nashville-tn'
+                    ? 'We buy houses in Nashville →'
+                    : slug === 'columbia-tn'
+                      ? 'Sell your house fast in Columbia, TN →'
+                      : 'Get a cash offer →'}
                 </QuietLink>
                 <QuietLink
                   href="/neighborhoods"

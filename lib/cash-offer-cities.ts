@@ -19,6 +19,12 @@ export type CashOfferSeo = {
   ogTitle: string
   ogDescription: string
   keywords: string[]
+  /**
+   * When true, `title` is the full document title and skips the layout
+   * template (`| Joshua Fink | Compass Real Estate`), so the query and
+   * the click hook stay inside the snippet Google actually shows.
+   */
+  absoluteTitle?: boolean
   /** Replaces the shared "{county} · Cash Home Buyers" hero eyebrow. */
   eyebrow?: string
 }
@@ -46,6 +52,10 @@ export type CashOfferCityContent = {
    * Use when title, meta, and H1 need to share one query (e.g. a cash-offer landing).
    */
   headline?: { lead: string; accent: string }
+  /** Replaces "Whatever you're going through in {city} — we can help". */
+  situationsHeading?: string
+  /** Replaces "Selling your {city} home for cash". */
+  faqHeading?: string
   /** Licensed-broker vs cash-buyer-site callout. Set per city when the page needs it. */
   differentiator?: string
   /** Extra compare-table closer. Rendered under the shared traditional-vs-cash grid. */
@@ -72,14 +82,6 @@ export type CashOfferCityContent = {
    * framing — never new numbers.
    */
   fairOfferFaqs?: CashOfferFaq[]
-  /**
-   * Short FAQ rendered near the top of /cash-offer/[city] and folded into the
-   * page's single FAQPage JSON-LD. Keep questions distinct from faqs and
-   * fairOfferFaqs. Reuse claims already published on the page.
-   */
-  quickFaqs?: CashOfferFaq[]
-  /** Visible lead sentence above quickFaqs. */
-  quickAnswerIntro?: string
 }
 
 export type CashOfferFaq = {
@@ -204,25 +206,26 @@ const cityContent: Record<string, CashOfferCityContent> = {
     slug: 'nashville-tn',
     areas: 'East Nashville, Wedgewood-Houston, Madison, Antioch, Donelson, and the urban core',
     intro:
-      'We Buy Houses in Nashville. Need to sell your home fast in Nashville? This is the most varied market in Middle TN — and the most common place for cash situations: inherited homes, tired rentals, pre-foreclosure, vacant houses, and properties that need more work than a retail buyer will take on. A cash offer lets you sell any of them as-is, without waiting on a traditional listing.',
+      'Need to sell your home fast in Nashville? We buy houses in Nashville in any condition — inherited homes, tired rentals, pre-foreclosure, vacant houses, and properties that need more work than a retail buyer will take on. A cash offer lets you sell any of them as-is, without waiting on a traditional listing.',
     localAngle:
       "Across Davidson County, Nashville's $475,538 median (Redfin, as of October 5, 2026) spans everything from updated East Nashville bungalows to dated homes in Madison, Antioch, and Donelson that are hard to sell traditionally. Cash is the cleanest exit for landlords done with tenants, heirs settling an estate, or owners facing foreclosure — Joshua buys in any condition, anywhere in the metro.",
     headline: {
       lead: 'We Buy Houses',
-      accent: 'in Nashville',
+      accent: 'in Nashville.',
     },
+    situationsHeading: 'We buy houses in Nashville — any situation',
     contentUpdated: '2026-10-23',
     marketNote:
       "Davidson County is not one housing market. The citywide median sale price is $475,538, with 64 days on market and $272.16 per square foot, down 0.52% year over year (Redfin, as of October 5, 2026). Davidson County's April 1, 2020 Census count was 715,884. The U.S. Census Bureau estimates 745,904 residents as of July 1, 2025, a 4.2% increase from the April 1, 2020 estimates base (U.S. Census Bureau QuickFacts; Population Estimates, Vintage 2025). The neighborhood guides on this site publish these price bands: East Nashville $450K – $1.2M+, 12 South $700K – $1.8M+, Germantown $500K – $1.5M+, Sylvan Park $550K – $1.3M+, The Gulch $400K – $1.5M+ (condos), and Green Hills: No published median. A cash offer follows the block and the condition, not the citywide midpoint. Joshua also buys in Madison, Antioch, Donelson, Bordeaux, and Hermitage.",
     seo: {
-      title: 'We Buy Houses in Nashville | Cash Offer in 24 Hours',
+      title: 'We Buy Houses Nashville | 24-Hour Cash Offer | Compass',
       description:
-        'We Buy Houses in Nashville — any condition, no fees, no repairs. Fair cash offer in 24 hours from a licensed Compass broker (TREC #351484). Close in 7 days.',
-      ogTitle: 'We Buy Houses in Nashville | Cash Offer in 24 Hours',
+        'We buy houses in Nashville in any condition. Fair cash offer in 24 hours, close in 7 days, no fees. Compass broker licensed since 2008. Call 615-551-2727.',
+      ogTitle: 'We Buy Houses Nashville | 24-Hour Cash Offer | Compass',
       ogDescription:
-        'We Buy Houses in Nashville — any condition, no fees, no repairs. Fair cash offer in 24 hours from a licensed Compass broker. Close in 7 days. Call or text 615-551-2727.',
+        'We buy houses in Nashville in any condition. Fair cash offer in 24 hours, close in 7 days, no fees. Compass broker licensed since 2008. Call 615-551-2727.',
+      absoluteTitle: true,
       keywords: [
-        'we buy houses in Nashville',
         'we buy houses Nashville',
         'we buy houses Nashville TN',
         'cash offer Nashville TN',
@@ -304,27 +307,11 @@ const cityContent: Record<string, CashOfferCityContent> = {
         a: "Ask for the math. A fair offer shows the after-repair value, the comps behind it, and the repair estimate, so you can check each piece yourself. Joshua puts that in writing next to a traditional-listing estimate, because he also lists homes with Compass. If an offer comes with no comps and no repair breakdown, compare it against a second opinion before you sign — you're never obligated to accept.",
       },
     ],
-    quickAnswerIntro:
-      'We Buy Houses in Nashville. These four answers cover how fast you can close, what you pay in fees, selling as-is, and how a cash offer compares with listing.',
-    quickFaqs: [
-      {
-        q: 'How fast can you buy a house in Nashville?',
-        a: 'You get a no-obligation cash offer within 24 hours. If you accept, you can close in as little as 7 days, or on a later date you choose. There is no lender and no appraisal. A Tennessee title attorney clears title and schedules closing.',
-      },
-      {
-        q: 'Do you charge fees to buy a house in Nashville?',
-        a: 'No. There is no agent commission, no closing cost charged to you, and no hidden fee. Joshua covers the closing costs. The cash offer you accept is the amount you walk away with.',
-      },
-      {
-        q: 'Will you buy my Nashville house as-is?',
-        a: 'Yes. You make zero repairs, do zero cleaning, and host zero showings. Joshua buys Nashville homes as-is, including fire or water damage, mold, foundation issues, code violations, hoarder conditions, and tenant-occupied rentals. Condition is priced into the offer up front.',
-      },
-      {
-        q: 'How does a cash offer compare with listing my Nashville house?',
-        a: 'A cash offer typically runs 70–85% of after-repair market value. You trade some retail price for speed and certainty: no commission, no repairs, and no showings. If the home is in good shape and you can wait 30–90 days, listing usually nets more. Joshua shows you both numbers in writing before you choose, because he also lists homes with Compass.',
-      },
-    ],
     faqs: [
+      {
+        q: 'I keep seeing “we buy houses Nashville.” Who actually buys?',
+        a: 'Joshua Fink does. He is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass, licensed since 2008 — not an out-of-town sign company. He buys Nashville houses for cash in any condition, with a no-obligation offer within 24 hours and a close in as little as 7 days. No repairs and no commissions. He also shows you a traditional listing number if that would net more. Call or text 615-551-2727. Office: 8119 Isabella Lane Suite 105, Brentwood, TN 37027.',
+      },
       {
         q: 'How fast can I sell my home in Nashville?',
         a: "You'll have a no-obligation cash offer within 24 hours, and you can close in as little as 7 days. There's no lender, appraisal, or inspection-repair loop — a Tennessee title attorney clears title and schedules closing, usually within the same week you accept. If you need to sell your home fast in Nashville, this is the path built for a firm timeline rather than a 30–90 day listing. Need longer? Joshua closes on your schedule.",
@@ -438,21 +425,28 @@ const cityContent: Record<string, CashOfferCityContent> = {
     areas:
       'Historic Downtown Columbia, the Downtown Columbia Historic District, North Columbia / Carters Creek (Spring Hill-Adjacent), Sunnyside, The Crossings, and Bear Creek',
     headline: {
-      lead: 'Cash Offer',
+      lead: 'Sell Your House Fast',
       accent: 'in Columbia, TN.',
     },
+    situationsHeading: 'When you need to sell your house fast in Columbia',
+    faqHeading: 'Sell your house for cash in Columbia, TN',
+    contentUpdated: '2026-10-23',
     intro:
-      'A Columbia, TN cash offer is for the seller who needs a date more than a perfect retail price. That includes a divorce, an inherited house, a relocation, a home you want to sell as-is, or any timeline that cannot wait on showings. Use the form on this page — the same cash-offer request Joshua reviews himself — and you will have a fair, no-obligation number within 24 hours.',
+      'Need to sell your house fast in Columbia, TN? A cash offer is for the seller who needs a date more than a perfect retail price. That includes a divorce, an inherited house, a relocation, a home you want to sell as-is, or any timeline that cannot wait on showings. Use the form on this page — the same cash-offer request Joshua reviews himself — and you will have a fair, no-obligation number within 24 hours.',
     localAngle:
       "Columbia's median sits around $368,006 (Redfin, as of October 5, 2026), and homes are averaging about 78 days on market. That wait is why cash is a real option here: historic houses near the Square often need systems work a retail buyer will not take on, and repair bills eat more of a listing in an attainable Maury County price band than they do in Williamson County. Maury County was Tennessee's #2 fastest-growing county by percentage from 2024 to 2025 (Maury Alliance), so the equity is real — Joshua prices it off current Maury County comps, buys as-is, and will also show you a traditional listing net if the house is ready and you can wait.",
     seo: {
-      title: 'Cash Offer in Columbia, TN | Sell My House Fast',
+      title: 'Sell House Fast Columbia TN | Close in 7 Days | Compass',
       description:
-        'Cash offer in Columbia, TN — inherited, divorce, relocation, or as-is. Fair offer in 24 hours, close in as little as 7 days. No repairs or commissions.',
-      ogTitle: 'Cash Offer in Columbia, TN — Sell My House Fast',
+        'Sell your house fast in Columbia, TN — or sell your house for cash, as-is. Offer in 24 hours, close in 7 days. Compass broker, no fees. Call 615-551-2727.',
+      ogTitle: 'Sell House Fast Columbia TN | Close in 7 Days | Compass',
       ogDescription:
-        'Fair cash offer on your Columbia, TN home in 24 hours. Close in as little as 7 days. As-is, no showings, no commissions. Call or text 615-551-2727.',
+        'Sell your house fast in Columbia, TN — or sell your house for cash, as-is. Offer in 24 hours, close in 7 days. Compass broker, no fees. Call 615-551-2727.',
+      absoluteTitle: true,
       keywords: [
+        'sell house fast Columbia TN',
+        'sell house fast Columbia',
+        'sell house for cash Columbia TN',
         'cash offer Columbia TN',
         'Columbia TN cash offer',
         'sell my house fast Columbia TN',
@@ -508,6 +502,10 @@ const cityContent: Record<string, CashOfferCityContent> = {
       { href: '/blog/cash-offer-vs-ibuyer-vs-listing-middle-tennessee', label: 'Cash offer vs. iBuyer vs. listing' },
     ],
     faqs: [
+      {
+        q: 'How do I sell my house fast in Columbia?',
+        a: 'Request a cash offer on this page if you need a date more than a listing. You will have a no-obligation number within 24 hours and can close in as little as 7 days, as-is, with no showings and no commissions. That is the practical way to sell your house fast in Columbia, and to sell your house for cash in Columbia, TN, when repairs or a 78-day listing wait will not work (Redfin, as of October 5, 2026). Joshua is a licensed Compass broker (TREC #351484), licensed since 2008. Call or text 615-551-2727.',
+      },
       {
         q: 'How fast can I sell my house for cash in Columbia, TN?',
         a: 'You will have a no-obligation cash offer within 24 hours, and you can close in as little as 7 days. There is no lender, appraisal, or inspection-repair loop — a Tennessee title attorney clears title and schedules closing, usually within the same week you accept. If you need more time to move, Joshua closes on your date instead.',
@@ -675,8 +673,8 @@ export function getAllCashOfferCitySlugs(): string[] {
 // on /cash-offer/[city], a freshness signal these pages previously lacked.
 export const cashOfferContentLastUpdated = '2026-10-05'
 
-/** Hub page /cash-offer was retitled off Nashville on this day. */
-export const cashOfferHubLastUpdated = '2026-10-17'
+/** Hub page /cash-offer proof block and FAQ were refreshed on this day. */
+export const cashOfferHubLastUpdated = '2026-10-26'
 
 /** Lightweight list for nav/grid linking (slug + display name), in declared order. */
 export function getCashOfferCityLinks(): Array<{ slug: string; name: string }> {
@@ -695,6 +693,7 @@ export type ResolvedCashOfferSeo = {
   ogDescription: string
   keywords: string[]
   eyebrow: string
+  absoluteTitle: boolean
 }
 
 /** Shared template strings, with optional per-city SEO overrides. */
@@ -719,6 +718,7 @@ export function cashOfferSeo(city: CashOfferCity): ResolvedCashOfferSeo {
       'Joshua Fink',
     ],
     eyebrow: city.seo?.eyebrow ?? `${city.county} · Cash Home Buyers`,
+    absoluteTitle: city.seo?.absoluteTitle ?? false,
   }
 }
 

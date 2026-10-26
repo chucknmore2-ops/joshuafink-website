@@ -334,10 +334,13 @@ async function forwardToJoshua(lead: Record<string, string>, testMode = false): 
 // A transient Sheets failure (timeout, 429, 5xx, "Service Spreadsheets")
 // is retried with a short exponential backoff inside the 30s function limit.
 // If it still does not confirm, the same payload is saved to Postgres
-// (DATABASE_URL) and /api/cron/sheet-lead-backfill writes it later. Email
-// and Pushover are started in the same Promise.all, so they are not waiting
-// on those retries. Blocked-tab routing is unchanged: blockedReason still
-// becomes blocked_reason + status spam, and this path still does not email.
+// (DATABASE_URL) and /api/cron/sheet-lead-backfill writes it later. A
+// confirmed append that finished in under 8 seconds also writes one queued
+// row before the response returns. That replay does not send email or Pushover. Email and
+// Pushover for the new lead are started in the same Promise.all, so they
+// are not waiting on those retries. Blocked-tab routing is unchanged:
+// blockedReason still becomes blocked_reason + status spam, and this path
+// still does not email.
 // ---------------------------------------------------------------------------
 
 async function pushToSheet(

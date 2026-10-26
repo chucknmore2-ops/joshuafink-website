@@ -5,6 +5,7 @@ import { createMemorySheetLeadStore } from './sheet-lead-queue.ts'
 import {
   SHEET_BACKFILL_ATTEMPT_MS,
   SHEET_BACKFILL_BUDGET_MS,
+  SHEET_OPPORTUNISTIC_DRAIN_MS,
   SHEET_ROW_FAIL_LIMIT,
   SHEET_WRITE_BUDGET_MS,
   backfillSheetLeads,
@@ -35,7 +36,8 @@ test('permanent script errors are not retried; spreadsheet and 503 errors are', 
   })
   assert.deepEqual(classifySheetFailure({ httpStatus: 503, detail: 'HTTP 503' }), { transient: true, scope: 'global' })
   assert.deepEqual(classifySheetFailure({ httpStatus: 429, detail: 'HTTP 429' }), { transient: true, scope: 'global' })
-  assert.deepEqual(classifySheetFailure({ httpStatus: 404, detail: 'HTTP 404' }), { transient: false, scope: 'global' })
+  assert.deepEqual(classifySheetFailure({ httpStatus: 404, detail: 'HTTP 404' }), { transient: false, scope: 'row' })
+  assert.deepEqual(classifySheetFailure({ httpStatus: 403, detail: 'HTTP 403' }), { transient: false, scope: 'global' })
   assert.deepEqual(classifySheetFailure({ detail: 'Exception: Service Spreadsheets failed' }), {
     transient: true,
     scope: 'global',
@@ -333,6 +335,7 @@ test('backfill gives each lead one Apps Script-sized attempt', () => {
   assert.equal(sheetFailureStopsBackfill({ scope: 'global', detail: 'HTTP 503' }), true)
   assert.equal(sheetFailureStopsBackfill({ scope: 'global', detail: 'bad secret' }), true)
   assert.equal(sheetFailureStopsBackfill({ scope: 'global', detail: 'non-JSON response (broken deployment?)' }), true)
+  assert.equal(sheetFailureStopsBackfill({ scope: 'row', detail: 'HTTP 404' }), false)
   assert.equal(sheetFailureStopsBackfill({ scope: 'row', detail: 'timeout' }), false)
   assert.equal(redactSheetDetail('failed for ada@example.com at 615-555-0100 postgres://user:pw@host/db'), 'failed for [email] at [phone] postgres://redacted')
 })
@@ -359,6 +362,115 @@ test('a duplicate response during backfill marks the lead written', async () => 
   })
   assert.equal(report.written, 1)
   assert.equal(report.remaining?.queued, 0)
+})
+
+test('an HTTP 404 releases that row and still writes the next one', async () => {
+  const store = createMemorySheetLeadStore()
+  await store.enqueue({ id: 'missing', payload: { lead_id: 'missing', name: 'Missing', email: 'missing@example.com' } })
+  await store.enqueue({ id: 'next', payload: { lead_id: 'next', name: 'Next', email: 'next@example.com' } })
+  const posted: string[] = []
+  const fetchImpl = (async (_input: RequestInfo | URL, init?: RequestInit) => {
+    const body = JSON.parse(String(init?.body ?? '')) as { lead_id: string }
+    posted.push(body.lead_id)
+    if (body.lead_id === 'missing') return new Response('missing', { status: 404 })
+    return new Response('{"ok":true}', { status: 200, headers: { 'Content-Type': 'application/json' } })
+  }) as typeof fetch
+  const opts = {
+    webhookUrl: URL,
+    store,
+    fetchImpl,
+    now: () => 0,
+    sleep: async () => undefined,
+    budgetMs: 45_000,
+  }
+  const first = await backfillSheetLeads(opts)
+  assert.equal(first.stopped, false)
+  assert.equal(first.written, 1)
+  assert.equal(first.failed, 0)
+  assert.equal(first.released, 1)
+  assert.equal(first.detail, 'HTTP 404')
+  assert.equal(first.remaining?.queued, 1)
+  assert.deepEqual(posted, ['missing', 'next'])
+
+  const second = await backfillSheetLeads(opts)
+  assert.equal(second.written, 0)
+  assert.equal(second.failed, 0)
+  assert.equal(second.stopped, false)
+  assert.equal(second.remaining?.queued, 1)
+  assert.equal(posted.filter((id) => id === 'missing').length, 2)
+
+  const third = await backfillSheetLeads(opts)
+  assert.equal(third.failed, 1)
+  assert.equal(third.stopped, false)
+  assert.equal(third.remaining?.queued, 0)
+  assert.equal(third.remaining?.failed, 1)
+  assert.equal(posted.filter((id) => id === 'missing').length, SHEET_ROW_FAIL_LIMIT)
+})
+
+test('a fast confirmed append also writes one queued lead', async () => {
+  const store = createMemorySheetLeadStore()
+  await store.enqueue({ id: 'queued', payload: { lead_id: 'queued', name: 'Queued', email: 'queued@example.com' } })
+  const posted: string[] = []
+  const result = await deliverSheetLead({
+    lead: { name: 'Ada', email: 'ada@example.com', subject: 'buy' },
+    webhookUrl: URL,
+    store,
+    leadId: 'live',
+    now: () => 0,
+    sleep: async () => undefined,
+    fetchImpl: (async (_input: RequestInfo | URL, init?: RequestInit) => {
+      posted.push(JSON.parse(String(init?.body ?? '')).lead_id as string)
+      return new Response('{"ok":true}', { status: 200, headers: { 'Content-Type': 'application/json' } })
+    }) as typeof fetch,
+  })
+  assert.equal(result.ok, true)
+  assert.deepEqual(posted, ['live', 'queued'])
+  assert.equal((await store.counts())?.queued, 0)
+})
+
+test('a slow confirmed append does not start a queued write', async () => {
+  const store = createMemorySheetLeadStore()
+  await store.enqueue({ id: 'queued', payload: { lead_id: 'queued', name: 'Queued', email: 'queued@example.com' } })
+  let t = 0
+  const posted: string[] = []
+  const result = await deliverSheetLead({
+    lead: { name: 'Ada', email: 'ada@example.com' },
+    webhookUrl: URL,
+    store,
+    leadId: 'live',
+    now: () => t,
+    sleep: async () => undefined,
+    fetchImpl: (async (_input: RequestInfo | URL, init?: RequestInit) => {
+      posted.push(JSON.parse(String(init?.body ?? '')).lead_id as string)
+      t += SHEET_OPPORTUNISTIC_DRAIN_MS
+      return new Response('{"ok":true}', { status: 200, headers: { 'Content-Type': 'application/json' } })
+    }) as typeof fetch,
+  })
+  assert.equal(result.ok, true)
+  assert.deepEqual(posted, ['live'])
+  assert.equal((await store.counts())?.queued, 1)
+})
+
+test('a queued drain that fails does not fail the contact', async () => {
+  const store = createMemorySheetLeadStore()
+  await store.enqueue({ id: 'queued', payload: { lead_id: 'queued', name: 'Queued', email: 'queued@example.com' } })
+  const result = await deliverSheetLead({
+    lead: { name: 'Ada', email: 'ada@example.com' },
+    webhookUrl: URL,
+    store,
+    leadId: 'live',
+    now: () => 0,
+    sleep: async () => undefined,
+    fetchImpl: (async (_input: RequestInfo | URL, init?: RequestInit) => {
+      const body = JSON.parse(String(init?.body ?? '')) as { lead_id: string }
+      if (body.lead_id === 'queued') throw new Error('timeout')
+      return new Response('{"ok":true}', { status: 200, headers: { 'Content-Type': 'application/json' } })
+    }) as typeof fetch,
+  })
+  assert.equal(result.ok, true)
+  assert.equal(result.queued, undefined)
+  assert.equal((await store.counts())?.queued, 1)
+  assert.equal((await store.counts())?.failed, 0)
 })
 
 test('a row the script rejects is failed after the limit and does not block the next row', async () => {
@@ -425,7 +537,11 @@ test('retry and backfill budgets fit the route time limits and do not add a Verc
   assert.equal(vercel.includes('sheet-lead-backfill'), false)
   assert.match(workflow, /CRON_SECRET/)
   assert.match(workflow, /api\/cron\/sheet-lead-backfill/)
+  assert.match(workflow, /10,40 \* \* \* \*/)
+  assert.match(workflow, /made_progress/)
   assert.match(workflow, /wrote 0 of/)
+  assert.ok(SHEET_OPPORTUNISTIC_DRAIN_MS <= 8_000)
+  assert.ok(SHEET_OPPORTUNISTIC_DRAIN_MS * 2 <= contactLimit * 1000 - 10_000)
   assert.equal(backfill.includes('sendPushover'), false)
   assert.equal(backfill.includes('forwardToJoshua'), false)
   assert.equal(backfill.includes('sendAutoReply'), false)

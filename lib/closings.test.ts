@@ -13,6 +13,7 @@ import {
   closingGroupsForSuburb,
   closingSideCounts,
   closingsLastModified,
+  tennesseeClosingsProof,
   formatBaths,
   formatCloseMonthYear,
   formatSoldPrice,
@@ -380,4 +381,48 @@ test('the Nashville cash-offer page counts closed Tennessee sales in Nashville',
     closingGroupsForSuburb('franklin-tn').some((candidate) => candidate.city === 'Nashville'),
     false,
   )
+})
+
+test('the in-body closings proof is computed from Tennessee /sold rows', () => {
+  const proof = tennesseeClosingsProof()
+  assert.equal(proof.total, closings.length)
+  assert.equal(proof.total, 230)
+  assert.equal(proof.soldHref, '/sold')
+  assert.deepEqual(
+    proof.cities.map((city) => [city.city, city.count, city.href]),
+    [
+      ['Nashville', CITY_COUNTS.Nashville, '/sold#nashville'],
+      ['Brentwood', CITY_COUNTS.Brentwood, '/sold#brentwood'],
+      ['Franklin', CITY_COUNTS.Franklin, '/sold#franklin'],
+    ],
+  )
+  assert.equal(proof.cities[0].count, 49)
+  assert.equal(proof.cities[1].count, 20)
+  assert.equal(proof.cities[2].count, 9)
+  for (const row of closings) {
+    assert.equal(row.state, 'TN')
+    assert.equal(row.status, 'Closed')
+  }
+  const named = new Set(proof.cities.map((city) => city.city))
+  for (const row of closings) {
+    if (!named.has(row.city)) continue
+    assert.equal(row.state, 'TN')
+  }
+
+  const component = readFileSync(new URL('../components/TennesseeClosingsProof.tsx', import.meta.url), 'utf8')
+  assert.match(component, /tennesseeClosingsProof/)
+  assert.doesNotMatch(component, /230|49|20|9/)
+  assert.doesNotMatch(component, /Parks/)
+  assert.doesNotMatch(component, /clientName|sellerName|buyerName|ownerName|address/i)
+
+  const cashOffer = readFileSync(new URL('../app/cash-offer/page.tsx', import.meta.url), 'utf8')
+  const moving = readFileSync(new URL('../app/moving-to-middle-tennessee/page.tsx', import.meta.url), 'utf8')
+  for (const page of [cashOffer, moving]) {
+    assert.match(page, /TennesseeClosingsProof/)
+    assert.doesNotMatch(page, /230 Tennessee closings/)
+    assert.doesNotMatch(page, /49 in Nashville/)
+    assert.doesNotMatch(page, /Parks/)
+  }
+  assert.match(cashOffer, /\/sold#\$\{nashvilleGroup\.anchor\}|tennesseeClosingsProof|TennesseeClosingsProof/)
+  assert.match(moving, /TennesseeClosingsProof/)
 })
