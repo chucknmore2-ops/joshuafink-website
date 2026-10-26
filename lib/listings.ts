@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-10-24T00:01:19.367Z
+// AUTO-GENERATED — Last synced: 2026-10-26T14:57:49.367Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -32,7 +32,7 @@ export interface Listing {
 
 // Mirrors the header timestamp so server components can compute sync staleness
 // without parsing comments. Updated by scripts/fetch-images.mjs each sync.
-export const listingsSyncedAt = "2026-10-24T00:01:19.367Z";
+export const listingsSyncedAt = "2026-10-26T14:57:49.367Z";
 
 export const listings: Listing[] = [
   {
@@ -207,12 +207,12 @@ export const listings: Listing[] = [
   },
   {
     address: "261 Paragon Mills Rd",
-    city: "Nashville, TN 37211 | MLS #3611676",
+    city: "Nashville, TN 37211",
     price: 339900,
     beds: 3,
     baths: 1,
     sqft: 1014,
-    status: "Active",
+    status: "Active Under Contract",
     compassUrl: "https://www.compass.com/homedetails/261-Paragon-Mills-Rd-Nashville-TN-37211/TLH7F_pid/",
     imageUrl: "https://www.compass.com/m/4e0ad91dae272cb8d10ab72fe92e356caa4ea6acda5b71c2fdc9a5e7d5b4f0ef/2048x1536.webp",
     photoUrls: [
@@ -245,6 +245,7 @@ export const listings: Listing[] = [
       "https://www.compass.com/m/824691f4784d39702a1f8f58cd3c4f386ada99c2a08763ee6994b0c3957baea1/2048x1536.webp",
     ],
     firstSeen: "2026-10-06T15:02:04.000Z",
+    contentUpdated: "2026-10-26T14:57:49.367Z",
     lastVerified: listingsSyncedAt,
   },
   {
