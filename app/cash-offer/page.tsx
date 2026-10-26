@@ -4,8 +4,11 @@ import CashOfferForm from './CashOfferForm'
 import TrustBadges from '@/components/TrustBadges'
 import ReviewStrip from '@/components/ReviewStrip'
 import TrackedTelLink from '@/components/TrackedTelLink'
+import TennesseeClosingsProof from '@/components/TennesseeClosingsProof'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
 import { getCashOfferCityLinks, cashOfferHubLastUpdated } from '@/lib/cash-offer-cities'
+import { cashOfferHubFaqs, cashOfferHubUpdatedLabel } from '@/lib/cash-offer-hub'
+import { OFFICE_ADDRESS } from '@/lib/office'
 import { reviewStats } from '@/lib/reviews'
 
 const SITE = 'https://www.joshuafink.com'
@@ -128,6 +131,8 @@ const sellerReviewFilter = (r: { transaction: string }) =>
 
 export default function CashOfferPage() {
   const cityLinks = getCashOfferCityLinks()
+  const hubFaqs = cashOfferHubFaqs()
+  const schemaFaqs = [...hubFaqs, ...faqs]
   const breadcrumb = buildBreadcrumbSchema([
     { name: 'Home', href: '/' },
     { name: 'Cash Offer', href: '/cash-offer' },
@@ -208,6 +213,58 @@ export default function CashOfferPage() {
           </div>
         </div>
       </div>
+
+      {/* Dated, citable proof — first body copy, ahead of the situation grid.
+          Every figure is already published elsewhere on the site. Closings
+          counts are computed from the /sold source. */}
+      <section aria-labelledby="cash-offer-proof" className="bg-white border-b border-neutral-200">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <p className="text-sm font-semibold text-neutral-500 mb-4">
+            Updated {cashOfferHubUpdatedLabel()}
+          </p>
+          <h2 id="cash-offer-proof" className="text-3xl sm:text-4xl font-black text-black tracking-tight mb-4">
+            Sell my house fast in Nashville
+          </h2>
+          <p className="text-base text-neutral-700 leading-relaxed">
+            Joshua Fink is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate, licensed since 2008, with 40+ homes a year in Middle Tennessee. Fair cash offer in 24 hours. Close in as little as 7 days. Office: Compass, {OFFICE_ADDRESS}. Call{' '}
+            <TrackedTelLink
+              href="tel:6155512727"
+              className="font-semibold text-black underline underline-offset-4"
+              data-cta="cash-offer-proof-call"
+            >
+              615-551-2727
+            </TrackedTelLink>
+            .
+          </p>
+          <p className="text-base text-neutral-700 leading-relaxed mt-4">
+            Recent closings:{' '}
+            <TennesseeClosingsProof linkClassName="font-semibold text-black underline underline-offset-4" />
+            .
+          </p>
+        </div>
+      </section>
+
+      <section aria-labelledby="nashville-cash-offer-faq" className="bg-neutral-50 border-b border-neutral-200">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3 text-center">
+            Cash Offer FAQ
+          </p>
+          <h2
+            id="nashville-cash-offer-faq"
+            className="text-3xl sm:text-4xl font-black text-black tracking-tight mb-10 text-center"
+          >
+            Nashville cash offer questions
+          </h2>
+          <div className="space-y-8">
+            {hubFaqs.map((faq) => (
+              <div key={faq.q} className="border-b border-neutral-200 pb-6">
+                <h3 className="text-lg font-black text-black mb-2">{faq.q}</h3>
+                <p className="text-sm text-neutral-600 leading-relaxed">{faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Situations */}
       <div className="bg-neutral-50 py-16 px-4 sm:px-6 lg:px-8">
@@ -399,7 +456,7 @@ export default function CashOfferPage() {
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'FAQPage',
-            mainEntity: faqs.map((f) => ({
+            mainEntity: schemaFaqs.map((f) => ({
               '@type': 'Question',
               name: f.q,
               acceptedAnswer: { '@type': 'Answer', text: f.a },
