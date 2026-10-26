@@ -8,6 +8,7 @@ import {
   housingMarketFaqAnswer,
 } from '@/lib/moving-faqs'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
+import TennesseeClosingsProof from '@/components/TennesseeClosingsProof'
 import TrackedTelLink from '@/components/TrackedTelLink'
 
 const SITE = 'https://www.joshuafink.com'
@@ -241,9 +242,13 @@ export default function MovingToMiddleTennesseePage() {
           <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-3">
             Why People Relocate Here
           </p>
-          <h2 className="text-3xl font-black text-black tracking-tight mb-10">
+          <h2 className="text-3xl font-black text-black tracking-tight mb-4">
             What’s pulling people to Middle Tennessee
           </h2>
+          <p className="text-base text-[#444] leading-relaxed mb-10 max-w-3xl">
+            <TennesseeClosingsProof linkClassName="font-semibold text-black underline underline-offset-4" />
+            .
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {MOVE_REASONS.map((r, i) => (
               <div key={i} className="bg-white p-8 border-t-4" style={{ borderColor: '#C41E3A' }}>

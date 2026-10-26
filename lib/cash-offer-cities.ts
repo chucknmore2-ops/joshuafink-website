@@ -673,8 +673,8 @@ export function getAllCashOfferCitySlugs(): string[] {
 // on /cash-offer/[city], a freshness signal these pages previously lacked.
 export const cashOfferContentLastUpdated = '2026-10-05'
 
-/** Hub page /cash-offer was retitled off Nashville on this day. */
-export const cashOfferHubLastUpdated = '2026-10-17'
+/** Hub page /cash-offer proof block and FAQ were refreshed on this day. */
+export const cashOfferHubLastUpdated = '2026-10-26'
 
 /** Lightweight list for nav/grid linking (slug + display name), in declared order. */
 export function getCashOfferCityLinks(): Array<{ slug: string; name: string }> {
