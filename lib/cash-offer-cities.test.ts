@@ -212,6 +212,45 @@ test('Nashville cash-offer SEO leads with we buy houses and keeps sell-fast quer
   assert.equal(cashOfferPath('nashville-tn'), '/cash-offer/nashville-tn')
 })
 
+test('Nashville cash page keeps one FAQPage and adds only the closings line and sell links', () => {
+  const city = getCashOfferCity('nashville-tn')
+  assert.ok(city)
+  const questions = [
+    ...city.faqs.map((faq) => faq.q),
+    ...(city.fairOfferFaqs ?? []).map((faq) => faq.q),
+  ]
+  assert.equal(new Set(questions).size, questions.length)
+  assert.equal(questions.includes('How does a cash offer compare with listing my Nashville house?'), false)
+  assert.equal(questions.includes('How fast can you buy a house in Nashville?'), false)
+
+  const page = readFileSync(new URL('../app/cash-offer/[city]/page.tsx', import.meta.url), 'utf8')
+  assert.equal(page.match(/'@type': 'FAQPage'/g)?.length, 1)
+  assert.match(page, /const schemaFaqs = \[\.\.\.fairOfferFaqs, \.\.\.allFaqs\]/)
+  assert.doesNotMatch(page, /quickFaqs/)
+  assert.equal(page.match(/id="nashville-closings-proof"/g)?.length, 1)
+  const closingsAt = page.indexOf('id="nashville-closings-proof"')
+  const localAt = page.indexOf('Why Sell for Cash in')
+  assert.ok(closingsAt > 0 && localAt > closingsAt)
+  const closings = page.slice(closingsAt, localAt)
+  assert.match(closings, /TREC #351484/)
+  assert.match(closings, /Compass Real Estate/)
+  assert.match(closings, /Licensed since 2008/)
+  assert.match(closings, /reviewStats\.total/)
+  assert.doesNotMatch(closings, /Parks/)
+  assert.doesNotMatch(closings, /\b49\b/)
+
+  const image = readFileSync(new URL('../app/cash-offer/[city]/opengraph-image.tsx', import.meta.url), 'utf8')
+  assert.match(image, /isNashville \? 'We Buy Houses' : 'Sell My House Fast'/)
+  assert.match(image, /isNashville \? 'in Nashville'/)
+
+  const sell = readFileSync(new URL('../app/sell/page.tsx', import.meta.url), 'utf8')
+  const sellCity = readFileSync(new URL('../app/sell/[suburb]/page.tsx', import.meta.url), 'utf8')
+  assert.match(sell, /href="\/cash-offer\/nashville-tn"/)
+  assert.match(sell, /We Buy Houses in Nashville →/)
+  assert.match(sellCity, /slug === 'nashville-tn' \? 'We Buy Houses in Nashville' : 'Prefer a Cash Offer\?'/)
+  assert.doesNotMatch(sell + sellCity, /Parks/)
+})
+
 test('Nashville market note reuses published Redfin, Census, and neighborhood bands', () => {
   const city = getCashOfferCity('nashville-tn')
   assert.ok(city?.marketNote)

@@ -9,6 +9,9 @@ export const alt = 'Sell My House Fast — Cash Offer in 24 Hours | Joshua Fink'
 export default async function Image({ params }: { params: { city: string } }) {
   const city = getCashOfferCity(params.city)
   const cityName = city?.name ?? 'Middle Tennessee'
+  const isNashville = params.city === 'nashville-tn'
+  const headline = isNashville ? 'We Buy Houses' : 'Sell My House Fast'
+  const subhead = isNashville ? 'in Nashville' : `in ${cityName}, TN`
 
   return new ImageResponse(
     (
@@ -35,10 +38,10 @@ export default async function Image({ params }: { params: { city: string } }) {
 
         <div style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center' }}>
           <div style={{ fontSize: 88, fontWeight: 900, lineHeight: 0.95, letterSpacing: '-0.02em' }}>
-            Sell My House Fast
+            {headline}
           </div>
           <div style={{ fontSize: 84, fontWeight: 900, lineHeight: 1, letterSpacing: '-0.02em', fontStyle: 'italic', color: 'rgba(255,255,255,0.7)', marginTop: 8 }}>
-            in {cityName}, TN
+            {subhead}
           </div>
         </div>
 

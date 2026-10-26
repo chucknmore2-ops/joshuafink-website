@@ -285,6 +285,44 @@ export default async function CashOfferCityPage({ params }: Props) {
         </div>
       </div>
 
+      {nashvilleGroup && nashvilleClosedCount > 0 ? (
+        <section
+          aria-labelledby="nashville-closings-proof"
+          className="bg-white border-b border-neutral-200"
+        >
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
+              Recent Closings · Compass Real Estate
+            </p>
+            <h2
+              id="nashville-closings-proof"
+              className="text-2xl sm:text-3xl font-black text-black tracking-tight"
+            >
+              {`Josh has closed ${nashvilleClosedCount} ${nashvilleClosedCount === 1 ? 'home' : 'homes'} in ${nashvilleGroup.city}`}
+            </h2>
+            <p className="text-neutral-700 text-base leading-relaxed mt-4">
+              Joshua Fink is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate.
+              Licensed since 2008, with {reviewStats.total}+ five-star reviews. Call or text{' '}
+              <TrackedTelLink
+                href="tel:6155512727"
+                className="font-semibold text-black underline underline-offset-4"
+                aria-label="Call Joshua at 615-551-2727"
+                data-cta="cash-offer-city-closings-call"
+              >
+                615-551-2727
+              </TrackedTelLink>
+              .
+            </p>
+            <a
+              href={`/sold#${nashvilleGroup.anchor}`}
+              className="inline-block mt-5 border border-black text-black text-sm font-bold px-6 py-3 tracking-wide hover:bg-black hover:text-white transition-colors text-center"
+            >
+              {`See homes Josh has sold in ${nashvilleGroup.city} →`}
+            </a>
+          </div>
+        </section>
+      ) : null}
+
       {/* Local angle */}
       <div className="bg-neutral-50 py-16 px-4 sm:px-6 lg:px-8 border-b border-neutral-200">
         <div className="max-w-4xl mx-auto">
@@ -359,31 +397,6 @@ export default async function CashOfferCityPage({ params }: Props) {
             </div>
           </div>
         </div>
-      ) : null}
-
-      {nashvilleGroup && nashvilleClosedCount > 0 ? (
-        <section
-          aria-labelledby="nashville-closings-proof"
-          className="bg-white border-y border-neutral-200"
-        >
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-            <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
-              Recent Closings · Compass Real Estate
-            </p>
-            <h2
-              id="nashville-closings-proof"
-              className="text-2xl sm:text-3xl font-black text-black tracking-tight"
-            >
-              {`Josh has closed ${nashvilleClosedCount} ${nashvilleClosedCount === 1 ? 'home' : 'homes'} in ${nashvilleGroup.city}`}
-            </h2>
-            <a
-              href={`/sold#${nashvilleGroup.anchor}`}
-              className="inline-block mt-5 border border-black text-black text-sm font-bold px-6 py-3 tracking-wide hover:bg-black hover:text-white transition-colors text-center"
-            >
-              {`See homes Josh has sold in ${nashvilleGroup.city} →`}
-            </a>
-          </div>
-        </section>
       ) : null}
 
       {/* Social proof */}

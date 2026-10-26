@@ -290,6 +290,12 @@ export default function SellPage() {
             >
               See the Cash-Offer Path →
             </Link>
+            <Link
+              href="/cash-offer/nashville-tn"
+              className="inline-flex items-center justify-center border border-neutral-300 text-black text-sm font-bold px-6 py-3 rounded-full tracking-wide transition-all duration-200 hover:border-black"
+            >
+              We Buy Houses in Nashville →
+            </Link>
           </div>
         </div>
       </div>
