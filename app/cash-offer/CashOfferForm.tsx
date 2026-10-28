@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, FormEvent } from 'react'
+import { trackAdsConversion } from '@/lib/ads'
 import { captureAttribution, getAttribution } from '@/lib/attribution'
 import LeadFormGuards from '@/components/LeadFormGuards'
 import { ensureTurnstileToken } from '@/components/TurnstileWidget'
@@ -72,6 +73,7 @@ export default function CashOfferForm({ source = 'cash-offer', cityName }: CashO
             value: 1,
           })
         }
+        trackAdsConversion(process.env.NEXT_PUBLIC_GOOGLE_ADS_LEAD_LABEL)
       } else {
         const json = await res.json().catch(() => ({}))
         setErrorMsg(json.error || 'Something went wrong. Please try again.')

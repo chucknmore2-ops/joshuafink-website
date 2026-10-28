@@ -58,3 +58,4 @@ research-brief.md
 # claude-mem auto-generated context dumps
 AGENTS.md
 .env*
+!.env.example
