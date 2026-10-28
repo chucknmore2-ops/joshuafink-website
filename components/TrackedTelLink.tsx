@@ -1,6 +1,7 @@
 'use client'
 
 import type { AnchorHTMLAttributes, MouseEvent, ReactNode } from 'react'
+import { trackAdsConversion } from '@/lib/ads'
 
 type Props = AnchorHTMLAttributes<HTMLAnchorElement> & {
   href: string
@@ -22,6 +23,9 @@ export default function TrackedTelLink({ href, children, onClick, ...rest }: Pro
           event_label: typeof label === 'string' ? label : href,
         })
       }
+    }
+    if (eventName === 'call_click') {
+      trackAdsConversion(process.env.NEXT_PUBLIC_GOOGLE_ADS_CALL_LABEL)
     }
     onClick?.(e)
   }
