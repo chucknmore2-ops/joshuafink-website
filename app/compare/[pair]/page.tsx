@@ -406,6 +406,15 @@ export default async function ComparePage({ params }: Props) {
                 answer within a 30-minute call. Tour both side-by-side and the right one usually
                 becomes obvious.
               </p>
+              {(a.slug === 'columbia-tn' || b.slug === 'columbia-tn') && (
+                <p className="text-sm text-[#444] leading-relaxed mt-4">
+                  Already own in Columbia and need to sell before you buy? You can{' '}
+                  <Link href="/cash-offer/columbia-tn" className="underline">
+                    sell your house fast in Columbia, TN
+                  </Link>
+                  .
+                </p>
+              )}
             </div>
           </div>
         </div>

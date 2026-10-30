@@ -225,7 +225,7 @@ test('Nashville cash page keeps one FAQPage and adds only the closings line and 
 
   const page = readFileSync(new URL('../app/cash-offer/[city]/page.tsx', import.meta.url), 'utf8')
   assert.equal(page.match(/'@type': 'FAQPage'/g)?.length, 1)
-  assert.match(page, /const schemaFaqs = \[\.\.\.fairOfferFaqs, \.\.\.allFaqs\]/)
+  assert.match(page, /const schemaFaqs = \[\.\.\.fairOfferFaqs, \.\.\.sellerFaqs, \.\.\.allFaqs\]/)
   assert.doesNotMatch(page, /quickFaqs/)
   assert.equal(page.match(/id="nashville-closings-proof"/g)?.length, 1)
   const closingsAt = page.indexOf('id="nashville-closings-proof"')
@@ -386,6 +386,105 @@ test('Columbia cash-offer SEO targets sell-fast and sell-for-cash queries withou
   assert.ok(questions.some((q) => /inherited/i.test(q)))
   assert.ok(questions.some((q) => /relocated/i.test(q)))
   assert.equal(cashOfferPath('columbia-tn'), '/cash-offer/columbia-tn')
+})
+
+test('Columbia seller FAQ and neighborhood note reuse published places and one FAQPage', () => {
+  const city = getCashOfferCity('columbia-tn')
+  assert.ok(city)
+  const faqs = city.sellerFaqs ?? []
+  assert.equal(faqs.length, 5)
+  assert.equal(city.sellerFaqHeading, 'Columbia seller FAQ')
+
+  const existing = new Set(city.faqs.map((f) => f.q))
+  for (const faq of faqs) {
+    assert.equal(existing.has(faq.q), false, faq.q)
+  }
+  const copy = faqs.map((f) => `${f.q} ${f.a}`).join('\n')
+  assert.match(copy, /Historic Downtown Columbia/)
+  assert.match(copy, /Downtown Columbia Historic District/)
+  assert.match(copy, /Sunnyside/)
+  assert.match(copy, /The Crossings/)
+  assert.match(copy, /Bear Creek Pike/)
+  assert.match(copy, /James Campbell Blvd/)
+  assert.match(copy, /Columbia Central High/)
+  assert.match(copy, /Maury County Public Schools/)
+  assert.match(copy, /TREC #351484/)
+  assert.match(copy, /licensed since 2008/)
+  assert.match(copy, /40\+ homes a year in Middle Tennessee/)
+  assert.match(copy, /8119 Isabella Lane Suite 105, Brentwood, TN 37027/)
+  assert.match(copy, /Compass/)
+  assert.match(copy, /24 hours/)
+  assert.match(copy, /7 days/)
+  assert.doesNotMatch(copy, /Parks/)
+  assert.doesNotMatch(copy, /\$/)
+  assert.doesNotMatch(copy, /\d+%/)
+
+  const note = city.marketNote ?? ''
+  for (const place of [
+    'Historic Downtown Columbia',
+    'Downtown Columbia Historic District',
+    'North Columbia / Carters Creek (Spring Hill-Adjacent)',
+    'James K. Polk Home',
+    'Duck River',
+    'Riverwalk Park',
+    'Mule Day',
+    'Reserve at Silver Springs',
+    'Overlook at Carters Creek',
+    'Carters Station',
+    'Sunnyside',
+    'The Crossings',
+    'Bear Creek Pike',
+    'James Campbell Blvd',
+    'Maury County Public Schools',
+  ]) {
+    assert.match(note, new RegExp(place.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), place)
+  }
+  assert.match(note, /National Register of Historic Places in 1984/)
+  assert.match(note, /roughly six miles/)
+  assert.doesNotMatch(note, /\$/)
+  assert.doesNotMatch(note, /Parks/)
+
+  const page = readFileSync(new URL('../app/cash-offer/[city]/page.tsx', import.meta.url), 'utf8')
+  assert.equal(page.match(/'@type': 'FAQPage'/g)?.length, 1)
+  assert.match(page, /const schemaFaqs = \[\.\.\.fairOfferFaqs, \.\.\.sellerFaqs, \.\.\.allFaqs\]/)
+  assert.match(page, /id="seller-faq"/)
+
+  const spring = getCashOfferCity('spring-hill-tn')
+  const thompson = getCashOfferCity('thompsons-station-tn')
+  const franklin = getCashOfferCity('franklin-tn')
+  assert.equal(spring?.asideLink?.href, '/cash-offer/columbia-tn')
+  assert.equal(spring?.asideLink?.label, 'sell your house fast in Columbia, TN')
+  assert.equal(thompson?.asideLink?.href, '/cash-offer/columbia-tn')
+  assert.equal(thompson?.asideLink?.label, 'cash offer in Columbia')
+  assert.equal(franklin?.asideLink?.href, '/cash-offer/columbia-tn')
+  assert.equal(franklin?.asideLink?.label, 'sell your house for cash in Columbia, TN')
+  assert.equal(franklin?.seo, undefined)
+  assert.equal(franklin?.headline, undefined)
+
+  const linkedFrom = [
+    '../app/moving-to-middle-tennessee/page.tsx',
+    '../app/sell/[suburb]/page.tsx',
+    '../app/buy/[suburb]/page.tsx',
+    '../app/market/[suburb]/page.tsx',
+    '../app/neighborhoods/[slug]/page.tsx',
+    '../app/homes-near/[school]/page.tsx',
+    '../app/compare/[pair]/page.tsx',
+  ]
+  for (const rel of linkedFrom) {
+    const source = readFileSync(new URL(rel, import.meta.url), 'utf8')
+    assert.match(source, /columbia-tn/, rel)
+    assert.match(source, /sell your house fast in Columbia, TN|cash offer in Columbia/, rel)
+  }
+
+  for (const slug of [
+    'living-in-spring-hill-tn-guide',
+    'spring-hill-tn-homes-for-sale',
+    'selling-a-house-in-middle-tennessee-this-fall-2026',
+  ]) {
+    const post = blogPosts.find((p) => p.slug === slug)
+    assert.ok(post, slug)
+    assert.match(post.content, /\]\(\/cash-offer\/columbia-tn\)/, slug)
+  }
 })
 
 test('cash-offer city canonicals are absolute www URLs and titles can skip the layout template', () => {

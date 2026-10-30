@@ -292,6 +292,15 @@ export default async function SuburbPage({ params }: Props) {
               <p className="text-[#444] text-base leading-relaxed">
                 {linkifyNeighborhoods(suburb.description, slug)}
               </p>
+              {slug === 'columbia-tn' ? (
+                <p className="text-[#444] text-base leading-relaxed mt-4">
+                  If the timeline will not stretch for a listing, you can{' '}
+                  <Link href="/cash-offer/columbia-tn" className="text-black underline hover:no-underline">
+                    sell your house fast in Columbia, TN
+                  </Link>
+                  . The cash offer is no-obligation, you hear back within 24 hours, and you can close in as little as 7 days, as-is.
+                </p>
+              ) : null}
               <div className="mt-8 flex flex-col sm:flex-row gap-4">
                 <Link
                   href="/sell"

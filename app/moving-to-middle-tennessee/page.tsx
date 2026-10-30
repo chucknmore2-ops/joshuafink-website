@@ -280,7 +280,12 @@ export default function MovingToMiddleTennesseePage() {
             <p className="text-sm text-[#6B6B6B] max-w-2xl mb-10 leading-relaxed">
               Fourteen cities and towns Joshua covers, from the luxury Williamson County core to the
               fast-growing, more accessible markets. Open any city for buyer guides, market data,
-              and neighborhood detail.
+              and neighborhood detail. Already own in Maury County and need to sell before you
+              move? You can{' '}
+              <Link href="/cash-offer/columbia-tn" className="font-semibold text-black underline hover:no-underline">
+                sell your house fast in Columbia, TN
+              </Link>
+              .
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {cities.map((c) => (

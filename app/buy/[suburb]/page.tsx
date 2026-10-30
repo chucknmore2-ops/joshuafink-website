@@ -836,6 +836,15 @@ export default async function BuySuburbPage({ params }: Props) {
                 </Link>
               </div>
             </div>
+            {slug === 'columbia-tn' ? (
+              <p className="text-sm text-[#6B6B6B] leading-relaxed mt-8 max-w-2xl">
+                If the house you need to sell is in Columbia, start with a{' '}
+                <Link href="/cash-offer/columbia-tn" className="font-semibold text-black underline hover:no-underline">
+                  cash offer in Columbia
+                </Link>
+                . You get a no-obligation number within 24 hours and can close in as little as 7 days.
+              </p>
+            ) : null}
           </div>
         </div>
 

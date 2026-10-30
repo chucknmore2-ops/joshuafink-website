@@ -117,7 +117,10 @@ export default async function CashOfferCityPage({ params }: Props) {
   // section, but folded into the one FAQPage below so the page never ships
   // two competing FAQPage entities.
   const fairOfferFaqs = city.fairOfferFaqs ?? []
-  const schemaFaqs = [...fairOfferFaqs, ...allFaqs]
+  // City seller FAQ (Columbia today). Own visible section, same single FAQPage
+  // as the fair-offer block and the shared questions — never a second entity.
+  const sellerFaqs = city.sellerFaqs ?? []
+  const schemaFaqs = [...fairOfferFaqs, ...sellerFaqs, ...allFaqs]
   const guides = getNeighborhoodsByCitySlug(slug)
   const otherCities = getCashOfferCityLinks().filter((c) => c.slug !== slug)
   // Same city groups as /buy/[suburb]. The number is the count of closed
@@ -336,6 +339,18 @@ export default async function CashOfferCityPage({ params }: Props) {
           <p className="text-neutral-600 text-base leading-relaxed">
             We buy across {linkifyNeighborhoods(city.areas, slug)} — and everywhere else in {city.displayName}.
           </p>
+          {city.asideLink ? (
+            <p className="text-neutral-600 text-base leading-relaxed mt-4">
+              {city.asideLink.before}
+              <Link
+                href={city.asideLink.href}
+                className="font-semibold text-black underline underline-offset-4"
+              >
+                {city.asideLink.label}
+              </Link>
+              {city.asideLink.after}
+            </p>
+          ) : null}
           {city.differentiator ? (
             <div className="mt-8 border-l-4 border-black bg-white p-6 sm:p-8">
               <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
@@ -499,6 +514,36 @@ export default async function CashOfferCityPage({ params }: Props) {
                   <h3 className="text-base font-black text-black mb-1">{g.name}</h3>
                   <p className="text-xs text-neutral-500">{g.priceBand} · Read guide →</p>
                 </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Seller FAQ — city-specific, folded into the one FAQPage above */}
+      {sellerFaqs.length > 0 && (
+        <div id="seller-faq" className="bg-white border-t border-neutral-200 py-20 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto">
+            <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3 text-center">
+              Seller Questions
+            </p>
+            <h2 className="text-4xl sm:text-5xl font-black text-black tracking-tight mb-14 text-center">
+              {city.sellerFaqHeading ?? `${city.name} seller FAQ`}
+            </h2>
+            <div className="space-y-8">
+              {sellerFaqs.map((faq) => (
+                <div key={faq.q} className="border-b border-neutral-200 pb-6">
+                  <h3 className="text-lg font-black text-black mb-2">{faq.q}</h3>
+                  <p className="text-sm text-neutral-600 leading-relaxed">{faq.a}</p>
+                  {faq.link && (
+                    <Link
+                      href={faq.link.href}
+                      className="inline-block mt-3 text-sm font-semibold text-black underline underline-offset-4 hover:text-neutral-600"
+                    >
+                      {faq.link.label} →
+                    </Link>
+                  )}
+                </div>
               ))}
             </div>
           </div>

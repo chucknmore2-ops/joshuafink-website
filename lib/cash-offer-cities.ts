@@ -65,6 +65,19 @@ export type CashOfferCityContent = {
   /** Optional related-reading links rendered on this city's cash-offer page only. */
   relatedReading?: CashOfferRelatedLink[]
   /**
+   * One sentence under the local-angle copy, with a single internal link.
+   * Points a nearby city's cash page at a related market.
+   */
+  asideLink?: { before: string; href: string; label: string; after: string }
+  /**
+   * Optional seller FAQ rendered as its own section and folded into the
+   * page's single FAQPage JSON-LD. Do not repeat questions already in `faqs`
+   * or `fairOfferFaqs`.
+   */
+  sellerFaqs?: CashOfferFaq[]
+  /** Heading for `sellerFaqs`. Defaults to "{city} seller FAQ". */
+  sellerFaqHeading?: string
+  /**
    * ISO day this city's prose was last edited. Feeds WebPage dateModified and
    * the sitemap lastmod. Omit to use cashOfferContentLastUpdated.
    */
@@ -99,6 +112,12 @@ const cityContent: Record<string, CashOfferCityContent> = {
       "Not every Franklin home is ready for a Williamson County showing. If yours needs work, is tied up in an estate, or you simply can't wait out a 21-day listing cycle, a cash sale skips the prep, the repairs, and the showings entirely.",
     localAngle:
       "Franklin's median sits around $862,929 (Redfin, as of October 5, 2026), which means even an as-is or dated home carries real equity — and a fair cash offer lets you capture it without sinking $20K into renovations to compete with the move-in-ready inventory in Cool Springs and Westhaven. Joshua prices off real Williamson County comps, not a national algorithm, so the number reflects what your home actually is.",
+    asideLink: {
+      before: 'If the house is in Maury County rather than Williamson County, you can ',
+      href: '/cash-offer/columbia-tn',
+      label: 'sell your house for cash in Columbia, TN',
+      after: '.',
+    },
     faqs: [
       {
         q: 'Can I get a cash offer on a Franklin home that needs major repairs?',
@@ -143,6 +162,12 @@ const cityContent: Record<string, CashOfferCityContent> = {
       "Spring Hill straddles Williamson and Maury counties and moves fast — but if your home needs work, you're relocating for a GM or plant job, or you're behind on payments, a cash sale lets you skip the repairs and showings and close on your schedule.",
     localAngle:
       "With a $508,284 median (Redfin, as of October 5, 2026), Spring Hill is a value market where many sellers are relocating for work or upsizing quickly. A cash offer is ideal when timing matters more than squeezing the last dollar — Joshua buys as-is across both the Williamson and Maury sides and prices off true local comps.",
+    asideLink: {
+      before: 'South of the county line, you can ',
+      href: '/cash-offer/columbia-tn',
+      label: 'sell your house fast in Columbia, TN',
+      after: ' — same licensed broker, a call back within 24 hours, and a close in as little as 7 days.',
+    },
     faqs: [
       {
         q: 'I got relocated for work — can you close fast on my Spring Hill home?',
@@ -187,6 +212,12 @@ const cityContent: Record<string, CashOfferCityContent> = {
       "Thompson's Station mixes new subdivisions with rural acreage. Whether your home needs work, sits on land that's become hard to maintain, or you're settling an estate, a cash offer lets you sell as-is and close on your schedule.",
     localAngle:
       "With a $829,451 median (Redfin, as of October 5, 2026) and a lot of land in the mix, Thompson's Station sellers often value speed and simplicity — especially on acreage or older homes that don't fit the new-build demand. Joshua buys as-is and prices off real Williamson County comps.",
+    asideLink: {
+      before: 'Farther south in Maury County, start with a ',
+      href: '/cash-offer/columbia-tn',
+      label: 'cash offer in Columbia',
+      after: ' if the house is in Columbia rather than Thompson’s Station.',
+    },
     faqs: [
       {
         q: 'Do you buy homes on acreage in Thompson’s Station?',
@@ -430,7 +461,10 @@ const cityContent: Record<string, CashOfferCityContent> = {
     },
     situationsHeading: 'When you need to sell your house fast in Columbia',
     faqHeading: 'Sell your house for cash in Columbia, TN',
-    contentUpdated: '2026-10-23',
+    sellerFaqHeading: 'Columbia seller FAQ',
+    contentUpdated: '2026-10-30',
+    marketNote:
+      'A Columbia cash sale depends on the block. Historic Downtown Columbia wraps the Maury County Courthouse square — antebellum, Victorian, and Craftsman houses, with the James K. Polk Home and the Arts District a short walk off the Square. The Columbia Commercial Historic Downtown District was listed on the National Register of Historic Places in 1984. The Downtown Columbia Historic District is the original street grid along the Duck River and Riverwalk Park; Columbia holds Mule Day there each April. North of town, North Columbia / Carters Creek (Spring Hill-Adjacent) follows Carters Creek Pike and US-31 toward Spring Hill, including Reserve at Silver Springs, Overlook at Carters Creek, and Carters Station, roughly six miles from the GM Spring Hill assembly plant. Joshua also buys in Sunnyside, The Crossings, along Bear Creek Pike, and in newer subdivisions off James Campbell Blvd. In-town addresses are commonly in Maury County Public Schools. Confirm the current zone for the specific address.',
     intro:
       'Need to sell your house fast in Columbia, TN? A cash offer is for the seller who needs a date more than a perfect retail price. That includes a divorce, an inherited house, a relocation, a home you want to sell as-is, or any timeline that cannot wait on showings. Use the form on this page — the same cash-offer request Joshua reviews himself — and you will have a fair, no-obligation number within 24 hours.',
     localAngle:
@@ -541,6 +575,28 @@ const cityContent: Record<string, CashOfferCityContent> = {
       {
         q: 'What if my Columbia house is already listed with an agent?',
         a: 'If you are under a listing agreement, you may still owe your agent a commission on a private sale — check the contract first. Joshua is a licensed broker, so he can talk with your listing agent directly or wait until the listing expires. He will not ask you to break an agreement.',
+      },
+    ],
+    sellerFaqs: [
+      {
+        q: 'Which Columbia neighborhoods do you buy houses in?',
+        a: 'All of them. That includes Historic Downtown Columbia, the Downtown Columbia Historic District, North Columbia / Carters Creek toward Spring Hill, Sunnyside, The Crossings, Bear Creek Pike, and newer subdivisions off James Campbell Blvd. Condition does not disqualify a house. The offer is as-is, with a no-obligation number within 24 hours.',
+      },
+      {
+        q: 'Who writes a cash offer on a Columbia house?',
+        a: 'Joshua Fink does. He is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate, licensed since 2008, with 40+ homes a year in Middle Tennessee. The offer comes from him, not an out-of-town we-buy-houses call center. Office: 8119 Isabella Lane Suite 105, Brentwood, TN 37027. Call or text 615-551-2727.',
+      },
+      {
+        q: 'Can I sell a Columbia house for cash and buy another Middle Tennessee home?',
+        a: 'Yes. Joshua is the same Compass broker on both sides. A Columbia cash sale can close in as little as 7 days, which helps when the next house is in Spring Hill, Franklin, Nashville, or another Middle Tennessee city he covers. If the Columbia house is move-in-ready and you can wait, he will also show you a traditional listing net before you choose.',
+      },
+      {
+        q: 'Do you buy houses near Columbia Central High and in other Maury County school zones?',
+        a: 'Yes. The school zone does not decide whether he will make an offer. In-town Columbia addresses are commonly in Maury County Public Schools. Neighborhood guides on this site associate parts of downtown with Columbia Central High, and some North Columbia subdivisions with the Spring Hill attendance zone. Confirm the current zone for the address with the district.',
+      },
+      {
+        q: 'My house is on the Columbia side of Spring Hill. Which page do I use?',
+        a: 'If the address is Columbia — including North Columbia / Carters Creek, which sits toward Spring Hill — start on this page. Spring Hill, including the Maury County side of Spring Hill, has its own cash-offer page because the comps are different. Either way you get a no-obligation offer within 24 hours and can close in as little as 7 days.',
       },
     ],
   },
