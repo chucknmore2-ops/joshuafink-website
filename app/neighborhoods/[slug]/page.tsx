@@ -528,7 +528,11 @@ export default async function NeighborhoodPage({ params }: Props) {
               className="inline-block border border-black text-black text-sm font-bold px-6 py-3 tracking-wide hover:bg-black hover:text-white transition-colors whitespace-nowrap text-center"
               data-cta="neighborhood-cash-offer"
             >
-              {n.citySlug === 'nashville-tn' ? 'Nashville cash offer →' : 'Get a cash offer →'}
+              {n.citySlug === 'nashville-tn'
+                ? 'Nashville cash offer →'
+                : n.citySlug === 'columbia-tn'
+                  ? 'Sell your house fast in Columbia, TN →'
+                  : 'Get a cash offer →'}
             </Link>
           </div>
         </div>
@@ -544,6 +548,15 @@ export default async function NeighborhoodPage({ params }: Props) {
                 What to Know About Living in {n.name}
               </h2>
               <p className="text-[#444] text-base leading-relaxed">{n.about}</p>
+              {n.citySlug === 'columbia-tn' ? (
+                <p className="text-[#444] text-base leading-relaxed mt-4">
+                  If you already own in {n.name} and need a date more than a listing, you can{' '}
+                  <Link href="/cash-offer/columbia-tn" className="text-black underline hover:no-underline">
+                    sell your house fast in Columbia, TN
+                  </Link>
+                  . As-is, with a call back within 24 hours and a close in as little as 7 days.
+                </p>
+              ) : null}
 
               <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-8">
                 <div>

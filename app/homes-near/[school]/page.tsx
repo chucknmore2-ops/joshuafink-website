@@ -357,6 +357,15 @@ export default async function HomesNearSchoolPage({ params }: Props) {
                       {suburb.name} Market Report →
                     </Link>
                   </div>
+                  {suburb.slug === 'columbia-tn' ? (
+                    <p className="text-[#444] text-base leading-relaxed mt-4">
+                      Already own near {s.name} and need to sell instead? You can get a{' '}
+                      <Link href="/cash-offer/columbia-tn" className="text-black underline hover:no-underline">
+                        cash offer in Columbia
+                      </Link>
+                      . No showings, a call back within 24 hours, and a close in as little as 7 days.
+                    </p>
+                  ) : null}
                 </>
               )}
             </div>

@@ -414,9 +414,9 @@ export default async function MarketSuburbPage({ params }: Props) {
               </p>
               {s.slug === 'columbia-tn' ? (
                 <p className="text-[#444] text-base leading-relaxed mb-4">
-                  Homes in Columbia have a median of about {s.avgDaysOnMarket} days on market. If you need a firmer date than that — repairs, an estate, a divorce, or a move you cannot put off —{' '}
+                  Homes in Columbia have a median of about {s.avgDaysOnMarket} days on market. If you need a firmer date than that — repairs, an estate, a divorce, or a move you cannot put off — you can{' '}
                   <Link href={cashOfferPath(s.slug)} className="text-black underline hover:no-underline">
-                    get a cash offer on your Columbia home
+                    sell your house fast in Columbia, TN
                   </Link>
                   . As-is, no showings, close in as little as 7 days.
                 </p>
