@@ -165,6 +165,23 @@ export function closingGroupsForSuburb(slug: string): CityClosings[] {
   return closingGroups().filter((group) => getSuburbSlugForListing(group.city) === slug)
 }
 
+/**
+ * Closed Tennessee sales for the named cities, in the order requested.
+ * Same rows as /sold. Drops a city that has no Tennessee closings.
+ */
+export function tennesseeClosingsInCities(cities: readonly string[]): CityClosings[] {
+  const groups = closingGroups()
+  return cities.flatMap((city) => {
+    const group = groups.find((candidate) => candidate.city === city)
+    if (!group) return []
+    const rows = group.closings.filter(
+      (row) => row.city === city && row.state === 'TN' && row.status === 'Closed',
+    )
+    if (rows.length === 0) return []
+    return [{ city: group.city, anchor: group.anchor, closings: rows }]
+  })
+}
+
 export type CityClosingProof = {
   city: string
   count: number

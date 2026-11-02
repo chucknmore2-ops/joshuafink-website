@@ -421,6 +421,15 @@ export default async function MarketSuburbPage({ params }: Props) {
                   . As-is, no showings, close in as little as 7 days.
                 </p>
               ) : null}
+              {s.slug === 'spring-hill-tn' ? (
+                <p className="text-[#444] text-base leading-relaxed mb-4">
+                  Spring Hill straddles Williamson and Maury counties. If the house is in Columbia, you can{' '}
+                  <Link href="/cash-offer/columbia-tn" className="text-black underline hover:no-underline">
+                    sell your Columbia house for cash
+                  </Link>
+                  .
+                </p>
+              ) : null}
 
               <h3 className="text-xl font-black text-black mt-10 mb-4">For Buyers in {s.name}</h3>
               <p className="text-[#444] text-base leading-relaxed mb-4">

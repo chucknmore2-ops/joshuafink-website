@@ -88,6 +88,12 @@ export type CashOfferCityContent = {
    */
   marketNote?: string
   /**
+   * Optional county section. Use published places and figures only.
+   * Rendered after the neighborhood guides. Inline links are explicit so a
+   * nearby city's guides can be linked without going through city linkify.
+   */
+  countySection?: CashOfferCountySection
+  /**
    * Optional "what is a fair cash offer here?" FAQ block. Rendered as its own
    * section on /cash-offer/[city] and folded into the page's single FAQPage
    * JSON-LD (one FAQPage per page). Reuse figures already published on the
@@ -102,6 +108,14 @@ export type CashOfferFaq = {
   a: string
   /** Optional supporting link rendered under the visible answer. */
   link?: CashOfferRelatedLink
+}
+
+export type CashOfferInline = string | CashOfferRelatedLink
+
+export type CashOfferCountySection = {
+  eyebrow: string
+  heading: string
+  paragraphs: CashOfferInline[][]
 }
 
 const cityContent: Record<string, CashOfferCityContent> = {
@@ -462,7 +476,49 @@ const cityContent: Record<string, CashOfferCityContent> = {
     situationsHeading: 'When you need to sell your house fast in Columbia',
     faqHeading: 'Sell your house for cash in Columbia, TN',
     sellerFaqHeading: 'Columbia seller FAQ',
-    contentUpdated: '2026-10-30',
+    contentUpdated: '2026-11-02',
+    countySection: {
+      eyebrow: 'Maury County',
+      heading: 'The courthouse, the streets, and the county edges',
+      paragraphs: [
+        [
+          'Columbia is the seat of Maury County, and the Maury County Courthouse stands on the Square in the ',
+          {
+            href: '/neighborhoods/downtown-columbia-historic-district-tn',
+            label: 'Downtown Columbia Historic District',
+          },
+          '. An inherited house here is a county-court question before it is a listing question. In Tennessee, probate is handled at the county level — the court in the county where the person lived. Often the authority to sign has to be in place before a sale, even if the estate is not fully closed, and sometimes the court approves the sale itself. Joshua Fink is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate, licensed since 2008. He is not a probate attorney. A Tennessee probate attorney confirms who can sign. The cash contract can wait on that authority. The longer walk-through already published on this site is ',
+          {
+            href: '/blog/selling-inherited-house-nashville-tennessee',
+            label: 'selling an inherited house in Middle Tennessee',
+          },
+          '.',
+        ],
+        [
+          'Sellers recognize Columbia by the street. Every closed Columbia sale in the Tennessee closing file is in ZIP 38401, the ZIP on the Columbia city record. Streets that appear more than once are East 17th Street, Hickman Street, Mooresville Pike, Dimple Court, Lynn Drive, and Scribner Avenue. The 2026 Columbia closings are on Hampton Road, Lakeside Drive, Transit Avenue, Porter Circle, Brown Street, and Shady Drive. The same rows, with sold price and month, are listed below and on ',
+          { href: '/sold#columbia', label: 'the Columbia closings' },
+          '.',
+        ],
+        [
+          "Spring Hill is the north edge, and it straddles Williamson County and Maury County. The Spring Hill citywide median is $508,284, with 62 days on market and $236.44 per square foot, down 4.14% year over year (Redfin, as of October 5, 2026). Columbia's citywide median is $368,006, with 78 days on market and $195.33 per square foot, down 1.07% year over year (Redfin, as of October 5, 2026). Those are citywide figures, not a price for one street. Neighborhood guides filed under Maury County on the Spring Hill side are ",
+          { href: '/neighborhoods/harvest-point-spring-hill-tn', label: 'Harvest Point' },
+          ' off Cleburne Road, ',
+          { href: '/neighborhoods/port-royal-estates-spring-hill-tn', label: 'Port Royal Estates' },
+          ' and ',
+          { href: '/neighborhoods/dartford-spring-hill-tn', label: 'Dartford' },
+          ' off Port Royal Road (both guides say some addresses cross into Williamson County), ',
+          { href: '/neighborhoods/reserve-at-port-royal-spring-hill-tn', label: 'The Reserve at Port Royal' },
+          ' off Reserve Boulevard, and ',
+          { href: '/neighborhoods/hampton-springs-spring-hill-tn', label: 'Hampton Springs' },
+          ' off Kedron Road. The Spring Hill rows in the closing file are ZIP 37174, on Greens Mill Road, Nealcrest Circle, and Kedron Road. A Spring Hill address is priced on the ',
+          { href: '/cash-offer/spring-hill-tn', label: 'Spring Hill cash-offer page' },
+          " because those comps are not Columbia's.",
+        ],
+        [
+          'The closing file also has Mount Pleasant sales — the Mt. Pleasant edge — all in ZIP 38474, on 1st Avenue and Lawrenceburg Highway. Price a Mount Pleasant house, or any other Maury County address that is not a Spring Hill comp, from the address itself. Start with the form on this page.',
+        ],
+      ],
+    },
     marketNote:
       'A Columbia cash sale depends on the block. Historic Downtown Columbia wraps the Maury County Courthouse square — antebellum, Victorian, and Craftsman houses, with the James K. Polk Home and the Arts District a short walk off the Square. The Columbia Commercial Historic Downtown District was listed on the National Register of Historic Places in 1984. The Downtown Columbia Historic District is the original street grid along the Duck River and Riverwalk Park; Columbia holds Mule Day there each April. North of town, North Columbia / Carters Creek (Spring Hill-Adjacent) follows Carters Creek Pike and US-31 toward Spring Hill, including Reserve at Silver Springs, Overlook at Carters Creek, and Carters Station, roughly six miles from the GM Spring Hill assembly plant. Joshua also buys in Sunnyside, The Crossings, along Bear Creek Pike, and in newer subdivisions off James Campbell Blvd. In-town addresses are commonly in Maury County Public Schools. Confirm the current zone for the specific address.',
     intro:

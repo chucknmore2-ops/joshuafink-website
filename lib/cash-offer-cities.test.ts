@@ -5,6 +5,9 @@ import { getAllCashOfferCitySlugs, getCashOfferCity, cashOfferContentLastUpdated
 import { suburbs, citywideStatsCitation, formatStatsDate, suburbStatsAsOf } from './suburbs.ts'
 import { neighborhoods } from './neighborhoods.ts'
 import { blogPosts } from './blog.ts'
+import { closings } from './closings-data.ts'
+import { tennesseeClosingsInCities } from './closings.ts'
+import { reviews } from './reviews.ts'
 
 /** Stale cash-offer ballparks that disagreed with live /buy/[suburb] Redfin medians. */
 const staleBySlug: Record<string, RegExp[]> = {
@@ -448,6 +451,7 @@ test('Columbia seller FAQ and neighborhood note reuse published places and one F
   assert.equal(page.match(/'@type': 'FAQPage'/g)?.length, 1)
   assert.match(page, /const schemaFaqs = \[\.\.\.fairOfferFaqs, \.\.\.sellerFaqs, \.\.\.allFaqs\]/)
   assert.match(page, /id="seller-faq"/)
+  assert.match(page, /id="maury-county"/)
 
   const spring = getCashOfferCity('spring-hill-tn')
   const thompson = getCashOfferCity('thompsons-station-tn')
@@ -480,11 +484,154 @@ test('Columbia seller FAQ and neighborhood note reuse published places and one F
     'living-in-spring-hill-tn-guide',
     'spring-hill-tn-homes-for-sale',
     'selling-a-house-in-middle-tennessee-this-fall-2026',
+    'may-2026-nashville-market-update',
+    'nashville-real-estate-market-2025',
+    'fix-and-flip-nashville-tn',
+    'williamson-county-real-estate-2025',
+    'first-time-home-buyer-nashville-middle-tennessee-2026',
+    'how-much-house-can-i-afford-middle-tennessee-2026',
+    'thda-great-choice-down-payment-assistance-tennessee-2026',
   ]) {
     const post = blogPosts.find((p) => p.slug === slug)
     assert.ok(post, slug)
     assert.match(post.content, /\]\(\/cash-offer\/columbia-tn\)/, slug)
   }
+})
+
+function closingStreet(address: string): string {
+  return address.replace(/^\d+\s+/, '').replace(/\s+Lot\s+\d+$/i, '')
+}
+
+test('Columbia Maury County section reuses published facts, closings, and the one local review', () => {
+  const city = getCashOfferCity('columbia-tn')
+  assert.ok(city?.countySection)
+  assert.equal(city.contentUpdated, '2026-11-02')
+  assert.equal(city.countySection.eyebrow, 'Maury County')
+  assert.equal(city.seo?.title, 'Sell House Fast Columbia TN | Close in 7 Days | Compass')
+  assert.equal(city.headline?.lead, 'Sell Your House Fast')
+  assert.equal(city.headline?.accent, 'in Columbia, TN.')
+
+  const copy = city.countySection.paragraphs
+    .map((parts) => parts.map((part) => (typeof part === 'string' ? part : part.label)).join(''))
+    .join('\n')
+  assert.match(copy, /seat of Maury County/)
+  assert.match(copy, /Maury County Courthouse/)
+  assert.match(copy, /probate is handled at the county level/)
+  assert.match(copy, /TREC #351484/)
+  assert.match(copy, /licensed since 2008/)
+  assert.match(copy, /Compass Real Estate/)
+  assert.match(copy, /East 17th Street/)
+  assert.match(copy, /Hickman Street/)
+  assert.match(copy, /Mooresville Pike/)
+  assert.match(copy, /Dimple Court/)
+  assert.match(copy, /Lynn Drive/)
+  assert.match(copy, /Scribner Avenue/)
+  assert.match(copy, /Hampton Road/)
+  assert.match(copy, /Lakeside Drive/)
+  assert.match(copy, /Transit Avenue/)
+  assert.match(copy, /Porter Circle/)
+  assert.match(copy, /Brown Street/)
+  assert.match(copy, /Shady Drive/)
+  assert.match(copy, /Greens Mill Road/)
+  assert.match(copy, /Nealcrest Circle/)
+  assert.match(copy, /Kedron Road/)
+  assert.match(copy, /1st Avenue/)
+  assert.match(copy, /Lawrenceburg Highway/)
+  assert.match(copy, /Mt\. Pleasant/)
+  assert.doesNotMatch(copy, /Parks/)
+  assert.doesNotMatch(copy, /James K\. Polk/)
+  assert.doesNotMatch(copy, /Mule Day/)
+  assert.doesNotMatch(copy, /Bear Creek Pike/)
+  assert.doesNotMatch(copy, /James Campbell/)
+  assert.doesNotMatch(copy, /Reserve at Silver Springs/)
+
+  const columbia = suburbs['columbia-tn']
+  const springHill = suburbs['spring-hill-tn']
+  assert.match(copy, new RegExp(columbia.medianPrice.replace(/[$,]/g, (ch) => `\\${ch}`)))
+  assert.match(copy, new RegExp(springHill.medianPrice.replace(/[$,]/g, (ch) => `\\${ch}`)))
+  assert.match(copy, /\$195\.33 per square foot/)
+  assert.equal(columbia.pricePerSqft, 195.33)
+  assert.match(copy, /\$236\.44 per square foot/)
+  assert.equal(springHill.pricePerSqft, 236.44)
+  assert.match(copy, new RegExp(`${columbia.avgDaysOnMarket} days`))
+  assert.match(copy, new RegExp(`${springHill.avgDaysOnMarket} days`))
+  assert.match(copy, /down 1\.07%/)
+  assert.equal(columbia.yoyChange, '-1.07%')
+  assert.match(copy, /down 4\.14%/)
+  assert.equal(springHill.yoyChange, '-4.14%')
+  assert.match(copy, /Redfin, as of October 5, 2026/)
+  assert.match(copy, new RegExp(`ZIP ${columbia.schemaZip}`))
+  assert.match(copy, new RegExp(`ZIP ${springHill.schemaZip}`))
+
+  const columbiaRows = closings.filter((row) => row.city === 'Columbia')
+  assert.ok(columbiaRows.every((row) => row.state === 'TN' && row.status === 'Closed' && row.zip === columbia.schemaZip))
+  const streetCounts = columbiaRows.reduce((map, row) => {
+    const street = closingStreet(row.address)
+    map.set(street, (map.get(street) ?? 0) + 1)
+    return map
+  }, new Map<string, number>())
+  const repeated = Array.from(streetCounts.entries())
+    .filter(([, count]) => count >= 2)
+    .map(([street]) => street)
+    .sort()
+  assert.deepEqual(repeated, ['Dimple Ct', 'E 17th St', 'Hickman St', 'Lynn Dr', 'Mooresville Pike', 'Scribner Ave'])
+  const soldIn2026 = Array.from(
+    new Set(columbiaRows.filter((row) => row.closeDate.startsWith('2026')).map((row) => closingStreet(row.address))),
+  ).sort()
+  assert.deepEqual(soldIn2026, ['Brown St', 'Hampton Rd', 'Lakeside Dr', 'Porter Cir', 'Shady Dr', 'Transit Ave'])
+
+  const springRows = closings.filter((row) => row.city === 'Spring Hill')
+  assert.deepEqual(springRows.map((row) => closingStreet(row.address)).sort(), ['Greens Mill Rd', 'Kedron Rd', 'Nealcrest Cir'])
+  assert.ok(springRows.every((row) => row.state === 'TN' && row.status === 'Closed' && row.zip === springHill.schemaZip))
+  const pleasantRows = closings.filter((row) => row.city === 'Mount Pleasant')
+  assert.equal(pleasantRows.length, 3)
+  assert.ok(pleasantRows.every((row) => row.state === 'TN' && row.status === 'Closed' && row.zip === '38474'))
+  assert.deepEqual(
+    Array.from(new Set(pleasantRows.map((row) => closingStreet(row.address)))).sort(),
+    ['1st Ave', 'Lawrenceburg Hwy'],
+  )
+
+  const shown = tennesseeClosingsInCities(['Columbia', 'Spring Hill', 'Mount Pleasant'])
+  assert.deepEqual(shown.map((group) => [group.city, group.closings.length, group.anchor]), [
+    ['Columbia', columbiaRows.length, 'columbia'],
+    ['Spring Hill', springRows.length, 'spring-hill'],
+    ['Mount Pleasant', pleasantRows.length, 'mount-pleasant'],
+  ])
+  assert.ok(shown.every((group) => group.closings.every((row) => row.state === 'TN' && row.status === 'Closed')))
+
+  const localReviews = reviews.filter((review) =>
+    /columbia, tn|maury county|spring hill, tn|mount pleasant/i.test(review.transaction),
+  )
+  assert.equal(localReviews.length, 1)
+  assert.equal(localReviews[0].transaction, 'Bought and sold a home in Columbia, TN')
+  assert.equal(
+    localReviews[0].text,
+    'Josh is very knowledgeable and his communication is top notch. Always answers or gets back to me real quick. We have used Josh in the past and we will continue to refer him to friends and family.',
+  )
+
+  const page = readFileSync(new URL('../app/cash-offer/[city]/page.tsx', import.meta.url), 'utf8')
+  const sectionStart = page.indexOf('id="maury-county"')
+  const sectionEnd = page.indexOf('id="seller-faq"')
+  assert.ok(sectionStart > 0 && sectionEnd > sectionStart)
+  const section = page.slice(sectionStart, sectionEnd)
+  assert.match(page, /tennesseeClosingsInCities\(\['Columbia', 'Spring Hill', 'Mount Pleasant'\]\)/)
+  assert.match(section, /closing\.address/)
+  assert.match(section, /closing\.state/)
+  assert.match(section, /formatSoldPrice\(closing\.soldPrice\)/)
+  assert.doesNotMatch(section, /review\.reviewer/)
+  assert.doesNotMatch(section, /Parks/)
+  assert.equal(page.match(/'@type': 'FAQPage'/g)?.length, 1)
+  assert.match(page, /alternates: \{ canonical: url \}/)
+
+  const home = readFileSync(new URL('../app/page.tsx', import.meta.url), 'utf8')
+  assert.match(home, /href="\/cash-offer\/columbia-tn"/)
+  const sold = readFileSync(new URL('../app/sold/page.tsx', import.meta.url), 'utf8')
+  assert.match(sold, /Sell your Columbia house for cash/)
+  assert.match(sold, /group\.city === 'Mount Pleasant'/)
+  assert.match(sold, /group\.city === 'Spring Hill'/)
+  const neighborhoodsPage = readFileSync(new URL('../app/neighborhoods/[slug]/page.tsx', import.meta.url), 'utf8')
+  assert.match(neighborhoodsPage, /n\.county === 'Maury County'/)
+  assert.match(neighborhoodsPage, /sell your Columbia house for cash/)
 })
 
 test('cash-offer city canonicals are absolute www URLs and titles can skip the layout template', () => {

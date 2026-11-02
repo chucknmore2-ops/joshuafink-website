@@ -845,6 +845,15 @@ export default async function BuySuburbPage({ params }: Props) {
                 . You get a no-obligation number within 24 hours and can close in as little as 7 days.
               </p>
             ) : null}
+            {slug === 'spring-hill-tn' ? (
+              <p className="text-sm text-[#6B6B6B] leading-relaxed mt-8 max-w-2xl">
+                Spring Hill straddles Williamson and Maury counties. If the house is in Columbia, you can{' '}
+                <Link href="/cash-offer/columbia-tn" className="font-semibold text-black underline hover:no-underline">
+                  sell your Columbia house for cash
+                </Link>
+                .
+              </p>
+            ) : null}
           </div>
         </div>
 
