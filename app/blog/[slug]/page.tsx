@@ -267,7 +267,6 @@ export default function BlogPostPage({ params }: Props) {
   const otherPosts = getRelatedPosts(params.slug, 3)
   const mentionedGuides = getMentionedNeighborhoods(post.content, 3)
   const { blogPosting, breadcrumb, faqSchema } = buildJsonLd(post)
-  const modifiedDifferent = post.dateModified && post.dateModified !== post.date
 
   return (
     <div className="bg-white">
@@ -298,9 +297,9 @@ export default function BlogPostPage({ params }: Props) {
           )}
           <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-4">
             Published <time dateTime={isoDate(post.date)}>{post.date}</time>
-            {modifiedDifferent && post.dateModified && (
+            {post.dateModified && (
               <>
-                {' · Updated '}
+                {' · Last updated '}
                 <time dateTime={isoDate(post.dateModified)}>{post.dateModified}</time>
               </>
             )}
@@ -370,10 +369,9 @@ export default function BlogPostPage({ params }: Props) {
             </p>
             <h3 className="text-xl font-black text-black mb-2">Joshua Fink</h3>
             <p className="text-sm text-[#444] leading-relaxed mb-5">
-              Affiliate Broker at Compass Real Estate, licensed since 2008, with 40+ homes
-              a year in Middle Tennessee. Diamond &amp; Titan Award winner. Licensed
-              with the Tennessee Real Estate Commission. Partner to the Children&apos;s Miracle
-              Network supporting Vanderbilt Children&apos;s Hospital.
+              Affiliate Broker at Compass Real Estate, licensed since 2008, TREC #351484,
+              with 40+ homes a year in Middle Tennessee. Diamond &amp; Titan Award winner.
+              Partner to the Children&apos;s Miracle Network supporting Vanderbilt Children&apos;s Hospital.
             </p>
             <div className="flex flex-col sm:flex-row gap-3">
               <Link
