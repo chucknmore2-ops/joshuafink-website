@@ -1057,7 +1057,7 @@ What I'm seeing on the ground:
 
 - **Buyers are back, but they're choosier.** Pre-approval is universal, and buyers are walking through three to five homes before writing — not making blind offers in the parking lot.
 - **Sellers who price right and present well are still getting multiple offers.** Sellers who anchor to a 2022 comp are sitting on the market for 30+ days and dropping price.
-- **The submarkets matter more than the metro.** Williamson County (Franklin, Brentwood, Spring Hill) is moving at a different pace than Nashville's urban core, and Maury County is moving differently again.
+- **The submarkets matter more than the metro.** Williamson County (Franklin, Brentwood, Spring Hill) is moving at a different pace than Nashville's urban core, and Maury County is moving differently again. If you need to sell in Maury County without waiting on a listing, you can [sell your Columbia house for cash](/cash-offer/columbia-tn).
 
 If you're consuming Nashville-wide stats from a national publication, you're probably getting an average that doesn't describe your block. Talk to someone who works your specific corridor.
 
@@ -1136,7 +1136,7 @@ Inventory has improved slightly compared to the frenzied pace of 2021–2022, bu
 
 **Be ready to move fast.** The best homes go quickly. If you see something you love, waiting even 24 hours can mean losing it. Build your decision-making criteria in advance so you can act with confidence.
 
-**Don't overlook emerging neighborhoods.** Areas like Madison, Antioch, and Columbia are offering solid value compared to the core Nashville submarkets. These areas are growing rapidly, and buyers who move in now stand to benefit from continued appreciation.
+**Don't overlook emerging neighborhoods.** Areas like Madison, Antioch, and Columbia are offering solid value compared to the core Nashville submarkets. These areas are growing rapidly, and buyers who move in now stand to benefit from continued appreciation. Already own in Columbia and need a date more than a listing? You can [sell your Columbia house for cash](/cash-offer/columbia-tn).
 
 **Factor in total cost of ownership.** Beyond the purchase price, consider HOA fees, property taxes (which vary significantly by county), insurance costs, and potential renovation needs. Nashville's property tax rates are generally favorable, but they've been rising as values increase.
 
@@ -1377,7 +1377,7 @@ The challenge in 2025 is finding the deal. Competition for off-market and distre
 
 **Whites Creek / Bordeaux** — Emerging areas with upside. Higher risk tolerance required, but early movers are being rewarded.
 
-**Columbia / Spring Hill** — 45 minutes south but increasingly attractive for investors as Nashville prices push buyers outward. Strong end-buyer demand.
+**Columbia / Spring Hill** — 45 minutes south but increasingly attractive for investors as Nashville prices push buyers outward. Strong end-buyer demand. If you are selling a house in that corridor instead of buying one to flip, you can [sell your Columbia house for cash](/cash-offer/columbia-tn).
 
 ## Running the Numbers
 
@@ -1694,7 +1694,7 @@ The crown jewel of Williamson County. Historic downtown, outstanding schools, an
 Prestigious and polished. Brentwood offers larger lots, mature neighborhoods, and proximity to Nashville without feeling urban. Entry point around $600K, with luxury properties well into the millions.
 
 ### Spring Hill
-The value play. Newer construction, strong growth, and home prices starting in the mid-$300s. Part of Spring Hill falls in Maury County — an important detail for school district purposes.
+The value play. Newer construction, strong growth, and home prices starting in the mid-$300s. Part of Spring Hill falls in Maury County — an important detail for school district purposes. If the address is in Columbia, you can [sell your Columbia house for cash](/cash-offer/columbia-tn).
 
 ### Nolensville
 Small-town charm with strong school ratings. Nolensville has grown rapidly over the past decade and offers a tight-knit community feel. Prices typically range from $450K–$800K.
@@ -3982,7 +3982,7 @@ If you don't already have a lender, I keep a short list of mortgage professional
 Where you can afford to live as a first-time buyer in the Nashville metro depends entirely on your maximum purchase price. A few honest 2026 reference points:
 
 - **Under $300K:** Look at parts of [Murfreesboro](/buy/murfreesboro-tn), [Smyrna](/buy/smyrna-tn), [La Vergne](/buy/la-vergne-tn), [Lebanon](/buy/lebanon-tn), and the more affordable pockets of Davidson County. Inventory at this tier is tight; you'll need to move fast.
-- **$300K-$425K:** [Gallatin](/buy/gallatin-tn), [Columbia](/buy/columbia-tn), Hendersonville's more accessible neighborhoods, and most of Murfreesboro and Smyrna. This is a much wider playing field.
+- **$300K-$425K:** [Gallatin](/buy/gallatin-tn), [Columbia](/buy/columbia-tn), Hendersonville's more accessible neighborhoods, and most of Murfreesboro and Smyrna. This is a much wider playing field. Already own in Columbia and need to sell before you buy? You can [sell your Columbia house for cash](/cash-offer/columbia-tn).
 - **$425K-$600K:** [Spring Hill](/buy/spring-hill-tn), [Thompson's Station](/buy/thompsons-station-tn), [Hendersonville](/buy/hendersonville-tn), [Mount Juliet](/buy/mount-juliet-tn), parts of [Nolensville](/buy/nolensville-tn). The Williamson County door starts opening at this price point.
 - **$600K+:** [Franklin](/buy/franklin-tn) opens up, along with deeper inventory in Brentwood-adjacent and Nolensville.
 
@@ -4427,7 +4427,7 @@ FHA and some conventional programs will stretch further than 28/36 for strong-cr
 Using the current 6.49% average rate and 30-year terms, here's principal-and-interest only (taxes, insurance, PMI, and HOA are extra and vary by county and property) on this site's own June 2026 median prices:
 
 - **[La Vergne](/buy/la-vergne-tn)** — median $330,000 → about **$1,667/mo** P&I with 20% down.
-- **[Columbia](/buy/columbia-tn)** — median $340,000 → about **$1,717/mo** P&I with 20% down.
+- **[Columbia](/buy/columbia-tn)** — median $340,000 → about **$1,717/mo** P&I with 20% down. Already own there and need a date? You can [sell your Columbia house for cash](/cash-offer/columbia-tn). The city pages carry the current Redfin median.
 - **[Smyrna](/buy/smyrna-tn)** — median $370,000 → about **$1,869/mo** P&I with 20% down.
 - **[Murfreesboro](/buy/murfreesboro-tn)** — median $380,000 → about **$1,919/mo** P&I with 20% down.
 - **[Nashville](/buy/nashville-tn)** — median $425,000 → about **$2,147/mo** P&I with 20% down.
@@ -4695,7 +4695,7 @@ You don't apply to THDA directly — you work with one of THDA's approved partic
 
 ## Where This Helps Most in Middle Tennessee
 
-Down payment assistance tends to matter most at the entry-level price points where THDA's purchase-price limits fit comfortably — think [Murfreesboro](/buy/murfreesboro-tn), [La Vergne](/buy/la-vergne-tn), [Smyrna](/buy/smyrna-tn), and [Columbia](/buy/columbia-tn), where median prices leave more room under the cap than Williamson County's premium suburbs. That doesn't rule out higher-priced markets entirely, since limits vary by county — it just means your odds of a purchase price fitting comfortably under the limit are better in these submarkets.
+Down payment assistance tends to matter most at the entry-level price points where THDA's purchase-price limits fit comfortably — think [Murfreesboro](/buy/murfreesboro-tn), [La Vergne](/buy/la-vergne-tn), [Smyrna](/buy/smyrna-tn), and [Columbia](/buy/columbia-tn), where median prices leave more room under the cap than Williamson County's premium suburbs. Already own in Columbia and need to sell on a date? You can [sell your Columbia house for cash](/cash-offer/columbia-tn). That doesn't rule out higher-priced markets entirely, since limits vary by county — it just means your odds of a purchase price fitting comfortably under the limit are better in these submarkets.
 
 ## The Bottom Line
 

@@ -576,6 +576,14 @@ export default async function NeighborhoodPage({ params }: Props) {
                   </Link>
                   . As-is, with a call back within 24 hours and a close in as little as 7 days.
                 </p>
+              ) : n.county === 'Maury County' ? (
+                <p className="text-[#444] text-base leading-relaxed mt-4">
+                  This guide is filed under Maury County. If the house you need to sell is in Columbia, you can{' '}
+                  <Link href="/cash-offer/columbia-tn" className="text-black underline hover:no-underline">
+                    sell your Columbia house for cash
+                  </Link>
+                  . As-is, with a call back within 24 hours and a close in as little as 7 days.
+                </p>
               ) : null}
 
               <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-8">

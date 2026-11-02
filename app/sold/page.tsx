@@ -121,7 +121,32 @@ export default function SoldPage() {
             <h2 id={`${group.anchor}-heading`} className="text-3xl font-black tracking-tight text-black">
               {group.city}
             </h2>
-            <p className="text-[#6B6B6B] mt-2 mb-8">{closingCountLabel(group.closings.length)}</p>
+            <p
+              className={`text-[#6B6B6B] mt-2 ${
+                group.city === 'Columbia' || group.city === 'Mount Pleasant' || group.city === 'Spring Hill'
+                  ? ''
+                  : 'mb-8'
+              }`}
+            >
+              {closingCountLabel(group.closings.length)}
+            </p>
+            {group.city === 'Columbia' || group.city === 'Mount Pleasant' ? (
+              <p className="text-[#444] text-sm leading-relaxed mt-3 mb-8">
+                <Link href="/cash-offer/columbia-tn" className="font-semibold text-black underline">
+                  Sell your Columbia house for cash
+                </Link>
+                . A no-obligation number within 24 hours, as-is.
+              </p>
+            ) : null}
+            {group.city === 'Spring Hill' ? (
+              <p className="text-[#444] text-sm leading-relaxed mt-3 mb-8">
+                If the house is in Columbia, you can{' '}
+                <Link href="/cash-offer/columbia-tn" className="font-semibold text-black underline">
+                  sell your Columbia house for cash
+                </Link>
+                .
+              </p>
+            ) : null}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {group.closings.map((closing) => (
                 <article

@@ -15,9 +15,16 @@ import {
 } from '@/lib/cash-offer-cities'
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
 import { linkifyNeighborhoods } from '@/lib/linkify-neighborhoods'
-import { reviewStats } from '@/lib/reviews'
+import { reviews, reviewStats } from '@/lib/reviews'
 import { getSuburb } from '@/lib/suburbs'
-import { closingGroupsForSuburb } from '@/lib/closings'
+import {
+  closingGroupsForSuburb,
+  formatBaths,
+  formatCloseMonthYear,
+  formatSoldPrice,
+  formatSqft,
+  tennesseeClosingsInCities,
+} from '@/lib/closings'
 
 const SITE = 'https://www.joshuafink.com'
 
@@ -122,6 +129,18 @@ export default async function CashOfferCityPage({ params }: Props) {
   const sellerFaqs = city.sellerFaqs ?? []
   const schemaFaqs = [...fairOfferFaqs, ...sellerFaqs, ...allFaqs]
   const guides = getNeighborhoodsByCitySlug(slug)
+  // Columbia, Spring Hill, and Mount Pleasant rows from the same Tennessee
+  // closing file as /sold. Other cities keep the Nashville proof block only.
+  const mauryEdgeClosings =
+    slug === 'columbia-tn'
+      ? tennesseeClosingsInCities(['Columbia', 'Spring Hill', 'Mount Pleasant'])
+      : []
+  const mauryEdgeReviews =
+    slug === 'columbia-tn'
+      ? reviews.filter((review) =>
+          /columbia, tn|maury county|spring hill, tn|mount pleasant/i.test(review.transaction),
+        )
+      : []
   const otherCities = getCashOfferCityLinks().filter((c) => c.slug !== slug)
   // Same city groups as /buy/[suburb]. The number is the count of closed
   // Tennessee sales whose city is Nashville — the rows behind /sold#nashville.
@@ -519,6 +538,111 @@ export default async function CashOfferCityPage({ params }: Props) {
           </div>
         </div>
       )}
+
+      {city.countySection ? (
+        <section
+          id="maury-county"
+          aria-labelledby="maury-county-heading"
+          className="bg-white border-t border-neutral-200 py-16 px-4 sm:px-6 lg:px-8"
+        >
+          <div className="max-w-4xl mx-auto">
+            <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
+              {city.countySection.eyebrow}
+            </p>
+            <h2 id="maury-county-heading" className="text-3xl sm:text-4xl font-black text-black tracking-tight mb-8">
+              {city.countySection.heading}
+            </h2>
+            <div className="space-y-6">
+              {city.countySection.paragraphs.map((parts, index) => (
+                <p key={index} className="text-neutral-700 text-base leading-relaxed">
+                  {parts.map((part, partIndex) =>
+                    typeof part === 'string' ? (
+                      <span key={partIndex}>{part}</span>
+                    ) : (
+                      <Link
+                        key={part.href}
+                        href={part.href}
+                        className="font-semibold text-black underline underline-offset-4"
+                      >
+                        {part.label}
+                      </Link>
+                    ),
+                  )}
+                </p>
+              ))}
+            </div>
+
+            {mauryEdgeReviews.length > 0 ? (
+              <div className="mt-12">
+                <h3 className="text-xl font-black text-black tracking-tight mb-4">
+                  Published local reviews
+                </h3>
+                <div className="space-y-4">
+                  {mauryEdgeReviews.map((review) => (
+                    <figure key={`${review.transaction}-${review.date}`} className="border border-neutral-200 p-6">
+                      <blockquote className="text-neutral-700 text-base leading-relaxed">
+                        &ldquo;{review.text}&rdquo;
+                      </blockquote>
+                      <figcaption className="mt-4 text-sm text-neutral-500">
+                        {review.transaction} · {review.date} · {review.rating} out of 5
+                      </figcaption>
+                    </figure>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {mauryEdgeClosings.length > 0 ? (
+              <div className="mt-12">
+                <h3 className="text-xl font-black text-black tracking-tight mb-2">
+                  Closed Tennessee sales
+                </h3>
+                <p className="text-neutral-600 text-sm leading-relaxed mb-8">
+                  Columbia, Spring Hill, and Mount Pleasant rows from the same closing file as the sold page.
+                  Each one is a closed Tennessee sale. The public line is the address, the price, and the month.
+                </p>
+                <div className="space-y-10">
+                  {mauryEdgeClosings.map((group) => (
+                    <div key={group.anchor}>
+                      <h4 className="text-lg font-black text-black">
+                        {group.closings.length} in {group.city}
+                      </h4>
+                      <p className="mt-2 mb-4">
+                        <a
+                          href={`/sold#${group.anchor}`}
+                          className="text-sm font-semibold text-black underline underline-offset-4"
+                        >
+                          {`See homes Josh has sold in ${group.city} →`}
+                        </a>
+                      </p>
+                      <ul className="divide-y divide-neutral-200 border-y border-neutral-200">
+                        {group.closings.map((closing) => (
+                          <li
+                            key={`${closing.address}-${closing.closeDate}-${closing.side}`}
+                            className="py-4"
+                          >
+                            <p className="text-sm font-black text-black">{closing.address}</p>
+                            <p className="text-sm text-neutral-600 mt-1">
+                              {closing.city}, {closing.state} {closing.zip} · {formatSoldPrice(closing.soldPrice)} ·{' '}
+                              <time dateTime={closing.closeDate.slice(0, 7)}>
+                                {formatCloseMonthYear(closing.closeDate)}
+                              </time>
+                              {' · '}
+                              {closing.beds} bed · {formatBaths(closing.baths)} bath · {formatSqft(closing.sqft)} sqft
+                              {' · '}
+                              {closing.side}
+                            </p>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
 
       {/* Seller FAQ — city-specific, folded into the one FAQPage above */}
       {sellerFaqs.length > 0 && (
