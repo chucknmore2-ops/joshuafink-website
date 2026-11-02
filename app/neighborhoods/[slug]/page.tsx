@@ -19,6 +19,18 @@ import ListingCard from '@/components/ListingCard'
 import { listings } from '@/lib/listings'
 import { isAvailable } from '@/app/listings/page'
 
+const FRANKLIN_FAMILY_POST = '/blog/best-franklin-neighborhoods-for-families-2026'
+
+/** Franklin family areas this post compares. Each already has a guide. */
+const franklinFamilyPostSlugs = new Set([
+  'westhaven-franklin-tn',
+  'fieldstone-farms-franklin-tn',
+  'mckays-mill-franklin-tn',
+  'berry-farms-franklin-tn',
+  'highlands-at-ladd-park-franklin-tn',
+  'cool-springs-franklin-tn',
+])
+
 type Props = {
   params: Promise<{ slug: string }>
 }
@@ -236,6 +248,14 @@ export default async function NeighborhoodPage({ params }: Props) {
                   Living in Green Hills guide
                 </Link>
                 {' '}— the longer relocation write-up. Census, Redfin, and GNAR figures there are citywide or nine-county, not a Green Hills price.
+              </p>
+            )}
+            {franklinFamilyPostSlugs.has(n.slug) && (
+              <p className="text-sm mt-4 max-w-3xl leading-relaxed" style={{ color: '#A0A0A0' }}>
+                <Link href={FRANKLIN_FAMILY_POST} className="underline">
+                  Best Franklin neighborhoods for families (2026)
+                </Link>
+                {' '}— how {n.name} compares with the other Franklin family neighborhoods on this site. School names are the ones the guides already publish. Confirm the address before you write.
               </p>
             )}
             <div className="mt-8 flex flex-col sm:flex-row gap-4">

@@ -215,6 +215,135 @@ const marketUpdatePosts: BlogPost[] = marketSnapshots.map(buildMarketUpdatePost)
 export const blogPosts: BlogPost[] = [
   ...marketUpdatePosts,
   {
+    slug: "best-franklin-neighborhoods-for-families-2026",
+    title: "Best Franklin Neighborhoods for Families (2026)",
+    date: "November 2, 2026",
+    dateModified: "November 2, 2026",
+    excerpt:
+      "Westhaven, Fieldstone Farms, and McKay's Mill lead this Franklin family comparison, followed by Berry Farms, The Highlands at Ladd Park, and Cool Springs. Schools, amenities, and commute — citywide numbers only where this site already cites a source and date.",
+    category: "For Families",
+    faq: [
+      {
+        q: "What are the best neighborhoods in Franklin, TN for families in 2026?",
+        a: "There is no single best Franklin neighborhood. The family areas that already have guides on this site are Westhaven, Fieldstone Farms, and McKay's Mill, then Berry Farms, The Highlands at Ladd Park, and Cool Springs. Westhaven and Berry Farms are the walkable town-center communities. Fieldstone Farms and McKay's Mill are the established pool-and-clubhouse subdivisions. The Highlands is newer residential streets without a town center. Cool Springs is the I-65 employment and retail corridor, not one HOA. The comparison is this post, and a Franklin search starts on the [buyer page](/buy/franklin-tn).",
+      },
+      {
+        q: "Which schools do Westhaven, Fieldstone Farms, and McKay's Mill usually feed?",
+        a: "The Westhaven guide names Pearre Creek Elementary, Hillsboro Middle, and Independence High, and the Williamson County school zones guide places Westhaven in the Independence zone. The McKay's Mill guide names Clovercroft Elementary, Woodland Middle, and Page High, and the school zones guide places McKay's Mill in the Page zone. The Fieldstone Farms guide names Johnson Elementary and Freedom Middle, which are Franklin Special District schools, and Franklin High, a Williamson County high school. That same school zones guide groups Fieldstone Farms with Centennial High and the Cool Springs corridor. The two pages do not name the same high school. Confirm the address with Franklin Special School District and Williamson County Schools before you write an offer.",
+      },
+      {
+        q: "What is the median home price in Franklin, TN?",
+        a: "The citywide median sale price in Franklin is $862,929, the median days on market is 49, and the median price per square foot is $330.85, up 12.43% year over year (Source: Redfin, as of October 5, 2026). That is a city figure. This post does not publish a median for Westhaven, Fieldstone Farms, McKay's Mill, Berry Farms, the Highlands, or Cool Springs. A street-level price comes from closed comps.",
+      },
+      {
+        q: "How long is the commute from Franklin's family neighborhoods?",
+        a: "Workers age 16 and older who live in Franklin city had a mean travel time to work of 23.9 minutes (U.S. Census Bureau QuickFacts; American Community Survey 2020–2024 5-year estimates, checked October 17, 2026). That is the average commute of people who live in the city. It is not a drive time from one neighborhood to downtown Nashville. The guides name McEwen Drive and Mack Hatcher on the west side, Liberty Pike and Hillsboro Road at Fieldstone Farms, I-65 for McKay's Mill and Cool Springs, and Goose Creek Bypass on the south side.",
+      },
+      {
+        q: "How do I start buying in a Franklin, TN family neighborhood?",
+        a: "Joshua Fink is an Affiliate Broker with Compass Real Estate, licensed since 2008, and sells 40+ homes a year in Middle Tennessee. Office: Compass, 8119 Isabella Lane Suite 105, Brentwood, TN 37027. TREC #351484. Use the buyer form on the [Franklin buyer page](/buy/franklin-tn) or [send a note](/contact). Call or text 615-551-2727. He confirms the school zone for the exact address before you write, including whether the house sits in Franklin Special District or Williamson County Schools.",
+      },
+    ],
+    content: `
+Last updated November 2, 2026.
+
+There is no single best Franklin neighborhood for a family. The decision is the school assignment for the exact address, the housing on that street, and the drive you will actually make. This post leads with the three subdivisions families ask about first — [Westhaven](/neighborhoods/westhaven-franklin-tn), [Fieldstone Farms](/neighborhoods/fieldstone-farms-franklin-tn), and [McKay's Mill](/neighborhoods/mckays-mill-franklin-tn) — then three more Franklin areas that already have guides here: [Berry Farms](/neighborhoods/berry-farms-franklin-tn), [The Highlands at Ladd Park](/neighborhoods/highlands-at-ladd-park-franklin-tn), and [Cool Springs](/neighborhoods/cool-springs-franklin-tn). The countywide school read is the [Williamson County school zones guide](/blog/best-williamson-county-school-zones-2026). To start a search, use the [Franklin buyer page](/buy/franklin-tn).
+
+## What this post will and will not quote
+
+The citywide median sale price in Franklin is $862,929, the median days on market is 49, and the median price per square foot is $330.85, up 12.43% year over year (Source: Redfin, as of October 5, 2026). The April 1, 2020 Census counted 83,454 residents. The U.S. Census Bureau estimates 90,226 as of July 1, 2025, which is 8.0% above the April 1, 2020 estimates base (U.S. Census Bureau QuickFacts; Population Estimates, Vintage 2025). Those figures are for the city. They are not a price or a headcount for Westhaven, Fieldstone Farms, McKay's Mill, Berry Farms, the Highlands, or Cool Springs. The subdivision guides describe each place. A street-level price comes from closed comps, not from the citywide median, and this post does not add one.
+
+## Schools
+
+Public school in Franklin is not one district. Franklin Special District is the public pre-kindergarten through 8th grade system for the city's Ninth Special District. Its homepage lists 3,130 students and eight schools, and states that the district ranks in the top 10% of Tennessee districts on TCAP achievement (fssd.org, retrieved October 17, 2026). After 8th grade, those students enter Williamson County Schools high schools, most often Franklin High School or Centennial High School (Franklin Special District FAQ, retrieved October 17, 2026). Williamson County Schools reports about 42,000 students in pre-K through 12 for the 2025–2026 school year, 52 schools, and a class of 2025 ACT composite of 25.3 compared with a state average composite of 19.3 (wcs.edu/schools, retrieved October 17, 2026).
+
+The [school zones guide](/blog/best-williamson-county-school-zones-2026) treats the high school as the anchor families use, and it names these Franklin places:
+
+- **Independence High School** for west Franklin and Thompson's Station, including Westhaven, The Highlands at Ladd Park, and Berry Farms. The campus address published by Williamson County Schools is 1776 Declaration Way, Thompson's Station, TN 37179 (wcs.edu/schools/high-schools, retrieved October 17, 2026).
+- **Page High School** for east Franklin, including McKay's Mill. The campus is at 6281 Arno Road, Franklin, TN 37064 (same high-schools page, retrieved October 17, 2026).
+- **Centennial High School** for central and southwest Franklin, including the Cool Springs corridor. That guide also groups Fieldstone Farms with Centennial. The campus is at 5050 Mallory Lane, Franklin, TN 37067 (same page, retrieved October 17, 2026).
+
+The Fieldstone Farms guide on this site names a different high school: Franklin High, at 810 Hillsboro Road, Franklin, TN 37064, and it names Johnson Elementary and Freedom Middle, which are Franklin Special District schools. The two pages do not agree. Zoning lines run inside subdivisions. Confirm the address with both districts before you write an offer.
+
+## City parks and the drive
+
+The City of Franklin park department snapshot lists 18 city parks and 900 acres of land, and city parks are open from dawn until dark (franklintn.gov parks page, retrieved October 17, 2026). The pools, clubhouses, trails, and playgrounds below are HOA amenities inside a subdivision. They are not those city parks. Fieldstone Park is a city park. Fieldstone Farms is a subdivision. They are not the same place.
+
+Workers age 16 and older who live in Franklin city had a mean travel time to work of 23.9 minutes (U.S. Census Bureau QuickFacts; American Community Survey 2020–2024 5-year estimates, checked October 17, 2026). That is the average commute of people who live in the city. It is not a drive time from Westhaven, Fieldstone Farms, or McKay's Mill to downtown Nashville. The guides name the roads that change the day: McEwen Drive and Mack Hatcher on the west side, Liberty Pike and Hillsboro Road at Fieldstone Farms, I-65 for McKay's Mill and Cool Springs, and Goose Creek Bypass on the south side.
+
+## Westhaven
+
+[Westhaven](/neighborhoods/westhaven-franklin-tn) is the master-planned community on the west side of Franklin, along McEwen Drive past Mack Hatcher. The Westhaven guide describes about 1,500 acres of traditional-neighborhood-design streets, a private golf course, and a town center with restaurants and shops. It is open to the street, not gated. The golf club and the pools are private to residents and members.
+
+For a family, the daily pattern the guide describes is a walkable core: front porches, alley-loaded garages, single-family homes and townhomes in the same blocks, and a town center residents can walk to. Amenities named on the guide include the Westhaven Golf Club, multiple pools and a lap pool, the town center, paved walking and biking trails, a resident fitness center, tennis, pickleball, playgrounds, and parks inside the community.
+
+Schools the guide names as the usual Williamson County assignments are [Pearre Creek Elementary](/homes-near/pearre-creek-elementary-franklin-tn), Hillsboro Middle, and [Independence High](/homes-near/independence-high-school-thompsons-station-tn). None of those three is on the Franklin Special District eight-school list. The school zones guide places Westhaven in the Independence zone with the other west-and-south master-planned communities. Confirm the address.
+
+The commute fact that is actually published is the citywide 23.9-minute mean above. The Westhaven guide places the community on McEwen Drive past Mack Hatcher, on the west side, rather than on the I-65 interchange.
+
+## Fieldstone Farms
+
+[Fieldstone Farms](/neighborhoods/fieldstone-farms-franklin-tn) is the established subdivision on the west side of Franklin, near Mack Hatcher, Liberty Pike, and Hillsboro Road. The guide describes over 1,200 homes, built primarily through the late 1990s and 2000s, with larger lots and a mature tree canopy than many newer Franklin builds. There is no retail center inside the community. The HOA is active, with annual dues, and the guide names multiple pools, a clubhouse, tennis and pickleball, walking and jogging paths, playgrounds, and sports fields. Floor plans on the guide typically run 2,500–4,500 square feet.
+
+Schools the Fieldstone Farms guide names are Johnson Elementary, Freedom Middle, and Franklin High. Johnson Elementary and Freedom Middle are Franklin Special District schools. Franklin High is a Williamson County high school. The school zones guide instead groups Fieldstone Farms with [Centennial High](/homes-near/centennial-high-school-franklin-tn) and the Cool Springs corridor. Use the address, not the subdivision name.
+
+The guide describes the location as close to downtown Franklin, Cool Springs, and the major commuter routes. This post does not turn that into a minute count. The only commute number on this page is the citywide 23.9-minute mean.
+
+## McKay's Mill
+
+[McKay's Mill](/neighborhoods/mckays-mill-franklin-tn) is the large traditional subdivision on the east side of Franklin. The guide describes well over a thousand homes, built primarily through the early-to-mid 2000s, with conventional residential streets and larger lots than Westhaven on average. There is no commercial center inside the community. Amenities named on the guide include multiple pools, a clubhouse, tennis courts, sports fields, playgrounds, sidewalks, and an HOA calendar. Floor plans on the guide typically run 2,500–4,500 square feet. The HOA collects annual dues.
+
+Schools the guide names as the usual Williamson County assignments are Clovercroft Elementary, Woodland Middle, and [Page High School](/homes-near/page-high-school-franklin-tn). The school zones guide places McKay's Mill in the Page zone, with east Franklin and Thompson's Station. None of those three schools is on the Franklin Special District list. The assignment can vary by section. Confirm the address.
+
+The guide describes easy access to I-65 toward Cool Springs, Brentwood, and downtown Nashville. That is a road, not a published drive time. The citywide mean remains 23.9 minutes.
+
+## Berry Farms
+
+[Berry Farms](/neighborhoods/berry-farms-franklin-tn) is the newer mixed-use community on the south end of Franklin, off Goose Creek Bypass near I-65. The guide describes a town center with restaurants, offices, and retail, plus townhomes, single-family homes, and larger custom lots, and it says the community is still building. Amenities named on the guide include the town center, community pools, walking and biking paths, and playgrounds.
+
+Schools the guide names are Trinity Elementary, Hillsboro Middle, and Independence High. The school zones guide places Berry Farms in the Independence zone with Westhaven and The Highlands at Ladd Park. None of those three is on the Franklin Special District list. Confirm the address. The south-side roads the guide names are Goose Creek Bypass and I-65.
+
+## The Highlands at Ladd Park
+
+[The Highlands at Ladd Park](/neighborhoods/highlands-at-ladd-park-franklin-tn) sits south of downtown Franklin, with access to Goose Creek Bypass and the Cool Springs corridor. The guide describes newer residential streets, mid-2010s onward, still building, with larger lots than nearby production subdivisions of the same era, and no town center. Amenities named on the guide are walking paths and community open space. The guide's HOA description does not include a pool complex or a club.
+
+Schools the guide names as common Williamson County assignments are Pearre Creek Elementary, Hillsboro Middle, and Independence High, the same trio the Westhaven guide names. The school zones guide groups the Highlands with Westhaven in the Independence zone. Confirm the section. The drive the guide describes is toward Cool Springs and I-65, not a minute count.
+
+## Cool Springs
+
+[Cool Springs](/neighborhoods/cool-springs-franklin-tn) is a corridor, not one HOA subdivision. The guide places it along I-65, Cool Springs Boulevard, and the Mack Hatcher / Carothers Parkway loop. Condos and townhomes sit near the Galleria and the office parks. Single-family streets are in the surrounding subdivisions. There is no shared Cool Springs amenity package.
+
+For a family, the guide's point is the commute and the daily errands: the employment base, the retail, and direct I-65 access toward Nashville, Brentwood, and Spring Hill. Most addresses are discussed as Williamson County Schools in the Centennial High corridor. Elementary and middle schools change by street. The school zones guide makes the same Centennial grouping for the Cool Springs corridor. Shop the address, the housing type, and the school zone, not the Cool Springs label alone.
+
+## How to choose
+
+Use the school name on the specific house, then the housing type.
+
+- Walkable town center on the west side, and the Independence zone on both this site's guides: Westhaven.
+- Larger established lots, mature trees, a pool and clubhouse, and a school assignment the two guides do not state the same way: Fieldstone Farms. Confirm Franklin High versus Centennial, and whether the elementary is in Franklin Special District.
+- East side, pool and clubhouse, and the Page zone on both guides: McKay's Mill.
+- Newer town center on the south side, and the Independence zone on both guides: Berry Farms.
+- Newer residential lots without a town center, and the Independence zone on both guides: The Highlands at Ladd Park.
+- Office and retail corridor, Centennial on both guides, housing type changing by the block: Cool Springs.
+
+The side-by-side version of this comparison, with the same citywide sources, is the [Franklin neighborhoods page](/neighborhoods/franklin-tn).
+
+## Ready to buy in one of these neighborhoods
+
+Joshua Fink is an Affiliate Broker with Compass Real Estate, licensed since 2008, and sells 40+ homes a year in Middle Tennessee. Office: Compass, 8119 Isabella Lane Suite 105, Brentwood, TN 37027. TREC #351484. He confirms the school zone for the exact address before you write, including whether the house sits in Franklin Special District or Williamson County Schools.
+
+Start with the buyer form on the [Franklin buyer page](/buy/franklin-tn), or [send a note](/contact). Call or text [615-551-2727](tel:6155512727).
+
+## Sources
+
+- [Redfin Data Center](https://www.redfin.com/news/data-center/downloads/) — Franklin city median sale price, median days on market, median price per square foot, and sale-price year-over-year change, as cited on this site as of October 5, 2026.
+- [U.S. Census Bureau QuickFacts — Franklin city, Tennessee](https://www.census.gov/quickfacts/fact/table/franklincitytennessee/PST045224) — April 1, 2020 count, July 1, 2025 estimate, and mean travel time to work. Travel time checked October 17, 2026.
+- [Franklin Special District](https://www.fssd.org/) and the [district FAQ](https://www.fssd.org/faq) — enrollment, grade span, and the high-school handoff. Retrieved October 17, 2026.
+- [Williamson County Schools](https://www.wcs.edu/schools) and the [high schools page](https://www.wcs.edu/schools/high-schools) — district size, class of 2025 ACT composite, and campus addresses. Retrieved October 17, 2026.
+- [City of Franklin park department](https://www.franklintn.gov/government/departments-k-z/parks) — 18 city parks and 900 acres. Retrieved October 17, 2026.
+    `.trim(),
+  },
+  {
     slug: "living-in-green-hills-nashville-tn-guide",
     title: "Living in Green Hills, Nashville: Schools, Streets & Real Estate Guide [2026]",
     date: "October 22, 2026",
@@ -3661,6 +3790,8 @@ In WCS, the high school zone is the primary anchor for family-buyer decisions. T
 ### Also Worth Knowing: [Centennial High School](/homes-near/centennial-high-school-franklin-tn)
 
 Central and southwest Franklin, including [Fieldstone Farms](/neighborhoods/fieldstone-farms-franklin-tn) and the Cool Springs corridor. A long-established WCS high school with strong family-buyer appeal in the $700K–$1.5M range.
+
+For the Franklin-only comparison — Westhaven, Fieldstone Farms, McKay's Mill, Berry Farms, The Highlands at Ladd Park, and Cool Springs — see [Best Franklin Neighborhoods for Families (2026)](/blog/best-franklin-neighborhoods-for-families-2026).
 
 ## How to Choose Between Them
 
