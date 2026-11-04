@@ -307,6 +307,10 @@ export default async function SuburbPage({ params }: Props) {
                   <Link href="/cash-offer/columbia-tn" className="text-black underline hover:no-underline">
                     sell your Columbia house for cash
                   </Link>
+                  . This page is the full-value listing. If you would rather sell as-is, see{' '}
+                  <Link href="/cash-offer/spring-hill-tn" className="text-black underline hover:no-underline">
+                    we buy houses in Spring Hill
+                  </Link>
                   .
                 </p>
               ) : null}

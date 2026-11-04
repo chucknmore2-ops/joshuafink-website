@@ -12,11 +12,28 @@ import { formatStatsDate, getSuburb, marketStatsSource, suburbStatsAsOf } from '
 
 const PAGE = readFileSync(new URL('../app/cash-offer/page.tsx', import.meta.url), 'utf8')
 
-test('cash-offer hub stamp reads Updated October 2026 from the content date', () => {
-  assert.equal(cashOfferHubLastUpdated, '2026-10-26')
-  assert.equal(cashOfferHubUpdatedLabel(), 'October 2026')
+test('cash-offer hub stamp reads Updated November 2026 from the content date', () => {
+  assert.equal(cashOfferHubLastUpdated, '2026-11-04')
+  assert.equal(cashOfferHubUpdatedLabel(), 'November 2026')
   assert.match(PAGE, /Updated \{cashOfferHubUpdatedLabel\(\)\}/)
   assert.match(PAGE, /dateModified: cashOfferHubLastUpdated/)
+  assert.match(PAGE, /id="we-buy-houses"/)
+  assert.match(PAGE, /We buy houses across/)
+})
+
+test('cash-offer hub directory lists every city from published county and area names', async () => {
+  const { cashOfferHubDirectory } = await import('./cash-offer-hub.ts')
+  const { getAllCashOfferCitySlugs } = await import('./cash-offer-cities.ts')
+  const cities = cashOfferHubDirectory()
+  assert.deepEqual(
+    cities.map((city) => city.slug),
+    getAllCashOfferCitySlugs(),
+  )
+  const blurbs = cities.map((city) => city.blurb).join('\n')
+  assert.doesNotMatch(blurbs, /\$/)
+  assert.doesNotMatch(blurbs, /615-551-3399/)
+  assert.match(blurbs, /Davidson County/)
+  assert.match(blurbs, /Sumner County/)
 })
 
 test('cash-offer proof block reuses on-site credentials and offer timing', () => {

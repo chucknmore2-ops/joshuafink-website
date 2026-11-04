@@ -148,6 +148,7 @@ export default function Footer() {
                 { href: '/sell', label: 'Free Home Valuation' },
                 { href: '/guide/seller', label: "Free Seller's Guide" },
                 { href: '/cash-offer', label: 'Cash Offer in 24h' },
+                { href: '/cash-offer#we-buy-houses', label: 'We buy houses across Middle Tennessee' },
                 { href: '/cash-offer/nashville-tn', label: 'We buy houses in Nashville' },
                 { href: '/cash-offer/columbia-tn', label: 'Sell your house fast in Columbia, TN' },
                 { href: '/sell/franklin-tn', label: 'Sell in Franklin' },

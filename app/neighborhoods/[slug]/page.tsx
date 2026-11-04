@@ -552,7 +552,19 @@ export default async function NeighborhoodPage({ params }: Props) {
                 ? 'Nashville cash offer →'
                 : n.citySlug === 'columbia-tn'
                   ? 'Sell your house fast in Columbia, TN →'
-                  : 'Get a cash offer →'}
+                  : n.citySlug === 'spring-hill-tn'
+                    ? 'Sell my house fast in Spring Hill →'
+                    : n.citySlug === 'gallatin-tn'
+                      ? 'Sell my house fast in Gallatin →'
+                      : n.citySlug === 'franklin-tn'
+                        ? 'We buy houses in Franklin →'
+                        : n.citySlug === 'smyrna-tn'
+                          ? 'Cash home buyers in Smyrna →'
+                          : n.citySlug === 'nolensville-tn'
+                            ? 'Sell my house fast in Nolensville →'
+                            : n.citySlug === 'brentwood-tn'
+                              ? 'Cash home buyers in Brentwood →'
+                              : 'Get a cash offer →'}
             </Link>
           </div>
         </div>
@@ -583,6 +595,67 @@ export default async function NeighborhoodPage({ params }: Props) {
                     sell your Columbia house for cash
                   </Link>
                   . As-is, with a call back within 24 hours and a close in as little as 7 days.
+                  {n.citySlug === 'spring-hill-tn' ? (
+                    <>
+                      {' '}If the address is Spring Hill rather than Columbia, see{' '}
+                      <Link href="/cash-offer/spring-hill-tn" className="text-black underline hover:no-underline">
+                        sell my house fast in Spring Hill
+                      </Link>
+                      .
+                    </>
+                  ) : null}
+                </p>
+              ) : n.citySlug === 'spring-hill-tn' ? (
+                <p className="text-[#444] text-base leading-relaxed mt-4">
+                  If you already own in {n.name} and want cash instead of a full-value listing, see{' '}
+                  <Link href="/cash-offer/spring-hill-tn" className="text-black underline hover:no-underline">
+                    sell my house fast in Spring Hill
+                  </Link>
+                  . The listing path is the{' '}
+                  <Link href="/sell/spring-hill-tn" className="text-black underline hover:no-underline">
+                    Spring Hill sell page
+                  </Link>
+                  .
+                </p>
+              ) : n.citySlug === 'gallatin-tn' ? (
+                <p className="text-[#444] text-base leading-relaxed mt-4">
+                  Need to sell in {n.name} without a listing? Cash home buyers cover Gallatin, including the lake:{' '}
+                  <Link href="/cash-offer/gallatin-tn" className="text-black underline hover:no-underline">
+                    sell my house fast in Gallatin
+                  </Link>
+                  .
+                </p>
+              ) : n.citySlug === 'franklin-tn' ? (
+                <p className="text-[#444] text-base leading-relaxed mt-4">
+                  An older or repair-heavy house in {n.name} does not have to be listed:{' '}
+                  <Link href="/cash-offer/franklin-tn" className="text-black underline hover:no-underline">
+                    we buy houses in Franklin
+                  </Link>
+                  .
+                </p>
+              ) : n.citySlug === 'smyrna-tn' ? (
+                <p className="text-[#444] text-base leading-relaxed mt-4">
+                  If you need to sell in {n.name} as-is, see{' '}
+                  <Link href="/cash-offer/smyrna-tn" className="text-black underline hover:no-underline">
+                    cash home buyers in Smyrna
+                  </Link>
+                  .
+                </p>
+              ) : n.citySlug === 'nolensville-tn' ? (
+                <p className="text-[#444] text-base leading-relaxed mt-4">
+                  If you need to sell in {n.name} without competing with new construction, see{' '}
+                  <Link href="/cash-offer/nolensville-tn" className="text-black underline hover:no-underline">
+                    sell my house fast in Nolensville
+                  </Link>
+                  .
+                </p>
+              ) : n.citySlug === 'brentwood-tn' ? (
+                <p className="text-[#444] text-base leading-relaxed mt-4">
+                  A dated house or an estate in {n.name} can take a cash offer:{' '}
+                  <Link href="/cash-offer/brentwood-tn" className="text-black underline hover:no-underline">
+                    cash home buyers in Brentwood
+                  </Link>
+                  .
                 </p>
               ) : null}
 

@@ -415,6 +415,24 @@ export default async function ComparePage({ params }: Props) {
                   .
                 </p>
               )}
+              {(a.slug === 'franklin-tn' || b.slug === 'franklin-tn') && (
+                <p className="text-sm text-[#444] leading-relaxed mt-4">
+                  Selling in Franklin instead of buying?{' '}
+                  <Link href="/cash-offer/franklin-tn" className="underline">
+                    We buy houses in Franklin
+                  </Link>
+                  .
+                </p>
+              )}
+              {(a.slug === 'brentwood-tn' || b.slug === 'brentwood-tn') && (
+                <p className="text-sm text-[#444] leading-relaxed mt-4">
+                  Selling in Brentwood?{' '}
+                  <Link href="/cash-offer/brentwood-tn" className="underline">
+                    Cash home buyers in Brentwood
+                  </Link>{' '}
+                  can make an offer without a listing.
+                </p>
+              )}
             </div>
           </div>
         </div>

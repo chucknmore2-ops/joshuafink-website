@@ -327,6 +327,32 @@ export default function BlogPostPage({ params }: Props) {
 
       {/* Article body */}
       <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+        {post.leadCta && (
+          <aside className="mb-10 border border-black bg-[#F5F5F5] p-6 sm:p-8 rounded-2xl">
+            <p className="text-xs font-semibold tracking-widest text-[#A0A0A0] uppercase mb-2">
+              Cash offer
+            </p>
+            <h2 className="text-2xl font-black text-black mb-3">{post.leadCta.title}</h2>
+            <p className="text-sm text-[#333] leading-relaxed mb-5">{parseInlineMarkdown(post.leadCta.body)}</p>
+            <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3">
+              <Link
+                href={post.leadCta.href}
+                className="inline-flex items-center justify-center bg-black text-white text-sm font-bold px-6 py-3 rounded-full tracking-wide hover:bg-[#222] transition-colors"
+              >
+                {post.leadCta.label}
+              </Link>
+              {post.leadCta.links?.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="inline-flex items-center justify-center border border-black text-black text-sm font-bold px-6 py-3 rounded-full tracking-wide hover:bg-black hover:text-white transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </aside>
+        )}
         <div className="text-base">{renderContent(post.content)}</div>
 
         {/* Compliance disclosure (only rendered when the post requires it) */}

@@ -73,6 +73,14 @@ export interface BlogPost {
   auditTier?: 'keep' | 'fix' | 'rewrite' | 'delete'
   /** Optional 3-5 question FAQ block, rendered on-page and emitted as FAQPage schema. */
   faq?: { q: string; a: string }[]
+  /** Box at the top of the article. Use for a cash-offer path that should not compete with the post's informational H1. */
+  leadCta?: {
+    title: string
+    body: string
+    href: string
+    label: string
+    links?: { href: string; label: string }[]
+  }
   content: string
 }
 
@@ -712,10 +720,34 @@ If you would like a calm, no-pressure conversation about where you stand and wha
     slug: "selling-inherited-house-nashville-tennessee",
     title: "Selling an Inherited House in Nashville & Middle Tennessee: A Probate-to-Closing Guide",
     date: "June 2, 2026",
-    dateModified: "October 23, 2026",
+    dateModified: "November 4, 2026",
     excerpt: "Inheriting a house in Middle Tennessee brings grief and a long to-do list at the same time. Here is a calm, practical walk-through of probate basics, coordinating with siblings, and the three real paths to selling.",
     category: "Selling",
     disclosure: "This article is for general educational purposes only and is not legal, tax, or financial advice — consult a licensed Tennessee probate attorney and a tax professional about your specific situation. Joshua Fink is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate and may act as a principal buyer or partner with a local investor in a cash transaction; his licensed status is disclosed in writing at offer time. Cash offers are typically 70–85% of after-repair market value.",
+    leadCta: {
+      title: "Need a cash offer on an inherited house?",
+      body: "As-is, with no cleanout and no showings. A no-obligation number within 24 hours, and a close in as little as 7 days. Call or text 615-551-2727.",
+      href: "/cash-offer",
+      label: "Request a cash offer",
+      links: [
+        { href: "/cash-offer/nashville-tn", label: "we buy houses in Nashville" },
+        { href: "/cash-offer/franklin-tn", label: "we buy houses in Franklin" },
+      ],
+    },
+    faq: [
+      {
+        q: "Can I sell an inherited house before probate closes in Tennessee?",
+        a: "Often the authority to sell has to be in place before a sale, even if the full estate is not closed. Sometimes the court approves the sale itself. Probate is handled at the county level, in the county where the person lived, and every estate is a little different. Talk to a licensed Tennessee probate attorney before you sign anything. Joshua Fink is a real estate broker, not a lawyer. A cash contract can wait on that authority.",
+      },
+      {
+        q: "Do I pay capital gains tax when I sell an inherited house?",
+        a: "Often that fear is larger than the bill because of the stepped-up cost basis. At a high level, the home's value generally resets to its fair market value as of the date of death, which can sharply reduce or eliminate capital gains tax if you sell soon after. This is not tax advice. Confirm your exact situation with a CPA before you decide.",
+      },
+      {
+        q: "Can I sell an inherited house in Nashville or Franklin for cash?",
+        a: "Yes. The cash path is as-is: no repairs, no cleanout, no showings, and a closing date you pick. An investor cash offer is typically 70–85% of after-repair market value. Out-of-state heirs can often sign remotely. See [we buy houses in Nashville](/cash-offer/nashville-tn) and [we buy houses in Franklin](/cash-offer/franklin-tn). Confirm the probate details with your attorney.",
+      },
+    ],
     content: `
 If you are reading this, you have probably just lost a parent or another family member, and now a house has landed in your lap. First, I am sorry. I have sat at a lot of kitchen tables with families in exactly this spot, and I want you to know two things up front: there is no rush to make a permanent decision this week, and you have more good options than it feels like right now.
 
@@ -757,7 +789,7 @@ There is no single right answer. Here are the three I walk families through.
 
 **1. Clean it out and list it traditionally for top dollar.** If the home is in reasonable shape, or you have the time, money, and a local family member to manage repairs and showings, listing on the open market usually nets the most. You'll clear out belongings, make the place presentable, and let buyers compete. I do this every day as a Compass agent, and you can start with a free, no-pressure valuation on my [home valuation page](/sell) to see what the house could bring.
 
-**2. Sell as-is for cash and split the proceeds cleanly.** This is the path a lot of inherited-home families choose, and here is the honest tradeoff. An investor cash offer is typically **70–85% of the after-repair market value** — you are trading some price for speed, certainty, and zero work. In exchange: no repairs, no cleanout, no showings, no agent commissions, and a closing date you pick. You can [request a cash offer here](/cash-offer). I serve the whole region, including [Hendersonville](/cash-offer/hendersonville-tn), [Gallatin](/cash-offer/gallatin-tn), and [Murfreesboro](/cash-offer/murfreesboro-tn). In Nashville, see [we buy houses in Nashville](/cash-offer/nashville-tn). In Columbia, you can [sell your house for cash in Columbia, TN](/cash-offer/columbia-tn).
+**2. Sell as-is for cash and split the proceeds cleanly.** This is the path a lot of inherited-home families choose, and here is the honest tradeoff. An investor cash offer is typically **70–85% of the after-repair market value** — you are trading some price for speed, certainty, and zero work. In exchange: no repairs, no cleanout, no showings, no agent commissions, and a closing date you pick. You can [request a cash offer here](/cash-offer). I serve the whole region, including [Hendersonville](/cash-offer/hendersonville-tn), [Gallatin](/cash-offer/gallatin-tn), [Murfreesboro](/cash-offer/murfreesboro-tn), and [Franklin](/cash-offer/franklin-tn). In Nashville, see [we buy houses in Nashville](/cash-offer/nashville-tn). In Franklin, see [we buy houses in Franklin](/cash-offer/franklin-tn). In Columbia, you can [sell your house for cash in Columbia, TN](/cash-offer/columbia-tn).
 
 The part families don't expect: you take **fully as-is.** Keep the photos, the furniture you want, Grandpa's tools — and leave **everything else** right where it sits. No dumpster, no estate-sale company, no scrubbing. We handle the cleanout. For a lot of out-of-town heirs, not having to fly back to empty a house is the whole reason they call.
 
@@ -3147,88 +3179,81 @@ Joshua Fink buys homes for cash throughout Nashville and Middle Tennessee. If yo
   },
   {
     slug: "we-buy-houses-nashville-how-it-works",
-    title: "We Buy Houses Nashville — How Cash Offers Actually Work",
+    title: "How 'We Buy Houses' Companies Work in Nashville: Red Flags & Fair Offers",
     date: "April 6, 2026",
-    dateModified: "October 23, 2026",
+    dateModified: "November 4, 2026",
     category: "Selling",
-    auditTier: "fix",
+    auditTier: "keep",
     disclosure: "Joshua Fink is a licensed Tennessee Affiliate Broker with Compass Real Estate (Tennessee Real Estate Commission). In cash-offer transactions Joshua may act as a principal buyer or partner with a vetted local investor; his licensee status and role in each transaction are disclosed in writing at offer time as required under TREC Rule 1260-02-.12 and TCA \u00a7 62-13-403. Cash offers are typically 70\u201385% of after-repair market value \u2014 the tradeoff is speed, certainty, and zero repairs, disclosed up-front so sellers can choose knowingly.",
-    excerpt: "Curious how 'we buy houses' companies work in Nashville? Here's an honest breakdown — what's legit, what to watch out for, and how to get a fair deal.",
+    excerpt: "How we-buy-houses companies work in Nashville, which red flags to watch, and what a fair cash offer looks like. Requesting an offer is a separate page.",
+    leadCta: {
+      title: "Want the offer, not just the explanation?",
+      body: "This guide is about how cash-buyer companies work, the red flags, and what a fair offer looks like. The Nashville page is where you request a no-obligation cash offer within 24 hours. Call or text 615-551-2727.",
+      href: "/cash-offer/nashville-tn",
+      label: "we buy houses in Nashville",
+    },
     content: `
-You've seen the signs. "We Buy Houses." "Cash for Your Home." "Sell Fast, No Fees." They're on bandit signs, Facebook ads, and Google results. But how do these companies actually work? And more importantly — are they legit?
+You've seen the signs. "We Buy Houses." "Cash for Your Home." "Sell Fast, No Fees." They show up on bandit signs, Facebook ads, and Google results. This guide explains how those companies actually work in Nashville, which offers are legitimate, and how to tell a fair number from a bad one.
 
-The short answer: some are, and some aren't. Here's how to tell the difference and how the process actually works when you sell your Nashville home for cash.
+It is an explanation, not an offer. If you already know you want a number on a Davidson County house, go straight to [we buy houses in Nashville](/cash-offer/nashville-tn).
 
-## How a Legitimate Cash Offer Works
+## How a legitimate cash offer works
 
-### Step 1: You Contact the Buyer
-Fill out a form or call directly. You'll provide basic information — your name, property address, and situation. A legitimate buyer will never pressure you or ask for money upfront.
+A real cash offer is a short sequence, and every step should be something you can see. If you are comparing companies, start with [we buy houses in Nashville](/cash-offer/nashville-tn) only after you understand the steps below.
 
-### Step 2: The Buyer Evaluates Your Property
-A real cash buyer will research your property — comparable sales, condition assessment, and location factors. They may ask to see the property in person or virtually. This is normal.
+**You contact the buyer.** You share your name, the address, and the situation. A legitimate buyer does not ask you for money up front and does not pressure you on the first call.
 
-### Step 3: You Receive an Offer
-Within 24–48 hours, you'll receive a written cash offer. A good buyer will explain how they arrived at the number and answer any questions.
+**The buyer looks at the house.** Comparable sales, condition, and location. A walk-through, in person or virtual, is normal.
 
-### Step 4: You Decide
-There's no obligation. You can accept, negotiate, or walk away. A legitimate buyer will never pressure you to sign immediately.
+**You get a written offer.** A good buyer explains the number. There is no obligation to accept it, and a fair offer does not expire in a few hours.
 
-### Step 5: Close on Your Timeline
-If you accept, a title company handles the closing. You choose the date — as fast as 7 days or whenever works for you. You sign the paperwork and receive your cash.
+**You close on your date.** A title company or closing attorney handles the paperwork. You pick the date — as fast as 7 days, or later if you still need time.
 
-## What Makes Our Cash Offers Different
+## Wholesalers, iBuyers, and a licensed broker
 
-Not all "we buy houses" companies are created equal. Here's what sets Joshua Fink apart:
+The phrase [we buy houses in Nashville](/cash-offer/nashville-tn) covers three very different businesses.
 
-### We're Not a Wholesaler
-Many "cash buyer" companies are actually **wholesalers** — they put your home under contract, then sell that contract to someone else for a fee. You end up getting less, and the person who actually buys your home is someone you never met.
+**Wholesalers** put your house under contract and then sell that contract to someone else. You often never meet the person who actually closes, and a second fee comes out of the price.
 
-**Joshua Fink closes with his own funds.** When we make an offer, we're the ones buying. No middlemen, no assignment contracts, no bait-and-switch.
+**iBuyers** such as Opendoor price with a national algorithm. They often charge a service fee of 5–14%, and they routinely decline houses that need repairs, are occupied, or have liens.
 
-### We're a Licensed Real Estate Agent
-Joshua Fink is a licensed Affiliate Broker with Compass Real Estate in Tennessee. That means:
-- We're held to legal and ethical standards that unlicensed investors aren't
-- We have access to accurate market data to ensure fair offers
-- We have a reputation to protect — licensed since 2008, with 40+ homes a year in Middle Tennessee
+**A licensed local broker** prices off Davidson County comps and can also list the house if a traditional sale would net more. Joshua Fink is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate, licensed since 2008. On a cash path his offers are typically 70–85% of after-repair value, with no commission. He writes that number next to a traditional-listing estimate so you can compare them. His role is disclosed in writing at offer time.
 
-### We Cover All Closing Costs
-You pay $0 in commissions and $0 in closing costs. The offer you accept is the amount you receive.
+## Red flags to watch for
 
-### We Buy in Any Condition
-Water damage, foundation issues, hoarding, fire damage, outdated everything — it doesn't matter. We've seen it all and we buy it all.
+Before you sign with anyone advertising [we buy houses in Nashville](/cash-offer/nashville-tn), slow down if they:
 
-## Red Flags to Watch For
+- **Won't put the offer in writing**
+- **Ask you to pay a fee up front** — a real buyer does not charge the seller to make an offer
+- **Won't tell you their name or company**
+- **Pressure you to sign the same day** — a fair offer does not expire in 24 hours
+- **Use an assignment contract** — that is a wholesaler, not the end buyer
+- **Can't show proof of funds**
 
-Be cautious of any cash buyer who:
-- **Won't provide a written offer** — Everything should be in writing
-- **Asks you to pay fees upfront** — A real buyer never charges the seller
-- **Won't tell you their name or company** — Transparency matters
-- **Pressures you to sign immediately** — A fair offer doesn't expire in 24 hours
-- **Uses assignment contracts** — This means they're a wholesaler, not a buyer
-- **Can't show proof of funds** — Real cash buyers can prove they have the money
+## When a cash sale makes sense
 
-## When Does a Cash Sale Make Sense?
+Cash is a trade: speed and certainty for a lower price than a patient retail sale. Read [we buy houses in Nashville](/cash-offer/nashville-tn) if one of these is your situation:
 
-A cash sale isn't right for everyone. It makes the most sense when:
 - You need to sell **fast** (foreclosure, job relocation, divorce)
-- The property needs **significant repairs** you can't afford
-- You've **inherited a property** and don't want to manage it
-- You're a **landlord done with tenants** and headaches
-- You want **certainty** — no financing contingencies, no deals falling through
-- You value **privacy** — no public listing, no showings, no open houses
+- The house needs **repairs** you cannot fund or do not want to manage
+- You **inherited** a house and do not want to clean it out
+- You are a **landlord** done with tenants
+- You want **certainty** — no financing contingency and no deal falling through
+- You want **privacy** — no public listing and no showings
 
-## What's a Fair Cash Offer?
+If the house is in good shape and you can wait 30–90 days, listing traditionally usually nets more. A licensed broker who does both should tell you that.
 
-Cash offers are typically below full market value — that's the tradeoff for speed, convenience, and certainty. But a fair cash offer should be **reasonable** relative to your home's condition and the cost you'd incur selling traditionally (commissions, repairs, holding costs, closing costs).
+## What a fair cash offer looks like
 
-A good rule of thumb: take your home's as-is market value, subtract what you'd pay in commissions (5–6%), closing costs (2–3%), and any needed repairs. A fair cash offer should be in that range or close to it.
+A fair cash offer is below full retail price. That is the tradeoff for speed, no repairs, and no commissions. The range published on this site is **70–85% of after-repair market value**. Where an offer sits in that range depends on condition. Ask for the after-repair value, the comps, and the repair estimate in writing. If a company will not show that math, get a second opinion before you sign. The same standard is spelled out on [we buy houses in Nashville](/cash-offer/nashville-tn).
 
-## Get Your Cash Offer Today
+A practical check: start from what the house would sell for as-is, then subtract a traditional commission (often 5–6%), seller closing costs (often 2–3%), and the repairs a retail buyer would require. A fair cash number should land near that net, not far below it.
 
-Joshua Fink buys houses for cash throughout Nashville and all of Middle Tennessee. No commissions, no closing costs, no repairs. Fair offer in 24 hours. Close in 7 days or on your schedule.
+## Where the offer actually lives
 
-📞 **[615-551-2727](tel:6155512727)** — Call or text anytime
-🏠 **[We buy houses in Nashville →](/cash-offer/nashville-tn)**
+This page explains the industry. It does not take the place of a city page. For Davidson County, the offer page is [we buy houses in Nashville](/cash-offer/nashville-tn). For Maury County, the matching page is [sell house fast Columbia TN](/cash-offer/columbia-tn). The Middle Tennessee index of every city page is the [we buy houses hub](/cash-offer#we-buy-houses).
+
+Call or text [615-551-2727](tel:6155512727) if you would rather talk it through. No obligation.
     `.trim(),
   },
   {
