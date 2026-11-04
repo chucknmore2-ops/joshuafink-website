@@ -427,6 +427,59 @@ export default async function MarketSuburbPage({ params }: Props) {
                   <Link href="/cash-offer/columbia-tn" className="text-black underline hover:no-underline">
                     sell your Columbia house for cash
                   </Link>
+                  . If the house is in Spring Hill and you want cash rather than a full-value listing, see{' '}
+                  <Link href="/cash-offer/spring-hill-tn" className="text-black underline hover:no-underline">
+                    sell my house fast in Spring Hill
+                  </Link>
+                  . The listing path stays on the{' '}
+                  <Link href="/sell/spring-hill-tn" className="text-black underline hover:no-underline">
+                    Spring Hill sell page
+                  </Link>
+                  .
+                </p>
+              ) : null}
+              {s.slug === 'gallatin-tn' ? (
+                <p className="text-[#444] text-base leading-relaxed mb-4">
+                  If you need a date more than a listing in Sumner County, cash home buyers cover Station Camp, the lake, and the rest of town:{' '}
+                  <Link href="/cash-offer/gallatin-tn" className="text-black underline hover:no-underline">
+                    sell my house fast in Gallatin
+                  </Link>
+                  .
+                </p>
+              ) : null}
+              {s.slug === 'franklin-tn' ? (
+                <p className="text-[#444] text-base leading-relaxed mb-4">
+                  Older houses near historic downtown, and houses that need repairs, can skip the listing:{' '}
+                  <Link href="/cash-offer/franklin-tn" className="text-black underline hover:no-underline">
+                    we buy houses in Franklin
+                  </Link>
+                  .
+                </p>
+              ) : null}
+              {s.slug === 'smyrna-tn' ? (
+                <p className="text-[#444] text-base leading-relaxed mb-4">
+                  Relocation and as-is houses in Rutherford County, including near the Nissan plant:{' '}
+                  <Link href="/cash-offer/smyrna-tn" className="text-black underline hover:no-underline">
+                    cash home buyers in Smyrna
+                  </Link>
+                  .
+                </p>
+              ) : null}
+              {s.slug === 'nolensville-tn' ? (
+                <p className="text-[#444] text-base leading-relaxed mb-4">
+                  An older Nolensville house does not have to compete with new construction:{' '}
+                  <Link href="/cash-offer/nolensville-tn" className="text-black underline hover:no-underline">
+                    sell my house fast in Nolensville
+                  </Link>
+                  .
+                </p>
+              ) : null}
+              {s.slug === 'brentwood-tn' ? (
+                <p className="text-[#444] text-base leading-relaxed mb-4">
+                  A dated Brentwood house or an estate can take a cash offer any day:{' '}
+                  <Link href="/cash-offer/brentwood-tn" className="text-black underline hover:no-underline">
+                    cash home buyers in Brentwood
+                  </Link>
                   .
                 </p>
               ) : null}

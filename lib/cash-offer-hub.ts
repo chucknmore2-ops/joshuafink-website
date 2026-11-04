@@ -1,15 +1,16 @@
-import { cashOfferHubLastUpdated } from '@/lib/cash-offer-cities'
+import { cashOfferHubLastUpdated, getCashOfferCity, getCashOfferCityLinks } from '@/lib/cash-offer-cities'
 import { formatCloseMonthYear } from '@/lib/closings'
 import {
   formatStatsDate,
   getSuburb,
   marketStatsSource,
+  suburbCityGeo,
   suburbStatsAsOf,
 } from '@/lib/suburbs'
 
 export type CashOfferHubFaq = { q: string; a: string }
 
-/** "Updated October 2026" — month and year of the hub content date, no day. */
+/** "Updated November 2026" — month and year of the hub content date, no day. */
 export function cashOfferHubUpdatedLabel(): string {
   return formatCloseMonthYear(cashOfferHubLastUpdated)
 }
@@ -29,6 +30,34 @@ export function nashvilleCashOfferCalculationAnswer(): string {
     `Nashville's ${nashville.medianPrice} median (${marketStatsSource}, as of ${asOf}) is a citywide midpoint that blends updated East Nashville bungalows with dated homes in Madison, Antioch, and Donelson.`,
     "A fair offer on your house should be tied to comps near your address and to your home's condition, not to the citywide number.",
   ].join(' ')
+}
+
+export type CashOfferHubCity = {
+  slug: string
+  name: string
+  county: string
+  blurb: string
+  latitude: number
+  longitude: number
+}
+
+/** Every city cash-offer page, with a blurb built only from county and area names already on that page. */
+export function cashOfferHubDirectory(): CashOfferHubCity[] {
+  return getCashOfferCityLinks().flatMap(({ slug, name }) => {
+    const city = getCashOfferCity(slug)
+    const geo = suburbCityGeo[slug]
+    if (!city || !geo) return []
+    return [
+      {
+        slug,
+        name,
+        county: city.county,
+        blurb: `${city.county}. ${city.areas}.`,
+        latitude: geo.latitude,
+        longitude: geo.longitude,
+      },
+    ]
+  })
 }
 
 /** Concise hub FAQ. Every sentence is a claim already published on the site. */

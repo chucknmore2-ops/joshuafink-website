@@ -52,6 +52,18 @@ export type CashOfferCityContent = {
    * Use when title, meta, and H1 need to share one query (e.g. a cash-offer landing).
    */
   headline?: { lead: string; accent: string }
+  /** Replaces "A {city} Cash Sale, Priced Locally". */
+  localHeading?: string
+  /**
+   * Optional comparison of iBuyers, wholesalers, and a licensed local broker.
+   * Questions that belong in FAQPage schema also go in `faqs`.
+   */
+  cashBuyersSection?: { heading: string; paragraphs: string[] }
+  /**
+   * Clarifies the traditional-listing path versus this cash page.
+   * Rendered beside the free-valuation link.
+   */
+  listingSplit?: { href: string; label: string; note: string }
   /** Replaces "Whatever you're going through in {city} — we can help". */
   situationsHeading?: string
   /** Replaces "Selling your {city} home for cash". */
@@ -132,6 +144,38 @@ const cityContent: Record<string, CashOfferCityContent> = {
       label: 'sell your house for cash in Columbia, TN',
       after: '.',
     },
+    localHeading: 'We Buy Houses in Franklin',
+    contentUpdated: '2026-11-04',
+    countySection: {
+      eyebrow: 'Williamson County',
+      heading: 'Historic downtown and older Franklin houses',
+      paragraphs: [
+        [
+          'Franklin is in Williamson County. The April 1, 2020 Census counted 83,454 residents. The U.S. Census Bureau estimates 90,226 as of July 1, 2025, which is 8.0% above the April 1, 2020 estimates base (U.S. Census Bureau QuickFacts; Population Estimates, Vintage 2025). The citywide median sale price is $862,929, the median days on market is 49, and the median price per square foot is $330.85, up 12.43% year over year (Redfin, as of October 5, 2026). Those figures are citywide. A cash offer follows the street and the condition.',
+        ],
+        [
+          'Guides on this site cover ',
+          { href: '/neighborhoods/westhaven-franklin-tn', label: 'Westhaven' },
+          ', ',
+          { href: '/neighborhoods/cool-springs-franklin-tn', label: 'Cool Springs' },
+          ', ',
+          { href: '/neighborhoods/fieldstone-farms-franklin-tn', label: 'Fieldstone Farms' },
+          ', ',
+          { href: '/neighborhoods/mckays-mill-franklin-tn', label: "McKay's Mill" },
+          ', ',
+          { href: '/neighborhoods/berry-farms-franklin-tn', label: 'Berry Farms' },
+          ', and ',
+          { href: '/neighborhoods/highlands-at-ladd-park-franklin-tn', label: 'The Highlands at Ladd Park' },
+          '. Historic downtown Franklin and older houses often need systems work a retail buyer will not take on. That is the cash case. A turnkey house in Cool Springs or Westhaven may net more as a traditional listing. Compare Franklin with Brentwood on the ',
+          { href: '/compare/franklin-tn-vs-brentwood-tn', label: 'Franklin vs Brentwood' },
+          ' page, see the ',
+          { href: '/market/franklin-tn', label: 'Franklin market report' },
+          ', or start a full-value listing on the ',
+          { href: '/sell/franklin-tn', label: 'Franklin sell page' },
+          '.',
+        ],
+      ],
+    },
     faqs: [
       {
         q: 'Can I get a cash offer on a Franklin home that needs major repairs?',
@@ -144,6 +188,10 @@ const cityContent: Record<string, CashOfferCityContent> = {
       {
         q: 'Will a cash offer be lower than listing my Franklin home with an agent?',
         a: "Usually, yes — a cash offer typically runs 70–85% of after-repair value. The trade is speed and certainty for top retail dollar. For a turnkey Franklin home with time to wait, listing traditionally nets more, and Joshua will tell you so honestly. For a dated, inherited, or time-sensitive property, the cash route often nets more after you subtract repairs, carrying costs, and months of uncertainty.",
+      },
+      {
+        q: 'Do you buy older homes near historic downtown Franklin that need repairs?',
+        a: 'Yes. Historic downtown Franklin and older Williamson County houses often need systems work a retail buyer will not take on. Joshua buys them as-is. A turnkey home in Cool Springs or Westhaven may net more as a traditional listing, and he will say so. Either path is a licensed Compass broker (TREC #351484), licensed since 2008. You get a no-obligation number within 24 hours and can close in as little as 7 days.',
       },
     ],
   },
@@ -167,7 +215,41 @@ const cityContent: Record<string, CashOfferCityContent> = {
         q: 'How is a cash offer different from an iBuyer in Brentwood?',
         a: "iBuyers like Opendoor often won't touch Brentwood's higher-value or non-cookie-cutter homes, and they charge 5–14% in service fees. Joshua is a local Tennessee broker pricing off actual Brentwood comps — no national algorithm, no service fee, and he'll buy homes with repairs, occupancy, or title issues that iBuyers decline.",
       },
+      {
+        q: 'Can I get a cash offer on a Brentwood home at any time?',
+        a: 'Yes. You can request a no-obligation cash offer any day. Joshua reviews the house and calls within 24 hours. You can close in as little as 7 days, or later if you need time. Brentwood buyers expect flawless presentation, so a dated house or an estate is a common cash sale. A move-in-ready house may net more listed traditionally, and he will show you both numbers. He is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate, licensed since 2008.',
+      },
     ],
+    localHeading: 'Cash Home Buyers in Brentwood',
+    contentUpdated: '2026-11-04',
+    countySection: {
+      eyebrow: 'Williamson County',
+      heading: 'Older Brentwood estates and a traditional listing',
+      paragraphs: [
+        [
+          'Brentwood is in Williamson County. The citywide median sale price is $1,424,058, the median days on market is 63, and the median price per square foot is $356.22, up 5.1% year over year (Redfin, as of October 5, 2026). Population is essentially flat: the April 1, 2020 Census counted 45,373 residents, and the U.S. Census Bureau estimates 45,313 as of July 1, 2025, a change of -0.1% from the April 1, 2020 estimates base (U.S. Census Bureau QuickFacts; Population Estimates, Vintage 2025).',
+        ],
+        [
+          'Guides on this site cover ',
+          { href: '/neighborhoods/governors-club-brentwood-tn', label: 'Governors Club' },
+          ', ',
+          { href: '/neighborhoods/annandale-brentwood-tn', label: 'Annandale' },
+          ', ',
+          { href: '/neighborhoods/raintree-forest-brentwood-tn', label: 'Raintree Forest' },
+          ', ',
+          { href: '/neighborhoods/witherspoon-brentwood-tn', label: 'Witherspoon' },
+          ', and ',
+          { href: '/neighborhoods/the-laurels-brentwood-tn', label: 'The Laurels' },
+          '. Many of these are older or custom houses where deferred maintenance stalls a luxury listing. Cash buys them as-is. If the house is ready for showings, the full-value path is the ',
+          { href: '/sell/brentwood-tn', label: 'Brentwood sell page' },
+          '. The side-by-side with Franklin is ',
+          { href: '/compare/franklin-tn-vs-brentwood-tn', label: 'Franklin vs Brentwood' },
+          ', and the citywide numbers are on the ',
+          { href: '/market/brentwood-tn', label: 'Brentwood market report' },
+          '.',
+        ],
+      ],
+    },
   },
   'spring-hill-tn': {
     slug: 'spring-hill-tn',
@@ -182,6 +264,47 @@ const cityContent: Record<string, CashOfferCityContent> = {
       label: 'sell your house fast in Columbia, TN',
       after: ' — same licensed broker, a call back within 24 hours, and a close in as little as 7 days.',
     },
+    headline: {
+      lead: 'Sell My House Fast',
+      accent: 'in Spring Hill. We Buy Houses.',
+    },
+    localHeading: 'We Buy Houses in Spring Hill',
+    contentUpdated: '2026-11-04',
+    listingSplit: {
+      href: '/sell/spring-hill-tn',
+      label: 'full-value Spring Hill listing',
+      note: 'This page is the cash path: as-is, no showings, and a number within 24 hours. Prep, showings, and a traditional close are the',
+    },
+    countySection: {
+      eyebrow: 'Williamson County and Maury County',
+      heading: 'Both sides of the Spring Hill line',
+      paragraphs: [
+        [
+          'Spring Hill straddles Williamson County and Maury County. The April 1, 2020 Census counted 50,005 residents. The U.S. Census Bureau estimates 61,336 as of July 1, 2025, which is 21.0% above the April 1, 2020 estimates base (U.S. Census Bureau QuickFacts; Population Estimates, Vintage 2025). The citywide median sale price is $508,284, with 62 days on market and $236.44 per square foot, down 4.14% year over year (Redfin, as of October 5, 2026). Those are citywide figures, not a price for one street. The county line changes the comps and the school zone. Joshua buys on both sides and prices the county the house actually sits in.',
+        ],
+        [
+          'Job relocation, including sellers tied to the GM Spring Hill plant, is a common reason for a cash sale here. GM and Ultium Cells are still growing in Spring Hill, the same employment base named on the Columbia cash page. Neighborhood guides include ',
+          { href: '/neighborhoods/autumn-ridge-spring-hill-tn', label: 'Autumn Ridge' },
+          ', ',
+          { href: '/neighborhoods/wades-grove-spring-hill-tn', label: 'Wades Grove' },
+          ', ',
+          { href: '/neighborhoods/cherry-grove-spring-hill-tn', label: 'Cherry Grove' },
+          ', and the Maury County side: ',
+          { href: '/neighborhoods/harvest-point-spring-hill-tn', label: 'Harvest Point' },
+          ', ',
+          { href: '/neighborhoods/port-royal-estates-spring-hill-tn', label: 'Port Royal Estates' },
+          ', ',
+          { href: '/neighborhoods/dartford-spring-hill-tn', label: 'Dartford' },
+          ', ',
+          { href: '/neighborhoods/reserve-at-port-royal-spring-hill-tn', label: 'The Reserve at Port Royal' },
+          ', and ',
+          { href: '/neighborhoods/hampton-springs-spring-hill-tn', label: 'Hampton Springs' },
+          '. The citywide read is the ',
+          { href: '/market/spring-hill-tn', label: 'Spring Hill market report' },
+          '.',
+        ],
+      ],
+    },
     faqs: [
       {
         q: 'I got relocated for work — can you close fast on my Spring Hill home?',
@@ -195,6 +318,10 @@ const cityContent: Record<string, CashOfferCityContent> = {
         q: 'Can I sell my Spring Hill house as-is without making repairs?',
         a: "Yes. You make zero repairs, do zero cleaning, and host zero showings. Spring Hill's newer-construction inventory sets a high bar for traditional buyers, so an older or worn home often sells far more easily — and nets comparably after repair costs — through a cash offer.",
       },
+      {
+        q: 'What is the difference between a Spring Hill listing and a cash offer?',
+        a: 'A full-value listing is the traditional path: prep, showings, and a close that usually takes longer. It lives on the Spring Hill sell page. A cash offer on this page is as-is, with no showings, a no-obligation number within 24 hours, and a close in as little as 7 days. Cash offers are typically 70–85% of after-repair value. Joshua is the same licensed Compass broker (TREC #351484), licensed since 2008, either way, and he will show you both numbers before you choose.',
+      },
     ],
   },
   'nolensville-tn': {
@@ -204,6 +331,32 @@ const cityContent: Record<string, CashOfferCityContent> = {
       "Nolensville's newer subdivisions set a high bar for condition. If your home is older, on acreage that needs clearing, or tied to an estate or divorce, a cash offer lets you sell as-is without competing against the move-in-ready inventory in Bent Creek and Scales Farmstead.",
     localAngle:
       "At a $929,385 median (Redfin, as of October 5, 2026) in fast-growing Williamson County, Nolensville homes hold strong equity — but much of the market is new construction, so an older or distressed property can struggle traditionally. A cash sale converts your equity now, with no prep and no showings.",
+    localHeading: 'Sell My House Fast in Nolensville',
+    contentUpdated: '2026-11-04',
+    countySection: {
+      eyebrow: 'Williamson County',
+      heading: 'Historic downtown Nolensville and the new subdivisions',
+      paragraphs: [
+        [
+          'Nolensville is in Williamson County. Founded in 1797, it is still anchored by a historic downtown of 1800s buildings. The population climbed from 13,829 at the 2020 Census to an estimated 16,200+ in 2026 — roughly 17% growth in five years (U.S. Census Bureau). The citywide median sale price is $929,385, with 63 days on market and $300.43 per square foot, down 7.06% year over year (Redfin, as of October 5, 2026). Those are citywide figures.',
+        ],
+        [
+          'Guides on this site cover ',
+          { href: '/neighborhoods/bent-creek-nolensville-tn', label: 'Bent Creek' },
+          ', ',
+          { href: '/neighborhoods/scales-farmstead-nolensville-tn', label: 'Scales Farmstead' },
+          ', ',
+          { href: '/neighborhoods/benington-nolensville-tn', label: 'Benington' },
+          ', and ',
+          { href: '/neighborhoods/burberry-glen-nolensville-tn', label: 'Burberry Glen' },
+          '. Newer subdivisions set a high bar for condition. An older house, or one on acreage, can sell as-is for cash without a renovation. The citywide numbers are on the ',
+          { href: '/market/nolensville-tn', label: 'Nolensville market report' },
+          ', and a traditional listing starts on the ',
+          { href: '/sell/nolensville-tn', label: 'Nolensville sell page' },
+          '.',
+        ],
+      ],
+    },
     faqs: [
       {
         q: 'Can I sell an older Nolensville home for cash against all the new construction?',
@@ -216,6 +369,10 @@ const cityContent: Record<string, CashOfferCityContent> = {
       {
         q: 'How fast can a Nolensville cash sale close?',
         a: "As little as 7 days, or on your timeline. With no lender, appraisal, or inspection-repair back-and-forth, the only real step is the title attorney clearing title and scheduling closing — usually within the same week you accept.",
+      },
+      {
+        q: 'Do you buy houses in historic downtown Nolensville and in the Williamson County subdivisions?',
+        a: 'Yes. That includes historic downtown Nolensville, Bent Creek, Scales Farmstead, Benington, and Burberry Glen. Newer subdivisions set a high bar for condition. An older house can sell as-is for cash without a renovation. You get a no-obligation offer within 24 hours and can close in as little as 7 days.',
       },
     ],
   },
@@ -259,16 +416,16 @@ const cityContent: Record<string, CashOfferCityContent> = {
       accent: 'in Nashville.',
     },
     situationsHeading: 'We buy houses in Nashville — any situation',
-    contentUpdated: '2026-10-23',
+    contentUpdated: '2026-11-04',
     marketNote:
       "Davidson County is not one housing market. The citywide median sale price is $475,538, with 64 days on market and $272.16 per square foot, down 0.52% year over year (Redfin, as of October 5, 2026). Davidson County's April 1, 2020 Census count was 715,884. The U.S. Census Bureau estimates 745,904 residents as of July 1, 2025, a 4.2% increase from the April 1, 2020 estimates base (U.S. Census Bureau QuickFacts; Population Estimates, Vintage 2025). The neighborhood guides on this site publish these price bands: East Nashville $450K – $1.2M+, 12 South $700K – $1.8M+, Germantown $500K – $1.5M+, Sylvan Park $550K – $1.3M+, The Gulch $400K – $1.5M+ (condos), and Green Hills: No published median. A cash offer follows the block and the condition, not the citywide midpoint. Joshua also buys in Madison, Antioch, Donelson, Bordeaux, and Hermitage.",
     seo: {
       title: 'We Buy Houses Nashville | 24-Hour Cash Offer | Compass',
       description:
-        'We buy houses in Nashville in any condition. Fair cash offer in 24 hours, close in 7 days, no fees. Compass broker licensed since 2008. Call 615-551-2727.',
+        'Cash home buyers in Nashville. We buy houses in Nashville in any condition. Fair offer in 24 hours. Compass, licensed since 2008. Call 615-551-2727.',
       ogTitle: 'We Buy Houses Nashville | 24-Hour Cash Offer | Compass',
       ogDescription:
-        'We buy houses in Nashville in any condition. Fair cash offer in 24 hours, close in 7 days, no fees. Compass broker licensed since 2008. Call 615-551-2727.',
+        'Cash home buyers in Nashville. We buy houses in Nashville in any condition. Fair offer in 24 hours. Compass, licensed since 2008. Call 615-551-2727.',
       absoluteTitle: true,
       keywords: [
         'we buy houses Nashville',
@@ -280,10 +437,18 @@ const cityContent: Record<string, CashOfferCityContent> = {
         'sell my home fast Nashville',
         'sell my home fast Nashville TN',
         'cash home buyer Nashville',
+        'cash home buyers in Nashville',
         'sell house as-is Nashville',
         'Joshua Fink',
       ],
       eyebrow: 'Nashville, TN · Cash Offer',
+    },
+    cashBuyersSection: {
+      heading: 'Cash home buyers in Nashville',
+      paragraphs: [
+        'Cash home buyers in Nashville fall into three groups. National iBuyers price with an algorithm and often charge a service fee of 5–14%. Wholesalers put a house under contract and then assign that contract to someone else, so the person who closes is not the person who made the offer. A licensed local broker prices off Davidson County comps and can also list the house if a traditional sale would net more.',
+        'Joshua Fink is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate, licensed since 2008. A cash offer is typically 70–85% of after-repair value. You get a no-obligation number within 24 hours and can close in as little as 7 days, as-is, with no commissions. He also writes a traditional-listing estimate so you can compare the two paths before you choose. Call or text 615-551-2727.',
+      ],
     },
     differentiator:
       "Most “sell my house fast Nashville” results are cash-buyer websites. Joshua is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate — 218+ five-star reviews, and he has been licensed since 2008 in Middle Tennessee. He can buy your Nashville home for cash or list it for full market value, and he shows you both numbers in writing before you choose.",
@@ -336,6 +501,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
       { href: '/blog/sell-inherited-house-nashville-tn', label: 'Selling an inherited Nashville house' },
       { href: '/blog/facing-foreclosure-nashville-tn', label: 'Facing foreclosure in Nashville' },
       { href: '/sell/nashville-tn', label: 'List your Nashville home instead' },
+      { href: '/cash-offer/columbia-tn', label: 'sell house fast Columbia TN' },
     ],
     fairOfferFaqs: [
       {
@@ -353,6 +519,10 @@ const cityContent: Record<string, CashOfferCityContent> = {
       },
     ],
     faqs: [
+      {
+        q: 'Who are the best cash home buyers in Nashville?',
+        a: 'There is no published ranking of cash home buyers in Nashville. Compare who is actually buying, whether the offer is in writing, and whether you can see the comps. iBuyers such as Opendoor often charge 5–14% in service fees and decline homes that need repairs, are occupied, or have liens. Wholesalers assign the contract instead of closing themselves. Joshua Fink is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate, licensed since 2008. He buys Nashville houses for cash in any condition, shows the after-repair math next to a traditional-listing estimate, and does not charge a commission on the cash path. Call or text 615-551-2727. Office: 8119 Isabella Lane Suite 105, Brentwood, TN 37027.',
+      },
       {
         q: 'I keep seeing “we buy houses Nashville.” Who actually buys?',
         a: 'Joshua Fink does. He is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass, licensed since 2008 — not an out-of-town sign company. He buys Nashville houses for cash in any condition, with a no-obligation offer within 24 hours and a close in as little as 7 days. No repairs and no commissions. He also shows you a traditional listing number if that would net more. Call or text 615-551-2727. Office: 8119 Isabella Lane Suite 105, Brentwood, TN 37027.',
@@ -428,6 +598,48 @@ const cityContent: Record<string, CashOfferCityContent> = {
       "Gallatin blends lakeside living with affordable Sumner County inventory. If your home needs work, is part of an estate, or you need to relocate quickly, a cash offer lets you sell as-is without the wait of a traditional listing.",
     localAngle:
       "At a $447,154 median (Redfin, as of October 5, 2026), Gallatin is one of the more affordable Sumner County markets — which means even a dated or distressed home holds usable equity. A cash sale is the simplest path for heirs, downsizers, and owners who'd rather not invest in repairs before selling.",
+    localHeading: 'Cash Home Buyers in Gallatin',
+    contentUpdated: '2026-11-04',
+    seo: {
+      title: 'Sell My House Fast Gallatin TN | Cash Home Buyers',
+      description:
+        'Cash home buyers in Gallatin, TN. Sell my house fast — offer in 24 hours, close in 7 days, as-is. Serving Sumner County, including Station Camp and Old Hickory Lake.',
+      ogTitle: 'Sell My House Fast Gallatin TN | Cash Home Buyers',
+      ogDescription:
+        'Cash home buyers in Gallatin, TN. Offer in 24 hours, close in 7 days, as-is. Sumner County, including Station Camp and the lake.',
+      absoluteTitle: true,
+      keywords: [
+        'sell my house fast Gallatin TN',
+        'cash house buyers Gallatin TN',
+        'cash home buyers Gallatin',
+        'we buy houses Gallatin TN',
+        'Gallatin TN cash offer',
+        'Joshua Fink',
+      ],
+      eyebrow: 'Gallatin, TN · Cash Home Buyers',
+    },
+    countySection: {
+      eyebrow: 'Sumner County',
+      heading: 'Station Camp, Fairvue, and the Old Hickory Lake side',
+      paragraphs: [
+        [
+          'Gallatin is in Sumner County, on Old Hickory Lake. The citywide median sale price is $447,154, with 70 days on market and $221.87 per square foot, up 5.22% year over year (Redfin, as of October 5, 2026). Population grew from about 44,400 at the 2020 Census to an estimated 53,000+ in 2026 — roughly 19% in five years (U.S. Census Bureau). Volunteer State Community College’s main campus is in Gallatin. The city completed a $31 million connector road from SR-109 to Dobbins Pike in 2022.',
+        ],
+        [
+          'Neighborhood guides on this site cover ',
+          { href: '/neighborhoods/fairvue-plantation-gallatin-tn', label: 'Fairvue Plantation' },
+          ' and ',
+          { href: '/neighborhoods/foxland-harbor-gallatin-tn', label: 'Foxland Harbor' },
+          ', both on the lake, along with Station Camp, Sanders Ferry, Lakeside, Wynbrooke, and downtown Gallatin. Hendersonville is the next city west, also in Sumner County, with its own ',
+          { href: '/cash-offer/hendersonville-tn', label: 'Hendersonville cash offer' },
+          '. Citywide numbers are on the ',
+          { href: '/market/gallatin-tn', label: 'Gallatin market report' },
+          '. A traditional listing starts on the ',
+          { href: '/sell/gallatin-tn', label: 'Gallatin sell page' },
+          '.',
+        ],
+      ],
+    },
     faqs: [
       {
         q: 'Can I sell an inherited Gallatin home for cash?',
@@ -440,6 +652,14 @@ const cityContent: Record<string, CashOfferCityContent> = {
       {
         q: 'Is a cash offer competitive in an affordable market like Gallatin?',
         a: "It can be very competitive for the right situation. In a $447,154 market (Redfin, as of October 5, 2026), the repair-and-carry costs of getting a dated home listing-ready often eat much of the retail premium. For as-is, inherited, or time-sensitive sales, the cash net is frequently close to — or better than — a traditional sale, and Joshua will show you both.",
+      },
+      {
+        q: 'How do I sell my house fast in Gallatin, TN?',
+        a: 'Request a cash offer on this page. You will have a no-obligation number within 24 hours and can close in as little as 7 days, as-is, with no showings and no commissions. Gallatin homes are averaging 70 days on market at a $447,154 median (Redfin, as of October 5, 2026). If the house is move-in-ready and you can wait, listing traditionally may net more, and Joshua will show you both numbers. He is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate, licensed since 2008.',
+      },
+      {
+        q: 'Do cash house buyers in Gallatin buy lake homes and Station Camp houses?',
+        a: 'Yes. Joshua buys across Sumner County, including Station Camp, Sanders Ferry, Lakeside, downtown Gallatin, Fairvue Plantation, and Foxland Harbor, plus near-lake and waterfront homes on Old Hickory Lake. Condition does not disqualify a house. The offer is as-is. Hendersonville has its own cash-offer page because those comps are different.',
       },
     ],
   },
@@ -473,10 +693,11 @@ const cityContent: Record<string, CashOfferCityContent> = {
       lead: 'Sell Your House Fast',
       accent: 'in Columbia, TN.',
     },
+    localHeading: 'We Buy Houses in Columbia',
     situationsHeading: 'When you need to sell your house fast in Columbia',
     faqHeading: 'Sell your house for cash in Columbia, TN',
     sellerFaqHeading: 'Columbia seller FAQ',
-    contentUpdated: '2026-11-02',
+    contentUpdated: '2026-11-04',
     countySection: {
       eyebrow: 'Maury County',
       heading: 'The courthouse, the streets, and the county edges',
@@ -526,12 +747,12 @@ const cityContent: Record<string, CashOfferCityContent> = {
     localAngle:
       "Columbia's median sits around $368,006 (Redfin, as of October 5, 2026), and homes are averaging about 78 days on market. That wait is why cash is a real option here: historic houses near the Square often need systems work a retail buyer will not take on, and repair bills eat more of a listing in an attainable Maury County price band than they do in Williamson County. Maury County was Tennessee's #2 fastest-growing county by percentage from 2024 to 2025 (Maury Alliance), so the equity is real — Joshua prices it off current Maury County comps, buys as-is, and will also show you a traditional listing net if the house is ready and you can wait.",
     seo: {
-      title: 'Sell House Fast Columbia TN | Close in 7 Days | Compass',
+      title: 'Sell House Fast Columbia TN | We Buy Houses | Compass',
       description:
-        'Sell your house fast in Columbia, TN — or sell your house for cash, as-is. Offer in 24 hours, close in 7 days. Compass broker, no fees. Call 615-551-2727.',
-      ogTitle: 'Sell House Fast Columbia TN | Close in 7 Days | Compass',
+        'Sell your house fast in Columbia, TN — or sell your house for cash, as-is. We buy houses for cash. Offer in 24 hours. Call 615-551-2727.',
+      ogTitle: 'Sell House Fast Columbia TN | We Buy Houses | Compass',
       ogDescription:
-        'Sell your house fast in Columbia, TN — or sell your house for cash, as-is. Offer in 24 hours, close in 7 days. Compass broker, no fees. Call 615-551-2727.',
+        'Sell your house fast in Columbia, TN — or sell your house for cash, as-is. We buy houses for cash. Offer in 24 hours. Call 615-551-2727.',
       absoluteTitle: true,
       keywords: [
         'sell house fast Columbia TN',
@@ -632,6 +853,10 @@ const cityContent: Record<string, CashOfferCityContent> = {
         q: 'What if my Columbia house is already listed with an agent?',
         a: 'If you are under a listing agreement, you may still owe your agent a commission on a private sale — check the contract first. Joshua is a licensed broker, so he can talk with your listing agent directly or wait until the listing expires. He will not ask you to break an agreement.',
       },
+      {
+        q: 'Do you buy houses in Columbia, TN?',
+        a: 'Yes. Joshua buys houses for cash across Columbia and Maury County, as-is, with a no-obligation offer within 24 hours and a close in as little as 7 days. He is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate, licensed since 2008. If a traditional listing would net more, he shows you that number too.',
+      },
     ],
     sellerFaqs: [
       {
@@ -707,6 +932,28 @@ const cityContent: Record<string, CashOfferCityContent> = {
       "Smyrna's affordability and Nissan-anchored job base keep it moving, but plenty of homes here need work or belong to owners relocating fast. A cash offer lets you sell as-is — no repairs, no showings, no waiting on a buyer's loan.",
     localAngle:
       "With a $413,476 median (Redfin, as of October 5, 2026) in Rutherford County, Smyrna is a value market where relocation and speed often drive sales. Joshua buys as-is — including homes near the Nissan plant tied to job moves, inherited properties, and homes needing major repairs — and prices off real local comps.",
+    localHeading: 'Cash Home Buyers in Smyrna',
+    contentUpdated: '2026-11-04',
+    countySection: {
+      eyebrow: 'Rutherford County',
+      heading: 'The Nissan plant and Smyrna’s cash sales',
+      paragraphs: [
+        [
+          'Smyrna is in Rutherford County. It is anchored by the Nissan Smyrna Vehicle Assembly Plant, the largest single-site auto plant in North America — producing roughly 640,000 vehicles a year and employing about 8,000 workers as the town’s largest employer. Smyrna climbed from 53,070 residents at the 2020 Census to an estimated 57,000+ in 2026, and the city page calls it the largest town in Tennessee. The citywide median sale price is $413,476, with 61 days on market and $217.85 per square foot, down 3.01% year over year (Redfin, as of October 5, 2026).',
+        ],
+        [
+          'Guides on this site cover ',
+          { href: '/neighborhoods/preserve-at-stewart-creek-smyrna-tn', label: 'Preserve at Stewart Creek' },
+          ' and ',
+          { href: '/neighborhoods/woodmont-smyrna-tn', label: 'Woodmont' },
+          ', plus Stewarts Creek, Lee Crossing, Autumn Ridge, and downtown Smyrna. Relocation tied to the plant is a common cash sale. Citywide numbers are on the ',
+          { href: '/market/smyrna-tn', label: 'Smyrna market report' },
+          '. A traditional listing starts on the ',
+          { href: '/sell/smyrna-tn', label: 'Smyrna sell page' },
+          '.',
+        ],
+      ],
+    },
     faqs: [
       {
         q: 'I’m relocating for a job at Nissan — can you close fast on my Smyrna home?',
@@ -719,6 +966,10 @@ const cityContent: Record<string, CashOfferCityContent> = {
       {
         q: 'How does a cash offer compare to listing my Smyrna home traditionally?',
         a: "A cash offer typically runs 70–85% of after-repair value — you trade some retail price for speed and certainty. For a turnkey Smyrna home with time to wait, listing may net more. For a dated, inherited, or time-sensitive property, the cash route often nets more after repairs and carrying costs. Joshua will lay out both paths.",
+      },
+      {
+        q: 'Do cash home buyers in Smyrna buy houses near the Nissan plant?',
+        a: 'Yes. Relocation tied to the Nissan Smyrna plant is a common reason owners sell for cash. Joshua buys as-is across Rutherford County, including Stewarts Creek, Lee Crossing, Woodmont, Autumn Ridge, and downtown Smyrna, with an offer within 24 hours and a close in as little as 7 days.',
       },
     ],
   },
@@ -786,7 +1037,7 @@ export function getAllCashOfferCitySlugs(): string[] {
 export const cashOfferContentLastUpdated = '2026-10-05'
 
 /** Hub page /cash-offer proof block and FAQ were refreshed on this day. */
-export const cashOfferHubLastUpdated = '2026-10-26'
+export const cashOfferHubLastUpdated = '2026-11-04'
 
 /** Lightweight list for nav/grid linking (slug + display name), in declared order. */
 export function getCashOfferCityLinks(): Array<{ slug: string; name: string }> {

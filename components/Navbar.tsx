@@ -60,10 +60,10 @@ export default function Navbar() {
         <div className="flex items-center gap-3">
           {/* Cash Offer — primary pill CTA, visible on all screens ≥ sm */}
           <Link
-            href="/cash-offer"
+            href="/cash-offer/nashville-tn"
             className="hidden sm:inline-flex items-center bg-black text-white text-sm font-semibold px-5 py-2 rounded-full tracking-wide transition-all duration-200 hover:bg-neutral-800 hover:shadow-md active:scale-[0.98]"
           >
-            Cash Offer
+            We buy houses in Nashville
           </Link>
 
           {/* Call Now — outline pill, desktop only */}
@@ -121,11 +121,18 @@ export default function Navbar() {
           ))}
           <div className="mt-4 flex flex-col gap-3">
             <Link
-              href="/cash-offer"
+              href="/cash-offer/nashville-tn"
               onClick={() => setMenuOpen(false)}
               className="block text-center bg-black text-white text-sm font-semibold px-5 py-3 rounded-full tracking-wide transition-all duration-200 hover:bg-neutral-800"
             >
-              Get a Cash Offer
+              We buy houses in Nashville
+            </Link>
+            <Link
+              href="/cash-offer#we-buy-houses"
+              onClick={() => setMenuOpen(false)}
+              className="block text-center border border-neutral-300 text-black text-sm font-semibold px-5 py-3 rounded-full tracking-wide transition-all duration-200 hover:border-black"
+            >
+              We buy houses across Middle Tennessee
             </Link>
             <TrackedTelLink
               href="tel:6155512727"

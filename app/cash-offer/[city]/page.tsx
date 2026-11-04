@@ -279,7 +279,7 @@ export default async function CashOfferCityPage({ params }: Props) {
                 {seo.eyebrow}
               </p>
               <h1 className="text-5xl sm:text-6xl font-black tracking-tight leading-[1.05] mb-6 font-display">
-                {city.headline?.lead ?? 'Sell My House Fast'}
+                {city.headline?.lead ?? 'Sell My House Fast'}{' '}
                 <br />
                 <span className="italic text-neutral-400">{city.headline?.accent ?? `in ${city.name}.`}</span>
               </h1>
@@ -352,7 +352,11 @@ export default async function CashOfferCityPage({ params }: Props) {
             Why Sell for Cash in {city.name}
           </p>
           <h2 className="text-3xl sm:text-4xl font-black text-black tracking-tight mb-6">
-            A {city.name} Cash Sale, <span className="font-display italic font-semibold">Priced Locally</span>
+            {city.localHeading ?? (
+              <>
+                A {city.name} Cash Sale, <span className="font-display italic font-semibold">Priced Locally</span>
+              </>
+            )}
           </h2>
           <p className="text-neutral-700 text-lg leading-relaxed mb-4">{linkifyNeighborhoods(city.localAngle, slug)}</p>
           <p className="text-neutral-600 text-base leading-relaxed">
@@ -378,8 +382,54 @@ export default async function CashOfferCityPage({ params }: Props) {
               <p className="text-neutral-800 text-base leading-relaxed">{city.differentiator}</p>
             </div>
           ) : null}
+          {slug !== 'nashville-tn' ? (
+            <p className="text-neutral-600 text-base leading-relaxed mt-4">
+              If the house is in Davidson County, see{' '}
+              <Link
+                href="/cash-offer/nashville-tn"
+                className="font-semibold text-black underline underline-offset-4"
+              >
+                we buy houses in Nashville
+              </Link>
+              .
+            </p>
+          ) : null}
         </div>
       </div>
+
+      {city.cashBuyersSection ? (
+        <section
+          id="cash-home-buyers"
+          aria-labelledby="cash-home-buyers-heading"
+          className="bg-white border-b border-neutral-200 py-16 px-4 sm:px-6 lg:px-8"
+        >
+          <div className="max-w-4xl mx-auto">
+            <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
+              Cash home buyers
+            </p>
+            <h2
+              id="cash-home-buyers-heading"
+              className="text-3xl sm:text-4xl font-black text-black tracking-tight mb-6"
+            >
+              {city.cashBuyersSection.heading}
+            </h2>
+            <div className="space-y-4">
+              {city.cashBuyersSection.paragraphs.map((paragraph, index) => (
+                <p key={index} className="text-neutral-700 text-base leading-relaxed">
+                  {paragraph}
+                </p>
+              ))}
+              {nashvilleClosedCount > 0 ? (
+                <p className="text-neutral-700 text-base leading-relaxed">
+                  The Tennessee closing file on this site lists {nashvilleClosedCount} closed{' '}
+                  {nashvilleClosedCount === 1 ? 'home' : 'homes'} in Nashville — the same rows as the
+                  proof block above.
+                </p>
+              ) : null}
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       {/* Situations */}
       <div className="py-16 px-4 sm:px-6 lg:px-8">
@@ -541,15 +591,18 @@ export default async function CashOfferCityPage({ params }: Props) {
 
       {city.countySection ? (
         <section
-          id="maury-county"
-          aria-labelledby="maury-county-heading"
+          id={slug === 'columbia-tn' ? 'maury-county' : `${slug}-county`}
+          aria-labelledby={slug === 'columbia-tn' ? 'maury-county-heading' : 'county-detail-heading'}
           className="bg-white border-t border-neutral-200 py-16 px-4 sm:px-6 lg:px-8"
         >
           <div className="max-w-4xl mx-auto">
             <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
               {city.countySection.eyebrow}
             </p>
-            <h2 id="maury-county-heading" className="text-3xl sm:text-4xl font-black text-black tracking-tight mb-8">
+            <h2
+              id={slug === 'columbia-tn' ? 'maury-county-heading' : 'county-detail-heading'}
+              className="text-3xl sm:text-4xl font-black text-black tracking-tight mb-8"
+            >
               {city.countySection.heading}
             </h2>
             <div className="space-y-6">
@@ -745,6 +798,15 @@ export default async function CashOfferCityPage({ params }: Props) {
                 If your home is in good shape and you can wait 30–90 days, listing traditionally usually nets more.
                 Joshua does both — get a free valuation and compare the two paths side by side.
               </p>
+              {city.listingSplit ? (
+                <p className="text-neutral-600 text-sm leading-relaxed mb-5">
+                  {city.listingSplit.note}{' '}
+                  <Link href={city.listingSplit.href} className="font-semibold text-black underline underline-offset-4">
+                    {city.listingSplit.label}
+                  </Link>
+                  .
+                </p>
+              ) : null}
               <div className="flex flex-wrap gap-3">
                 <Link href={`/sell/${slug}`} className="inline-flex items-center justify-center bg-black text-white text-sm font-black px-6 py-3 rounded-full hover:bg-neutral-800 transition-colors">
                   Free {city.name} Valuation →
@@ -778,7 +840,7 @@ export default async function CashOfferCityPage({ params }: Props) {
                     href={`/cash-offer/${c.slug}`}
                     className="inline-flex items-center rounded-full border border-neutral-300 bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-black hover:text-white hover:border-black transition-colors"
                   >
-                    {c.name}
+                    {c.slug === 'nashville-tn' ? 'we buy houses in Nashville' : c.name}
                   </Link>
                 ))}
               </div>

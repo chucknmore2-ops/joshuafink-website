@@ -6,8 +6,8 @@ import ReviewStrip from '@/components/ReviewStrip'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import TennesseeClosingsProof from '@/components/TennesseeClosingsProof'
 import { buildBreadcrumbSchema } from '@/lib/breadcrumbs'
-import { getCashOfferCityLinks, cashOfferHubLastUpdated } from '@/lib/cash-offer-cities'
-import { cashOfferHubFaqs, cashOfferHubUpdatedLabel } from '@/lib/cash-offer-hub'
+import { cashOfferHubLastUpdated } from '@/lib/cash-offer-cities'
+import { cashOfferHubDirectory, cashOfferHubFaqs, cashOfferHubUpdatedLabel, type CashOfferHubCity } from '@/lib/cash-offer-hub'
 import { OFFICE_ADDRESS } from '@/lib/office'
 import { reviewStats } from '@/lib/reviews'
 
@@ -129,8 +129,38 @@ const faqs = [
 const sellerReviewFilter = (r: { transaction: string }) =>
   /\bsold\b|\bsell\b|bought and sold/i.test(r.transaction)
 
+function MiddleTennesseeMap({ cities }: { cities: CashOfferHubCity[] }) {
+  const lats = cities.map((city) => city.latitude)
+  const lngs = cities.map((city) => city.longitude)
+  const minLat = Math.min(...lats)
+  const maxLat = Math.max(...lats)
+  const minLng = Math.min(...lngs)
+  const maxLng = Math.max(...lngs)
+  const pad = 0.12
+
+  return (
+    <nav aria-label="Map of Middle Tennessee cities where we buy houses" className="relative mb-8 h-80 border border-neutral-200 bg-neutral-100">
+      {cities.map((city) => {
+        const x = ((city.longitude - minLng) / (maxLng - minLng || 1)) * (1 - pad * 2) + pad
+        const y = (1 - (city.latitude - minLat) / (maxLat - minLat || 1)) * (1 - pad * 2) + pad
+        return (
+          <QuietLink
+            key={city.slug}
+            href={`/cash-offer/${city.slug}`}
+            className="absolute max-w-[7rem] -translate-x-1/2 -translate-y-1/2 text-center text-[11px] font-semibold leading-tight text-black hover:underline"
+            style={{ left: `${x * 100}%`, top: `${y * 100}%` }}
+          >
+            <span aria-hidden="true" className="mx-auto mb-1 block h-2 w-2 rounded-full bg-black" />
+            {city.name}
+          </QuietLink>
+        )
+      })}
+    </nav>
+  )
+}
+
 export default function CashOfferPage() {
-  const cityLinks = getCashOfferCityLinks()
+  const directory = cashOfferHubDirectory()
   const hubFaqs = cashOfferHubFaqs()
   const schemaFaqs = [...hubFaqs, ...faqs]
   const breadcrumb = buildBreadcrumbSchema([
@@ -385,18 +415,17 @@ export default function CashOfferPage() {
         </div>
       </div>
 
-      {/* Suburb callouts */}
-      <div className="bg-neutral-50 py-16 px-4 sm:px-6 lg:px-8">
+      <div id="we-buy-houses" className="bg-neutral-50 py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="max-w-3xl mb-8">
             <p className="text-xs font-semibold tracking-widest text-neutral-500 uppercase mb-3">
-              Sell in Your Neighborhood
+              We Buy Houses Across Middle Tennessee
             </p>
             <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-black mb-3">
-              Serving every suburb across <span className="font-display italic font-semibold">Middle Tennessee</span>
+              We buy houses across <span className="font-display italic font-semibold">Middle Tennessee</span>
             </h2>
             <p className="text-neutral-600 leading-relaxed">
-              Offers are priced off real local comps — not a national algorithm.{' '}
+              Every city below has its own cash-offer page, priced off local comps.{' '}
               <QuietLink href="/cash-offer/nashville-tn" className="font-semibold text-black underline underline-offset-4">
                 We buy houses in Nashville
               </QuietLink>
@@ -404,23 +433,28 @@ export default function CashOfferPage() {
               <QuietLink href="/cash-offer/columbia-tn" className="font-semibold text-black underline underline-offset-4">
                 sell your house fast in Columbia, TN
               </QuietLink>
-              . Tap your city below for the local page.
+              .
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-            {cityLinks.map(({ slug, name }) => (
+          <MiddleTennesseeMap cities={directory} />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {directory.map((city) => (
               <QuietLink
-                key={slug}
-                href={`/cash-offer/${slug}`}
-                className="rounded-2xl border border-neutral-200 bg-white px-5 py-4 text-sm font-semibold text-black transition-all duration-200 hover:bg-black hover:text-white hover:border-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+                key={city.slug}
+                href={`/cash-offer/${city.slug}`}
+                className="rounded-2xl border border-neutral-200 bg-white px-5 py-4 text-sm text-black transition-all duration-200 hover:border-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
               >
-                {slug === 'nashville-tn'
-                  ? 'We buy houses in Nashville'
-                  : slug === 'columbia-tn'
-                    ? 'Sell your house for cash in Columbia, TN'
-                    : `Sell My House Fast in ${name}, TN`}{' '}
-                <span aria-hidden="true">→</span>
+                <span className="block font-semibold">
+                  {city.slug === 'nashville-tn'
+                    ? 'We buy houses in Nashville'
+                    : city.slug === 'columbia-tn'
+                      ? 'Sell your house for cash in Columbia, TN'
+                      : `Sell My House Fast in ${city.name}, TN`}{' '}
+                  <span aria-hidden="true">→</span>
+                </span>
+                <span className="mt-1 block text-xs font-normal text-neutral-500">{city.blurb}</span>
               </QuietLink>
             ))}
           </div>

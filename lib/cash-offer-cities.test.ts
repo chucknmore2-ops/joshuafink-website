@@ -285,13 +285,16 @@ test('Nashville market note reuses published Redfin, Census, and neighborhood ba
   }
 })
 
-test('Franklin cash-offer still uses the shared template strings (no mass city SEO rollout)', () => {
+test('Franklin cash-offer keeps the shared title and adds a Williamson County section', () => {
   const city = getCashOfferCity('franklin-tn')
   assert.ok(city)
   const seo = cashOfferSeo(city)
   assert.equal(seo.title, 'Sell My House Fast Franklin, TN | Cash Offer in 24 Hours')
   assert.equal(city.seo, undefined)
   assert.equal(city.headline, undefined)
+  assert.equal(city.localHeading, 'We Buy Houses in Franklin')
+  assert.equal(city.countySection?.eyebrow, 'Williamson County')
+  assert.match(city.countySection?.paragraphs.flat().join(' ') ?? '', /historic downtown/i)
   assert.equal(city.situationDetails, undefined)
   assert.equal(city.differentiator, undefined)
 })
@@ -301,10 +304,10 @@ test('Columbia cash-offer SEO targets sell-fast and sell-for-cash queries withou
   assert.ok(city)
   const seo = cashOfferSeo(city)
 
-  assert.equal(seo.title, 'Sell House Fast Columbia TN | Close in 7 Days | Compass')
+  assert.equal(seo.title, 'Sell House Fast Columbia TN | We Buy Houses | Compass')
   assert.equal(seo.absoluteTitle, true)
   assert.match(seo.title, /Sell House Fast Columbia TN/)
-  assert.match(seo.title, /Close in 7 Days/)
+  assert.match(seo.title, /We Buy Houses/)
   assert.match(seo.title, /Compass/)
   assert.doesNotMatch(seo.title, /Parks/)
   assert.ok(seo.title.length <= 60, `title is ${seo.title.length} characters`)
@@ -314,7 +317,7 @@ test('Columbia cash-offer SEO targets sell-fast and sell-for-cash queries withou
   assert.match(seo.description, /615-551-2727/)
   assert.doesNotMatch(seo.description, /Parks/)
   assert.ok(seo.description.length <= 160, `description is ${seo.description.length} characters`)
-  assert.match(seo.ogTitle, /Sell House Fast Columbia TN/)
+  assert.match(seo.ogTitle, /We Buy Houses/)
   assert.match(seo.eyebrow, /Columbia, TN · Cash Offer/)
   assert.ok(seo.keywords.includes('sell house fast Columbia TN'))
   assert.ok(seo.keywords.includes('sell house fast Columbia'))
@@ -451,7 +454,7 @@ test('Columbia seller FAQ and neighborhood note reuse published places and one F
   assert.equal(page.match(/'@type': 'FAQPage'/g)?.length, 1)
   assert.match(page, /const schemaFaqs = \[\.\.\.fairOfferFaqs, \.\.\.sellerFaqs, \.\.\.allFaqs\]/)
   assert.match(page, /id="seller-faq"/)
-  assert.match(page, /id="maury-county"/)
+  assert.match(page, /slug === 'columbia-tn' \? 'maury-county'/)
 
   const spring = getCashOfferCity('spring-hill-tn')
   const thompson = getCashOfferCity('thompsons-station-tn')
@@ -505,9 +508,9 @@ function closingStreet(address: string): string {
 test('Columbia Maury County section reuses published facts, closings, and the one local review', () => {
   const city = getCashOfferCity('columbia-tn')
   assert.ok(city?.countySection)
-  assert.equal(city.contentUpdated, '2026-11-02')
+  assert.equal(city.contentUpdated, '2026-11-04')
   assert.equal(city.countySection.eyebrow, 'Maury County')
-  assert.equal(city.seo?.title, 'Sell House Fast Columbia TN | Close in 7 Days | Compass')
+  assert.equal(city.seo?.title, 'Sell House Fast Columbia TN | We Buy Houses | Compass')
   assert.equal(city.headline?.lead, 'Sell Your House Fast')
   assert.equal(city.headline?.accent, 'in Columbia, TN.')
 
@@ -610,7 +613,7 @@ test('Columbia Maury County section reuses published facts, closings, and the on
   )
 
   const page = readFileSync(new URL('../app/cash-offer/[city]/page.tsx', import.meta.url), 'utf8')
-  const sectionStart = page.indexOf('id="maury-county"')
+  const sectionStart = page.indexOf('city.countySection ? (')
   const sectionEnd = page.indexOf('id="seller-faq"')
   assert.ok(sectionStart > 0 && sectionEnd > sectionStart)
   const section = page.slice(sectionStart, sectionEnd)
@@ -641,4 +644,67 @@ test('cash-offer city canonicals are absolute www URLs and titles can skip the l
   assert.doesNotMatch(page, /canonical: ['"]https:\/\/joshuafink\.com/)
   assert.match(page, /seo\.absoluteTitle \? \{ absolute: seo\.title \} : seo\.title/)
   assert.match(page, /'@type': 'FAQPage'/)
+})
+
+test('page-2 cash-offer fixes keep one FAQPage, the live phone, and published figures only', () => {
+  const page = readFileSync(new URL('../app/cash-offer/[city]/page.tsx', import.meta.url), 'utf8')
+  assert.equal(page.match(/'@type': 'FAQPage'/g)?.length, 1)
+  assert.match(page, /Sell My House Fast'\}\{' '\}/)
+  assert.match(page, /we buy houses in Nashville/)
+  assert.doesNotMatch(page, /615-551-3399|6155513399/)
+
+  const nashville = getCashOfferCity('nashville-tn')
+  assert.ok(nashville?.cashBuyersSection)
+  assert.equal(nashville.cashBuyersSection.heading, 'Cash home buyers in Nashville')
+  assert.ok(nashville.faqs.some((faq) => faq.q === 'Who are the best cash home buyers in Nashville?'))
+  const seo = cashOfferSeo(nashville)
+  assert.match(seo.description, /Cash home buyers in Nashville/)
+  assert.ok(seo.description.length <= 160, seo.description)
+
+  const gallatin = getCashOfferCity('gallatin-tn')
+  assert.equal(cashOfferSeo(gallatin!).title, 'Sell My House Fast Gallatin TN | Cash Home Buyers')
+  assert.equal(gallatin?.countySection?.eyebrow, 'Sumner County')
+  assert.ok((gallatin?.faqs.length ?? 0) >= 4)
+
+  const spring = getCashOfferCity('spring-hill-tn')
+  assert.equal(spring?.headline?.accent, 'in Spring Hill. We Buy Houses.')
+  assert.equal(spring?.listingSplit?.href, '/sell/spring-hill-tn')
+  assert.match(spring?.listingSplit?.note ?? '', /cash path/)
+
+  const columbia = getCashOfferCity('columbia-tn')
+  assert.equal(columbia?.localHeading, 'We Buy Houses in Columbia')
+
+  for (const slug of ['smyrna-tn', 'nolensville-tn', 'brentwood-tn', 'franklin-tn']) {
+    const city = getCashOfferCity(slug)
+    assert.ok(city?.countySection, slug)
+    assert.ok((city?.faqs.length ?? 0) >= 4, slug)
+  }
+
+  const guide = blogPosts.find((post) => post.slug === 'we-buy-houses-nashville-how-it-works')
+  assert.ok(guide)
+  assert.equal(guide.title, "How 'We Buy Houses' Companies Work in Nashville: Red Flags & Fair Offers")
+  assert.match(guide.content, /we buy houses in Nashville/i)
+  assert.match(guide.content, /sell house fast Columbia TN/)
+  const h2s = guide.content.split('\n').filter((line) => line.startsWith('## '))
+  assert.ok(h2s.length >= 5)
+  assert.ok(guide.leadCta?.href === '/cash-offer/nashville-tn')
+
+  const inherited = blogPosts.find((post) => post.slug === 'selling-inherited-house-nashville-tennessee')
+  assert.ok(inherited?.faq && inherited.faq.length >= 2)
+  assert.match(inherited.faq.map((faq) => faq.q).join('\n'), /probate closes in Tennessee/)
+  assert.match(inherited.faq.map((faq) => faq.q).join('\n'), /capital gains/)
+  assert.equal(inherited.leadCta?.links?.[0]?.href, '/cash-offer/nashville-tn')
+  assert.equal(inherited.leadCta?.links?.[1]?.href, '/cash-offer/franklin-tn')
+
+  const footer = readFileSync(new URL('../components/Footer.tsx', import.meta.url), 'utf8')
+  const nav = readFileSync(new URL('../components/Navbar.tsx', import.meta.url), 'utf8')
+  assert.match(footer, /\/cash-offer#we-buy-houses/)
+  assert.match(footer, /We buy houses across Middle Tennessee/)
+  assert.match(nav, /href="\/cash-offer\/nashville-tn"/)
+  assert.match(nav, /We buy houses in Nashville/)
+  assert.doesNotMatch(footer + nav + guide.content + (inherited.content ?? ''), /615-551-3399|6155513399/)
+  assert.doesNotMatch(
+    [nashville, gallatin, spring, columbia].map((city) => JSON.stringify(city)).join('\n'),
+    /Parks/,
+  )
 })
