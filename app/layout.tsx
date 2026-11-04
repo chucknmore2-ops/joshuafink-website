@@ -9,6 +9,7 @@ import Footer from '@/components/Footer'
 import MobileCallCTA from '@/components/MobileCallCTA'
 import AttributionCapture from '@/components/AttributionCapture'
 import { siteJsonLdGraph } from '@/lib/agent-profile'
+import { gtagBootstrap } from '@/lib/ads'
 
 // Self-hosted latin variable fonts. next/font/google fetches
 // fonts.googleapis.com during `next build` and then assumes every file URL
@@ -103,18 +104,19 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
       <head>
-        {/* Google Analytics — only renders when NEXT_PUBLIC_GA_ID matches the
-            GA4 measurement ID pattern (G-XXXXXXXXXX). Hard-fails any malformed
-            or hostile value before it reaches dangerouslySetInnerHTML. */}
+        {/* Google tag. GA4 config when NEXT_PUBLIC_GA_ID is a G- id, and
+            gtag('config', AW-…) when NEXT_PUBLIC_GOOGLE_ADS_ID is set. One
+            gtag.js loader either way. Malformed ids are dropped before
+            dangerouslySetInnerHTML. */}
         {(() => {
-          const gaId = process.env.NEXT_PUBLIC_GA_ID
-          if (!gaId || !/^G-[A-Z0-9]{4,20}$/.test(gaId)) return null
+          const tags = gtagBootstrap(process.env.NEXT_PUBLIC_GA_ID, process.env.NEXT_PUBLIC_GOOGLE_ADS_ID)
+          if (!tags) return null
           return (
             <>
-              <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} />
+              <script async src={tags.src} />
               <script
                 dangerouslySetInnerHTML={{
-                  __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${gaId}');`,
+                  __html: tags.inline,
                 }}
               />
             </>
