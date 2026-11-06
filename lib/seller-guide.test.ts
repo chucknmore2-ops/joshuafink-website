@@ -23,7 +23,10 @@ test('seller guide cites the current GNAR and Redfin sources and live links', ()
   assert.match(SELLER_PAGE, /marketUpdateSlug\(snapshot\.month\)/)
   const snapshot = currentSnapshot(new Date('2026-10-07T16:00:00Z'))
   assert.ok(snapshot)
-  assert.equal(marketUpdateSlug(snapshot.month), 'middle-tennessee-market-update-september-2026')
+  // The guide links with marketUpdateSlug(snapshot.month). Expect that helper's
+  // slug for the checked-in month so the next GNAR snapshot does not need a new literal.
+  const slug = marketUpdateSlug(snapshot.month)
+  assert.equal(blogPosts.find((entry) => entry.slug === slug)?.slug, slug)
   assert.ok(post)
   assert.match(post.content, /middle-tennessee-market-update-september-2026/)
   assert.match(SELLER_PAGE, /\/listings/)
