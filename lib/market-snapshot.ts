@@ -110,6 +110,29 @@ export interface MarketSnapshot {
  */
 export const marketSnapshots: MarketSnapshot[] = [
   {
+    month: '2026-10',
+    medianSalePrice: '$499,990',
+    medianSalePriceNum: 499990,
+    medianYoyChange: '-2.9%', // $499,990 vs October 2025 $515,000
+    avgDaysOnMarket: 61,
+    daysMetric: 'days-on-market', // release: average days on the market
+    closedSales: 2540, // 2016 residential + 365 condominium + 21 multi-family + 138 farms, land, and lots
+    activeListings: 15379, // 10294 residential + 2710 condominium + 136 multi-family + 2239 farms, land, and lots
+    monthsOfInventory: 6.83, // release: "6.83 months of available inventory"
+    condoMedianPrice: '$343,776',
+    condoMedianPriceNum: 343776,
+    pendingSales: 1805,
+    source: 'Greater Nashville REALTORS®',
+    sourceUrl: 'https://www.greaternashvillerealtors.org/news/housing-market-sees-more-inventory-fewer-sales-in-october',
+    reportDate: '2026-11-05',
+    takeaways: [
+      'October 2026 closed 2,540 nine-county sales: 2,016 residential, 365 condominium, 21 multi-family, and 138 farms, land, and lots.',
+      'The residential median was $499,990, -2.9% from $515,000 in October 2025.',
+      'The condominium median was $343,776, compared with $353,700 in October 2025.',
+      'Active inventory was 15,379, with 1,805 pending sales. Days on market was 61. The release reported 6.83 months of available inventory.',
+    ],
+  },
+  {
     month: '2026-09',
     medianSalePrice: '$510,000',
     medianSalePriceNum: 510000,
