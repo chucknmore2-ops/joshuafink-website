@@ -1,13 +1,15 @@
 // Submits the lead forms and click-to-call links the way a visitor does.
-// generate_lead and the Google Ads conversion fire only after a successful
-// submit. Validation errors, HTTP failures, and a missing gtag send nothing.
-// Ads env vars unset → no conversion event.
+// generate_lead and the Google Ads conversion fire only when the server
+// receipt says the lead was accepted. A 200 with a decoy ref, a bare
+// {ok:true}, a validation error, an HTTP failure, or a missing gtag sends
+// nothing. Ads env vars unset → no conversion event.
 
 import { test, before, afterEach } from 'node:test'
 import assert from 'node:assert/strict'
 import React, { act } from 'react'
 import { JSDOM } from 'jsdom'
 import { MISSING_CONTACT_MESSAGE } from './lead-form.ts'
+import { acceptReceipt, decoyReceipt } from './lead-receipt.ts'
 
 // tsx compiles JSX with the classic runtime because tsconfig uses
 // "jsx": "preserve". The app itself is built with Next's automatic runtime.
@@ -97,9 +99,9 @@ function setAds(on: boolean): void {
   process.env.NEXT_PUBLIC_GOOGLE_ADS_LEAD_LABEL = LEAD_LABEL
 }
 
-function mockFetch(result: 'ok' | 'blocked' | 'network'): { count: () => number } {
+function mockFetch(result: 'ok' | 'blocked' | 'network' | 'quarantine' | 'bare'): { count: () => number } {
   let n = 0
-  globalThis.fetch = (async () => {
+  globalThis.fetch = (async (_input: RequestInfo | URL, init?: RequestInit) => {
     n += 1
     if (result === 'network') throw new Error('offline')
     if (result === 'blocked') {
@@ -108,7 +110,18 @@ function mockFetch(result: 'ok' | 'blocked' | 'network'): { count: () => number 
         headers: { 'Content-Type': 'application/json' },
       })
     }
-    return new Response(JSON.stringify({ ok: true }), {
+    if (result === 'bare') {
+      return new Response(JSON.stringify({ ok: true }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+    let ref = decoyReceipt()
+    if (result === 'ok') {
+      const sent = JSON.parse(String(init?.body || '{}')) as { _submit_nonce?: string }
+      if (sent._submit_nonce) ref = await acceptReceipt(sent._submit_nonce)
+    }
+    return new Response(JSON.stringify({ ok: true, ref }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     })
@@ -152,7 +165,7 @@ async function submitForm(): Promise<void> {
   assert.ok(form)
   await act(async () => {
     form.requestSubmit()
-    await new Promise((resolve) => setTimeout(resolve, 30))
+    await new Promise((resolve) => setTimeout(resolve, 80))
   })
 }
 
@@ -259,7 +272,7 @@ for (const lead of [
   'ContactForm',
   'SuburbLeadForm',
 ] as const) {
-  test(`${lead} fires generate_lead and the Ads conversion only on a successful submit`, async () => {
+  test(`${lead} fires generate_lead and the Ads conversion only when the server accepts the lead`, async () => {
     const spec = cases().find((item) => item.name === lead)
     if (!spec) throw new Error(`missing case ${lead}`)
 
@@ -283,6 +296,25 @@ for (const lead of [
     assertConversion(calls, LEAD_LABEL)
     assertNoPii(calls)
     await unmount(root)
+
+    const quarantinedCalls = installGtag()
+    const quarantineFetch = mockFetch('quarantine')
+    const quarantineRoot = await mount(spec.element())
+    spec.fill()
+    await submitForm()
+    assert.equal(quarantineFetch.count(), 1)
+    assert.match(document.body.textContent || '', new RegExp(spec.successText))
+    assertNoLeadOrConversion(quarantinedCalls)
+    await unmount(quarantineRoot)
+
+    const bareCalls = installGtag()
+    mockFetch('bare')
+    const bareRoot = await mount(spec.element())
+    spec.fill()
+    await submitForm()
+    assert.match(document.body.textContent || '', new RegExp(spec.successText))
+    assertNoLeadOrConversion(bareCalls)
+    await unmount(bareRoot)
 
     const blocked = installGtag()
     const blockedFetch = mockFetch('blocked')

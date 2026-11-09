@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useEffect, useRef, FormEvent, ReactNode } from 'react'
-import { trackAdsConversion } from '@/lib/ads'
 import { captureAttribution, getAttribution } from '@/lib/attribution'
 import LeadFormGuards from '@/components/LeadFormGuards'
 import { ensureTurnstileToken } from '@/components/TurnstileWidget'
-import { MISSING_CONTACT_MESSAGE, missingContact, trackLeadFormError } from '@/lib/lead-form'
+import { MISSING_CONTACT_MESSAGE, missingContact, trackAcceptedLead, trackLeadFormError } from '@/lib/lead-form'
+import { SUBMIT_NONCE_FIELD, leadReceiptMatches, newSubmitNonce } from '@/lib/lead-receipt'
 
 type Props = {
   children: ReactNode
@@ -61,6 +61,8 @@ export default function SuburbLeadForm({ children, successTitle, successMessage,
     setErrorMsg('')
 
     try {
+      const nonce = newSubmitNonce()
+      data[SUBMIT_NONCE_FIELD] = nonce
       const token = await ensureTurnstileToken(form)
       if (token) data['cf-turnstile-response'] = token
       const res = await fetch('/api/contact', {
@@ -68,21 +70,16 @@ export default function SuburbLeadForm({ children, successTitle, successMessage,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       })
+      const json = (await res.json().catch(() => ({}))) as { error?: string }
       if (res.ok) {
         setState('success')
         form.reset()
-        // Fire a GA4 conversion event so lead-form submissions are measurable.
-        // No-ops safely when gtag isn't loaded (NEXT_PUBLIC_GA_ID unset).
-        if (typeof window !== 'undefined' && (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag) {
-          ;(window as unknown as { gtag: (...args: unknown[]) => void }).gtag('event', 'generate_lead', {
-            event_category: 'lead_form',
-            event_label: formLabel,
-            value: 1,
-          })
+        // The success screen is the same for a quarantined submit. GA4 and
+        // Ads fire only when the server receipt says this lead was accepted.
+        if (await leadReceiptMatches(nonce, json)) {
+          trackAcceptedLead('lead_form', formLabel)
         }
-        trackAdsConversion(process.env.NEXT_PUBLIC_GOOGLE_ADS_LEAD_LABEL)
       } else {
-        const json = await res.json().catch(() => ({}))
         setErrorMsg(json.error || 'Something went wrong. Please try again.')
         setState('error')
         trackLeadFormError(formLabel, `http_${res.status}`)

@@ -1,4 +1,5 @@
 import { randomUUID } from 'crypto'
+import { isHoneypotField } from './honeypot'
 import { TURNSTILE_FIELD } from './turnstile'
 import {
   currentSheetLeadStore,
@@ -135,7 +136,7 @@ export function buildSheetPayload(
   } = {},
 ): Record<string, string> {
   const clean = Object.fromEntries(
-    Object.entries(lead).filter(([key]) => !key.startsWith('_') && key !== 'website' && key !== TURNSTILE_FIELD && key !== 'secret'),
+    Object.entries(lead).filter(([key]) => !key.startsWith('_') && !isHoneypotField(key) && key !== TURNSTILE_FIELD && key !== 'secret' && key !== 'ref'),
   )
   return {
     ...clean,

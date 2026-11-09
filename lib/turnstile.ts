@@ -41,10 +41,16 @@ const FAIL_OPEN_ERROR_CODES = new Set([
 
 const SITEVERIFY_TIMEOUT_MS = 4_000
 
+export type TurnstileFailReason =
+  | 'turnstile_missing'
+  | 'turnstile_invalid'
+  | 'turnstile_expired'
+  | 'turnstile_failed'
+
 export type TurnstileOutcome =
   | { ok: true; skipped: true }
   | { ok: true; skipped: false; failOpen: boolean }
-  | { ok: false; reason: 'turnstile_failed' }
+  | { ok: false; reason: TurnstileFailReason }
 
 type TurnstileEnv = Record<string, string | undefined>
 
@@ -63,6 +69,14 @@ function failOpen(): TurnstileOutcome {
   return { ok: true, skipped: false, failOpen: true }
 }
 
+function turnstileFailReason(codes: string[]): TurnstileFailReason {
+  const hard = codes.filter((code) => !FAIL_OPEN_ERROR_CODES.has(code))
+  if (hard.includes('missing-input-response')) return 'turnstile_missing'
+  if (hard.includes('timeout-or-duplicate')) return 'turnstile_expired'
+  if (hard.includes('invalid-input-response')) return 'turnstile_invalid'
+  return 'turnstile_failed'
+}
+
 function errorCodes(body: unknown): string[] {
   if (!body || typeof body !== 'object') return []
   const codes = (body as { 'error-codes'?: unknown })['error-codes']
@@ -74,8 +88,11 @@ function errorCodes(body: unknown): string[] {
  * Verify a Turnstile token. Never throws.
  *
  * Skips entirely when either env key is unset. A blank token while configured
- * is `turnstile_failed` and does not call siteverify. A siteverify timeout,
- * network error, non-2xx, or unreadable body fails open.
+ * is `turnstile_missing` and does not call siteverify. Cloudflare
+ * `invalid-input-response` is `turnstile_invalid`. `timeout-or-duplicate`
+ * (expired or already used) is `turnstile_expired`. Any other rejection is
+ * `turnstile_failed`. A siteverify timeout, network error, non-2xx, or
+ * unreadable body fails open.
  */
 export async function verifyTurnstile(options: {
   token: string | undefined
@@ -89,7 +106,7 @@ export async function verifyTurnstile(options: {
   if (!keys) return { ok: true, skipped: true }
 
   const token = (options.token || '').trim()
-  if (!token) return { ok: false, reason: 'turnstile_failed' }
+  if (!token) return { ok: false, reason: 'turnstile_missing' }
 
   const timeoutMs = options.timeoutMs ?? SITEVERIFY_TIMEOUT_MS
   const fetchImpl = options.fetchImpl ?? fetch
@@ -123,7 +140,7 @@ export async function verifyTurnstile(options: {
     if (codes.length > 0 && codes.every((code) => FAIL_OPEN_ERROR_CODES.has(code))) {
       return failOpen()
     }
-    return { ok: false, reason: 'turnstile_failed' }
+    return { ok: false, reason: turnstileFailReason(codes) }
   } catch {
     return failOpen()
   } finally {

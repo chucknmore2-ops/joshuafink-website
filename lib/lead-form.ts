@@ -1,3 +1,5 @@
+import { trackAdsConversion } from './ads'
+
 // Client-side helpers shared by the lead forms (SuburbLeadForm, SellForm,
 // ContactForm, CashOfferForm).
 
@@ -26,6 +28,24 @@ export function missingContact(form: HTMLFormElement): boolean {
  * instead of only as fewer leads. Never pass field values — GA4 event params
  * are not a PII-safe place for names, phones, emails or addresses.
  */
+/**
+ * GA4 `generate_lead` and the Google Ads lead conversion. Call this only
+ * after the server receipt says the lead was accepted into the CRM. A quiet
+ * 200 for a quarantined submit must not count.
+ */
+export function trackAcceptedLead(category: string, label: string): void {
+  if (typeof window === 'undefined') return
+  const gtag = (window as unknown as { gtag?: Gtag }).gtag
+  if (typeof gtag === 'function') {
+    gtag('event', 'generate_lead', {
+      event_category: category,
+      event_label: label,
+      value: 1,
+    })
+  }
+  trackAdsConversion(process.env.NEXT_PUBLIC_GOOGLE_ADS_LEAD_LABEL)
+}
+
 export function trackLeadFormError(formLabel: string, errorType: string): void {
   if (typeof window === 'undefined') return
   const gtag = (window as unknown as { gtag?: Gtag }).gtag

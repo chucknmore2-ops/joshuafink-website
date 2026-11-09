@@ -15,6 +15,7 @@ import { test, after } from 'node:test'
 import assert from 'node:assert/strict'
 import { NextRequest } from 'next/server'
 import { createMemorySheetLeadStore, useSheetLeadStoreForTests } from '@/lib/sheet-lead-queue.ts'
+import { acceptReceipt, leadReceiptMatches, newSubmitNonce } from '@/lib/lead-receipt.ts'
 
 // Env is read at module load in route.ts, so it must be set before the first
 // dynamic import below. The sheet is deliberately the ONLY configured channel:
@@ -678,6 +679,14 @@ async function postContact(body: Record<string, string>, ip: string) {
   return { status: res.status, json }
 }
 
+function assertQuietAck(json: { ok?: boolean; ref?: unknown; accepted?: unknown }) {
+  assert.equal(json.ok, true)
+  assert.equal(json.accepted, undefined)
+  assert.equal(typeof json.ref, 'string')
+  assert.match(String(json.ref), /^[A-Za-z0-9_-]{43}$/)
+  assert.deepEqual(Object.keys(json).sort(), ['ok', 'ref'])
+}
+
 test('the screenshot spam is quarantined: sheet only, success response, attribution kept', async () => {
   const captured = mockDeliveryChannels()
   process.env.RESEND_API_KEY = 're_test_key'
@@ -686,7 +695,7 @@ test('the screenshot spam is quarantined: sheet only, success response, attribut
   try {
     const { status, json } = await postContact(SCREENSHOT_SPAM, '203.0.113.50')
     assert.equal(status, 200)
-    assert.deepEqual(json, { ok: true })
+    assertQuietAck(json)
 
     assert.equal(captured.some((c) => c.url.includes('api.resend.com')), false)
     assert.equal(captured.some((c) => c.url.includes('api.pushover.net')), false)
@@ -735,7 +744,7 @@ test('a honeypot hit is quarantined with no email or Pushover', async () => {
       _loaded: String(Date.now() - 20_000),
     }, '203.0.113.51')
     assert.equal(status, 200)
-    assert.deepEqual(json, { ok: true })
+    assertQuietAck(json)
     assert.equal(captured.some((c) => c.url.includes('api.resend.com')), false)
     assert.equal(captured.some((c) => c.url.includes('api.pushover.net')), false)
     const sheet = JSON.parse(captured.find((c) => c.url.includes('script.google.com'))!.body)
@@ -769,7 +778,7 @@ test('a too-fast submit is quarantined with no email or Pushover', async () => {
       _loaded: String(Date.now() - 400),
     }, '203.0.113.52')
     assert.equal(status, 200)
-    assert.deepEqual(json, { ok: true })
+    assertQuietAck(json)
     assert.equal(captured.some((c) => c.url.includes('api.resend.com')), false)
     assert.equal(captured.some((c) => c.url.includes('api.pushover.net')), false)
     const sheet = JSON.parse(captured.find((c) => c.url.includes('script.google.com'))!.body)
@@ -961,7 +970,7 @@ test('the Oct 2026 bot phone is sheet-only: no New Lead email, no auto-reply, no
       _loaded: String(Date.now() - 45_000),
     }, '198.51.100.70')
     assert.equal(status, 200)
-    assert.deepEqual(json, { ok: true })
+    assertQuietAck(json)
     assert.equal(captured.some((c) => c.url.includes('api.resend.com')), false)
     assert.equal(captured.some((c) => c.url.includes('api.pushover.net')), false)
     const sheet = JSON.parse(captured.find((c) => c.url.includes('script.google.com'))!.body)
@@ -991,7 +1000,7 @@ test('a Test / blank message is sheet-only and does not auto-reply the stranger'
       _loaded: String(Date.now() - 45_000),
     }, '198.51.100.71')
     assert.equal(status, 200)
-    assert.deepEqual(json, { ok: true })
+    assertQuietAck(json)
     assert.equal(captured.some((c) => c.url.includes('api.resend.com')), false)
     assert.equal(captured.some((c) => c.url.includes('api.pushover.net')), false)
     const sheet = JSON.parse(captured.find((c) => c.url.includes('script.google.com'))!.body)
@@ -1143,12 +1152,12 @@ test('a missing Turnstile token is sheet-only and does not call siteverify', asy
       _loaded: String(Date.now() - 45_000),
     }, '198.51.100.80')
     assert.equal(status, 200)
-    assert.deepEqual(json, { ok: true })
+    assertQuietAck(json)
     assert.equal(captured.some((c) => c.url.includes('challenges.cloudflare.com')), false)
     assert.equal(captured.some((c) => c.url.includes('api.resend.com')), false)
     assert.equal(captured.some((c) => c.url.includes('api.pushover.net')), false)
     const sheet = JSON.parse(captured.find((c) => c.url.includes('script.google.com'))!.body)
-    assert.equal(sheet.blocked_reason, 'turnstile_failed')
+    assert.equal(sheet.blocked_reason, 'turnstile_missing')
     assert.equal(sheet.status, 'spam')
     assert.equal('cf-turnstile-response' in sheet, false)
   } finally {
@@ -1233,11 +1242,58 @@ test('a rejected Turnstile token is quiet and does not alert', async () => {
       'cf-turnstile-response': TURNSTILE_DUMMY,
     }, '198.51.100.82')
     assert.equal(status, 200)
-    assert.deepEqual(json, { ok: true })
+    assertQuietAck(json)
     assert.equal(captured.some((c) => c.url.includes('api.resend.com')), false)
     assert.equal(captured.some((c) => c.url.includes('api.pushover.net')), false)
     const sheet = JSON.parse(captured.find((c) => c.url.includes('script.google.com'))!.body)
-    assert.equal(sheet.blocked_reason, 'turnstile_failed')
+    assert.equal(sheet.blocked_reason, 'turnstile_invalid')
+  } finally {
+    disableTurnstile()
+    delete process.env.RESEND_API_KEY
+    delete process.env.PUSHOVER_TOKEN
+    delete process.env.PUSHOVER_USER
+  }
+})
+
+test('an expired Turnstile token is recorded separately from a missing or invalid one', async () => {
+  const captured: { url: string; body: string }[] = []
+  globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input)
+    captured.push({ url, body: String(init?.body ?? '') })
+    if (url.includes('challenges.cloudflare.com')) {
+      return new Response(JSON.stringify({ success: false, 'error-codes': ['timeout-or-duplicate'] }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+    if (url.includes('script.google.com')) {
+      return new Response('{"ok":true}', { status: 200, headers: { 'Content-Type': 'application/json' } })
+    }
+    return new Response('{}', { status: 200 })
+  }) as typeof fetch
+  process.env.RESEND_API_KEY = 're_test_key'
+  process.env.PUSHOVER_TOKEN = 'po_test_token'
+  process.env.PUSHOVER_USER = 'po_test_user'
+  enableTurnstile()
+  try {
+    const nonce = newSubmitNonce()
+    const { status, json } = await postContact({
+      name: 'Jordan Hale',
+      phone: '615-438-2291',
+      email: 'jordan.turnstile.expired@example.com',
+      body: 'We would like a cash offer.',
+      source: 'cash-offer-nashville-tn',
+      property_address: '1842 Maple Street',
+      _loaded: String(Date.now() - 30_000),
+      _submit_nonce: nonce,
+      'cf-turnstile-response': TURNSTILE_DUMMY,
+    }, '198.51.100.86')
+    assert.equal(status, 200)
+    assertQuietAck(json)
+    assert.equal(await leadReceiptMatches(nonce, json), false)
+    assert.equal(captured.some((c) => c.url.includes('api.resend.com')), false)
+    const sheet = JSON.parse(captured.find((c) => c.url.includes('script.google.com'))!.body)
+    assert.equal(sheet.blocked_reason, 'turnstile_expired')
   } finally {
     disableTurnstile()
     delete process.env.RESEND_API_KEY
@@ -1463,7 +1519,7 @@ test('a honeypot whose sheet write fails is queued and still sends no email or P
       _loaded: String(Date.now() - 20_000),
     }, '203.0.113.221')
     assert.equal(status, 200)
-    assert.deepEqual(json, { ok: true })
+    assertQuietAck(json)
     assert.equal(captured.some((c) => c.url.includes('api.resend.com')), false)
     assert.equal(captured.some((c) => c.url.includes('api.pushover.net')), false)
     const counts = await store.counts()
@@ -1483,5 +1539,128 @@ test('a honeypot whose sheet write fails is queued and still sends no email or P
     delete process.env.PUSHOVER_TOKEN
     delete process.env.PUSHOVER_USER
     useSheetLeadStoreForTests(undefined)
+  }
+})
+
+const REVIEW_CLICK = 'EAIaIQobChMItestclick0123456789abcd'
+
+test('a honeypot on a paid lead with a real phone and street address is delivered flagged, and the receipt matches', async () => {
+  const captured = mockDeliveryChannels()
+  process.env.RESEND_API_KEY = 're_test_key'
+  process.env.PUSHOVER_TOKEN = 'po_test_token'
+  process.env.PUSHOVER_USER = 'po_test_user'
+  enableTurnstile()
+  try {
+    const nonce = newSubmitNonce()
+    const forged = await acceptReceipt(nonce)
+    const { status, json } = await postContact({
+      name: 'Jordan Hale',
+      phone: '615-438-2291',
+      email: 'jordan.hale.review@example.com',
+      body: 'We would like a cash offer on our house.',
+      source: 'cash-offer-nashville-tn',
+      property_address: '1842 Maple Street',
+      gclid: REVIEW_CLICK,
+      hp_confirm: 'https://autofill.example',
+      ref: forged,
+      _submit_nonce: nonce,
+      _loaded: String(Date.now() - 30_000),
+      'cf-turnstile-response': TURNSTILE_DUMMY,
+    }, '203.0.113.240')
+    assert.equal(status, 200)
+    assertQuietAck(json)
+    assert.equal(await leadReceiptMatches(nonce, json), true)
+    assert.equal(json.ref, forged)
+    assert.equal(captured.some((c) => c.url.includes('api.resend.com')), true)
+    assert.equal(captured.some((c) => c.url.includes('api.pushover.net')), true)
+    const sheet = JSON.parse(captured.find((c) => c.url.includes('script.google.com'))!.body)
+    assert.equal(sheet.blocked_reason, undefined)
+    assert.equal(sheet.status, undefined)
+    assert.equal(sheet.suspected_spam, 'honeypot_review')
+    assert.equal(sheet.gclid, REVIEW_CLICK)
+    assert.equal(sheet.property_address, '1842 Maple Street')
+    assert.equal('hp_confirm' in sheet, false)
+    assert.equal('website' in sheet, false)
+    assert.equal('ref' in sheet, false)
+    assert.equal('_submit_nonce' in sheet, false)
+    const emails = captured.filter((c) => c.url.includes('api.resend.com')).map((c) => JSON.parse(c.body))
+    const toJosh = emails.find((email) => /New Lead/.test(email.subject))
+    assert.ok(toJosh)
+    assert.equal(String(toJosh.html).includes('hp_confirm'), false)
+    assert.equal(String(toJosh.html).includes('honeypot_review'), true)
+  } finally {
+    disableTurnstile()
+    delete process.env.RESEND_API_KEY
+    delete process.env.PUSHOVER_TOKEN
+    delete process.env.PUSHOVER_USER
+  }
+})
+
+test('the same paid lead is not accepted when the honeypot trips without a turnstile token', async () => {
+  const captured = mockDeliveryChannels()
+  process.env.RESEND_API_KEY = 're_test_key'
+  process.env.PUSHOVER_TOKEN = 'po_test_token'
+  process.env.PUSHOVER_USER = 'po_test_user'
+  enableTurnstile()
+  try {
+    const nonce = newSubmitNonce()
+    const { status, json } = await postContact({
+      name: 'Jordan Hale',
+      phone: '615-438-2291',
+      email: 'jordan.hale.missing-token@example.com',
+      body: 'We would like a cash offer on our house.',
+      source: 'cash-offer-nashville-tn',
+      property_address: '1842 Maple Street',
+      gclid: REVIEW_CLICK,
+      hp_confirm: 'https://autofill.example',
+      _submit_nonce: nonce,
+      _loaded: String(Date.now() - 30_000),
+    }, '203.0.113.241')
+    assert.equal(status, 200)
+    assertQuietAck(json)
+    assert.equal(await leadReceiptMatches(nonce, json), false)
+    assert.equal(captured.some((c) => c.url.includes('api.resend.com')), false)
+    assert.equal(captured.some((c) => c.url.includes('challenges.cloudflare.com')), false)
+    const sheet = JSON.parse(captured.find((c) => c.url.includes('script.google.com'))!.body)
+    assert.equal(sheet.blocked_reason, 'turnstile_missing')
+  } finally {
+    disableTurnstile()
+    delete process.env.RESEND_API_KEY
+    delete process.env.PUSHOVER_TOKEN
+    delete process.env.PUSHOVER_USER
+  }
+})
+
+test('a posted receipt cannot make a plain honeypot look accepted', async () => {
+  const captured = mockDeliveryChannels()
+  process.env.RESEND_API_KEY = 're_test_key'
+  process.env.PUSHOVER_TOKEN = 'po_test_token'
+  process.env.PUSHOVER_USER = 'po_test_user'
+  try {
+    const nonce = newSubmitNonce()
+    const forged = await acceptReceipt(nonce)
+    const { status, json } = await postContact({
+      name: 'Jordan Hale',
+      phone: '615-555-0142',
+      email: 'jordan.hale.forged@example.com',
+      body: 'We want to sell in Brentwood.',
+      source: 'contact-page',
+      website: 'http://spam.example',
+      ref: forged,
+      _submit_nonce: nonce,
+      _loaded: String(Date.now() - 20_000),
+    }, '203.0.113.242')
+    assert.equal(status, 200)
+    assertQuietAck(json)
+    assert.equal(await leadReceiptMatches(nonce, json), false)
+    assert.notEqual(json.ref, forged)
+    assert.equal(captured.some((c) => c.url.includes('api.resend.com')), false)
+    const sheet = JSON.parse(captured.find((c) => c.url.includes('script.google.com'))!.body)
+    assert.equal(sheet.blocked_reason, 'honeypot')
+    assert.equal('ref' in sheet, false)
+  } finally {
+    delete process.env.RESEND_API_KEY
+    delete process.env.PUSHOVER_TOKEN
+    delete process.env.PUSHOVER_USER
   }
 })

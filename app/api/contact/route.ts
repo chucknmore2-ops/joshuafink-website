@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { classifyLead } from '@/lib/classify-lead'
+import { isHoneypotField } from '@/lib/honeypot'
+import { SUBMIT_NONCE_FIELD, receiptForLead } from '@/lib/lead-receipt'
 import { recordEmailSubmission, recordIpSubmission } from '@/lib/lead-rate-limit'
 import { botChallengeMode } from '@/lib/bot-challenge'
 import { TURNSTILE_FIELD, verifyTurnstile } from '@/lib/turnstile'
@@ -307,7 +309,7 @@ async function forwardToJoshua(lead: Record<string, string>, testMode = false): 
     // Empty attribution cells (a direct visitor has no gclid) would add a
     // couple dozen blank rows. Non-empty values still render. Other fields
     // keep their previous "show even if blank" behavior.
-    .filter(([k, v]) => !k.startsWith('_') && k !== 'website' && k !== TURNSTILE_FIELD && !(ATTRIBUTION_FIELD_SET.has(k) && v.trim() === ''))
+    .filter(([k, v]) => !k.startsWith('_') && !isHoneypotField(k) && k !== TURNSTILE_FIELD && k !== 'ref' && k !== 'secret' && !(ATTRIBUTION_FIELD_SET.has(k) && v.trim() === ''))
     .map(([k, v]) => `<tr><td style="padding:6px 12px;color:#666;font-size:13px;width:140px;vertical-align:top;">${escapeHtml(k)}</td><td style="padding:6px 12px;font-size:13px;">${escapeHtml(v)}</td></tr>`)
     .join('')
 
@@ -519,6 +521,15 @@ async function maybeSubscribeListingAlert(
 }
 
 let botChallengeWarned = false
+
+// Accepted and quarantined submits share one JSON shape. `accepted` mints a
+// receipt bound to the browser's nonce; a quarantine mints a lookalike that
+// will not verify. The healthcheck response is separate and has no ref.
+async function visitorOutcome(lead: Record<string, string>, accepted: boolean): Promise<NextResponse> {
+  const ref = await receiptForLead(lead[SUBMIT_NONCE_FIELD] || '', accepted)
+  return NextResponse.json({ ok: true, ref })
+}
+
 function noteBotChallengeConfig(): void {
   const mode = botChallengeMode()
   if (mode === 'off' || botChallengeWarned) return
@@ -583,6 +594,8 @@ export async function POST(req: NextRequest) {
     // Classification still sees the honeypot and the mount timestamp.
     const turnstileToken = (lead[TURNSTILE_FIELD] || '').trim()
     delete lead[TURNSTILE_FIELD]
+    // A posted ref is never an acceptance proof. The server mints its own.
+    delete lead.ref
 
     if (!lead.email) {
       lead.email = ''
@@ -637,14 +650,16 @@ export async function POST(req: NextRequest) {
         remoteIp: ip === 'unknown' ? undefined : ip,
       })
       if (!turnstile.ok) {
-        // Quiet failure: same {ok:true} as the honeypot, so a bot learns
-        // nothing. Sheet only — no email, Pushover, auto-reply, or webhooks.
+        // Quiet failure: same {ok:true, ref} shape as an accepted lead, so a
+        // bot learns nothing from the status or a boolean. Sheet only — no
+        // email, Pushover, auto-reply, or webhooks. The ref is a decoy, so
+        // the browser does not count a GA4 or Ads conversion.
         console.log(`Lead quarantined (turnstile/${turnstile.reason}): ${JSON.stringify(lead)}`)
         const quarantined = await pushToSheet(lead, turnstile.reason)
         if (quarantined.configured && !quarantined.ok) {
           console.error(`Quarantine sheet write failed (${turnstile.reason}): ${quarantined.detail}`)
         }
-        return NextResponse.json({ ok: true })
+        return visitorOutcome(lead, false)
       }
       if (!turnstile.skipped && turnstile.failOpen) {
         console.warn('Turnstile siteverify unavailable; lead continuing to the spam filter')
@@ -666,8 +681,9 @@ export async function POST(req: NextRequest) {
       if (quarantined.configured && !quarantined.ok) {
         console.error(`Quarantine sheet write failed (${verdict.reason}): ${quarantined.detail}`)
       }
-      // Success either way, so the bot cannot tell it was stopped.
-      return NextResponse.json({ ok: true })
+      // Success either way, so the bot cannot tell it was stopped. The ref
+      // does not match the submit nonce, so it is not counted as a conversion.
+      return visitorOutcome(lead, false)
     }
 
     if (verdict.kind === 'suspect') {
@@ -791,9 +807,10 @@ export async function POST(req: NextRequest) {
       console.warn('Contact API: auto-reply to lead did not send')
     }
 
-    return NextResponse.json(
-      isHealthcheck ? { ok: true, channels: joshuaChannels } : { ok: true }
-    )
+    if (isHealthcheck) {
+      return NextResponse.json({ ok: true, channels: joshuaChannels })
+    }
+    return visitorOutcome(lead, true)
   } catch (err) {
     console.error('Contact API error:', err)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })

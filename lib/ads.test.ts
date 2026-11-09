@@ -105,21 +105,25 @@ test('layout renders one gtag.js loader and configs Ads only through that loader
   assert.equal(layout.split('src={tags.src}').length, 2)
 })
 
-test('lead forms fire the Ads conversion only in the successful submit branch, after generate_lead', () => {
+test('lead forms fire the Ads conversion only after the server accepts the lead', () => {
+  const helper = readFileSync('lib/lead-form.ts', 'utf8')
+  const leadAt = helper.indexOf("gtag('event', 'generate_lead'")
+  const adsAt = helper.indexOf('trackAdsConversion(process.env.NEXT_PUBLIC_GOOGLE_ADS_LEAD_LABEL)')
+  assert.ok(leadAt !== -1 && adsAt > leadAt, 'trackAcceptedLead must emit generate_lead before the Ads conversion')
   for (const file of FORMS) {
     const src = readFileSync(file, 'utf8')
+    assert.equal(src.includes('generate_lead'), false, `${file} fires generate_lead directly`)
+    assert.equal(src.includes('trackAdsConversion('), false, `${file} fires an Ads conversion directly`)
     const start = src.indexOf('if (res.ok)')
     const elseAt = src.indexOf('} else {', start)
     assert.ok(start !== -1 && elseAt !== -1, `${file} is missing the res.ok branch`)
     const success = src.slice(start, elseAt)
-    const leadAt = success.indexOf("gtag('event', 'generate_lead'")
-    const adsAt = success.indexOf('trackAdsConversion(process.env.NEXT_PUBLIC_GOOGLE_ADS_LEAD_LABEL)')
-    assert.ok(leadAt !== -1, `${file} success path dropped generate_lead`)
-    assert.ok(adsAt > leadAt, `${file} must call the Ads conversion after generate_lead`)
-    assert.equal(src.split('trackAdsConversion(').length, 2, `${file} should call trackAdsConversion once`)
+    const gate = success.indexOf('leadReceiptMatches(')
+    const track = success.indexOf('trackAcceptedLead(')
+    assert.ok(gate !== -1 && track > gate, `${file} must track only after the receipt matches`)
     const outside = src.slice(0, start) + src.slice(elseAt)
-    assert.equal(outside.includes('trackAdsConversion('), false, `${file} tracks a conversion off the success path`)
-    assert.equal(outside.includes('generate_lead'), false, `${file} tracks generate_lead off the success path`)
+    assert.equal(outside.includes('trackAcceptedLead('), false, `${file} tracks a conversion off the success path`)
+    assert.match(src, /newSubmitNonce\(\)/)
   }
 })
 

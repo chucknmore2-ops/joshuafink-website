@@ -194,7 +194,7 @@ test('a failed write is queued without the webhook secret, and email fields are 
 
 test('buildSheetPayload keeps one received_at and does not keep the honeypot', () => {
   const payload = buildSheetPayload(
-    { name: 'Ada', email: 'ada@example.com', website: 'x', _loaded: '1', subject: 'buy' },
+    { name: 'Ada', email: 'ada@example.com', website: 'x', hp_confirm: 'y', ref: 'forged', _submit_nonce: 'abc', _loaded: '1', subject: 'buy' },
     { leadId: 'fixed', receivedAt: '2026-10-22T00:00:00.000Z', testMode: true },
   )
   assert.equal(payload.lead_id, 'fixed')
@@ -202,6 +202,9 @@ test('buildSheetPayload keeps one received_at and does not keep the honeypot', (
   assert.equal(payload.system_test, 'true')
   assert.equal(payload.lead_type, 'buy')
   assert.equal('website' in payload, false)
+  assert.equal('hp_confirm' in payload, false)
+  assert.equal('ref' in payload, false)
+  assert.equal('_submit_nonce' in payload, false)
   assert.equal('secret' in payload, false)
 })
 

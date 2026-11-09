@@ -27,14 +27,17 @@ gh workflow run morning_healthcheck.yml -f always_email=true
 They should roughly agree. What a mismatch means:
 
 - **GA4 > CRM rows** → a delivery channel is failing. Check the healthcheck's
-  lead-pipeline line, then `HANDOFF.md` Runbook 2.
+  lead-pipeline line, then `HANDOFF.md` Runbook 2. Quarantined submits do not
+  fire `generate_lead`, so a Blocked row should not show up as a conversion.
 - **CRM rows > GA4** → fine; GA4 misses ad-blocked visitors.
 - **A real person in Blocked** → read `blocked_reason`. `honeypot` means the
-  hidden field was filled (often a browser autofill). `too_fast` means the
-  form was sent in under 3 seconds. `turnstile_failed` means the spam check
-  rejected the submission before any alert. Anything else is the spam score
-  (a link plus a scam phrase, for example). Call them if they look real, then
-  say so, because the rule may need changing.
+  hidden field was filled. A paid lead with a real US phone and a street
+  address is delivered to CRM instead, with `suspected_spam` = `honeypot_review`.
+  `too_fast` means the form was sent in under 3 seconds. Turnstile reasons are
+  `turnstile_missing`, `turnstile_invalid`, `turnstile_expired`, or
+  `turnstile_failed`. Anything else is the spam score (a link plus a scam
+  phrase, for example). Call them if they look real, then say so, because the
+  rule may need changing.
 - **Both near zero** → it's a traffic/conversion problem, not a plumbing one.
   The plumbing is proven daily by the System tab's test row (sheet +
   Pushover). The test lead does not email the inbox.
