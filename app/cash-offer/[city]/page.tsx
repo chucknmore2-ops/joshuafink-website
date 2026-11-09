@@ -12,7 +12,10 @@ import {
   getCashOfferCityLinks,
   cashOfferContentLastUpdated,
   cashOfferSeo,
+  faqSchemaAnswerText,
 } from '@/lib/cash-offer-cities'
+import ByTheNumbers from '@/components/ByTheNumbers'
+import { byTheNumbersDataset, getByTheNumbers } from '@/lib/by-the-numbers'
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
 import { linkifyNeighborhoods } from '@/lib/linkify-neighborhoods'
 import { reviews, reviewStats } from '@/lib/reviews'
@@ -127,7 +130,8 @@ export default async function CashOfferCityPage({ params }: Props) {
   // City seller FAQ (Columbia today). Own visible section, same single FAQPage
   // as the fair-offer block and the shared questions — never a second entity.
   const sellerFaqs = city.sellerFaqs ?? []
-  const schemaFaqs = [...fairOfferFaqs, ...sellerFaqs, ...allFaqs]
+  const byTheNumbers = slug === 'nashville-tn' ? getByTheNumbers('cash-offer-nashville-tn') : null
+  const schemaFaqs = [...fairOfferFaqs, ...sellerFaqs, ...allFaqs, ...(byTheNumbers?.answers ?? [])]
   const guides = getNeighborhoodsByCitySlug(slug)
   // Columbia, Spring Hill, and Mount Pleasant rows from the same Tennessee
   // closing file as /sold. Other cities keep the Nashville proof block only.
@@ -202,11 +206,17 @@ export default async function CashOfferCityPage({ params }: Props) {
             mainEntity: schemaFaqs.map((f) => ({
               '@type': 'Question',
               name: f.q,
-              acceptedAnswer: { '@type': 'Answer', text: f.a },
+              acceptedAnswer: { '@type': 'Answer', text: faqSchemaAnswerText(f) },
             })),
           }),
         }}
       />
+      {byTheNumbers ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(byTheNumbersDataset(byTheNumbers)) }}
+        />
+      ) : null}
 
       {/* RealEstateAgent Schema — surfaces star-rating rich result */}
       <script
@@ -396,6 +406,8 @@ export default async function CashOfferCityPage({ params }: Props) {
           ) : null}
         </div>
       </div>
+
+      {byTheNumbers ? <ByTheNumbers section={byTheNumbers} /> : null}
 
       {city.cashBuyersSection ? (
         <section

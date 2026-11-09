@@ -1,5 +1,10 @@
-import { getSuburb } from './suburbs'
-import { marketUpdateSlug } from './market-snapshot'
+import {
+  formatStatsDate,
+  getSuburb,
+  marketStatsSource,
+  suburbStatsAsOf,
+} from './suburbs'
+import { latestSnapshot, marketUpdateSlug, monthLabel } from './market-snapshot'
 
 /**
  * Per-city cash-offer landing content for /cash-offer/[city].
@@ -120,6 +125,57 @@ export type CashOfferFaq = {
   a: string
   /** Optional supporting link rendered under the visible answer. */
   link?: CashOfferRelatedLink
+}
+
+/**
+ * FAQ JSON-LD text. When the visible answer has a supporting link, the
+ * schema answer includes that URL so the structured data points at the same
+ * page the reader sees.
+ */
+export function faqSchemaAnswerText(faq: {
+  a: string
+  link?: { href: string; label: string }
+}): string {
+  if (!faq.link) return faq.a
+  const href = faq.link.href.startsWith('http')
+    ? faq.link.href
+    : `https://www.joshuafink.com${faq.link.href}`
+  return `${faq.a} ${faq.link.label}: ${href}`
+}
+
+/** Current GNAR market-update link. Rolls when lib/market-snapshot.ts gains a month. */
+export function currentMarketUpdatePointer(): { href: string; label: string; clause: string } {
+  const snap = latestSnapshot()
+  if (!snap) {
+    return {
+      href: '/market',
+      label: 'Middle Tennessee market update',
+      clause: 'For the regional trend, see the Middle Tennessee market update.',
+    }
+  }
+  const label = `${monthLabel(snap.month)} Middle Tennessee market update`
+  return {
+    href: `/blog/${marketUpdateSlug(snap.month)}`,
+    label,
+    clause: `For the regional trend, see the ${label}, built from ${snap.source} figures.`,
+  }
+}
+
+function nashvilleMedianLead(): string {
+  const suburb = getSuburb('nashville-tn')
+  if (!suburb) return "Nashville's citywide median"
+  return `Nashville's ${suburb.medianPrice} median (${marketStatsSource}, as of ${formatStatsDate(suburbStatsAsOf(suburb))})`
+}
+
+function nashvilleMedianFaq(): CashOfferFaq {
+  const update = currentMarketUpdatePointer()
+  return {
+    q: "Does Nashville's median home price tell me what my cash offer will be?",
+    a:
+      `No. ${nashvilleMedianLead()} is a citywide midpoint that blends updated East Nashville bungalows with dated homes in Madison, Antioch, and Donelson. ` +
+      `A fair offer on your house should be tied to comps near your address and to your home's condition, not to the citywide number. ${update.clause}`,
+    link: { href: update.href, label: update.label },
+  }
 }
 
 export type CashOfferInline = string | CashOfferRelatedLink
@@ -508,11 +564,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
         q: 'What is a fair cash offer for a house in Nashville?',
         a: "A fair cash offer starts from your home's after-repair value — what it would sell for fixed up, based on recent Davidson County comps — and accounts for the repairs it actually needs. Investor cash offers typically land at 70–85% of after-repair value; where yours falls inside that range depends on condition, not on a formula. The less work the house needs, the closer the offer should sit to the top of the range.",
       },
-      {
-        q: "Does Nashville's median home price tell me what my cash offer will be?",
-        a: "No. Nashville's $475,538 median (Redfin, as of October 5, 2026) is a citywide midpoint that blends updated East Nashville bungalows with dated homes in Madison, Antioch, and Donelson. A fair offer on your house should be tied to comps near your address and to your home's condition, not to the citywide number. For the regional trend, see the September 2026 Middle Tennessee market update, built from Greater Nashville REALTORS® figures.",
-        link: { href: `/blog/${marketUpdateSlug('2026-09')}`, label: 'September 2026 Middle Tennessee market update' },
-      },
+      nashvilleMedianFaq(),
       {
         q: 'How can I tell if a Nashville cash offer is fair?',
         a: "Ask for the math. A fair offer shows the after-repair value, the comps behind it, and the repair estimate, so you can check each piece yourself. Joshua puts that in writing next to a traditional-listing estimate, because he also lists homes with Compass. If an offer comes with no comps and no repair breakdown, compare it against a second opinion before you sign — you're never obligated to accept.",

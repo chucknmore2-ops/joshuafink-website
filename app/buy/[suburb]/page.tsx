@@ -16,7 +16,9 @@ import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import GnarRegionalSnapshot from '@/components/GnarRegionalSnapshot'
 import FranklinWhoToHire from '@/components/FranklinWhoToHire'
+import ByTheNumbers from '@/components/ByTheNumbers'
 import { showsGnarRegionalSnapshot } from '@/lib/market-snapshot'
+import { byTheNumbersDataset, byTheNumbersForBuySlug } from '@/lib/by-the-numbers'
 import { cashOfferPath } from '@/lib/cash-offer-cities'
 import { closingGroupsForSuburb } from '@/lib/closings'
 
@@ -175,6 +177,7 @@ export default async function BuySuburbPage({ params }: Props) {
     a: `Joshua Fink is an Affiliate Broker with Compass Real Estate who personally sells 40+ homes a year in Middle Tennessee, including ${suburb.name}. Licensed since 2008, he knows ${suburb.name}'s neighborhoods, school zones, and pricing in detail, and gives buyers early access to Compass Coming Soon and off-market listings. Call 615-551-2727 or visit joshuafink.com to start your ${suburb.name} home search.`,
   }
   const faqs = [agentFaq, ...(suburb.buyerFaqs || suburb.faqs)]
+  const byTheNumbers = byTheNumbersForBuySlug(slug)
   const description = suburb.buyerDescription || suburb.description
   const cityGuides = getNeighborhoodsByCitySlug(slug)
   // Live homes Joshua has listed in this suburb (matched via city → slug). Only
@@ -214,7 +217,7 @@ export default async function BuySuburbPage({ params }: Props) {
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: faqs.map((faq) => ({
+    mainEntity: [...faqs, ...(byTheNumbers?.answers ?? [])].map((faq) => ({
       '@type': 'Question',
       name: faq.q,
       acceptedAnswer: {
@@ -234,6 +237,12 @@ export default async function BuySuburbPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
+      {byTheNumbers ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(byTheNumbersDataset(byTheNumbers)) }}
+        />
+      ) : null}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -505,6 +514,8 @@ export default async function BuySuburbPage({ params }: Props) {
             </div>
           </div>
         </div>
+
+        {byTheNumbers ? <ByTheNumbers section={byTheNumbers} /> : null}
 
         {showsGnarRegionalSnapshot(slug) && (
           <GnarRegionalSnapshot cityName={suburb.name} />
