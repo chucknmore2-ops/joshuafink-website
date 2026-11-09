@@ -2,14 +2,18 @@
 
 import { useEffect, useState } from 'react'
 import TurnstileWidget from '@/components/TurnstileWidget'
+import { HONEYPOT_FIELD } from '@/lib/honeypot'
 
 /**
  * Shared spam traps for every lead form.
  *
  * The honeypot is a text field (not type=hidden — dumb bots skip those)
  * parked off-screen, out of tab order, and hidden from assistive tech.
- * Autocomplete is off so a password manager is less likely to fill it.
- * Humans never see it. A non-empty value is quarantined server-side.
+ * The name is not an autofill token: `website` / `url` / `email` get filled
+ * from a contact card even with autocomplete=off. Autocomplete is off, and
+ * the password-manager ignore flags are set, so a manager does not treat it
+ * as a login. Humans never see it. A non-empty value is quarantined
+ * server-side unless the submission has strong paid-lead signals.
  *
  * `_loaded` is the millisecond timestamp of when this form mounted in the
  * browser. It is set in an effect, never during render: these pages are
@@ -42,7 +46,7 @@ export default function LeadFormGuards() {
       >
         <input
           type="text"
-          name="website"
+          name={HONEYPOT_FIELD}
           tabIndex={-1}
           autoComplete="off"
           autoCapitalize="off"
@@ -52,6 +56,9 @@ export default function LeadFormGuards() {
           defaultValue=""
           data-1p-ignore="true"
           data-lpignore="true"
+          data-bwignore="true"
+          data-protonpass-ignore="true"
+          data-form-type="other"
         />
       </div>
       <input type="hidden" name="_loaded" value={startedAt} autoComplete="off" />

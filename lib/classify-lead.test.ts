@@ -13,6 +13,10 @@
 // with a blank or "test" message, or more than 3 submissions in the window
 // from one IP or one email. Those rows are kept on the sheet and do not
 // email or Pushover. A 10-digit US number is never a +7 hit.
+//
+// A honeypot hit is still a bot, except an otherwise clean lead that has a
+// paid click id, a real US phone (not the 555 exchange), a street address,
+// and a normal form timestamp. That one is delivered as honeypot_review.
 
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
@@ -454,4 +458,125 @@ test('a fake phone wins over the test-name rule and over the rate cap', () => {
   )
   assert.equal(v.kind, 'spam')
   assert.equal(v.reason, 'fake_phone')
+})
+
+// ---------------------------------------------------------------------------
+// Honeypot autofill. A paid lead with a real phone and a street address is
+// delivered for review. Everything weaker stays on the Blocked tab.
+// ---------------------------------------------------------------------------
+
+const PAID_CLICK = 'EAIaIQobChMItestclick0123456789abcd'
+
+function paidPerson(over: Record<string, string> = {}) {
+  return lead({
+    name: 'Jordan Hale',
+    phone: '615-438-2291',
+    email: 'jordan.hale@example.com',
+    source: 'cash-offer-nashville-tn',
+    property_address: '1842 Maple Street',
+    body: 'We would like a cash offer on our house.',
+    gclid: PAID_CLICK,
+    ...over,
+  })
+}
+
+test('the renamed honeypot still quarantines a lead with no paid-person signals', () => {
+  const v = classifyLead(lead({ hp_confirm: 'https://autofill.example' }))
+  assert.equal(v.kind, 'bot')
+  assert.equal(v.reason, 'honeypot')
+})
+
+test('a paid lead with a real phone and a street address is reviewed, not blocked, when the honeypot trips', () => {
+  for (const field of ['hp_confirm', 'website'] as const) {
+    const v = classifyLead(paidPerson({ [field]: 'https://autofill.example' }))
+    assert.equal(v.kind, 'suspect', field)
+    assert.equal(v.kind === 'suspect' ? v.reason : '', 'honeypot_review', field)
+  }
+})
+
+test('the same paid lead without a honeypot value is clean', () => {
+  assert.equal(classifyLead(paidPerson()).kind, 'clean')
+  assert.equal(classifyLead(paidPerson({ hp_confirm: '   ', website: '' })).kind, 'clean')
+})
+
+test('a short or non-click-id does not rescue a honeypot hit', () => {
+  for (const gclid of ['real-click', '1', 'https://evil.example/gclid', '']) {
+    const v = classifyLead(paidPerson({ gclid, hp_confirm: 'filled' }))
+    assert.equal(v.kind, 'bot', gclid)
+    assert.equal(v.kind === 'bot' ? v.reason : '', 'honeypot', gclid)
+  }
+  const cpc = classifyLead(paidPerson({
+    gclid: '',
+    utm_medium: 'cpc',
+    utm_source: 'google',
+    hp_confirm: 'filled',
+  }))
+  assert.equal(cpc.kind, 'bot')
+})
+
+test('gbraid, wbraid, fbclid, and last-touch click ids count as paid attribution', () => {
+  const token = 'IwAR3testclickid0123456789abcd'
+  for (const field of ['gbraid', 'wbraid', 'fbclid', 'last_gclid', 'last_gbraid', 'last_wbraid', 'last_fbclid']) {
+    const v = classifyLead(paidPerson({ gclid: '', [field]: token, hp_confirm: 'filled' }))
+    assert.equal(v.kind, 'suspect', field)
+    assert.equal(v.kind === 'suspect' ? v.reason : '', 'honeypot_review', field)
+  }
+})
+
+test('a 555 number, a non-US number, or a city-only address does not rescue a honeypot hit', () => {
+  const fictional = classifyLead(paidPerson({ phone: '615-555-0142', hp_confirm: 'filled' }))
+  assert.equal(fictional.kind, 'bot')
+
+  const abroad = classifyLead(paidPerson({ phone: '85211936711', hp_confirm: 'filled' }))
+  assert.equal(abroad.kind, 'bot')
+
+  const city = classifyLead(paidPerson({ property_address: 'Nashville', hp_confirm: 'filled' }))
+  assert.equal(city.kind, 'bot')
+
+  const url = classifyLead(paidPerson({
+    property_address: 'https://www.redfin.com/TN/Nashville/456-Oak-St/home/98765',
+    hp_confirm: 'filled',
+  }))
+  assert.equal(url.kind, 'bot')
+})
+
+test('a paid honeypot lead with no form timestamp or a too-fast submit stays blocked', () => {
+  const missing = classifyLead(paidPerson({ _loaded: '', hp_confirm: 'filled' }))
+  assert.equal(missing.kind, 'bot')
+  assert.equal(missing.kind === 'bot' ? missing.reason : '', 'honeypot')
+
+  const now = 1_800_000_000_000
+  const fast = classifyLead(
+    paidPerson({ _loaded: String(now - 500), hp_confirm: 'filled' }),
+    { now },
+  )
+  assert.equal(fast.kind, 'bot')
+  assert.equal(fast.kind === 'bot' ? fast.reason : '', 'honeypot')
+})
+
+test('a second spam signal keeps a paid honeypot lead off the CRM', () => {
+  const disposable = classifyLead(paidPerson({
+    email: 'jordan@mailinator.com',
+    hp_confirm: 'filled',
+  }))
+  assert.equal(disposable.kind, 'bot')
+  assert.equal(disposable.kind === 'bot' ? disposable.reason : '', 'honeypot+disposable_email')
+
+  const fake = classifyLead(paidPerson({ phone: '+79990000000', hp_confirm: 'filled' }))
+  assert.equal(fake.kind, 'bot')
+  assert.equal(fake.kind === 'bot' ? fake.reason : '', 'honeypot')
+
+  const capped = classifyLead(paidPerson({ hp_confirm: 'filled' }), { recentSubmissions: 4 })
+  assert.equal(capped.kind, 'spam')
+  assert.equal(capped.kind === 'spam' ? capped.reason : '', 'ip_rate_limit')
+})
+
+test('an E.164 US number and a suffixed street still qualify for honeypot review', () => {
+  const v = classifyLead(paidPerson({
+    phone: '+1 (615) 438-2291',
+    property_address: '410 Oak Ave',
+    hp_confirm: 'https://profiles.example',
+  }))
+  assert.equal(v.kind, 'suspect')
+  assert.equal(v.kind === 'suspect' ? v.reason : '', 'honeypot_review')
 })

@@ -12,12 +12,16 @@ sent in under 3 seconds, a high content score (the Russian "перевод /
 phone (`fake_phone`: country code +7, `79990000000`, or 10 zeros in a row),
 a name that is exactly "test" with a blank or "test" message
 (`test_submission`), more than 3 submissions in 10 minutes from one IP
-or one email (`ip_rate_limit`, `email_rate_limit`), and a missing or
-rejected Cloudflare Turnstile token (`turnstile_failed`, only once both
-Turnstile env vars are set). A single weak
+or one email (`ip_rate_limit`, `email_rate_limit`), and a Turnstile
+failure once both Turnstile env vars are set (`turnstile_missing` when the
+browser sent no token, `turnstile_invalid` when Cloudflare rejected it,
+`turnstile_expired` when the token was spent or expired, `turnstile_failed`
+for anything else). A single weak
 signal does not land here: those leads still go to **CRM**, tagged in
-`suspected_spam`, and still email and Pushover. The honeypot can misfire on
-a real person whose browser autofills the hidden field, and a fast human can
+`suspected_spam`, and still email and Pushover. A honeypot hit normally
+lands here. If it also has a paid click id, a real US phone, and a street
+address, and nothing else looks like spam, it is delivered to **CRM** with
+`suspected_spam` set to `honeypot_review` instead. A fast human can still
 trip `too_fast`, so skim the Blocked tab for anything that looks like a
 person.
 
@@ -373,6 +377,7 @@ do not type them in. A tab that already has `traffic_source` through
 The **Blocked** tab has the same columns except `status` is replaced by
 `blocked_reason` (e.g. `honeypot`, `too_fast`, `fake_phone`,
 `test_submission`, `ip_rate_limit`, `email_rate_limit`,
+`turnstile_missing`, `turnstile_invalid`, `turnstile_expired`,
 `turnstile_failed`, or `non_latin+spam_phrase+spam_url`). Nothing else fires for these rows — no
 Pushover or email, and no auto-reply to the address on the row — so the tab
 is skim-at-your-leisure. The site sends

@@ -72,11 +72,18 @@ form (SuburbLeadForm / SellForm / ContactForm / CashOfferForm)
   → invalid:                  400, the visitor can fix it (Turnstile token not spent)
   → Turnstile, only when BOTH NEXT_PUBLIC_TURNSTILE_SITE_KEY and
     TURNSTILE_SECRET_KEY are set (healthcheck secret skips this):
-       missing or rejected token → Blocked tab, reason turnstile_failed,
-                                   200 {ok:true}, no email, no Pushover
+       missing token → Blocked, turnstile_missing (siteverify not called)
+       invalid token → Blocked, turnstile_invalid
+       expired or spent token → Blocked, turnstile_expired
+       any other rejection → Blocked, turnstile_failed
+       all four: 200 {ok:true, ref} with a decoy ref, no email, no Pushover,
+       and the browser does not fire GA4 or Ads
        siteverify timeout/network/Cloudflare error → fail open, continue
-  → bot or spam:              Blocked tab only, then 200 {ok:true}
-                              (no email, no Pushover, no webhooks)
+  → bot or spam:              Blocked tab only, then 200 {ok:true, ref}
+                              (decoy ref; no email, no Pushover, no webhooks,
+                              no GA4 or Ads conversion)
+  → honeypot plus a paid click id, a real US phone, and a street address,
+    with nothing else suspicious: CRM, suspected_spam=honeypot_review
   → clean or suspect:
        email (Resend) · Pushover · Google Sheet CRM · ClickUp (off)
        best-effort webhooks:  n8n · FlipIntel cash-offer · buyer-lead
@@ -122,7 +129,7 @@ form (SuburbLeadForm / SellForm / ContactForm / CashOfferForm)
 - **Pushover** — `PUSHOVER_TOKEN` / `PUSHOVER_USER`. This is both the new-lead
   phone alert and the emergency last resort. See landmine #2.
 - **Google Sheet** — Apps Script web app at `GOOGLE_SHEET_WEBHOOK_URL`. Tabs:
-  **CRM** (real leads), **Blocked** (honeypot, too-fast, fake phone, test submissions, rate limit, scored spam, and `turnstile_failed`), **System** (daily test lead).
+  **CRM** (real leads, including `honeypot_review`), **Blocked** (honeypot, too-fast, fake phone, test submissions, rate limit, scored spam, and `turnstile_missing` / `turnstile_invalid` / `turnstile_expired` / `turnstile_failed`), **System** (daily test lead).
   The script answers HTTP 200 for everything, so the route believes the *body*,
   not the status. See `docs/google-sheet-lead-log.md`.
 - **ClickUp** — OFF. Skipped unless `CLICKUP_LEADS_ENABLED=true` *and*

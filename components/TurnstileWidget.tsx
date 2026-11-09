@@ -1,6 +1,12 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import {
+  isSlowTurnstileClient,
+  turnstileTokenStale,
+  turnstileWaitMs,
+  waitForTurnstileToken,
+} from '@/lib/turnstile-token'
 
 // Invisible / managed Turnstile. The widget type (Invisible vs Managed) is
 // chosen in the Cloudflare dashboard with the sitekey. `appearance:
@@ -10,13 +16,17 @@ import { useEffect, useRef } from 'react'
 // The script is injected only after this component mounts, and only once a
 // form is near the viewport. It is not in the root layout. No sitekey means
 // the component renders nothing and no request is made.
+//
+// Tokens expire after 300 seconds. On submit, a missing, expired, or aging
+// token is reset and the form waits for a fresh one (longer on a phone)
+// before posting. A fresh token is reused so a normal submit does not pause.
 
 const SCRIPT_SRC = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
 const TOKEN_FIELD = 'cf-turnstile-response'
-const TOKEN_WAIT_MS = 4_000
 
-// Keys are configured in Vercel as of 2026-10-19.
-const SITE_KEY = (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '').trim()
+function siteKey(): string {
+  return (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '').trim()
+}
 
 type TurnstileRenderOptions = {
   sitekey: string
@@ -29,12 +39,16 @@ type TurnstileRenderOptions = {
   'response-field-name'?: string
   callback?: (token: string) => void
   'error-callback'?: () => void
+  'expired-callback'?: () => void
 }
 
 interface TurnstileApi {
   ready: (callback: () => void) => void
   render: (container: HTMLElement, options: TurnstileRenderOptions) => string
   remove: (widgetId: string) => void
+  reset?: (widgetId: string) => void
+  execute?: (widgetId: string) => void
+  isExpired?: (widgetId: string) => boolean
 }
 
 declare global {
@@ -49,6 +63,8 @@ type Slot = {
   widgetId: string | null
   renderPromise: Promise<void> | null
   cancelled: boolean
+  token: string
+  tokenAt: number | null
 }
 
 const slots = new Set<Slot>()
@@ -111,12 +127,25 @@ function renderSlot(slot: Slot): Promise<void> {
       tabindex: -1,
       'response-field': true,
       'response-field-name': TOKEN_FIELD,
+      callback: (token: string) => {
+        if (slot.cancelled) return
+        slot.token = token
+        slot.tokenAt = Date.now()
+      },
+      'expired-callback': () => {
+        slot.token = ''
+        slot.tokenAt = null
+      },
+      'error-callback': () => {
+        slot.token = ''
+        slot.tokenAt = null
+      },
     })
   })()
   return slot.renderPromise
 }
 
-function readToken(form: HTMLFormElement): string {
+function readFieldToken(form: HTMLFormElement): string {
   const fields = form.querySelectorAll<HTMLInputElement>(`input[name="${TOKEN_FIELD}"]`)
   for (let i = 0; i < fields.length; i++) {
     const value = fields[i].value.trim()
@@ -125,17 +154,63 @@ function readToken(form: HTMLFormElement): string {
   return ''
 }
 
+function clearFieldToken(form: HTMLFormElement): void {
+  const fields = form.querySelectorAll<HTMLInputElement>(`input[name="${TOKEN_FIELD}"]`)
+  for (let i = 0; i < fields.length; i++) fields[i].value = ''
+}
+
+function slotExpired(slot: Slot | undefined): boolean {
+  if (!slot?.widgetId) return false
+  const api = window.turnstile
+  if (!api?.isExpired) return false
+  try {
+    return api.isExpired(slot.widgetId) === true
+  } catch {
+    return false
+  }
+}
+
+function refreshSlot(form: HTMLFormElement, slot: Slot | undefined): void {
+  clearFieldToken(form)
+  if (!slot) return
+  slot.token = ''
+  slot.tokenAt = null
+  const api = window.turnstile
+  if (!slot.widgetId || !api) return
+  if (typeof api.reset === 'function') {
+    api.reset(slot.widgetId)
+    return
+  }
+  if (typeof api.execute === 'function') api.execute(slot.widgetId)
+}
+
+function mediaMatches(query: string): boolean {
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false
+  try {
+    return window.matchMedia(query).matches
+  } catch {
+    return false
+  }
+}
+
+function slowClient(): boolean {
+  return isSlowTurnstileClient({
+    coarsePointer: mediaMatches('(pointer: coarse)'),
+    narrowViewport: mediaMatches('(max-width: 768px)'),
+    userAgent: typeof navigator === 'undefined' ? '' : navigator.userAgent || '',
+  })
+}
+
 /**
  * Resolve the Turnstile token for this form before the POST body is built.
  * Returns '' when the sitekey is unset, the script fails, or the widget does
- * not answer in time. The server treats an empty token as a skip when the
- * keys are unset, and as a quiet failure when they are set.
+ * not answer in time. A missing or likely-expired token is reset first.
+ * Phones wait longer than desktops before the token is treated as missing.
+ * The server treats an empty token as a skip when the keys are unset, and as
+ * turnstile_missing when they are set.
  */
 export async function ensureTurnstileToken(form: HTMLFormElement): Promise<string> {
-  if (!SITE_KEY) return ''
-  const existing = readToken(form)
-  if (existing) return existing
-
+  if (!siteKey()) return ''
   const slot = Array.from(slots).find((candidate) => form.contains(candidate.container))
   if (slot) {
     try {
@@ -145,13 +220,21 @@ export async function ensureTurnstileToken(form: HTMLFormElement): Promise<strin
     }
   }
 
-  const deadline = Date.now() + TOKEN_WAIT_MS
-  while (Date.now() < deadline) {
-    const token = readToken(form)
-    if (token) return token
-    await new Promise((resolve) => setTimeout(resolve, 50))
-  }
-  return readToken(form)
+  const readToken = () => (slot?.token || readFieldToken(form)).trim()
+  const stale = (token: string) => turnstileTokenStale({
+    token,
+    issuedAt: slot?.tokenAt ?? null,
+    now: Date.now(),
+    expired: slotExpired(slot),
+  })
+
+  return waitForTurnstileToken({
+    readToken,
+    stale,
+    refresh: () => refreshSlot(form, slot),
+    shouldRefresh: stale(readToken()),
+    waitMs: turnstileWaitMs(slowClient()),
+  })
 }
 
 export default function TurnstileWidget() {
@@ -159,14 +242,17 @@ export default function TurnstileWidget() {
 
   useEffect(() => {
     const container = containerRef.current
-    if (!container || !SITE_KEY) return
+    const key = siteKey()
+    if (!container || !key) return
     const form = container.closest('form')
     const slot: Slot = {
       container,
-      siteKey: SITE_KEY,
+      siteKey: key,
       widgetId: null,
       renderPromise: null,
       cancelled: false,
+      token: '',
+      tokenAt: null,
     }
     slots.add(slot)
 
@@ -208,7 +294,7 @@ export default function TurnstileWidget() {
     }
   }, [])
 
-  if (!SITE_KEY) return null
+  if (!siteKey()) return null
 
   return (
     <div

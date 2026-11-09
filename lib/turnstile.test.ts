@@ -69,7 +69,7 @@ test('a documented always-fail secret rejects the token', async () => {
       'error-codes': ['invalid-input-response'],
     })) as typeof fetch,
   })
-  assert.deepEqual(outcome, { ok: false, reason: 'turnstile_failed' })
+  assert.deepEqual(outcome, { ok: false, reason: 'turnstile_invalid' })
 })
 
 test('a documented spent-token secret is a hard failure', async () => {
@@ -81,7 +81,7 @@ test('a documented spent-token secret is a hard failure', async () => {
       'error-codes': ['timeout-or-duplicate'],
     })) as typeof fetch,
   })
-  assert.deepEqual(outcome, { ok: false, reason: 'turnstile_failed' })
+  assert.deepEqual(outcome, { ok: false, reason: 'turnstile_expired' })
 })
 
 test('a missing token fails closed and does not call siteverify', async () => {
@@ -95,6 +95,18 @@ test('a missing token fails closed and does not call siteverify', async () => {
     }) as typeof fetch,
   })
   assert.equal(calls, 0)
+  assert.deepEqual(outcome, { ok: false, reason: 'turnstile_missing' })
+})
+
+test('an unrecognized rejection is turnstile_failed and is not fail-open', async () => {
+  const outcome = await verifyTurnstile({
+    token: TURNSTILE_DUMMY_TOKEN,
+    env: configuredEnv(TURNSTILE_TEST_SECRET_FAIL),
+    fetchImpl: (async () => jsonResponse({
+      success: false,
+      'error-codes': ['something-new'],
+    })) as typeof fetch,
+  })
   assert.deepEqual(outcome, { ok: false, reason: 'turnstile_failed' })
 })
 

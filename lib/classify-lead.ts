@@ -6,6 +6,8 @@
 // pinning the specific messages that were lost. See classify-lead.test.ts.
 // ---------------------------------------------------------------------------
 
+import { honeypotFilled } from './honeypot'
+
 const DISPOSABLE_DOMAINS = new Set([
   'mailinator.com', 'guerrillamail.com', 'tempmail.com', 'throwaway.email',
   'yopmail.com', 'sharklasers.com', 'guerrillamailblock.com', 'grr.la',
@@ -36,7 +38,8 @@ const TRUSTED_LINK_HOSTS = [
 
 // A lead gets exactly one of five verdicts.
 //
-//   bot     → honeypot filled. Quarantine: sheet only, fake success.
+//   bot     → honeypot filled, without the paid-person exception below.
+//             Quarantine: sheet only, fake success.
 //   spam    → high-confidence junk. Same quarantine as bot: no email, no
 //             Pushover, no auto-reply. The row still lands on the sheet's
 //             Blocked tab. High-confidence means any of:
@@ -51,7 +54,11 @@ const TRUSTED_LINK_HOSTS = [
 //             they can fix it and resubmit. NEVER a silent drop.
 //   suspect → one weak signal, or a couple that don't add up. DELIVERED,
 //             tagged suspected_spam so Joshua can judge. A false positive
-//             costs a tag, not a lead.
+//             costs a tag, not a lead. Also the honeypot-review exception:
+//             a filled honeypot on an otherwise clean lead that has a paid
+//             click id, a real US phone, and a street address
+//             (suspected_spam = honeypot_review). Anything else on top of
+//             the honeypot stays quarantined.
 //   clean   → delivered normally.
 //
 // One weak signal must not quarantine. A pasted listing link, a long surname,
@@ -146,11 +153,34 @@ export function classifyLead(
   lead: Record<string, string>,
   options: ClassifyOptions = {},
 ): LeadVerdict {
-  // Honeypot filled → bot. A human never sees this field, so filling it is
-  // unambiguous. This is a quarantine, not a delete: the route still writes
-  // the row to the sheet.
-  if (lead.website && lead.website.trim() !== '') {
+  // Honeypot filled → bot, unless this looks like a person whose browser
+  // autofilled the trap. The rendered field is not named `website` anymore
+  // (that name is a contact-card autofill token). `website` is still checked
+  // so a direct post or a cached page that sends it does not skip the trap.
+  //
+  // The exception is deliberately narrow. All of these have to be true, and
+  // the rest of the lead has to come back clean:
+  //   a paid click id (gclid / gbraid / wbraid / fbclid, first or last touch)
+  //     long enough to be a real token, not `gclid=1`
+  //   a 10-digit US number that is not the 555 exchange and not an obvious fake
+  //   a property address that looks like a street, not a URL or a city name
+  //   a real client timestamp at least 3 seconds old
+  // A spam phrase, a disposable address, a too-fast submit, a fake phone, or
+  // a rate limit still quarantines. The route delivers the exception as
+  // suspected_spam=honeypot_review so it shows on the CRM tab, not Blocked.
+  const now = options.now ?? Date.now()
+  const reviewHoneypot = honeypotFilled(lead) && honeypotReviewEligible(lead, now)
+  if (honeypotFilled(lead) && !reviewHoneypot) {
     return { kind: 'bot', reason: 'honeypot' }
+  }
+
+  const finish = (verdict: LeadVerdict): LeadVerdict => {
+    if (!reviewHoneypot) return verdict
+    if (verdict.kind === 'clean') return { kind: 'suspect', reason: 'honeypot_review' }
+    // A second signal means this is not "autofill on an otherwise normal
+    // paid lead". Keep it on the Blocked tab.
+    if (verdict.kind === 'suspect') return { kind: 'bot', reason: `honeypot+${verdict.reason}` }
+    return verdict
   }
 
   // ---- Validation: things the human can actually fix. Visible errors. ----
@@ -162,27 +192,27 @@ export function classifyLead(
   // blank name still sees the error instead of a fake success.
 
   if ((lead.name || '').trim().length < 2) {
-    return { kind: 'invalid', reason: 'name_too_short', message: 'Please enter your name.' }
+    return finish({ kind: 'invalid', reason: 'name_too_short', message: 'Please enter your name.' })
   }
 
   const phone = (lead.phone || '').replace(/\D/g, '')
   if (phone.length > 0 && phone.length < 7) {
-    return {
+    return finish({
       kind: 'invalid',
       reason: 'phone_too_short',
       message: 'That phone number looks incomplete — please check it, or leave it blank if you prefer email.',
-    }
+    })
   }
 
   // The 14 /cash-offer/[city] pages submit as `cash-offer-<city>`, and they are
   // the same form asking for the same address.
   const isCashOffer = lead.source === 'cash-offer' || (lead.source || '').startsWith('cash-offer-')
   if (isCashOffer && (lead.property_address || '').trim().length < 5) {
-    return {
+    return finish({
       kind: 'invalid',
       reason: 'address_too_short',
       message: 'Please enter the property address so Joshua can price it.',
-    }
+    })
   }
 
   // Obvious fakes from the Oct 2026 form wave. Checked before the too-fast
@@ -190,10 +220,10 @@ export function classifyLead(
   // submits immediately. These quarantine on their own. A normal US number,
   // including area codes that start with 7, is not in this set.
   if (isObviouslyFakePhone(lead.phone || '')) {
-    return { kind: 'spam', reason: 'fake_phone' }
+    return finish({ kind: 'spam', reason: 'fake_phone' })
   }
   if (isTestSubmission(lead)) {
-    return { kind: 'spam', reason: 'test_submission' }
+    return finish({ kind: 'spam', reason: 'test_submission' })
   }
 
   // Timing. The hidden `_loaded` value is stamped in a useEffect when the
@@ -208,15 +238,14 @@ export function classifyLead(
   //     posts, no-JS submits, and the old "Date.now() at build time" bug all
   //     look like this. Missing adds weight only when something else already
   //     looks wrong.
-  const now = options.now ?? Date.now()
   const timing = readTiming(lead._loaded, now)
   if (timing === 'too_fast') {
-    return { kind: 'spam', reason: 'too_fast' }
+    return finish({ kind: 'spam', reason: 'too_fast' })
   }
 
   const rateReason = rateLimitReason(options)
   if (rateReason) {
-    return { kind: 'spam', reason: rateReason }
+    return finish({ kind: 'spam', reason: rateReason })
   }
 
   const signals = new Set<string>()
@@ -277,15 +306,15 @@ export function classifyLead(
   })
 
   if (quarantineScore >= QUARANTINE_SCORE) {
-    return { kind: 'spam', reason: ordered.join('+') }
+    return finish({ kind: 'spam', reason: ordered.join('+') })
   }
 
   if (contentScore >= SUSPECT_SCORE) {
     const suspectIds = ordered.filter((id) => id !== 'missing_form_time' || contentIds.length > 0)
-    return { kind: 'suspect', reason: suspectIds.join('+') }
+    return finish({ kind: 'suspect', reason: suspectIds.join('+') })
   }
 
-  return { kind: 'clean' }
+  return finish({ kind: 'clean' })
 }
 
 function rateLimitReason(options: ClassifyOptions): string | null {
@@ -387,4 +416,56 @@ function hasMixedToken(body: string): boolean {
     const digits = cleaned.match(new RegExp('\\p{N}', 'gu')) || []
     return letters.length >= 4 && digits.length >= 4
   })
+}
+
+const PAID_CLICK_FIELDS = [
+  'gclid',
+  'gbraid',
+  'wbraid',
+  'fbclid',
+  'last_gclid',
+  'last_gbraid',
+  'last_wbraid',
+  'last_fbclid',
+] as const
+
+// Street suffix, not a city name. "Nashville" alone is not enough to override
+// the honeypot. A pasted listing URL is not a street either.
+const STREET_SUFFIX = /\b(?:st|street|ave|avenue|rd|road|dr|drive|ln|lane|blvd|boulevard|ct|court|way|pl|place|cir|circle|trl|trail|pkwy|parkway|hwy|highway|ter|terrace|pike|loop|run|pass|row|sq|square)\b/i
+
+function honeypotReviewEligible(lead: Record<string, string>, now: number): boolean {
+  if (readTiming(lead._loaded, now) !== 'ok') return false
+  if (!hasPaidClickId(lead)) return false
+  if (!strongUsPhone(lead.phone || '')) return false
+  if (!plausibleStreetAddress(lead.property_address || '')) return false
+  return true
+}
+
+function hasPaidClickId(lead: Record<string, string>): boolean {
+  return PAID_CLICK_FIELDS.some((key) => plausibleClickId(lead[key] || ''))
+}
+
+function plausibleClickId(value: string): boolean {
+  const token = value.trim()
+  return token.length >= 20 && token.length <= 200 && /^[A-Za-z0-9._-]+$/.test(token)
+}
+
+function strongUsPhone(raw: string): boolean {
+  if (isObviouslyFakePhone(raw)) return false
+  const digits = raw.replace(/\D/g, '')
+  const national = digits.length === 11 && digits.startsWith('1') ? digits.slice(1) : digits
+  if (!/^[2-9]\d{2}[2-9]\d{6}$/.test(national)) return false
+  // 555 is the fictional exchange. A normal lead may still use it; it is not
+  // strong enough to pull a honeypot hit out of the Blocked tab.
+  if (national.slice(3, 6) === '555') return false
+  return true
+}
+
+function plausibleStreetAddress(raw: string): boolean {
+  const value = raw.trim().replace(/\s+/g, ' ')
+  if (value.length < 8 || value.length > 200) return false
+  if (/https?:\/\//i.test(value)) return false
+  if (!/^\d{1,6}[a-z]?(?:\s|-)/i.test(value)) return false
+  if (!/[a-z]/i.test(value)) return false
+  return STREET_SUFFIX.test(value)
 }
