@@ -7,6 +7,8 @@ import {
   HOUSING_MARKET_FAQ_QUESTION,
   housingMarketFaqAnswer,
 } from '@/lib/moving-faqs'
+import ByTheNumbers from '@/components/ByTheNumbers'
+import { byTheNumbersDataset, getByTheNumbers } from '@/lib/by-the-numbers'
 import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TennesseeClosingsProof from '@/components/TennesseeClosingsProof'
 import TrackedTelLink from '@/components/TrackedTelLink'
@@ -137,11 +139,12 @@ export const metadata: Metadata = {
 export default function MovingToMiddleTennesseePage() {
   // City cards sorted most→least expensive for a clean "luxury to accessible" read.
   const cities = Object.values(suburbs).sort((a, b) => b.medianPriceNum - a.medianPriceNum)
+  const byTheNumbers = getByTheNumbers('moving-to-middle-tennessee')
 
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: RELO_FAQS.map((f) => ({
+    mainEntity: [...RELO_FAQS, ...byTheNumbers.answers].map((f) => ({
       '@type': 'Question',
       name: f.q,
       acceptedAnswer: { '@type': 'Answer', text: f.a },
@@ -190,6 +193,7 @@ export default function MovingToMiddleTennesseePage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(byTheNumbersDataset(byTheNumbers)) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
 
@@ -262,6 +266,8 @@ export default function MovingToMiddleTennesseePage() {
             professional. Market figures below are 2026 medians and move over time.
           </p>
         </div>
+
+        <ByTheNumbers section={byTheNumbers} />
 
         {/* City comparison */}
         <div id="cities" className="bg-[#F5F5F5] py-16 px-4 sm:px-6 lg:px-8 scroll-mt-20">

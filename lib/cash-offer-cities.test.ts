@@ -1,7 +1,8 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { getAllCashOfferCitySlugs, getCashOfferCity, cashOfferContentLastUpdated, cashOfferSeo, cashOfferPath } from './cash-offer-cities.ts'
+import { getAllCashOfferCitySlugs, getCashOfferCity, cashOfferContentLastUpdated, cashOfferSeo, cashOfferPath, faqSchemaAnswerText } from './cash-offer-cities.ts'
+import { latestSnapshot, marketUpdateSlug, monthLabel } from './market-snapshot.ts'
 import { suburbs, citywideStatsCitation, formatStatsDate, suburbStatsAsOf } from './suburbs.ts'
 import { neighborhoods } from './neighborhoods.ts'
 import { blogPosts } from './blog.ts'
@@ -125,16 +126,26 @@ test('Nashville fair-cash-offer FAQ reuses only figures already on the site', ()
   const dollars = copy.match(/\$[0-9][0-9,.]*[KM]?/g) ?? []
   assert.deepEqual(Array.from(new Set(dollars)), ['$475,538'])
 
-  // Links to the September 2026 GNAR market update (published October 5, 2026).
+  // Points at the current GNAR market update and rolls when a new snapshot is checked in.
+  const latest = latestSnapshot()
+  assert.ok(latest)
+  const updateLabel = `${monthLabel(latest.month)} Middle Tennessee market update`
+  const updateHref = `/blog/${marketUpdateSlug(latest.month)}`
   const links = faqs.flatMap((f) => (f.link ? [f.link.href] : []))
   const labels = faqs.flatMap((f) => (f.link ? [f.link.label] : []))
-  assert.ok(links.includes('/blog/middle-tennessee-market-update-september-2026'))
-  assert.ok(labels.includes('September 2026 Middle Tennessee market update'))
-  assert.match(copy, /September 2026 Middle Tennessee market update/)
-  assert.doesNotMatch(copy, /August 2026 Middle Tennessee market update/)
-  const september = blogPosts.find((p) => p.slug === 'middle-tennessee-market-update-september-2026')
-  assert.ok(september)
-  assert.equal(september.date, 'October 5, 2026')
+  assert.ok(links.includes(updateHref))
+  assert.ok(labels.includes(updateLabel))
+  assert.match(copy, new RegExp(updateLabel))
+  const citiesSource = readFileSync(new URL('./cash-offer-cities.ts', import.meta.url), 'utf8')
+  assert.doesNotMatch(citiesSource, /marketUpdateSlug\('2026-09'\)/)
+  if (latest.month !== '2026-09') {
+    assert.doesNotMatch(copy, /September 2026 Middle Tennessee market update/)
+  }
+  const update = blogPosts.find((p) => p.slug === marketUpdateSlug(latest.month))
+  assert.ok(update)
+  const schemaText = faqSchemaAnswerText(faqs.find((f) => f.link)!)
+  assert.match(schemaText, new RegExp(`https://www.joshuafink.com${updateHref}`))
+  assert.match(schemaText, new RegExp(updateLabel))
 
   // Does not duplicate the shared "agent who buys houses for cash" answer or existing city FAQs.
   const existing = new Set(city.faqs.map((f) => f.q))
@@ -228,7 +239,7 @@ test('Nashville cash page keeps one FAQPage and adds only the closings line and 
 
   const page = readFileSync(new URL('../app/cash-offer/[city]/page.tsx', import.meta.url), 'utf8')
   assert.equal(page.match(/'@type': 'FAQPage'/g)?.length, 1)
-  assert.match(page, /const schemaFaqs = \[\.\.\.fairOfferFaqs, \.\.\.sellerFaqs, \.\.\.allFaqs\]/)
+  assert.match(page, /const schemaFaqs = \[\.\.\.fairOfferFaqs, \.\.\.sellerFaqs, \.\.\.allFaqs, \.\.\.\(byTheNumbers\?\.answers \?\? \[\]\)\]/)
   assert.doesNotMatch(page, /quickFaqs/)
   assert.equal(page.match(/id="nashville-closings-proof"/g)?.length, 1)
   const closingsAt = page.indexOf('id="nashville-closings-proof"')
@@ -452,7 +463,7 @@ test('Columbia seller FAQ and neighborhood note reuse published places and one F
 
   const page = readFileSync(new URL('../app/cash-offer/[city]/page.tsx', import.meta.url), 'utf8')
   assert.equal(page.match(/'@type': 'FAQPage'/g)?.length, 1)
-  assert.match(page, /const schemaFaqs = \[\.\.\.fairOfferFaqs, \.\.\.sellerFaqs, \.\.\.allFaqs\]/)
+  assert.match(page, /const schemaFaqs = \[\.\.\.fairOfferFaqs, \.\.\.sellerFaqs, \.\.\.allFaqs, \.\.\.\(byTheNumbers\?\.answers \?\? \[\]\)\]/)
   assert.match(page, /id="seller-faq"/)
   assert.match(page, /slug === 'columbia-tn' \? 'maury-county'/)
 

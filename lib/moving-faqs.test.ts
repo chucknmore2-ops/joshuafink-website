@@ -88,5 +88,5 @@ test('moving page puts the housing-market FAQ in FAQPage schema and stamps Oct 5
   assert.match(page, /Page last verified: \{PAGE_LAST_VERIFIED\}/)
   assert.match(page, /q: HOUSING_MARKET_FAQ_QUESTION/)
   assert.match(page, /a: housingMarketFaqAnswer\(\)/)
-  assert.match(page, /mainEntity: RELO_FAQS\.map/)
+  assert.match(page, /mainEntity: \[\.\.\.RELO_FAQS, \.\.\.byTheNumbers\.answers\]\.map/)
 })
