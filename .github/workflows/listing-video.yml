@@ -23,15 +23,12 @@ name: Listing Video
 # A real failure sends a Pushover alert. Missing YouTube credentials are
 # reported in the job summary and do not fail the social queue.
 
+# PAUSED 2026-11-10 (Josh's call) pending the Kling-style rebuild. The
+# daily schedule and the lib/listings.ts push trigger are removed, so nothing
+# auto-publishes. Sync Compass Listings still dispatches this workflow with no
+# inputs; the job-level `if` below turns that into a skipped run. A manual
+# Run workflow with an `address` still renders and publishes that one home.
 on:
-  schedule:
-    # After the 08:00 UTC Compass sync. Push and the sync dispatch are the
-    # fast path; this run catches a dispatch that did not start.
-    - cron: '30 9 * * *'
-  push:
-    branches: [main]
-    paths:
-      - 'lib/listings.ts'
   workflow_dispatch:
     inputs:
       address:
@@ -53,6 +50,8 @@ env:
 
 jobs:
   publish:
+    # Paused: only a manual run that names an address does anything.
+    if: ${{ github.event.inputs.address != '' }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
