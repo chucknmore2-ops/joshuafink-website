@@ -68,7 +68,10 @@ jobs:
           fi
 
   sync:
-    runs-on: ubuntu-latest
+    # Playwright 1.58.2 cannot install Chromium on Ubuntu 26.04. ubuntu-latest
+    # resolved to that image on 2026-11-09 (run 42674289568); the previous
+    # successful sync ran on ubuntu-24.04. Pin until Playwright is bumped.
+    runs-on: ubuntu-24.04
     # Includes a wait for the sync PR to merge so GBP Just Listed can be
     # dispatched against the new commit. Auto-merge itself is enabled first;
     # a timeout here does not roll that back.
