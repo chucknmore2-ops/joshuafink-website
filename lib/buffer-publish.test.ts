@@ -8,8 +8,10 @@ import {
   BUFFER_GRAPHQL_URL,
   bufferImagePostVariables,
   interpretBufferCreatePost,
+  planBufferRetire,
   queueInstagramImagePost,
   redactBufferSecret,
+  retireQueuedBufferPost,
 } from './buffer-publish.ts'
 
 const API_KEY = 'buf_test_key_secret'
@@ -205,4 +207,85 @@ test('social autopost workflow uses Buffer secrets and leaves Graph off', () => 
   assert.match(yml, /X-Buffer-Ig-Channel-Id:/)
   assert.equal(yml.includes('creationId'), false)
   assert.equal(yml.includes('graph.facebook.com'), false)
+})
+
+function bufferFetch(pages: Array<{ queryIncludes: string; body: unknown }>): {
+  fetchImpl: typeof fetch
+  calls: string[]
+} {
+  const calls: string[] = []
+  const fetchImpl = (async (_url: string, init?: RequestInit) => {
+    const parsed = JSON.parse(String(init?.body ?? '{}')) as { query?: string }
+    const query = parsed.query ?? ''
+    calls.push(query)
+    const page = pages.find((item) => query.includes(item.queryIncludes))
+    if (!page) return new Response('{}', { status: 500 })
+    return new Response(JSON.stringify(page.body), { status: 200, headers: { 'Content-Type': 'application/json' } })
+  }) as typeof fetch
+  return { fetchImpl, calls }
+}
+
+test('a sent Buffer post is not deleted', async () => {
+  assert.equal(planBufferRetire({ status: 'sent', sentAt: '2026-11-10T00:00:00Z', allowedActions: [] }).action, 'already_published')
+  const { fetchImpl, calls } = bufferFetch([
+    {
+      queryIncludes: 'post(input:',
+      body: {
+        data: {
+          post: { id: '6af345dea80c88d576473b79', status: 'sent', sentAt: '2026-11-10T00:00:00Z', allowedActions: [] },
+        },
+      },
+    },
+  ])
+  const result = await retireQueuedBufferPost(
+    { apiKey: API_KEY, postId: '6af345dea80c88d576473b79' },
+    fetchImpl,
+  )
+  assert.deepEqual(result, {
+    ok: true,
+    action: 'already_published',
+    postId: '6af345dea80c88d576473b79',
+    previousStatus: 'sent',
+  })
+  assert.equal(calls.length, 1)
+  assert.equal(calls.some((query) => query.includes('deletePost')), false)
+  assert.equal(calls.join('\n').includes(API_KEY), false)
+})
+
+test('a scheduled Buffer post is deleted', async () => {
+  assert.equal(
+    planBufferRetire({ status: 'scheduled', sentAt: null, allowedActions: ['deletePost'] }).action,
+    'delete',
+  )
+  const { fetchImpl, calls } = bufferFetch([
+    {
+      queryIncludes: 'post(input:',
+      body: {
+        data: {
+          post: { id: '6af345dea80c88d576473b79', status: 'scheduled', sentAt: null, allowedActions: ['deletePost'] },
+        },
+      },
+    },
+    {
+      queryIncludes: 'deletePost',
+      body: { data: { deletePost: { __typename: 'DeletePostSuccess', id: '6af345dea80c88d576473b79' } } },
+    },
+  ])
+  const result = await retireQueuedBufferPost(
+    { apiKey: API_KEY, postId: '6af345dea80c88d576473b79' },
+    fetchImpl,
+  )
+  assert.deepEqual(result, {
+    ok: true,
+    action: 'deleted',
+    postId: '6af345dea80c88d576473b79',
+    previousStatus: 'scheduled',
+  })
+  assert.equal(calls.some((query) => query.includes('deletePost(input:')), true)
+})
+
+test('a Buffer post that is sending cannot be removed', () => {
+  const plan = planBufferRetire({ status: 'sending', sentAt: null, allowedActions: ['deletePost'] })
+  assert.equal(plan.action, 'not_removable')
+  if (plan.action === 'not_removable') assert.match(plan.reason, /cannot be deleted through Buffer/)
 })

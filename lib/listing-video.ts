@@ -19,10 +19,17 @@ export const LISTING_VIDEO_KIND = 'listing-video'
 /** How many new homes one automatic run may publish. */
 export const LISTING_VIDEO_PER_RUN = 2
 export const LISTING_VIDEO_MAX_PHOTOS = 6
+export const LISTING_VIDEO_PHONE = '615-551-2727'
+export const LISTING_VIDEO_LICENSE = 'TREC #351484'
+/** Spoken on hand-made clips. The Ken Burns renderer does not use this line. */
+export const LISTING_VIDEO_MOTION_NOTE = 'Motion in this video is AI-enhanced.'
+/** Rejected wherever listing-video copy is built. Joshua's number is LISTING_VIDEO_PHONE. */
+const LISTING_VIDEO_FORBIDDEN_PHONE = '615-551-3399'
 
 export const YOUTUBE_UPLOAD_SCOPE = 'https://www.googleapis.com/auth/youtube.upload'
 export const YOUTUBE_MANAGE_SCOPE = 'https://www.googleapis.com/auth/youtube'
 export const YOUTUBE_FORCE_SSL_SCOPE = 'https://www.googleapis.com/auth/youtube.force-ssl'
+export const YOUTUBE_PARTNER_SCOPE = 'https://www.googleapis.com/auth/youtubepartner'
 
 export const YOUTUBE_SECRET_NAMES = [
   'YOUTUBE_CLIENT_ID',
@@ -160,12 +167,65 @@ export function listingVideoCaption(
     `${comingSoon ? 'Coming soon' : 'Home for sale'}: ${listing.address}, ${place.cityLine}.`,
     facts.join('\n'),
     'Joshua Fink | Compass',
-    'Call or text 615-551-2727.',
+    `Call or text ${LISTING_VIDEO_PHONE}.`,
     listingVideoPageUrl(listing, source),
     `${hash} #${cityHash}TN #CompassRealEstate #JoshuaFinkGroup`,
   ]
     .filter(Boolean)
     .join('\n\n')
+}
+
+/**
+ * YouTube description for a finished clip supplied to the custom workflow.
+ * Same facts, page link, end card, and #Shorts line as the rendered Shorts,
+ * plus the phone, license, and the AI-motion disclosure.
+ */
+export function listingVideoCustomDescription(listing: Listing): string {
+  const place = listingVideoPlace(listing)
+  const facts = [listingSpecLine(listing), listingPriceLine(listing)].filter(Boolean)
+  return [
+    `${listing.address}, ${place.cityLine}`,
+    facts.join('\n'),
+    LISTING_VIDEO_MOTION_NOTE,
+    listingVideoPageUrl(listing, 'youtube'),
+    LISTING_VIDEO_END_CARD,
+    `Call or text ${LISTING_VIDEO_PHONE}.`,
+    LISTING_VIDEO_LICENSE,
+    '#Shorts',
+  ]
+    .filter(Boolean)
+    .join('\n\n')
+}
+
+/** Instagram/Facebook caption for that same finished clip. */
+export function listingVideoCustomCaption(
+  listing: Listing,
+  source: 'instagram' | 'facebook',
+): string {
+  const place = listingVideoPlace(listing)
+  const comingSoon = /coming\s*soon/i.test(listing.status)
+  const cityHash = place.city.replace(/[^A-Za-z0-9]+/g, '')
+  const hash = comingSoon ? '#ComingSoon' : '#JustListed'
+  const facts = [listingSpecLine(listing), listingPriceLine(listing)].filter(Boolean)
+  return [
+    `${comingSoon ? 'Coming soon' : 'Home for sale'}: ${listing.address}, ${place.cityLine}.`,
+    facts.join('\n'),
+    LISTING_VIDEO_MOTION_NOTE,
+    'Joshua Fink | Compass',
+    `Call or text ${LISTING_VIDEO_PHONE}.`,
+    LISTING_VIDEO_LICENSE,
+    listingVideoPageUrl(listing, source),
+    `${hash} #${cityHash}TN #CompassRealEstate #JoshuaFinkGroup`,
+  ]
+    .filter(Boolean)
+    .join('\n\n')
+}
+
+/** Copy that must never ship. Returns the blocked phrase, or null. */
+export function listingVideoCopyProblem(text: string): string | null {
+  if (/parks/i.test(text)) return 'Parks'
+  if (text.includes(LISTING_VIDEO_FORBIDDEN_PHONE)) return LISTING_VIDEO_FORBIDDEN_PHONE
+  return null
 }
 
 export interface ListingVideoOverlay {
@@ -248,6 +308,29 @@ export function youtubeScopeAllowsUpload(scope: string): boolean {
     parts.has(YOUTUBE_MANAGE_SCOPE) ||
     parts.has(YOUTUBE_FORCE_SSL_SCOPE)
   )
+}
+
+/**
+ * videos.update (privacyStatus) is not granted by youtube.upload.
+ * Upload can succeed and unlist can still be refused.
+ */
+export function youtubeScopeAllowsUpdate(scope: string): boolean {
+  const parts = new Set(scope.split(/\s+/).filter(Boolean))
+  return (
+    parts.has(YOUTUBE_MANAGE_SCOPE) ||
+    parts.has(YOUTUBE_FORCE_SSL_SCOPE) ||
+    parts.has(YOUTUBE_PARTNER_SCOPE)
+  )
+}
+
+export function youtubeUpdateScopeMessage(): string {
+  return [
+    'The YouTube refresh token cannot set privacyStatus on an existing video.',
+    `videos.update needs ${YOUTUBE_MANAGE_SCOPE} or ${YOUTUBE_FORCE_SSL_SCOPE}.`,
+    `${YOUTUBE_UPLOAD_SCOPE} can upload a new Short and cannot unlist the previous one.`,
+    'The new Short upload is kept. Re-authorize YOUTUBE_REFRESH_TOKEN with an update scope to unlist the old video.',
+    'Channel: joshuafinkgroup (UCc6j1NWgJeb00pT5xsenz3g).',
+  ].join('\n')
 }
 
 export function youtubeSetupMessage(reason: 'missing' | 'scope'): string {

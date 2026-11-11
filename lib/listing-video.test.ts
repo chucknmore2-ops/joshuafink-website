@@ -19,6 +19,9 @@ import {
   listingPhotoIds,
   listingSpecLine,
   listingVideoCaption,
+  listingVideoCopyProblem,
+  listingVideoCustomCaption,
+  listingVideoCustomDescription,
   listingVideoDescription,
   listingVideoFullyPosted,
   listingVideoOverlay,
@@ -29,11 +32,13 @@ import {
   planAutomaticListingVideos,
   readYoutubeCredentials,
   requiredListingVideoChannels,
+  youtubeScopeAllowsUpdate,
   youtubeScopeAllowsUpload,
   youtubeSetupMessage,
+  youtubeUpdateScopeMessage,
 } from './listing-video.ts'
 import { clipFilterScript, kenBurnsFilter, renderListingVideo, resolveListingVideoFont, xfadeFilterScript } from './listing-video-render.ts'
-import { uploadYoutubeShort } from './listing-video-youtube.ts'
+import { unlistYoutubeVideo, uploadYoutubeShort, YOUTUBE_LISTING_TAGS } from './listing-video-youtube.ts'
 
 const repoRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..')
 
@@ -285,6 +290,169 @@ test('workflow renders with ffmpeg, alerts on failure, and can target one addres
   assert.match(workflow, /youtube\.upload/)
   assert.match(sync, /listing-video\.yml/)
   assert.equal(/parks/i.test(workflow), false)
+  assert.match(workflow, /PAUSED/)
+  assert.equal(/^\s*schedule:/m.test(workflow), false)
+  assert.equal(/^\s*push:/m.test(workflow), false)
+})
+
+test('custom listing copy keeps the Short conventions and names the phone, license, and AI motion', () => {
+  const listing = home({
+    address: '201 Spartan Dr',
+    city: 'Nashville, TN 37211 | MLS #3634243',
+    price: 449900,
+    beds: 4,
+    baths: 2,
+    sqft: 1477,
+    compassUrl: 'https://www.compass.com/homedetails/201-Spartan-Dr-Nashville-TN-37211/SWBYM_pid/',
+  })
+  assert.equal(listingVideoTitle(listing), '201 Spartan Dr, Nashville TN | Home for Sale')
+  const description = listingVideoCustomDescription(listing)
+  const caption = listingVideoCustomCaption(listing, 'instagram')
+  for (const text of [description, caption]) {
+    assert.match(text, /Joshua Fink/)
+    assert.match(text, /Compass/)
+    assert.match(text, /615-551-2727/)
+    assert.match(text, /TREC #351484/)
+    assert.match(text, /AI-enhanced/)
+    assert.match(text, /https:\/\/www\.joshuafink\.com\/listings\/201-spartan-dr-nashville/)
+    assert.equal(listingVideoCopyProblem(text), null)
+    assert.equal(text.includes('615-551-3399'), false)
+    assert.equal(/parks/i.test(text), false)
+    assert.equal(text.includes('Mixkit'), false)
+    assert.equal(text.includes('Lily J'), false)
+  }
+  assert.match(description, /#Shorts/)
+  assert.match(description, /utm_source=youtube/)
+  assert.match(caption, /#JustListed/)
+  assert.match(caption, /utm_source=instagram/)
+  assert.deepEqual(YOUTUBE_LISTING_TAGS, ['home for sale', 'Compass', 'Joshua Fink'])
+  assert.equal(youtubeScopeAllowsUpdate('https://www.googleapis.com/auth/youtube.upload'), false)
+  assert.equal(youtubeScopeAllowsUpdate('https://www.googleapis.com/auth/youtube'), true)
+  assert.equal(youtubeScopeAllowsUpdate('https://www.googleapis.com/auth/youtube.force-ssl'), true)
+  assert.match(youtubeUpdateScopeMessage(), /videos\.update/)
+  assert.match(youtubeUpdateScopeMessage(), /youtube\.upload/)
+})
+
+test('upload sends the listing tags and a public embeddable video', async () => {
+  let initBody = ''
+  const result = await uploadYoutubeShort({
+    credentials: { clientId: 'id', clientSecret: 'secret', refreshToken: 'refresh' },
+    filePath: path.join(repoRoot, 'package.json'),
+    title: '201 Spartan Dr, Nashville TN | Home for Sale',
+    description: 'Motion in this video is AI-enhanced.',
+    fetchImpl: (async (url: string, init?: RequestInit) => {
+      const target = String(url)
+      if (target.includes('oauth2.googleapis.com/token')) {
+        return new Response(JSON.stringify({ access_token: 'ya29.test', scope: YOUTUBE_UPLOAD_SCOPE }), { status: 200 })
+      }
+      if (target.includes('/upload/youtube/')) {
+        initBody = String(init?.body ?? '')
+        return new Response('', { status: 200, headers: { Location: 'https://upload.example/session' } })
+      }
+      return new Response(JSON.stringify({ id: 'abcdefghijk' }), { status: 200 })
+    }) as typeof fetch,
+  })
+  assert.equal(result.ok, true)
+  const payload = JSON.parse(initBody) as {
+    snippet: { tags: string[] }
+    status: { privacyStatus: string; embeddable: boolean; selfDeclaredMadeForKids: boolean }
+  }
+  assert.deepEqual(payload.snippet.tags, ['home for sale', 'Compass', 'Joshua Fink'])
+  assert.equal(payload.status.privacyStatus, 'public')
+  assert.equal(payload.status.embeddable, true)
+  assert.equal(payload.status.selfDeclaredMadeForKids, false)
+})
+
+test('unlist is skipped when the token can upload but cannot call videos.update', async () => {
+  const calls: string[] = []
+  const result = await unlistYoutubeVideo({
+    credentials: { clientId: 'id', clientSecret: 'secret', refreshToken: 'refresh' },
+    videoId: '3XpZKdw8iDU',
+    fetchImpl: (async (url: string) => {
+      calls.push(String(url))
+      return new Response(
+        JSON.stringify({ access_token: 'ya29.test', scope: 'https://www.googleapis.com/auth/youtube.upload' }),
+        { status: 200 },
+      )
+    }) as typeof fetch,
+  })
+  assert.equal(result.ok, false)
+  if (!result.ok) {
+    assert.equal(result.kind, 'scope')
+    assert.match(result.error, /privacyStatus/)
+  }
+  assert.equal(calls.length, 1)
+  assert.equal(calls.some((url) => url.includes('/youtube/v3/videos')), false)
+})
+
+test('unlist sets privacyStatus to unlisted and keeps embeddable', async () => {
+  let putBody = ''
+  const result = await unlistYoutubeVideo({
+    credentials: { clientId: 'id', clientSecret: 'secret', refreshToken: 'refresh' },
+    videoId: '3XpZKdw8iDU',
+    fetchImpl: (async (url: string, init?: RequestInit) => {
+      const target = String(url)
+      if (target.includes('oauth2.googleapis.com/token')) {
+        return new Response(
+          JSON.stringify({ access_token: 'ya29.test', scope: 'https://www.googleapis.com/auth/youtube' }),
+          { status: 200 },
+        )
+      }
+      if ((init?.method ?? 'GET') === 'GET') {
+        return new Response(
+          JSON.stringify({
+            items: [
+              {
+                status: {
+                  privacyStatus: 'public',
+                  embeddable: true,
+                  license: 'youtube',
+                  publicStatsViewable: true,
+                  selfDeclaredMadeForKids: false,
+                },
+              },
+            ],
+          }),
+          { status: 200 },
+        )
+      }
+      putBody = String(init?.body ?? '')
+      return new Response(JSON.stringify({ id: '3XpZKdw8iDU', status: { privacyStatus: 'unlisted' } }), { status: 200 })
+    }) as typeof fetch,
+  })
+  assert.equal(result.ok, true)
+  const body = JSON.parse(putBody) as {
+    id: string
+    status: { privacyStatus: string; embeddable: boolean; license: string }
+  }
+  assert.equal(body.id, '3XpZKdw8iDU')
+  assert.equal(body.status.privacyStatus, 'unlisted')
+  assert.equal(body.status.embeddable, true)
+  assert.equal(body.status.license, 'youtube')
+})
+
+test('a 403 from videos.update is a scope skip, not a thrown upload failure', async () => {
+  const result = await unlistYoutubeVideo({
+    credentials: { clientId: 'id', clientSecret: 'secret', refreshToken: 'refresh' },
+    videoId: '3XpZKdw8iDU',
+    fetchImpl: (async (url: string, init?: RequestInit) => {
+      const target = String(url)
+      if (target.includes('oauth2.googleapis.com/token')) {
+        return new Response(
+          JSON.stringify({ access_token: 'ya29.test', scope: 'https://www.googleapis.com/auth/youtube' }),
+          { status: 200 },
+        )
+      }
+      if ((init?.method ?? 'GET') === 'GET') {
+        return new Response(JSON.stringify({ items: [{ status: { privacyStatus: 'public', embeddable: true } }] }), {
+          status: 200,
+        })
+      }
+      return new Response(JSON.stringify({ error: { code: 403, message: 'insufficientPermissions' } }), { status: 403 })
+    }) as typeof fetch,
+  })
+  assert.equal(result.ok, false)
+  if (!result.ok) assert.equal(result.kind, 'scope')
 })
 
 test('listing page URL carries UTM tags', () => {

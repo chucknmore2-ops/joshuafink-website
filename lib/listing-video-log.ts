@@ -66,6 +66,32 @@ export async function logListingVideo(pool: Pool, row: ListingVideoLogRow): Prom
   )
 }
 
+/**
+ * Point the listing's posted rows at a replacement id, and append a new
+ * posted row so the latest activity shows the replacement.
+ */
+export async function pointListingVideoPost(pool: Pool, row: ListingVideoLogRow): Promise<void> {
+  await pool.query(
+    `UPDATE post_log
+        SET external_post_id = $1,
+            link = $2
+      WHERE channel = $3
+        AND job_name = $4
+        AND payload_kind = $5
+        AND ref_key = $6
+        AND status = 'posted'`,
+    [
+      row.externalPostId ?? null,
+      row.link ?? null,
+      row.channel,
+      row.jobName,
+      LISTING_VIDEO_KIND,
+      row.refKey,
+    ],
+  )
+  await logListingVideo(pool, row)
+}
+
 /** One launch-seed row per channel. Existing rows are left alone. */
 export async function seedListingVideoRow(
   pool: Pool,
