@@ -1,0 +1,116 @@
+name: Post custom listing video
+
+# Manual only. Downloads a finished vertical MP4, checks its sha256, uploads
+# a YouTube Short, and queues an Instagram Reel through Buffer.
+#
+# Does not build a slideshow. Does not run on a schedule or on push, and does
+# not turn listing-video.yml back on. Facebook is skipped. The Facebook page
+# token is not read.
+#
+# A second dispatch uploads another Short. Do not re-run after a successful
+# YouTube upload. The tour-video id lands in a PR from this job; merge that
+# PR once its checks are green so the listing page embeds the new Short.
+
+on:
+  workflow_dispatch:
+    inputs:
+      video_url:
+        description: 'Public https URL of the finished vertical MP4. Buffer fetches this URL for the Instagram Reel.'
+        required: true
+        type: string
+      sha256:
+        description: 'Expected sha256 hex digest of that MP4. The job refuses to upload when the download does not match.'
+        required: true
+        type: string
+      address:
+        description: 'Street address on the site, for example 201 Spartan Dr.'
+        required: true
+        type: string
+      replace_youtube_id:
+        description: 'Existing YouTube video id to set unlisted. Leave empty to skip. A token without videos.update scope is logged and does not fail the new upload.'
+        required: false
+        type: string
+        default: ''
+      replace_buffer_id:
+        description: 'Existing Buffer post id. Deleted when it is still queued. When it was already published, the job logs that Buffer cannot remove it.'
+        required: false
+        type: string
+        default: ''
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: post-custom-listing-video
+  cancel-in-progress: false
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Post the custom listing video
+        env:
+          VIDEO_URL: ${{ github.event.inputs.video_url }}
+          VIDEO_SHA256: ${{ github.event.inputs.sha256 }}
+          ADDRESS: ${{ github.event.inputs.address }}
+          REPLACE_YOUTUBE_ID: ${{ github.event.inputs.replace_youtube_id }}
+          REPLACE_BUFFER_ID: ${{ github.event.inputs.replace_buffer_id }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+          BUFFER_IG_CHANNEL_ID: ${{ secrets.BUFFER_IG_CHANNEL_ID }}
+          BUFFER_FB_CHANNEL_ID: ${{ secrets.BUFFER_FB_CHANNEL_ID }}
+          YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+          PUSHOVER_TOKEN: ${{ secrets.PUSHOVER_TOKEN }}
+          PUSHOVER_USER: ${{ secrets.PUSHOVER_USER }}
+          SYNC_PAT: ${{ secrets.SYNC_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -z "${BUFFER_FB_CHANNEL_ID:-}" ]; then
+            echo "Facebook skipped: BUFFER_FB_CHANNEL_ID is not set."
+          else
+            echo "Facebook skipped. This workflow posts YouTube and Instagram only."
+          fi
+          npx tsx scripts/post-custom-listing-video.ts
+
+      - name: Pushover if the script did not already alert
+        if: failure()
+        env:
+          PUSHOVER_TOKEN: ${{ secrets.PUSHOVER_TOKEN }}
+          PUSHOVER_USER: ${{ secrets.PUSHOVER_USER }}
+        run: |
+          if [ -f /tmp/custom-listing-video-alerted ]; then
+            echo "The script already sent a Pushover alert."
+            exit 0
+          fi
+          if [ -n "${PUSHOVER_TOKEN:-}" ] && [ -n "${PUSHOVER_USER:-}" ]; then
+            curl -sS --fail -m 20 \
+              --form-string "token=$PUSHOVER_TOKEN" \
+              --form-string "user=$PUSHOVER_USER" \
+              --form-string "title=Custom listing video failed" \
+              --form-string "message=Custom listing video job failed before it could alert. See GitHub Actions run ${{ github.run_id }}." \
+              --form-string "priority=1" \
+              https://api.pushover.net/1/messages.json || echo "::warning::Pushover alert failed"
+          else
+            echo "::warning::PUSHOVER_TOKEN or PUSHOVER_USER is not set."
+          fi

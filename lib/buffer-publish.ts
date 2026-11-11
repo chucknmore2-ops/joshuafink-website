@@ -14,6 +14,7 @@ export const BUFFER_CREATE_POST_MUTATION = `
       ... on PostActionSuccess {
         post {
           id
+          status
         }
       }
       ... on MutationError {
@@ -35,13 +36,13 @@ export type BufferImagePostInput = {
 }
 
 export type BufferQueueResult =
-  | { ok: true; postId: string }
+  | { ok: true; postId: string; status?: string }
   | { ok: false; error: string }
 
 type CreatePostPayload = {
   __typename?: string
   message?: string
-  post?: { id?: string | null } | null
+  post?: { id?: string | null; status?: string | null } | null
 }
 
 type BufferGraphqlBody = {
@@ -91,7 +92,7 @@ function asBody(raw: string): BufferGraphqlBody | null {
   }
 }
 
-function graphqlErrorText(body: BufferGraphqlBody | null): string {
+function graphqlErrorText(body: { errors?: Array<{ message?: string }> | null } | null): string {
   const messages = (body?.errors ?? [])
     .map((err) => (typeof err?.message === 'string' ? err.message.trim() : ''))
     .filter(Boolean)
@@ -123,7 +124,10 @@ export function interpretBufferCreatePost(
   }
 
   if (typename === 'PostActionSuccess' || (!typename && typeof postId === 'string' && postId)) {
-    if (typeof postId === 'string' && postId) return { ok: true, postId }
+    if (typeof postId === 'string' && postId) {
+      const status = createPost?.post?.status
+      return typeof status === 'string' && status ? { ok: true, postId, status } : { ok: true, postId }
+    }
     return { ok: false, error: 'buffer PostActionSuccess returned no post id' }
   }
 
@@ -275,4 +279,222 @@ export async function queueInstagramImagePost(
   fetchImpl: typeof fetch = fetch,
 ): Promise<BufferQueueResult> {
   return queueBufferImagePost({ ...input, channel: 'instagram' }, fetchImpl)
+}
+
+export const BUFFER_POST_QUERY = `
+  query BufferPost($input: PostInput!) {
+    post(input: $input) {
+      id
+      status
+      sentAt
+      allowedActions
+    }
+  }
+`
+
+export const BUFFER_DELETE_POST_MUTATION = `
+  mutation DeleteBufferPost($input: DeletePostInput!) {
+    deletePost(input: $input) {
+      __typename
+      ... on DeletePostSuccess {
+        id
+      }
+      ... on MutationError {
+        message
+      }
+    }
+  }
+`
+
+export type BufferPostRecord = {
+  id: string
+  status: string
+  sentAt: string | null
+  allowedActions: string[]
+}
+
+export type BufferPostLookup =
+  | { ok: true; post: BufferPostRecord }
+  | { ok: false; error: string }
+
+export type BufferRetireResult =
+  | { ok: true; action: 'deleted'; postId: string; previousStatus: string }
+  | { ok: true; action: 'already_published'; postId: string; previousStatus: string }
+  | { ok: true; action: 'not_removable'; postId: string; previousStatus: string; reason: string }
+  | { ok: false; error: string }
+
+type BufferPostPayload = {
+  id?: string
+  status?: string
+  sentAt?: string | null
+  allowedActions?: string[] | null
+}
+
+type BufferDeletePayload = {
+  __typename?: string
+  id?: string
+  message?: string
+}
+
+type BufferReadBody = {
+  data?: { post?: BufferPostPayload | null; deletePost?: BufferDeletePayload | null } | null
+  errors?: Array<{ message?: string }> | null
+}
+
+/** Queued posts can be deleted. A sent post stays on Instagram; Buffer will not remove it. */
+export function planBufferRetire(post: Pick<BufferPostRecord, 'status' | 'sentAt' | 'allowedActions'>):
+  | { action: 'delete' }
+  | { action: 'already_published' }
+  | { action: 'not_removable'; reason: string } {
+  const status = post.status.trim().toLowerCase()
+  if (status === 'sent') return { action: 'already_published' }
+  if (status === 'sending') {
+    return {
+      action: 'not_removable',
+      reason: 'Buffer is sending this post, so it cannot be deleted through Buffer.',
+    }
+  }
+  const stillQueued = status === 'scheduled' || status === 'draft' || status === 'needs_approval' || status === 'error'
+  if (post.sentAt && !stillQueued) return { action: 'already_published' }
+  const actions = post.allowedActions.map((action) => action.toLowerCase())
+  if (actions.length > 0 && !actions.includes('deletepost')) {
+    return {
+      action: 'not_removable',
+      reason: `Buffer status is ${status} and deletePost is not an allowed action.`,
+    }
+  }
+  return { action: 'delete' }
+}
+
+async function bufferGraphql(
+  apiKey: string,
+  query: string,
+  variables: Record<string, unknown>,
+  fetchImpl: typeof fetch,
+): Promise<{ ok: true; httpStatus: number; raw: string } | { ok: false; error: string }> {
+  try {
+    const res = await fetchImpl(BUFFER_GRAPHQL_URL, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({ query, variables }),
+      signal: AbortSignal.timeout(30_000),
+    })
+    const raw = await res.text().catch(() => '')
+    return { ok: true, httpStatus: res.status, raw }
+  } catch (err) {
+    return { ok: false, error: redactBufferSecret(`buffer network: ${(err as Error).message}`, apiKey) }
+  }
+}
+
+function readBody(raw: string): BufferReadBody | null {
+  try {
+    const parsed = JSON.parse(raw) as unknown
+    if (!parsed || typeof parsed !== 'object') return null
+    return parsed as BufferReadBody
+  } catch {
+    return null
+  }
+}
+
+export function interpretBufferPost(httpStatus: number, raw: string, apiKey = ''): BufferPostLookup {
+  const body = readBody(raw)
+  const snippet = redactBufferSecret(raw, apiKey)
+  const graphMessage = redactBufferSecret(graphqlErrorText(body), apiKey)
+  if (httpStatus < 200 || httpStatus >= 300) {
+    const why = graphMessage || snippet
+    return { ok: false, error: `buffer HTTP ${httpStatus}${why ? ` ${why}` : ''}` }
+  }
+  const post = body?.data?.post
+  const id = typeof post?.id === 'string' ? post.id.trim() : ''
+  const status = typeof post?.status === 'string' ? post.status.trim() : ''
+  if (!id || !status) {
+    const why = graphMessage || snippet
+    return { ok: false, error: why ? `buffer post: ${why}` : 'buffer post returned no id' }
+  }
+  const sentAt = typeof post?.sentAt === 'string' && post.sentAt.trim() ? post.sentAt : null
+  const allowedActions = Array.isArray(post?.allowedActions)
+    ? post.allowedActions.filter((action): action is string => typeof action === 'string')
+    : []
+  return { ok: true, post: { id, status, sentAt, allowedActions } }
+}
+
+export function interpretBufferDelete(httpStatus: number, raw: string, apiKey = ''): BufferQueueResult {
+  const body = readBody(raw)
+  const snippet = redactBufferSecret(raw, apiKey)
+  const graphMessage = redactBufferSecret(graphqlErrorText(body), apiKey)
+  const deleted = body?.data?.deletePost ?? null
+  const typename = deleted?.__typename ?? ''
+  const message = typeof deleted?.message === 'string' ? deleted.message.trim() : ''
+  const postId = typeof deleted?.id === 'string' ? deleted.id.trim() : ''
+  if (httpStatus < 200 || httpStatus >= 300) {
+    const why = redactBufferSecret(message || graphMessage || snippet, apiKey)
+    return { ok: false, error: `buffer HTTP ${httpStatus}${why ? ` ${why}` : ''}` }
+  }
+  if (typename === 'DeletePostSuccess' || (!typename && postId)) {
+    if (postId) return { ok: true, postId }
+    return { ok: false, error: 'buffer DeletePostSuccess returned no post id' }
+  }
+  if (message || graphMessage) {
+    return { ok: false, error: `buffer ${typename || 'error'}: ${redactBufferSecret(message || graphMessage, apiKey)}` }
+  }
+  return { ok: false, error: `buffer deletePost returned no post id${typename ? ` (${typename})` : ''}` }
+}
+
+export async function fetchBufferPost(
+  input: { apiKey: string; postId: string },
+  fetchImpl: typeof fetch = fetch,
+): Promise<BufferPostLookup> {
+  const apiKey = input.apiKey.trim()
+  const postId = input.postId.trim()
+  if (!apiKey) return { ok: false, error: 'BUFFER_API_KEY not set' }
+  if (!postId) return { ok: false, error: 'buffer post id missing' }
+  const result = await bufferGraphql(apiKey, BUFFER_POST_QUERY, { input: { id: postId } }, fetchImpl)
+  if (!result.ok) return result
+  return interpretBufferPost(result.httpStatus, result.raw, apiKey)
+}
+
+export async function retireQueuedBufferPost(
+  input: { apiKey: string; postId: string },
+  fetchImpl: typeof fetch = fetch,
+): Promise<BufferRetireResult> {
+  const lookedUp = await fetchBufferPost(input, fetchImpl)
+  if (!lookedUp.ok) return lookedUp
+  const plan = planBufferRetire(lookedUp.post)
+  if (plan.action === 'already_published') {
+    return { ok: true, action: 'already_published', postId: lookedUp.post.id, previousStatus: lookedUp.post.status }
+  }
+  if (plan.action === 'not_removable') {
+    return {
+      ok: true,
+      action: 'not_removable',
+      postId: lookedUp.post.id,
+      previousStatus: lookedUp.post.status,
+      reason: plan.reason,
+    }
+  }
+  const apiKey = input.apiKey.trim()
+  const deleted = await bufferGraphql(
+    apiKey,
+    BUFFER_DELETE_POST_MUTATION,
+    { input: { id: lookedUp.post.id } },
+    fetchImpl,
+  )
+  if (!deleted.ok) return deleted
+  const interpreted = interpretBufferDelete(deleted.httpStatus, deleted.raw, apiKey)
+  if (!interpreted.ok) {
+    if (/already (been )?sent|already published|has been published|status is sent/i.test(interpreted.error)) {
+      return {
+        ok: true,
+        action: 'already_published',
+        postId: lookedUp.post.id,
+        previousStatus: lookedUp.post.status,
+      }
+    }
+    return interpreted
+  }
+  return { ok: true, action: 'deleted', postId: interpreted.postId, previousStatus: lookedUp.post.status }
 }
