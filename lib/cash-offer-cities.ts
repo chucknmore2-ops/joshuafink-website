@@ -623,6 +623,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
   },
   'murfreesboro-tn': {
     slug: 'murfreesboro-tn',
+    contentUpdated: '2026-11-12',
     areas: 'Oaklands, Blackman, Northfield, Ellendale, and downtown Murfreesboro',
     intro:
       "Murfreesboro is one of the fastest-growing cities in the state, but plenty of homes here need work, are caught in an estate, or belong to owners who need to move before MTSU's rental rush. A cash offer lets you sell as-is and close fast.",

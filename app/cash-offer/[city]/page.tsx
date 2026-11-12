@@ -15,6 +15,7 @@ import {
   faqSchemaAnswerText,
 } from '@/lib/cash-offer-cities'
 import ByTheNumbers from '@/components/ByTheNumbers'
+import RutherfordSellerListings from '@/components/RutherfordSellerListings'
 import { byTheNumbersDataset, getByTheNumbers } from '@/lib/by-the-numbers'
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
 import { linkifyNeighborhoods } from '@/lib/linkify-neighborhoods'
@@ -28,6 +29,11 @@ import {
   formatSqft,
   tennesseeClosingsInCities,
 } from '@/lib/closings'
+import {
+  recentRutherfordSellerListings,
+  rutherfordRealEstateAgentAreaServed,
+  rutherfordSellerListingsItemList,
+} from '@/lib/rutherford-seller-listings'
 
 const SITE = 'https://www.joshuafink.com'
 
@@ -154,6 +160,9 @@ export default async function CashOfferCityPage({ params }: Props) {
         (row) => row.city === 'Nashville' && row.state === 'TN' && row.status === 'Closed',
       ).length
     : 0
+  // Seller-side Rutherford listings only. Shown on Murfreesboro; other city
+  // pages keep the single-city areaServed below.
+  const rutherfordRows = slug === 'murfreesboro-tn' ? recentRutherfordSellerListings() : null
 
   const breadcrumb = buildBreadcrumbSchema([
     { name: 'Home', href: '/' },
@@ -226,12 +235,14 @@ export default async function CashOfferCityPage({ params }: Props) {
             '@context': 'https://schema.org',
             '@type': 'RealEstateAgent',
             '@id': 'https://www.joshuafink.com/#agent',
-            areaServed: {
-              '@type': 'City',
-              name: city.schemaCity,
-              addressRegion: 'TN',
-              addressCountry: 'US',
-            },
+            areaServed: rutherfordRows
+              ? rutherfordRealEstateAgentAreaServed()
+              : {
+                  '@type': 'City',
+                  name: city.schemaCity,
+                  addressRegion: 'TN',
+                  addressCountry: 'US',
+                },
             aggregateRating: {
               '@type': 'AggregateRating',
               ratingValue: reviewStats.rating.toFixed(1),
@@ -242,6 +253,14 @@ export default async function CashOfferCityPage({ params }: Props) {
           }),
         }}
       />
+      {rutherfordRows ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(rutherfordSellerListingsItemList(rutherfordRows)),
+          }}
+        />
+      ) : null}
 
       {/* Service Schema — city-specific areaServed */}
       <script
@@ -406,6 +425,8 @@ export default async function CashOfferCityPage({ params }: Props) {
           ) : null}
         </div>
       </div>
+
+      {slug === 'murfreesboro-tn' ? <RutherfordSellerListings /> : null}
 
       {byTheNumbers ? <ByTheNumbers section={byTheNumbers} /> : null}
 
