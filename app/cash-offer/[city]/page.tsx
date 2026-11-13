@@ -16,6 +16,7 @@ import {
 } from '@/lib/cash-offer-cities'
 import ByTheNumbers from '@/components/ByTheNumbers'
 import RutherfordSellerListings from '@/components/RutherfordSellerListings'
+import WilliamsonSellerListings from '@/components/WilliamsonSellerListings'
 import { byTheNumbersDataset, getByTheNumbers } from '@/lib/by-the-numbers'
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
 import { linkifyNeighborhoods } from '@/lib/linkify-neighborhoods'
@@ -34,6 +35,11 @@ import {
   rutherfordRealEstateAgentAreaServed,
   rutherfordSellerListingsItemList,
 } from '@/lib/rutherford-seller-listings'
+import {
+  recentWilliamsonSellerListings,
+  williamsonRealEstateAgentAreaServed,
+  williamsonSellerListingsItemList,
+} from '@/lib/williamson-seller-listings'
 
 const SITE = 'https://www.joshuafink.com'
 
@@ -160,9 +166,10 @@ export default async function CashOfferCityPage({ params }: Props) {
         (row) => row.city === 'Nashville' && row.state === 'TN' && row.status === 'Closed',
       ).length
     : 0
-  // Seller-side Rutherford listings only. Shown on Murfreesboro; other city
-  // pages keep the single-city areaServed below.
+  // Seller-side county listings. Murfreesboro shows Rutherford; Franklin shows
+  // Williamson. Other city pages keep the single-city areaServed below.
   const rutherfordRows = slug === 'murfreesboro-tn' ? recentRutherfordSellerListings() : null
+  const williamsonRows = slug === 'franklin-tn' ? recentWilliamsonSellerListings() : null
 
   const breadcrumb = buildBreadcrumbSchema([
     { name: 'Home', href: '/' },
@@ -237,12 +244,14 @@ export default async function CashOfferCityPage({ params }: Props) {
             '@id': 'https://www.joshuafink.com/#agent',
             areaServed: rutherfordRows
               ? rutherfordRealEstateAgentAreaServed()
-              : {
-                  '@type': 'City',
-                  name: city.schemaCity,
-                  addressRegion: 'TN',
-                  addressCountry: 'US',
-                },
+              : williamsonRows
+                ? williamsonRealEstateAgentAreaServed()
+                : {
+                    '@type': 'City',
+                    name: city.schemaCity,
+                    addressRegion: 'TN',
+                    addressCountry: 'US',
+                  },
             aggregateRating: {
               '@type': 'AggregateRating',
               ratingValue: reviewStats.rating.toFixed(1),
@@ -258,6 +267,14 @@ export default async function CashOfferCityPage({ params }: Props) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(rutherfordSellerListingsItemList(rutherfordRows)),
+          }}
+        />
+      ) : null}
+      {williamsonRows ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(williamsonSellerListingsItemList(williamsonRows)),
           }}
         />
       ) : null}
@@ -427,6 +444,7 @@ export default async function CashOfferCityPage({ params }: Props) {
       </div>
 
       {slug === 'murfreesboro-tn' ? <RutherfordSellerListings /> : null}
+      {slug === 'franklin-tn' ? <WilliamsonSellerListings /> : null}
 
       {byTheNumbers ? <ByTheNumbers section={byTheNumbers} /> : null}
 
