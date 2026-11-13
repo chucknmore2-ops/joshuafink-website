@@ -54,6 +54,15 @@ function isRealIsoDate(iso: string): boolean {
   return utc.getUTCFullYear() === year && utc.getUTCMonth() === month - 1 && utc.getUTCDate() === day
 }
 
+/**
+ * Street ordinals (5th, 53rd) are the name. Any other digit is a house
+ * number or a unit number that should have been stripped before the row
+ * was stored.
+ */
+function streetIncludesHouseNumber(street: string): boolean {
+  return /\d/.test(street.replace(/\d+(?:st|nd|rd|th)\b/gi, ''))
+}
+
 function assertListing<City extends string>(
   row: CountySellerListing<City>,
   index: number,
@@ -65,7 +74,7 @@ function assertListing<City extends string>(
   if (!row.street.trim() || row.street !== row.street.trim()) {
     throw new Error(`${where} has a blank street`)
   }
-  if (/^\d/.test(row.street) || /\d/.test(row.street)) {
+  if (streetIncludesHouseNumber(row.street)) {
     throw new Error(`${where} includes a house number`)
   }
   if (!(cityOrder as readonly string[]).includes(row.city)) {
