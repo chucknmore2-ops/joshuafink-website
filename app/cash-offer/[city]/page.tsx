@@ -15,6 +15,7 @@ import {
   faqSchemaAnswerText,
 } from '@/lib/cash-offer-cities'
 import ByTheNumbers from '@/components/ByTheNumbers'
+import BrentwoodSellerListings from '@/components/BrentwoodSellerListings'
 import DavidsonSellerListings from '@/components/DavidsonSellerListings'
 import RutherfordSellerListings from '@/components/RutherfordSellerListings'
 import WilliamsonSellerListings from '@/components/WilliamsonSellerListings'
@@ -31,6 +32,11 @@ import {
   formatSqft,
   tennesseeClosingsInCities,
 } from '@/lib/closings'
+import {
+  recentBrentwoodSellerListings,
+  brentwoodRealEstateAgentAreaServed,
+  brentwoodSellerListingsItemList,
+} from '@/lib/brentwood-seller-listings'
 import {
   recentDavidsonSellerListings,
   davidsonRealEstateAgentAreaServed,
@@ -173,11 +179,12 @@ export default async function CashOfferCityPage({ params }: Props) {
       ).length
     : 0
   // Seller-side county listings. Nashville shows Davidson; Murfreesboro shows
-  // Rutherford; Franklin shows Williamson. Other city pages keep the
-  // single-city areaServed below.
+  // Rutherford; Franklin shows Williamson; Brentwood shows its own Williamson
+  // County rows. Other city pages keep the single-city areaServed below.
   const davidsonRows = slug === 'nashville-tn' ? recentDavidsonSellerListings() : null
   const rutherfordRows = slug === 'murfreesboro-tn' ? recentRutherfordSellerListings() : null
   const williamsonRows = slug === 'franklin-tn' ? recentWilliamsonSellerListings() : null
+  const brentwoodRows = slug === 'brentwood-tn' ? recentBrentwoodSellerListings() : null
 
   const breadcrumb = buildBreadcrumbSchema([
     { name: 'Home', href: '/' },
@@ -250,18 +257,20 @@ export default async function CashOfferCityPage({ params }: Props) {
             '@context': 'https://schema.org',
             '@type': 'RealEstateAgent',
             '@id': 'https://www.joshuafink.com/#agent',
-            areaServed: rutherfordRows
-              ? rutherfordRealEstateAgentAreaServed()
-              : williamsonRows
-                ? williamsonRealEstateAgentAreaServed()
-                : davidsonRows
-                  ? davidsonRealEstateAgentAreaServed()
-                  : {
-                      '@type': 'City',
-                      name: city.schemaCity,
-                      addressRegion: 'TN',
-                      addressCountry: 'US',
-                    },
+            areaServed: brentwoodRows
+              ? brentwoodRealEstateAgentAreaServed()
+              : rutherfordRows
+                ? rutherfordRealEstateAgentAreaServed()
+                : williamsonRows
+                  ? williamsonRealEstateAgentAreaServed()
+                  : davidsonRows
+                    ? davidsonRealEstateAgentAreaServed()
+                    : {
+                        '@type': 'City',
+                        name: city.schemaCity,
+                        addressRegion: 'TN',
+                        addressCountry: 'US',
+                      },
             aggregateRating: {
               '@type': 'AggregateRating',
               ratingValue: reviewStats.rating.toFixed(1),
@@ -293,6 +302,14 @@ export default async function CashOfferCityPage({ params }: Props) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(davidsonSellerListingsItemList(davidsonRows)),
+          }}
+        />
+      ) : null}
+      {brentwoodRows ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(brentwoodSellerListingsItemList(brentwoodRows)),
           }}
         />
       ) : null}
@@ -464,6 +481,7 @@ export default async function CashOfferCityPage({ params }: Props) {
       {slug === 'murfreesboro-tn' ? <RutherfordSellerListings /> : null}
       {slug === 'franklin-tn' ? <WilliamsonSellerListings /> : null}
       {slug === 'nashville-tn' ? <DavidsonSellerListings /> : null}
+      {slug === 'brentwood-tn' ? <BrentwoodSellerListings /> : null}
 
       {byTheNumbers ? <ByTheNumbers section={byTheNumbers} /> : null}
 
