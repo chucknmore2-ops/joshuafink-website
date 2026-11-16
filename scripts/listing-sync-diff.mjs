@@ -1,12 +1,34 @@
 /**
  * Prints "timestamp-only" when the staged listing files differ from HEAD
  * only by the Compass sync clock, and "meaningful" otherwise.
+ * A change to lib/removed-listing-redirects.json is always meaningful:
+ * that file is what turns a removed /listings/<slug> into a 308.
  * The daily sync workflow uses this to skip a no-op commit.
  */
 import { execSync } from 'node:child_process';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { listingSyncIsTimestampOnly } from './listings-file.mjs';
 
-const FILES = ['lib/listings.ts', 'lib/sold-listings.ts'];
+export const LISTING_SYNC_FILES = [
+  'lib/listings.ts',
+  'lib/sold-listings.ts',
+  'lib/removed-listing-redirects.json',
+];
+
+/**
+ * @param {{ file: string, before: string | null, after: string | null }[]} entries
+ * @returns {'meaningful' | 'timestamp-only'}
+ */
+export function classifyListingSync(entries) {
+  for (const { file, before, after } of entries) {
+    if (before == null || after == null) return 'meaningful';
+    if (before === after) continue;
+    if (file.endsWith('.json')) return 'meaningful';
+    if (!listingSyncIsTimestampOnly(before, after)) return 'meaningful';
+  }
+  return 'timestamp-only';
+}
 
 function show(rev, file) {
   try {
@@ -16,19 +38,14 @@ function show(rev, file) {
   }
 }
 
-let meaningful = false;
-for (const file of FILES) {
-  const before = show('HEAD', file);
-  const after = show(':0', file);
-  if (before == null || after == null) {
-    meaningful = true;
-    break;
-  }
-  if (before === after) continue;
-  if (!listingSyncIsTimestampOnly(before, after)) {
-    meaningful = true;
-    break;
-  }
-}
+const isDirect = process.argv[1]
+  && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 
-process.stdout.write(meaningful ? 'meaningful\n' : 'timestamp-only\n');
+if (isDirect) {
+  const entries = LISTING_SYNC_FILES.map((file) => ({
+    file,
+    before: show('HEAD', file),
+    after: show(':0', file),
+  }));
+  process.stdout.write(`${classifyListingSync(entries)}\n`);
+}

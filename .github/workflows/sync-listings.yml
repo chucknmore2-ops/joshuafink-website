@@ -1,7 +1,8 @@
 name: Sync Compass Listings
 
 # Daily sync of Joshua's listings from https://www.compass.com/agents/joshua-fink/
-# via scripts/sync-all.sh — writes lib/listings.ts + lib/sold-listings.ts and
+# via scripts/sync-all.sh — writes lib/listings.ts, lib/sold-listings.ts, and
+# lib/removed-listing-redirects.json (308s for slugs that left inventory) and
 # opens an auto-merging PR if there are diffs.
 #
 # NOT a direct push to main: main is protected and requires the "build" status
@@ -141,7 +142,7 @@ jobs:
 
           git config user.name  'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git add lib/listings.ts lib/sold-listings.ts
+          git add lib/listings.ts lib/sold-listings.ts lib/removed-listing-redirects.json
           if git diff --cached --quiet; then
             echo 'No listing changes — nothing to commit.'
             exit 0
@@ -154,7 +155,7 @@ jobs:
           DIFF_KIND=$(node scripts/listing-sync-diff.mjs)
           if [ "$DIFF_KIND" = "timestamp-only" ]; then
             echo 'Only the Compass sync timestamp changed. Not opening a PR, so production does not redeploy.'
-            git restore --source=HEAD --staged --worktree -- lib/listings.ts lib/sold-listings.ts
+            git restore --source=HEAD --staged --worktree -- lib/listings.ts lib/sold-listings.ts lib/removed-listing-redirects.json
             exit 0
           fi
 

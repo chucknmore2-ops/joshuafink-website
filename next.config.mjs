@@ -32,7 +32,7 @@ const csp = [
 
 const nextConfig = {
   async redirects() {
-    // 308s for measured 404s (missing -tn slugs, delisted listing, legacy WP).
+    // 308s for measured 404s (missing -tn slugs, delisted listings, legacy WP).
     return legacyRedirects()
   },
   images: {

@@ -40,6 +40,7 @@ test('a timestamp-only listing sync skips production and a price change does not
 test('any rendered site file still builds', () => {
   assert.equal(shouldSkipProductionBuild(['app/page.tsx'], () => ''), false);
   assert.equal(shouldSkipProductionBuild(['public/robots.txt'], () => ''), false);
+  assert.equal(shouldSkipProductionBuild(['lib/removed-listing-redirects.json'], () => ''), false);
   assert.equal(shouldSkipProductionBuild(['README.md', 'docs/notes.md'], () => ''), true);
 });
 
