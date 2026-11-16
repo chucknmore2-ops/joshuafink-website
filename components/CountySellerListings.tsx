@@ -15,6 +15,9 @@ type Props = {
   rows: readonly CountySellerListing[]
   summary: string
   total: number
+  /** City anchor on /sold, when that page has one. Other county sections omit it. */
+  soldHref?: string
+  soldLabel?: string
 }
 
 /**
@@ -29,6 +32,8 @@ export default function CountySellerListings({
   rows,
   summary,
   total,
+  soldHref,
+  soldLabel,
 }: Props) {
   return (
     <section aria-labelledby={headingId} className="bg-white border-b border-neutral-200">
@@ -91,6 +96,13 @@ export default function CountySellerListings({
             </li>
           ))}
         </ul>
+        {soldHref && soldLabel ? (
+          <p className="mt-5">
+            <Link href={soldHref} className="text-sm font-semibold text-black underline underline-offset-4">
+              {soldLabel}
+            </Link>
+          </p>
+        ) : null}
       </div>
     </section>
   )
