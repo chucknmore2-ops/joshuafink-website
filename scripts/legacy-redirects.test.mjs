@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { legacyRedirects } from '../lib/legacy-redirects.mjs'
@@ -40,9 +40,23 @@ test('legacy redirects are permanent, unique, and point at live city pages', () 
   assert.equal(bySource.get('/neighborhoods/westhaven'), '/neighborhoods/westhaven-franklin-tn')
   assert.equal(bySource.get('/neighborhoods/12-south'), '/neighborhoods/12-south-nashville-tn')
   assert.equal(bySource.get('/listings/159-n-berwick-ln-franklin'), '/buy/franklin-tn')
+  assert.equal(bySource.get('/listings/870-reeves-rd-antioch'), '/sold')
+  assert.equal(bySource.get('/listings/107-overlook-trail-goodlettsville'), '/sold')
+  assert.equal(bySource.get('/listings/261-paragon-mills-rd-nashville'), '/buy/nashville-tn')
+  assert.equal(bySource.get('/listings/1113-linn-cv-ct-gallatin'), '/sold')
+  assert.equal(bySource.get('/listings/1100-gibson-dr-madison'), '/listings')
+  assert.equal(bySource.get('/listings/8117-hilldale-dr-brentwood'), '/sold')
+  assert.equal(bySource.get('/compare/murfreesboro-tn-smryna-tn'), '/compare/murfreesboro-tn-vs-smyrna-tn')
   assert.equal(bySource.get('/about-us'), '/about')
   assert.equal(bySource.get('/feed'), '/blog/rss.xml')
   assert.equal(bySource.has('/listings/undisclosed-address-nashville'), false)
+
+  assert.equal(existsSync(join(root, 'app/sold/page.tsx')), true)
+  assert.equal(existsSync(join(root, 'app/listings/page.tsx')), true)
+  assert.equal(suburbSlugs.has('nashville-tn'), true)
+  assert.equal(suburbSlugs.has('madison-tn'), false)
+  assert.equal(suburbSlugs.has('antioch-tn'), false)
+  assert.equal(suburbSlugs.has('goodlettsville-tn'), false)
 
   const neighborhoodSlugs = quotedSlugs('lib/neighborhoods.ts', /(?<=slug:\s')[^']+(?=')/g)
   for (const rule of rules) {
