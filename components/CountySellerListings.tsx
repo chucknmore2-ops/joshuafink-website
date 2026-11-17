@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import Link from 'next/link'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import { formatCloseMonthYear, formatSoldPrice } from '@/lib/closings'
@@ -18,6 +19,8 @@ type Props = {
   /** City anchor on /sold, when that page has one. Other county sections omit it. */
   soldHref?: string
   soldLabel?: string
+  /** Extra line after the list. Spring Hill uses it for the Columbia record. */
+  note?: ReactNode
 }
 
 /**
@@ -34,6 +37,7 @@ export default function CountySellerListings({
   total,
   soldHref,
   soldLabel,
+  note,
 }: Props) {
   return (
     <section aria-labelledby={headingId} className="bg-white border-b border-neutral-200">
@@ -103,6 +107,7 @@ export default function CountySellerListings({
             </Link>
           </p>
         ) : null}
+        {note ? <div className="text-neutral-700 text-base leading-relaxed mt-4">{note}</div> : null}
       </div>
     </section>
   )
