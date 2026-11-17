@@ -19,6 +19,7 @@ import BrentwoodSellerListings from '@/components/BrentwoodSellerListings'
 import ColumbiaSellerListings from '@/components/ColumbiaSellerListings'
 import DavidsonSellerListings from '@/components/DavidsonSellerListings'
 import RutherfordSellerListings from '@/components/RutherfordSellerListings'
+import SmyrnaSellerListings from '@/components/SmyrnaSellerListings'
 import SpringHillSellerListings from '@/components/SpringHillSellerListings'
 import WilliamsonSellerListings from '@/components/WilliamsonSellerListings'
 import { byTheNumbersDataset, getByTheNumbers } from '@/lib/by-the-numbers'
@@ -54,6 +55,11 @@ import {
   rutherfordRealEstateAgentAreaServed,
   rutherfordSellerListingsItemList,
 } from '@/lib/rutherford-seller-listings'
+import {
+  recentSmyrnaSellerListings,
+  smyrnaRealEstateAgentAreaServed,
+  smyrnaSellerListingsItemList,
+} from '@/lib/smyrna-seller-listings'
 import {
   recentSpringHillSellerListings,
   springHillRealEstateAgentAreaServed,
@@ -193,7 +199,8 @@ export default async function CashOfferCityPage({ params }: Props) {
   // Seller-side listings. Nashville shows Davidson; Murfreesboro shows
   // Rutherford; Franklin shows Williamson; Brentwood shows its own Williamson
   // County rows. Columbia shows its Maury County rows. Spring Hill shows only
-  // its four closings, not the Williamson list. Other city pages keep the
+  // its four closings, not the Williamson list. Smyrna shows the Smyrna and
+  // La Vergne closings, not the Murfreesboro rows. Other city pages keep the
   // single-city areaServed below.
   const davidsonRows = slug === 'nashville-tn' ? recentDavidsonSellerListings() : null
   const rutherfordRows = slug === 'murfreesboro-tn' ? recentRutherfordSellerListings() : null
@@ -201,6 +208,7 @@ export default async function CashOfferCityPage({ params }: Props) {
   const brentwoodRows = slug === 'brentwood-tn' ? recentBrentwoodSellerListings() : null
   const columbiaRows = slug === 'columbia-tn' ? recentColumbiaSellerListings() : null
   const springHillRows = slug === 'spring-hill-tn' ? recentSpringHillSellerListings() : null
+  const smyrnaRows = slug === 'smyrna-tn' ? recentSmyrnaSellerListings() : null
 
   const breadcrumb = buildBreadcrumbSchema([
     { name: 'Home', href: '/' },
@@ -285,12 +293,14 @@ export default async function CashOfferCityPage({ params }: Props) {
                       ? williamsonRealEstateAgentAreaServed()
                       : davidsonRows
                         ? davidsonRealEstateAgentAreaServed()
-                        : {
-                            '@type': 'City',
-                            name: city.schemaCity,
-                            addressRegion: 'TN',
-                            addressCountry: 'US',
-                          },
+                        : smyrnaRows
+                          ? smyrnaRealEstateAgentAreaServed()
+                          : {
+                              '@type': 'City',
+                              name: city.schemaCity,
+                              addressRegion: 'TN',
+                              addressCountry: 'US',
+                            },
             aggregateRating: {
               '@type': 'AggregateRating',
               ratingValue: reviewStats.rating.toFixed(1),
@@ -346,6 +356,14 @@ export default async function CashOfferCityPage({ params }: Props) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(springHillSellerListingsItemList(springHillRows)),
+          }}
+        />
+      ) : null}
+      {smyrnaRows ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(smyrnaSellerListingsItemList(smyrnaRows)),
           }}
         />
       ) : null}
@@ -520,6 +538,7 @@ export default async function CashOfferCityPage({ params }: Props) {
       {slug === 'brentwood-tn' ? <BrentwoodSellerListings /> : null}
       {slug === 'columbia-tn' ? <ColumbiaSellerListings /> : null}
       {slug === 'spring-hill-tn' ? <SpringHillSellerListings /> : null}
+      {slug === 'smyrna-tn' ? <SmyrnaSellerListings /> : null}
 
       {byTheNumbers ? <ByTheNumbers section={byTheNumbers} /> : null}
 
