@@ -1,4 +1,4 @@
-// AUTO-GENERATED — Last synced: 2026-11-14T14:53:19.169Z
+// AUTO-GENERATED — Last synced: 2026-11-18T17:01:52.913Z
 // Source: https://www.compass.com/agents/joshua-fink/
 // Do not edit manually — run: node scripts/fetch-images.mjs
 
@@ -32,7 +32,7 @@ export interface Listing {
 
 // Mirrors the header timestamp so server components can compute sync staleness
 // without parsing comments. Updated by scripts/fetch-images.mjs each sync.
-export const listingsSyncedAt = "2026-11-14T14:53:19.169Z";
+export const listingsSyncedAt = "2026-11-18T17:01:52.913Z";
 
 export const listings: Listing[] = [
   {
@@ -291,51 +291,6 @@ export const listings: Listing[] = [
       "https://www.compass.com/m/b4f7eb327d63ebd526d2367e7b5bd1c1a1b78ddd2f969409628de106e87a5b5c/2048x1536.webp",
     ],
     firstSeen: "2026-06-24T10:55:44.000Z",
-    lastVerified: listingsSyncedAt,
-  },
-  {
-    address: "2037 Walnut Ln",
-    city: "Gallatin, TN 37066 | MLS #3527618",
-    price: 307500,
-    beds: 3,
-    baths: 3,
-    sqft: 1544,
-    status: "Active",
-    compassUrl: "https://www.compass.com/homedetails/2037-Walnut-Ln-Gallatin-TN-37066/SFFDI_pid/",
-    imageUrl: "https://www.compass.com/m/cfb0b5c09b81c0659c2b0baa6b3bc9332777f4a2bd4d6d647b185638b946738f/2048x1536.webp",
-    photoUrls: [
-      "https://www.compass.com/m/cfb0b5c09b81c0659c2b0baa6b3bc9332777f4a2bd4d6d647b185638b946738f/2048x1536.webp",
-      "https://www.compass.com/m/83cde17a733461803e007dea24ff355ec4e03cc94670e1dc52a4bda0a7c64304/2048x1536.webp",
-      "https://www.compass.com/m/293131e87fb3741327e0783361cab0de2e998354ec3fd0cd01dab82c46cefdb9/2048x1536.webp",
-      "https://www.compass.com/m/be7b2733854c51c1ed5b3f38d16058ad05da4ecad3e2626df6a687a5bea58c9d/2048x1536.webp",
-      "https://www.compass.com/m/2b4fd2583cf2165243b65cdbd1a7f65fc8ff344323b23180efb0cf74fa1d5788/2048x1536.webp",
-      "https://www.compass.com/m/041a86e825566febf7b84e11c94faeb8ab664970fc07e5671782552a91db2edf/2048x1536.webp",
-      "https://www.compass.com/m/0ff500503290c6cb5f43427edc29326d123d8ee9c37b65bf34471f4a914d109d/2048x1536.webp",
-      "https://www.compass.com/m/b696c5fb59cbe1daafdf49d7e4eafb2d227ee0c796eaea9564f2cccd16d0f614/2048x1536.webp",
-      "https://www.compass.com/m/8ef4380e87737b318eb016e4eb7655e1be398635b4df89ce60cf6c7b9a859d4e/2048x1536.webp",
-      "https://www.compass.com/m/521871d693f043fbf87d96d1a24c062c1f3043e7deb4c395f09b045f879b260a/2048x1536.webp",
-      "https://www.compass.com/m/398868b0c07c11d6ca86f2d38b31264237c69a77c20a9ebb446b886b7042168c/2048x1536.webp",
-      "https://www.compass.com/m/1b31ff7fa64eb152e7f333e03c14f78049c02e3dc28f353bd8841ce6fba2cc9d/2048x1536.webp",
-      "https://www.compass.com/m/b2012c7091e93df0fb5f3bd3aede19d8d08d5653d9933465c8f17a4dbc1a2b33/2048x1536.webp",
-      "https://www.compass.com/m/76918fc4b82ff82ef4a0bb5817ebc5c7643c4e2aa24c4b8e4df08f58928549aa/2048x1536.webp",
-      "https://www.compass.com/m/0a4a5b5102f69b898e0e7a1386ea6123e5aab06aab628627cca165e0a5256b36/2048x1536.webp",
-      "https://www.compass.com/m/bdfbd5850717f950245f21484661a8bbcc11c053a6a4982ed5d0582d6d8e945c/2048x1536.webp",
-      "https://www.compass.com/m/462f5aa952c8a56d169f86d1744366a182bb50527e327f78465879e47a38db15/2048x1536.webp",
-      "https://www.compass.com/m/6399524364a660bf1f0a07612bacafc9d226d1a977a34dcf5d928e1b6deef3ea/2048x1536.webp",
-      "https://www.compass.com/m/564b34694506e79ef105bee7c5d71f736c15333bca26023e3c0f02c5b64244d7/2048x1536.webp",
-      "https://www.compass.com/m/fadbbf3bd469bd49333ac57ae6da2174ea4b3986345f6a47da7893806107fdde/2048x1536.webp",
-      "https://www.compass.com/m/4ea7f276870e70d87b512431e19d6ec0fb5e2b67cd5afc9b905a514807b3fef8/2048x1536.webp",
-      "https://www.compass.com/m/2f8259e5cdb21f6a3e83e3879edd5c5f09216a0621cc0be7136ab255f8d3c6bb/2048x1536.webp",
-      "https://www.compass.com/m/308455374648a6dffa7bef7fb346385aa49601096e037228365f9ca4e22c1637/2048x1536.webp",
-      "https://www.compass.com/m/2b37a86aa96c280112506d1fd6cfb8e4816875239ebf1fce2977328d716a8fc8/2048x1536.webp",
-      "https://www.compass.com/m/ec5f1d2656525111ac0d84da0d120056f9bdf9a122587a6b117ba4e588adfe89/2048x1536.webp",
-      "https://www.compass.com/m/2a630fa3a6a9b36ece3e446b27ddf7c010ca5e1c1417eb2de9500929e8b7bf8a/2048x1536.webp",
-      "https://www.compass.com/m/8eb2cc397bb46879e845dff19b164630b20a4a930ff71cc65af573d8c6fbcb15/2048x1536.webp",
-      "https://www.compass.com/m/53d9911994a6d71653fe33e9587a9dbea405976afedb195e15602ef68e981a57/2048x1536.webp",
-      "https://www.compass.com/m/4cb0183d5188ee1ff64b588e358b904858ce2750abf3607ce092c5d923bd4714/2048x1536.webp",
-      "https://www.compass.com/m/3e912091dfd3bcbf291d9f98171cd664c9702fd60c669d65d5be4e89d55b3be3/2048x1536.webp",
-    ],
-    firstSeen: "2026-08-30T13:44:15.000Z",
     lastVerified: listingsSyncedAt,
   },
   {
