@@ -32,6 +32,7 @@ import {
   planJustListedPosts,
   type JustListedDraft,
 } from './just-listed'
+import { normalizeGbpLocationId } from './location'
 
 export const dynamic = 'force-dynamic'
 
@@ -60,13 +61,23 @@ export const dynamic = 'force-dynamic'
 //   GBP_REFRESH_TOKEN     — OAuth refresh token with scope
 //                           https://www.googleapis.com/auth/business.manage
 //   GBP_ACCOUNT_ID        — e.g. "accounts/123456789012345"
-//   GBP_LOCATION_ID       — e.g. "accounts/.../locations/987654321"
+//   GBP_LOCATION_ID       — v4 parent "accounts/.../locations/987654321".
+//                           A Business Information name ("locations/...") is
+//                           combined with GBP_ACCOUNT_ID. A bare numeric id
+//                           is prefixed the same way. See normalizeGbpLocationId.
 //
 // See docs/automation.md for the one-time setup flow to get these values.
 
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token'
 const GBP_POSTS_API = (location: string) =>
   `https://mybusiness.googleapis.com/v4/${location}/localPosts`
+
+function configuredGbpLocationId(): string | undefined {
+  const raw = process.env.GBP_LOCATION_ID
+  if (!raw) return undefined
+  const parent = normalizeGbpLocationId(raw, process.env.GBP_ACCOUNT_ID)
+  return parent || undefined
+}
 
 const SITE = 'https://www.joshuafink.com'
 
@@ -467,7 +478,7 @@ export async function GET(request: Request) {
       ? 'gbp-on-demand'
       : 'gbp-post'
 
-  const locationId = process.env.GBP_LOCATION_ID
+  const locationId = configuredGbpLocationId()
   if (!locationId) {
     // Log the early exit too — otherwise a channel that never even reaches
     // Google looks identical in /admin to one that was never scheduled.
@@ -794,7 +805,7 @@ async function handleNewListings(params: URLSearchParams): Promise<NextResponse>
     })
   }
 
-  const locationId = process.env.GBP_LOCATION_ID
+  const locationId = configuredGbpLocationId()
   if (!locationId) {
     await logPost({
       channel: 'gbp',

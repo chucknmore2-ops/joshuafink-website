@@ -36,6 +36,8 @@ IG_BUSINESS_ACCOUNT_ID   = unused by the live path (Graph leftovers; do not poin
 IG_ACCESS_TOKEN          = unused by the live path (Graph leftovers)
 ```
 
+`GBP_LOCATION_ID` is the v4 `localPosts` parent (`accounts/{account}/locations/{location}`), which `scripts/google_business_auth.py` prints. The Business Information location name is only `locations/{location}`. `/api/cron/gbp-post` (Tuesday rotator and Just Listed) uses a full parent as-is, and composes one when the value starts with `locations/` and `GBP_ACCOUNT_ID` is set, or when the value is a bare numeric id.
+
 Facebook Page credentials stay on the Railway autoposter only. Do not add
 `FB_PAGE_ID` or `FB_PAGE_TOKEN` to Vercel. The site does not read them.
 
@@ -82,6 +84,8 @@ You need a refresh_token with the `https://www.googleapis.com/auth/business.mana
    GBP_LOCATION_ID=accounts/123456789012345/locations/987654321
    ============================================================
    ```
+
+   Paste that `GBP_LOCATION_ID` line as printed: `accounts/…/locations/…`. That is the v4 localPosts parent. `locations/…` by itself is only the Business Information name, and `mybusiness.googleapis.com/v4/locations/{id}/localPosts` returns 404.
 
 5. **Publish your OAuth app** (one-time, avoids the 7-day refresh-token expiry). Google Cloud Console → APIs & Services → **OAuth consent screen** → **Publish App**. No verification needed as long as you only use internal scopes.
 
