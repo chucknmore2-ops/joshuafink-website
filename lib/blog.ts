@@ -433,7 +433,7 @@ The reason to look here is the Hillsboro Pike location and the school assignment
 
 Joshua Fink is an Affiliate Broker with Compass Real Estate, licensed since 2008, and sells 40+ homes a year in Middle Tennessee. Office: Compass, 8119 Isabella Lane Suite 105, Brentwood, TN 37027. TREC #351484. Call or text [615-551-2727](tel:6155512727), or [send a note](/contact).
 
-Current Nashville listings are on the [homes for sale](/listings) page. The city buyer page is [Buy in Nashville](/buy/nashville-tn).
+Current Nashville listings are on the [homes for sale](/listings) page. The city buyer page is [Buy in Nashville](/buy/nashville-tn). If the house needs to sell as-is, see [we buy houses in Nashville](/cash-offer/nashville-tn).
 
 ## Sources
 
@@ -720,7 +720,7 @@ If you would like a calm, no-pressure conversation about where you stand and wha
     slug: "selling-inherited-house-nashville-tennessee",
     title: "Selling an Inherited House in Nashville & Middle Tennessee: A Probate-to-Closing Guide",
     date: "June 2, 2026",
-    dateModified: "November 4, 2026",
+    dateModified: "November 18, 2026",
     excerpt: "Inheriting a house in Middle Tennessee brings grief and a long to-do list at the same time. Here is a calm, practical walk-through of probate basics, coordinating with siblings, and the three real paths to selling.",
     category: "Selling",
     disclosure: "This article is for general educational purposes only and is not legal, tax, or financial advice — consult a licensed Tennessee probate attorney and a tax professional about your specific situation. Joshua Fink is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate and may act as a principal buyer or partner with a local investor in a cash transaction; his licensed status is disclosed in writing at offer time. Cash offers are typically 70–85% of after-repair market value.",
@@ -770,6 +770,14 @@ Here is the most important thing I can tell you: **talk to a licensed Tennessee 
 - Sort out the heirs and make sure everyone who needs to consent is accounted for
 
 Do you have to finish probate before you can sell? Often the **authority to sell** must be established first, even if the full estate isn't closed. Sometimes the court's approval is part of the sale. Your attorney will tell you exactly where you stand — every estate is a little different.
+
+## Franklin and Williamson County
+
+Franklin is in Williamson County. If the person who died lived there, the probate case belongs to Williamson County — the court in the county where they lived — even when the heirs live in Nashville or out of state. A Franklin house is not a Davidson County probate just because the family is in Nashville.
+
+The steps stay the ones above, and they stay high level on purpose. A Tennessee probate attorney confirms whether the house has to go through probate, who has authority to sign, and whether the court has to approve the sale. Often that authority has to be in place before a sale, even if the estate is not fully closed. Sometimes the court approves the sale itself. I am a real estate broker, not a lawyer.
+
+A cash contract can wait on that authority. For a Franklin address, see [we buy houses in Franklin](/cash-offer/franklin-tn). For a Nashville address, see [we buy houses in Nashville](/cash-offer/nashville-tn).
 
 ## When Multiple Heirs or Siblings Are Involved
 
@@ -1141,7 +1149,7 @@ Three things I'll be tracking over the next eight weeks:
 
 May 2026 is a real market. Not a frenzy, not a crash — a market where preparation, pricing, and presentation determine outcomes. Buyers who do the work get rewarded. Sellers who do the work get rewarded. The agents and clients who try to wing it are the ones complaining that the market is hard.
 
-If you're thinking about a move in the next 90 days, this is the season to get serious about it. I'm happy to walk through the specifics of your situation — your neighborhood, your timeline, your numbers — and give you an honest read on what makes sense.
+If you're thinking about a move in the next 90 days, this is the season to get serious about it. I'm happy to walk through the specifics of your situation — your neighborhood, your timeline, your numbers — and give you an honest read on what makes sense. If a Nashville house needs to sell without a listing, see [we buy houses in Nashville](/cash-offer/nashville-tn).
 
 Reach out anytime: [615-551-2727](tel:6155512727) or [joshua@joshuafink.com](mailto:joshua@joshuafink.com).
     `.trim(),
@@ -1818,7 +1826,7 @@ Not all agents understand investment property. You need someone who can run ARV 
 
 As both a Compass agent and active fix-and-flip investor in Middle Tennessee, I bring real investor perspective — not just agent perspective — to every deal.
 
-**Looking for investment properties in Nashville or Middle Tennessee?**
+**Looking for investment properties in Nashville or Middle Tennessee?** If you are exiting a Nashville rental instead of buying another, see [we buy houses in Nashville](/cash-offer/nashville-tn).
 
 **Call or text:** 615-551-2727
 **Email:** joshua@joshuafink.com
@@ -5646,7 +5654,7 @@ Skip the calculator that asks for a city and hands back a verdict. Do this inste
 
 Rent vs. buy in Nashville going into 2027 is a stay-put question wearing a market headline. Several years in the house, a payment you can carry, and cash left after closing — buying is usually the stronger move in a market where rates have settled and sellers will talk. A short or uncertain timeline — renting is the smarter one, and there's no prize for buying before your life supports it.
 
-If you want that comparison run on your lease, your savings, and the neighborhoods you are actually considering, that is a straightforward conversation. Call or text [615-551-2727](tel:6155512727) or email [joshua@joshuafink.com](mailto:joshua@joshuafink.com).
+If you want that comparison run on your lease, your savings, and the neighborhoods you are actually considering, that is a straightforward conversation. If you already own in Nashville and the comparison says sell, see [we buy houses in Nashville](/cash-offer/nashville-tn). Call or text [615-551-2727](tel:6155512727) or email [joshua@joshuafink.com](mailto:joshua@joshuafink.com).
     `.trim(),
   },
 ]

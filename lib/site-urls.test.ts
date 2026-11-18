@@ -50,7 +50,7 @@ test('sitemap lastmod uses real content dates and omits pages without one', () =
   assert.ok(days.size > 1, 'lastmod should not be one shared build timestamp')
 
   const nashville = catalog.find((entry) => entry.path === '/cash-offer/nashville-tn')
-  assert.equal(nashville?.lastModified?.toISOString(), '2026-11-04T12:00:00.000Z')
+  assert.equal(nashville?.lastModified?.toISOString(), '2026-11-18T12:00:00.000Z')
   const unchangedCash = catalog.find((entry) => entry.path === '/cash-offer/la-vergne-tn')
   assert.equal(unchangedCash?.lastModified?.toISOString(), '2026-10-05T12:00:00.000Z')
   const privacy = catalog.find((entry) => entry.path === '/privacy')

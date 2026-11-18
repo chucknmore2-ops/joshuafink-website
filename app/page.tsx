@@ -188,6 +188,13 @@ export default function HomePage() {
                 not an algorithm. Most sellers are surprised by what their home is worth in
                 today&apos;s Middle Tennessee market.
               </p>
+              <p className="text-neutral-400 text-base leading-relaxed max-w-lg mt-4">
+                Need to sell without listing?{' '}
+                <Link href="/cash-offer/nashville-tn" className="font-semibold text-white underline underline-offset-4">
+                  We buy houses in Nashville
+                </Link>
+                .
+              </p>
             </div>
             <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-3 lg:justify-end">
               <Link

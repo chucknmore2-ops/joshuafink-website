@@ -200,8 +200,30 @@ const cityContent: Record<string, CashOfferCityContent> = {
       label: 'sell your house for cash in Columbia, TN',
       after: '.',
     },
-    localHeading: 'We Buy Houses in Franklin',
-    contentUpdated: '2026-11-04',
+    headline: {
+      lead: 'Sell My House Fast',
+      accent: 'in Franklin, TN.',
+    },
+    localHeading: 'We Buy Houses in Franklin, TN',
+    contentUpdated: '2026-11-18',
+    seo: {
+      title: 'We Buy Houses Franklin TN | Sell My House Fast | Compass',
+      description:
+        'We buy houses in Franklin, TN. Sell my house fast, as-is, with an offer in 24 hours. Compass, licensed since 2008. Call 615-551-2727.',
+      ogTitle: 'We Buy Houses Franklin TN | Sell My House Fast | Compass',
+      ogDescription:
+        'We buy houses in Franklin, TN. Sell my house fast, as-is, with an offer in 24 hours. Compass, licensed since 2008. Call 615-551-2727.',
+      absoluteTitle: true,
+      keywords: [
+        'we buy houses Franklin TN',
+        'sell my house fast Franklin TN',
+        'cash home buyers Franklin TN',
+        'sell my house cash Franklin TN',
+        'Franklin TN cash offer',
+        'Joshua Fink',
+      ],
+      eyebrow: 'Franklin, TN · Cash Offer',
+    },
     countySection: {
       eyebrow: 'Williamson County',
       heading: 'Historic downtown and older Franklin houses',
@@ -228,6 +250,14 @@ const cityContent: Record<string, CashOfferCityContent> = {
           { href: '/market/franklin-tn', label: 'Franklin market report' },
           ', or start a full-value listing on the ',
           { href: '/sell/franklin-tn', label: 'Franklin sell page' },
+          '.',
+        ],
+        [
+          'An inherited Franklin house is a Williamson County question before it is a listing question. Probate is handled at the county level, in the county where the person lived, so a Franklin estate is not a Davidson County filing just because the heirs live in Nashville. Often the authority to sign has to be in place before a sale, even if the estate is not fully closed, and sometimes the court approves the sale itself. Joshua is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate, licensed since 2008. He is not a probate attorney. The walk-through is ',
+          {
+            href: '/blog/selling-inherited-house-nashville-tennessee',
+            label: 'selling an inherited house in Franklin and Williamson County',
+          },
           '.',
         ],
       ],
@@ -472,7 +502,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
       accent: 'in Nashville.',
     },
     situationsHeading: 'We buy houses in Nashville — any situation',
-    contentUpdated: '2026-11-04',
+    contentUpdated: '2026-11-18',
     marketNote:
       "Davidson County is not one housing market. The citywide median sale price is $475,538, with 64 days on market and $272.16 per square foot, down 0.52% year over year (Redfin, as of October 5, 2026). Davidson County's April 1, 2020 Census count was 715,884. The U.S. Census Bureau estimates 745,904 residents as of July 1, 2025, a 4.2% increase from the April 1, 2020 estimates base (U.S. Census Bureau QuickFacts; Population Estimates, Vintage 2025). The neighborhood guides on this site publish these price bands: East Nashville $450K – $1.2M+, 12 South $700K – $1.8M+, Germantown $500K – $1.5M+, Sylvan Park $550K – $1.3M+, The Gulch $400K – $1.5M+ (condos), and Green Hills: No published median. A cash offer follows the block and the condition, not the citywide midpoint. Joshua also buys in Madison, Antioch, Donelson, Bordeaux, and Hermitage.",
     seo: {
@@ -515,8 +545,8 @@ const cityContent: Record<string, CashOfferCityContent> = {
         id: 'inherited',
         heading: 'Selling an inherited house in Nashville',
         body: 'Probate, siblings who don’t agree, and a house that hasn’t been updated in years are the usual mix. Joshua buys inherited Nashville homes as-is — cleanout, repairs, and leftover belongings included — and the closing attorney coordinates title around the probate timeline. Out-of-state heirs can sign remotely.',
-        href: '/blog/sell-inherited-house-nashville-tn',
-        linkLabel: 'Inherited-home guide',
+        href: '/blog/selling-inherited-house-nashville-tennessee',
+        linkLabel: 'Selling an inherited house in Nashville',
       },
       {
         id: 'divorce',
@@ -555,6 +585,10 @@ const cityContent: Record<string, CashOfferCityContent> = {
       { href: '/blog/cash-offer-vs-ibuyer-vs-listing-middle-tennessee', label: 'Cash offer vs. iBuyer vs. listing' },
       { href: '/blog/traditional-sale-vs-cash-offer-nashville', label: 'Traditional sale vs. cash offer in Nashville' },
       { href: '/blog/sell-inherited-house-nashville-tn', label: 'Selling an inherited Nashville house' },
+      {
+        href: '/blog/selling-inherited-house-nashville-tennessee',
+        label: 'Selling an inherited house in Nashville and Williamson County',
+      },
       { href: '/blog/facing-foreclosure-nashville-tn', label: 'Facing foreclosure in Nashville' },
       { href: '/sell/nashville-tn', label: 'List your Nashville home instead' },
       { href: '/cash-offer/columbia-tn', label: 'sell house fast Columbia TN' },
