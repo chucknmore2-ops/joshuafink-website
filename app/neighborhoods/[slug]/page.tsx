@@ -549,7 +549,7 @@ export default async function NeighborhoodPage({ params }: Props) {
               data-cta="neighborhood-cash-offer"
             >
               {n.citySlug === 'nashville-tn'
-                ? 'Nashville cash offer →'
+                ? 'We buy houses in Nashville →'
                 : n.citySlug === 'columbia-tn'
                   ? 'Sell your house fast in Columbia, TN →'
                   : n.citySlug === 'spring-hill-tn'
@@ -656,6 +656,14 @@ export default async function NeighborhoodPage({ params }: Props) {
                     cash home buyers in Brentwood
                   </Link>
                   .
+                </p>
+              ) : n.citySlug === 'nashville-tn' ? (
+                <p className="text-[#444] text-base leading-relaxed mt-4">
+                  If you already own in {n.name} and need to sell without a listing, see{' '}
+                  <Link href="/cash-offer/nashville-tn" className="text-black underline hover:no-underline">
+                    we buy houses in Nashville
+                  </Link>
+                  . As-is, with a call back within 24 hours and a close in as little as 7 days.
                 </p>
               ) : null}
 

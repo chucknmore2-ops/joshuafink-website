@@ -18,17 +18,16 @@ import ByTheNumbers from '@/components/ByTheNumbers'
 import BrentwoodSellerListings from '@/components/BrentwoodSellerListings'
 import ColumbiaSellerListings from '@/components/ColumbiaSellerListings'
 import DavidsonSellerListings from '@/components/DavidsonSellerListings'
+import FranklinSellerListings from '@/components/FranklinSellerListings'
 import RutherfordSellerListings from '@/components/RutherfordSellerListings'
 import SmyrnaSellerListings from '@/components/SmyrnaSellerListings'
 import SpringHillSellerListings from '@/components/SpringHillSellerListings'
-import WilliamsonSellerListings from '@/components/WilliamsonSellerListings'
 import { byTheNumbersDataset, getByTheNumbers } from '@/lib/by-the-numbers'
 import { getNeighborhoodsByCitySlug } from '@/lib/neighborhoods'
 import { linkifyNeighborhoods } from '@/lib/linkify-neighborhoods'
 import { reviews, reviewStats } from '@/lib/reviews'
 import { getSuburb } from '@/lib/suburbs'
 import {
-  closingGroupsForSuburb,
   formatBaths,
   formatCloseMonthYear,
   formatSoldPrice,
@@ -41,6 +40,11 @@ import {
   brentwoodSellerListingsItemList,
 } from '@/lib/brentwood-seller-listings'
 import {
+  recentFranklinSellerListings,
+  franklinRealEstateAgentAreaServed,
+  franklinSellerListingsItemList,
+} from '@/lib/franklin-seller-listings'
+import {
   recentColumbiaSellerListings,
   columbiaRealEstateAgentAreaServed,
   columbiaSellerListingsItemList,
@@ -49,6 +53,7 @@ import {
   recentDavidsonSellerListings,
   davidsonRealEstateAgentAreaServed,
   davidsonSellerListingsItemList,
+  davidsonSellerListingsSummary,
 } from '@/lib/davidson-seller-listings'
 import {
   recentRutherfordSellerListings,
@@ -65,11 +70,6 @@ import {
   springHillRealEstateAgentAreaServed,
   springHillSellerListingsItemList,
 } from '@/lib/spring-hill-seller-listings'
-import {
-  recentWilliamsonSellerListings,
-  williamsonRealEstateAgentAreaServed,
-  williamsonSellerListingsItemList,
-} from '@/lib/williamson-seller-listings'
 
 const SITE = 'https://www.joshuafink.com'
 
@@ -188,23 +188,17 @@ export default async function CashOfferCityPage({ params }: Props) {
         )
       : []
   const otherCities = getCashOfferCityLinks().filter((c) => c.slug !== slug)
-  // Same city groups as /buy/[suburb]. The number is the count of closed
-  // Tennessee sales whose city is Nashville — the rows behind /sold#nashville.
-  const nashvilleGroup = closingGroupsForSuburb(slug).find((group) => group.city === 'Nashville')
-  const nashvilleClosedCount = nashvilleGroup
-    ? nashvilleGroup.closings.filter(
-        (row) => row.city === 'Nashville' && row.state === 'TN' && row.status === 'Closed',
-      ).length
-    : 0
-  // Seller-side listings. Nashville shows Davidson; Murfreesboro shows
-  // Rutherford; Franklin shows Williamson; Brentwood shows its own Williamson
-  // County rows. Columbia shows its Maury County rows. Spring Hill shows only
-  // its four closings, not the Williamson list. Smyrna shows the Smyrna and
-  // La Vergne closings, not the Murfreesboro rows. Other city pages keep the
-  // single-city areaServed below.
+  // Seller-side listings. Nashville shows Davidson (67 listings since 2021).
+  // The Tennessee closing file's 49 Nashville rows are a different export and
+  // are not restated here as a second total. Murfreesboro shows Rutherford.
+  // Franklin shows its own six listings, not the Williamson County roundup.
+  // Brentwood shows its own Williamson County rows. Columbia shows its Maury
+  // County rows. Spring Hill shows only its four closings. Smyrna shows the
+  // Smyrna and La Vergne closings, not the Murfreesboro rows. Other city
+  // pages keep the single-city areaServed below.
   const davidsonRows = slug === 'nashville-tn' ? recentDavidsonSellerListings() : null
   const rutherfordRows = slug === 'murfreesboro-tn' ? recentRutherfordSellerListings() : null
-  const williamsonRows = slug === 'franklin-tn' ? recentWilliamsonSellerListings() : null
+  const franklinRows = slug === 'franklin-tn' ? recentFranklinSellerListings() : null
   const brentwoodRows = slug === 'brentwood-tn' ? recentBrentwoodSellerListings() : null
   const columbiaRows = slug === 'columbia-tn' ? recentColumbiaSellerListings() : null
   const springHillRows = slug === 'spring-hill-tn' ? recentSpringHillSellerListings() : null
@@ -289,8 +283,8 @@ export default async function CashOfferCityPage({ params }: Props) {
                   ? brentwoodRealEstateAgentAreaServed()
                   : rutherfordRows
                     ? rutherfordRealEstateAgentAreaServed()
-                    : williamsonRows
-                      ? williamsonRealEstateAgentAreaServed()
+                    : franklinRows
+                      ? franklinRealEstateAgentAreaServed()
                       : davidsonRows
                         ? davidsonRealEstateAgentAreaServed()
                         : smyrnaRows
@@ -319,11 +313,11 @@ export default async function CashOfferCityPage({ params }: Props) {
           }}
         />
       ) : null}
-      {williamsonRows ? (
+      {franklinRows ? (
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(williamsonSellerListingsItemList(williamsonRows)),
+            __html: JSON.stringify(franklinSellerListingsItemList(franklinRows)),
           }}
         />
       ) : null}
@@ -442,20 +436,20 @@ export default async function CashOfferCityPage({ params }: Props) {
         </div>
       </div>
 
-      {nashvilleGroup && nashvilleClosedCount > 0 ? (
+      {slug === 'nashville-tn' ? (
         <section
           aria-labelledby="nashville-closings-proof"
           className="bg-white border-b border-neutral-200"
         >
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
             <p className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mb-3">
-              Recent Closings · Compass Real Estate
+              Traditional listings · Compass Real Estate
             </p>
             <h2
               id="nashville-closings-proof"
               className="text-2xl sm:text-3xl font-black text-black tracking-tight"
             >
-              {`Josh has closed ${nashvilleClosedCount} ${nashvilleClosedCount === 1 ? 'home' : 'homes'} in ${nashvilleGroup.city}`}
+              {davidsonSellerListingsSummary()}
             </h2>
             <p className="text-neutral-700 text-base leading-relaxed mt-4">
               Joshua Fink is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate.
@@ -470,12 +464,6 @@ export default async function CashOfferCityPage({ params }: Props) {
               </TrackedTelLink>
               .
             </p>
-            <a
-              href={`/sold#${nashvilleGroup.anchor}`}
-              className="inline-block mt-5 border border-black text-black text-sm font-bold px-6 py-3 tracking-wide hover:bg-black hover:text-white transition-colors text-center"
-            >
-              {`See homes Josh has sold in ${nashvilleGroup.city} →`}
-            </a>
           </div>
         </section>
       ) : null}
@@ -533,7 +521,7 @@ export default async function CashOfferCityPage({ params }: Props) {
       </div>
 
       {slug === 'murfreesboro-tn' ? <RutherfordSellerListings /> : null}
-      {slug === 'franklin-tn' ? <WilliamsonSellerListings /> : null}
+      {slug === 'franklin-tn' ? <FranklinSellerListings /> : null}
       {slug === 'nashville-tn' ? <DavidsonSellerListings /> : null}
       {slug === 'brentwood-tn' ? <BrentwoodSellerListings /> : null}
       {slug === 'columbia-tn' ? <ColumbiaSellerListings /> : null}
@@ -564,13 +552,6 @@ export default async function CashOfferCityPage({ params }: Props) {
                   {paragraph}
                 </p>
               ))}
-              {nashvilleClosedCount > 0 ? (
-                <p className="text-neutral-700 text-base leading-relaxed">
-                  The Tennessee closing file on this site lists {nashvilleClosedCount} closed{' '}
-                  {nashvilleClosedCount === 1 ? 'home' : 'homes'} in Nashville — the same rows as the
-                  proof block above.
-                </p>
-              ) : null}
             </div>
           </div>
         </section>

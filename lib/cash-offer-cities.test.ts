@@ -296,16 +296,33 @@ test('Nashville market note reuses published Redfin, Census, and neighborhood ba
   }
 })
 
-test('Franklin cash-offer keeps the shared title and adds a Williamson County section', () => {
+test('Franklin cash-offer targets we-buy and sell-fast queries and keeps the county section', () => {
   const city = getCashOfferCity('franklin-tn')
   assert.ok(city)
   const seo = cashOfferSeo(city)
-  assert.equal(seo.title, 'Sell My House Fast Franklin, TN | Cash Offer in 24 Hours')
-  assert.equal(city.seo, undefined)
-  assert.equal(city.headline, undefined)
-  assert.equal(city.localHeading, 'We Buy Houses in Franklin')
+  assert.equal(seo.title, 'We Buy Houses Franklin TN | Sell My House Fast | Compass')
+  assert.equal(seo.absoluteTitle, true)
+  assert.ok(seo.title.length <= 60, `title is ${seo.title.length} characters`)
+  assert.match(seo.description, /We buy houses in Franklin, TN/)
+  assert.match(seo.description, /Sell my house fast/)
+  assert.match(seo.description, /615-551-2727/)
+  assert.match(seo.description, /licensed since 2008/)
+  assert.match(seo.description, /Compass/)
+  assert.doesNotMatch(seo.description, /Parks/)
+  assert.ok(seo.description.length <= 160, `description is ${seo.description.length} characters`)
+  assert.equal(city.headline?.lead, 'Sell My House Fast')
+  assert.equal(city.headline?.accent, 'in Franklin, TN.')
+  assert.equal(city.localHeading, 'We Buy Houses in Franklin, TN')
   assert.equal(city.countySection?.eyebrow, 'Williamson County')
   assert.match(city.countySection?.paragraphs.flat().join(' ') ?? '', /historic downtown/i)
+  const countyCopy = (city.countySection?.paragraphs ?? [])
+    .map((parts) => parts.map((part) => (typeof part === 'string' ? part : part.label)).join(''))
+    .join('\n')
+  assert.match(countyCopy, /selling an inherited house in Franklin and Williamson County/)
+  const inheritedLink = (city.countySection?.paragraphs ?? [])
+    .flat()
+    .find((part) => typeof part !== 'string' && part.href === '/blog/selling-inherited-house-nashville-tennessee')
+  assert.ok(inheritedLink && typeof inheritedLink !== 'string')
   assert.equal(city.situationDetails, undefined)
   assert.equal(city.differentiator, undefined)
 })
@@ -476,8 +493,8 @@ test('Columbia seller FAQ and neighborhood note reuse published places and one F
   assert.equal(thompson?.asideLink?.label, 'cash offer in Columbia')
   assert.equal(franklin?.asideLink?.href, '/cash-offer/columbia-tn')
   assert.equal(franklin?.asideLink?.label, 'sell your house for cash in Columbia, TN')
-  assert.equal(franklin?.seo, undefined)
-  assert.equal(franklin?.headline, undefined)
+  assert.equal(franklin?.seo?.title, 'We Buy Houses Franklin TN | Sell My House Fast | Compass')
+  assert.equal(franklin?.headline?.accent, 'in Franklin, TN.')
 
   const linkedFrom = [
     '../app/moving-to-middle-tennessee/page.tsx',
@@ -666,6 +683,16 @@ test('page-2 cash-offer fixes keep one FAQPage, the live phone, and published fi
 
   const nashville = getCashOfferCity('nashville-tn')
   assert.ok(nashville?.cashBuyersSection)
+  const inheritedSituation = nashville.situationDetails?.find((item) => item.id === 'inherited')
+  assert.equal(inheritedSituation?.href, '/blog/selling-inherited-house-nashville-tennessee')
+  assert.equal(inheritedSituation?.linkLabel, 'Selling an inherited house in Nashville')
+  assert.ok(
+    nashville.relatedReading?.some(
+      (link) =>
+        link.href === '/blog/selling-inherited-house-nashville-tennessee' &&
+        link.label === 'Selling an inherited house in Nashville and Williamson County',
+    ),
+  )
   assert.equal(nashville.cashBuyersSection.heading, 'Cash home buyers in Nashville')
   assert.ok(nashville.faqs.some((faq) => faq.q === 'Who are the best cash home buyers in Nashville?'))
   const seo = cashOfferSeo(nashville)

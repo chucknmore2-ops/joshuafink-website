@@ -5,7 +5,10 @@ import {
   williamsonSellerListingsSummary,
 } from '@/lib/williamson-seller-listings'
 
-/** Williamson County traditional listings on the Franklin cash-offer page. */
+/**
+ * County-wide Williamson list. The Franklin, Brentwood, and Spring Hill
+ * cash-offer pages each mount their own city section instead of this one.
+ */
 export default function WilliamsonSellerListings() {
   const rows = recentWilliamsonSellerListings()
 
