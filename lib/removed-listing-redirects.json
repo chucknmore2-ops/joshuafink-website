@@ -1,3 +1,10 @@
 {
-  "removed": []
+  "removed": [
+    {
+      "slug": "2037-walnut-ln-gallatin",
+      "address": "2037 Walnut Ln",
+      "city": "Gallatin, TN 37066 | MLS #3527618",
+      "destination": "/buy/gallatin-tn"
+    }
+  ]
 }
