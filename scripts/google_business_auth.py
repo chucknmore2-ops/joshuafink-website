@@ -187,6 +187,23 @@ def get_account_and_location(access_token: str) -> tuple[str, str]:
     return account_id, location_id
 
 
+def v4_location_parent(account_id: str, location_name: str) -> str:
+    """GBP_LOCATION_ID value for mybusiness v4 localPosts.
+
+    Business Information v1 returns ``locations/{id}``. The v4 parent is
+    ``accounts/{account}/locations/{id}``. An already-full parent is kept.
+    """
+    account_id = account_id.strip().strip("/")
+    location_name = location_name.strip().strip("/")
+    if location_name.startswith("accounts/") and "/locations/" in location_name:
+        return location_name
+    if not account_id.startswith("accounts/"):
+        account_id = f"accounts/{account_id}"
+    if location_name.startswith("locations/"):
+        return f"{account_id}/{location_name}"
+    return f"{account_id}/locations/{location_name}"
+
+
 # ── Entry ──────────────────────────────────────────────────────────────
 
 
@@ -222,7 +239,10 @@ def main() -> None:
     print(f"GBP_CLIENT_SECRET={tok['client_secret']}")
     print(f"GBP_REFRESH_TOKEN={tok['refresh_token']}")
     print(f"GBP_ACCOUNT_ID={account_id}")
-    print(f"GBP_LOCATION_ID={location_id}")
+    # Business Information v1 `name` is "locations/{id}". v4 localPosts
+    # needs the parent "accounts/{account}/locations/{id}". The on-disk
+    # config keeps the v1 name; only the printed env var is the v4 parent.
+    print(f"GBP_LOCATION_ID={v4_location_parent(account_id, location_id)}")
     print("=" * 64)
     print()
     print("After pasting, redeploy Vercel and test with:")
