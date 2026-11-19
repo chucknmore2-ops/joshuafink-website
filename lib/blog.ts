@@ -337,7 +337,7 @@ Joshua Fink is an Affiliate Broker with Compass Real Estate, licensed since 2008
     slug: "best-franklin-neighborhoods-for-families-2026",
     title: "Best Franklin Neighborhoods for Families (2026)",
     date: "November 2, 2026",
-    dateModified: "November 2, 2026",
+    dateModified: "November 19, 2026",
     excerpt:
       "Westhaven, Fieldstone Farms, and McKay's Mill lead this Franklin family comparison, followed by Berry Farms, The Highlands at Ladd Park, and Cool Springs. Schools, amenities, and commute — citywide numbers only where this site already cites a source and date.",
     category: "For Families",
@@ -352,7 +352,7 @@ Joshua Fink is an Affiliate Broker with Compass Real Estate, licensed since 2008
       },
       {
         q: "What is the median home price in Franklin, TN?",
-        a: "The citywide median sale price in Franklin is $862,929, the median days on market is 49, and the median price per square foot is $330.85, up 12.43% year over year (Source: Redfin, as of October 5, 2026). That is a city figure. This post does not publish a median for Westhaven, Fieldstone Farms, McKay's Mill, Berry Farms, the Highlands, or Cool Springs. A street-level price comes from closed comps.",
+        a: "The citywide median sale price in Franklin is $849,409, the median days on market is 61, and the median price per square foot is $331.06, up 5.52% year over year (Source: Redfin, as of November 19, 2026). That is a city figure. This post does not publish a median for Westhaven, Fieldstone Farms, McKay's Mill, Berry Farms, the Highlands, or Cool Springs. A street-level price comes from closed comps.",
       },
       {
         q: "How long is the commute from Franklin's family neighborhoods?",
@@ -364,13 +364,13 @@ Joshua Fink is an Affiliate Broker with Compass Real Estate, licensed since 2008
       },
     ],
     content: `
-Last updated November 2, 2026.
+Last updated November 19, 2026.
 
 There is no single best Franklin neighborhood for a family. The decision is the school assignment for the exact address, the housing on that street, and the drive you will actually make. This post leads with the three subdivisions families ask about first — [Westhaven](/neighborhoods/westhaven-franklin-tn), [Fieldstone Farms](/neighborhoods/fieldstone-farms-franklin-tn), and [McKay's Mill](/neighborhoods/mckays-mill-franklin-tn) — then three more Franklin areas that already have guides here: [Berry Farms](/neighborhoods/berry-farms-franklin-tn), [The Highlands at Ladd Park](/neighborhoods/highlands-at-ladd-park-franklin-tn), and [Cool Springs](/neighborhoods/cool-springs-franklin-tn). The countywide school read is the [Williamson County school zones guide](/blog/best-williamson-county-school-zones-2026). To start a search, use the [Franklin buyer page](/buy/franklin-tn).
 
 ## What this post will and will not quote
 
-The citywide median sale price in Franklin is $862,929, the median days on market is 49, and the median price per square foot is $330.85, up 12.43% year over year (Source: Redfin, as of October 5, 2026). The April 1, 2020 Census counted 83,454 residents. The U.S. Census Bureau estimates 90,226 as of July 1, 2025, which is 8.0% above the April 1, 2020 estimates base (U.S. Census Bureau QuickFacts; Population Estimates, Vintage 2025). Those figures are for the city. They are not a price or a headcount for Westhaven, Fieldstone Farms, McKay's Mill, Berry Farms, the Highlands, or Cool Springs. The subdivision guides describe each place. A street-level price comes from closed comps, not from the citywide median, and this post does not add one.
+The citywide median sale price in Franklin is $849,409, the median days on market is 61, and the median price per square foot is $331.06, up 5.52% year over year (Source: Redfin, as of November 19, 2026). The April 1, 2020 Census counted 83,454 residents. The U.S. Census Bureau estimates 90,226 as of July 1, 2025, which is 8.0% above the April 1, 2020 estimates base (U.S. Census Bureau QuickFacts; Population Estimates, Vintage 2025). Those figures are for the city. They are not a price or a headcount for Westhaven, Fieldstone Farms, McKay's Mill, Berry Farms, the Highlands, or Cool Springs. The subdivision guides describe each place. A street-level price comes from closed comps, not from the citywide median, and this post does not add one.
 
 ## Schools
 
@@ -455,7 +455,7 @@ Start with the buyer form on the [Franklin buyer page](/buy/franklin-tn), or [se
 
 ## Sources
 
-- [Redfin Data Center](https://www.redfin.com/news/data-center/downloads/) — Franklin city median sale price, median days on market, median price per square foot, and sale-price year-over-year change, as cited on this site as of October 5, 2026.
+- [Redfin Data Center](https://www.redfin.com/news/data-center/downloads/) — Franklin city median sale price, median days on market, median price per square foot, and sale-price year-over-year change, as cited on this site as of November 19, 2026.
 - [U.S. Census Bureau QuickFacts — Franklin city, Tennessee](https://www.census.gov/quickfacts/fact/table/franklincitytennessee/PST045224) — April 1, 2020 count, July 1, 2025 estimate, and mean travel time to work. Travel time checked October 17, 2026.
 - [Franklin Special District](https://www.fssd.org/) and the [district FAQ](https://www.fssd.org/faq) — enrollment, grade span, and the high-school handoff. Retrieved October 17, 2026.
 - [Williamson County Schools](https://www.wcs.edu/schools) and the [high schools page](https://www.wcs.edu/schools/high-schools) — district size, class of 2025 ACT composite, and campus addresses. Retrieved October 17, 2026.
@@ -466,14 +466,14 @@ Start with the buyer form on the [Franklin buyer page](/buy/franklin-tn), or [se
     slug: "living-in-green-hills-nashville-tn-guide",
     title: "Living in Green Hills, Nashville: Schools, Streets & Real Estate Guide [2026]",
     date: "October 22, 2026",
-    dateModified: "October 22, 2026",
+    dateModified: "November 19, 2026",
     excerpt:
       "Green Hills is a Nashville neighborhood on Hillsboro Pike, not its own city. Julia Green Elementary is a 2020 National Blue Ribbon School. This guide uses Census, Redfin, and September GNAR figures only where they actually apply.",
     category: "Relocation",
     faq: [
       {
         q: "How much do homes in Green Hills, Nashville cost in 2026?",
-        a: "This site has no published Redfin or Greater Nashville REALTORS® median for Green Hills, so this guide does not quote one. The Nashville citywide median is $475,538 (Redfin, as of October 5, 2026). The September 2026 nine-county residential median was $510,000 (Greater Nashville REALTORS®, published October 5, 2026). Neither number is a Green Hills price. Joshua pulls closed comps for the specific street.",
+        a: "This site has no published Redfin or Greater Nashville REALTORS® median for Green Hills, so this guide does not quote one. The Nashville citywide median is $457,132 (Redfin, as of November 19, 2026). The September 2026 nine-county residential median was $510,000 (Greater Nashville REALTORS®, published October 5, 2026). Neither number is a Green Hills price. Joshua pulls closed comps for the specific street.",
       },
       {
         q: "What school does Green Hills feed into?",
@@ -511,7 +511,7 @@ Green Hills is not an incorporated city and not a census-designated place, so th
 
 ## Cost of Living
 
-There is no published Redfin or Greater Nashville REALTORS® median for Green Hills in this site's data, so this guide does not quote a neighborhood price. The Nashville citywide median sale price is $475,538, with a median of $272.16 per square foot, a median of 64 days on market, and a year-over-year change of -0.52% (Redfin, as of October 5, 2026). On the same Redfin pull, Franklin's median is $862,929 and Brentwood's is $1,424,058. None of those three numbers is a Green Hills price. Current citywide figures are on the [Nashville market report](/market/nashville-tn).
+There is no published Redfin or Greater Nashville REALTORS® median for Green Hills in this site's data, so this guide does not quote a neighborhood price. The Nashville citywide median sale price is $457,132, with a median of $262.21 per square foot, a median of 66 days on market, and a year-over-year change of -3.76% (Redfin, as of November 19, 2026). On the same Redfin pull, Franklin's median is $849,409 and Brentwood's is $1,281,609. None of those three numbers is a Green Hills price. Current citywide figures are on the [Nashville market report](/market/nashville-tn).
 
 A few things that change the monthly cost of a specific house, without a neighborhood-wide dollar figure attached:
 
@@ -526,7 +526,7 @@ Greater Nashville REALTORS® reported a nine-county residential median of $510,0
 Two things buyers should know going in:
 
 - A citywide or nine-county median will not price a Green Hills street. Joshua pulls closed comps for the block.
-- Nashville's median of 64 days on market (Redfin, as of October 5, 2026) is also citywide. It is not a Green Hills pace.
+- Nashville's median of 66 days on market (Redfin, as of November 19, 2026) is also citywide. It is not a Green Hills pace.
 
 ## Local News & Development
 
@@ -554,7 +554,7 @@ Current Nashville listings are on the [homes for sale](/listings) page. The city
 - [MNPS board agenda, November 12, 2024](https://resources.finalsite.net/images/v1758311767/mnpsorg/mc3iitr6fdwz9oujngmy/111224AGENDA.pdf) — Hillsboro proposal, 28 students
 - [Metro Nashville Planning — Neighborhoods](https://www.nashville.gov/departments/planning/long-range-planning/neighborhoods) — no definitive neighborhood boundary
 - [U.S. Census Bureau QuickFacts — Nashville-Davidson (balance), Tennessee](https://www.census.gov/quickfacts/fact/table/nashvilledavidsonbalancetennessee/PST045224) — citywide population cited above, not a Green Hills count
-- [Redfin Data Center](https://www.redfin.com/news/data-center/) — Nashville, Franklin, and Brentwood medians on this site as of October 5, 2026
+- [Redfin Data Center](https://www.redfin.com/news/data-center/) — Nashville, Franklin, and Brentwood medians on this site as of November 19, 2026
 - [Greater Nashville REALTORS®, September 2026](https://www.greaternashvillerealtors.org/news/september-homes-sales-continued-to-show-mixed-results-across-counties-and-price-points)
     `.trim(),
   },
@@ -562,9 +562,9 @@ Current Nashville listings are on the [homes for sale](/listings) page. The city
     slug: "middle-tennessee-sellers-guide-2026",
     title: "The 2026 Middle Tennessee Seller's Guide",
     date: "October 7, 2026",
-    dateModified: "October 23, 2026",
+    dateModified: "November 19, 2026",
     excerpt:
-      "How to price, prep, and close a Middle Tennessee home in 2026, with the September Greater Nashville REALTORS® figures and Redfin city medians as of October 5, 2026. Written by Joshua Fink at Compass, licensed since 2008.",
+      "How to price, prep, and close a Middle Tennessee home in 2026, with the September Greater Nashville REALTORS® figures and Redfin city medians as of November 19, 2026. Written by Joshua Fink at Compass, licensed since 2008.",
     category: "For Sellers",
     faq: [
       {
@@ -577,7 +577,7 @@ Current Nashville listings are on the [homes for sale](/listings) page. The city
       },
       {
         q: "What is the Middle Tennessee median home price in September 2026?",
-        a: "The nine-county residential median was $510,000, up 4.1% from $490,000 in September 2025, per Greater Nashville REALTORS®. City medians are different: Franklin $862,929, Brentwood $1,424,058, Spring Hill $508,284, Nolensville $929,385, and Nashville $475,538 (Redfin, as of October 5, 2026).",
+        a: "The nine-county residential median was $510,000, up 4.1% from $490,000 in September 2025, per Greater Nashville REALTORS®. City medians are different: Franklin $849,409, Brentwood $1,281,609, Spring Hill $501,321, Nolensville $969,326, and Nashville $457,132 (Redfin, as of November 19, 2026).",
       },
     ],
     content: `
@@ -593,13 +593,13 @@ The write-up, with the same figures, is the [September 2026 market update](/blog
 
 ## City medians are not the regional median
 
-Redfin city medians as of October 5, 2026 (median sale price, median days on market, sale-price change):
+Redfin city medians as of November 19, 2026 (median sale price, median days on market, sale-price change):
 
-- **Franklin:** $862,929, 49 days on market, up 12.43%
-- **Brentwood:** $1,424,058, 63 days on market, up 5.1%
-- **Spring Hill:** $508,284, 62 days on market, down 4.14%
-- **Nolensville:** $929,385, 63 days on market, down 7.06%
-- **Nashville:** $475,538, 64 days on market, down 0.52%
+- **Franklin:** $849,409, 61 days on market, up 5.52%
+- **Brentwood:** $1,281,609, 62 days on market, down 4.09%
+- **Spring Hill:** $501,321, 67 days on market, down 9.67%
+- **Nolensville:** $969,326, 64 days on market, down 8.55%
+- **Nashville:** $457,132, 66 days on market, down 3.76%
 
 City pages for sellers: [Franklin](/sell/franklin-tn), [Brentwood](/sell/brentwood-tn), [Spring Hill](/sell/spring-hill-tn), [Nolensville](/sell/nolensville-tn), [Nashville](/sell/nashville-tn). Homes already on the market are on [listings](/listings).
 
@@ -3012,7 +3012,7 @@ If you want a custom game plan for Gallatin — including Station Camp school-zo
     slug: "living-in-lebanon-tn-guide",
     title: "Living in Lebanon, TN: Schools, Growth & Real Estate Guide [2026]",
     date: "October 14, 2026",
-    dateModified: "October 14, 2026",
+    dateModified: "November 19, 2026",
     excerpt: "Thinking about moving to Lebanon, TN? Explore Wilson County schools, the Cracker Barrel and Under Armour employer base, population growth, home prices, and local development in this 2026 real estate guide.",
     category: "Relocation",
     content: `
@@ -3020,7 +3020,7 @@ If you're weighing suburbs in Middle Tennessee, [Lebanon](/buy/lebanon-tn) deser
 
 ## Overview
 
-Lebanon sits east of Nashville in Wilson County, roughly 35–45 minutes to downtown via I-40 depending on traffic. The city's identity is built around a historic downtown square, Cumberland University, and a genuinely unusual employment anchor: Cracker Barrel Old Country Store has been headquartered in Lebanon since 1969. Compared with neighboring [Mount Juliet](/buy/mount-juliet-tn), Lebanon's median sale price is lower — $424,719 versus Mount Juliet's $564,626 (Redfin, as of October 5, 2026) — and the core of town is more traditional, while Mount Juliet carries more new-build subdivisions closer to Nashville. The tradeoffs are laid out on the [Lebanon vs. Mount Juliet comparison](/compare/mount-juliet-tn-vs-lebanon-tn).
+Lebanon sits east of Nashville in Wilson County, roughly 35–45 minutes to downtown via I-40 depending on traffic. The city's identity is built around a historic downtown square, Cumberland University, and a genuinely unusual employment anchor: Cracker Barrel Old Country Store has been headquartered in Lebanon since 1969. Compared with neighboring [Mount Juliet](/buy/mount-juliet-tn), Lebanon's median sale price is lower — $419,708 versus Mount Juliet's $584,593 (Redfin, as of November 19, 2026) — and the core of town is more traditional, while Mount Juliet carries more new-build subdivisions closer to Nashville. The tradeoffs are laid out on the [Lebanon vs. Mount Juliet comparison](/compare/mount-juliet-tn-vs-lebanon-tn).
 
 From an agent's perspective, the biggest thing buyers underestimate is how much of Lebanon's demand is employer-driven rather than purely lifestyle-driven. Cracker Barrel's roughly 820 corporate jobs and a major Under Armour distribution center (1,500+ employees) mean a steady stream of relocating and promoted employees shopping specific commute radii — that's a different buyer pool than the lake-and-lifestyle demand you see in Sumner County.
 
@@ -3031,7 +3031,7 @@ Wilson County Schools serves Lebanon, and depending on the specific address, buy
 A few practical notes for buyers:
 
 - Wilson County splits Lebanon across multiple high school attendance zones, so always confirm the current assignment for a specific address with Wilson County Schools before writing an offer.
-- A 4-star district rating at Lebanon's $424,719 median (Redfin, as of October 5, 2026) is the value trade many Lebanon buyers are making intentionally. Franklin's median on the same pull is $862,929, and Brentwood's is $1,424,058.
+- A 4-star district rating at Lebanon's $419,708 median (Redfin, as of November 19, 2026) is the value trade many Lebanon buyers are making intentionally. Franklin's median on the same pull is $849,409, and Brentwood's is $1,281,609.
 - School zone still moves resale value inside Lebanon — verify it early in a home search, not after.
 
 ## Population & Growth
@@ -3042,7 +3042,7 @@ The reason isn't a mystery: Cracker Barrel's national headquarters and the Under
 
 ## Cost of Living
 
-The 2026 median sale price in Lebanon is $424,719, with a median of $205.33 per square foot (Redfin, as of October 5, 2026). That sits below Mount Juliet ($564,626) and well below Franklin ($862,929) and Brentwood ($1,424,058) on the same Redfin pull. The median days on market is 71, and the median sale price is up 3.08% year over year. Current citywide figures are on the [Lebanon market report](/market/lebanon-tn).
+The 2026 median sale price in Lebanon is $419,708, with a median of $204.06 per square foot (Redfin, as of November 19, 2026). That sits below Mount Juliet ($584,593) and well below Franklin ($849,409) and Brentwood ($1,281,609) on the same Redfin pull. The median days on market is 74, and the median sale price is up 4.93% year over year. Current citywide figures are on the [Lebanon market report](/market/lebanon-tn).
 
 A few things that affect real monthly cost beyond the purchase price:
 
@@ -3056,7 +3056,7 @@ Lebanon's inventory mix — from downtown-adjacent older homes to newer subdivis
 
 Two things buyers should know going in:
 
-- A median of 71 days on market is slower than Franklin's median of 49 days (Redfin, as of October 5, 2026). That's room for buyers who want less bidding-war pressure, not a red flag on the market.
+- A median of 74 days on market is slower than Franklin's median of 61 days (Redfin, as of November 19, 2026). That's room for buyers who want less bidding-war pressure, not a red flag on the market.
 - Clean exterior presentation and pre-listing maintenance checks are what move the needle most for sellers here, since buyers are comparing a wide range of home ages and conditions.
 
 ## Local News & Development
@@ -3065,7 +3065,7 @@ Cracker Barrel's continued presence as a Lebanon-headquartered national brand, a
 
 ## Why Buy in Lebanon
 
-If you're buying in Lebanon, the opportunity is a stable, diversified job base, Census-documented population growth, and a $424,719 median that sits below Mount Juliet and the Williamson County markets tracked on this site. I usually walk clients through three things before they commit:
+If you're buying in Lebanon, the opportunity is a stable, diversified job base, Census-documented population growth, and a $419,708 median that sits below Mount Juliet and the Williamson County markets tracked on this site. I usually walk clients through three things before they commit:
 
 1. **School zone verification** — Which Wilson County high school zone does this address fall in, and does that match your priorities?
 2. **Commute reality** — What does I-40 actually look like at your specific commute times, not just the map estimate?
@@ -3081,7 +3081,7 @@ If you want a custom game plan for Lebanon — including Wilson County school-zo
 
 ## Sources
 - [U.S. Census Bureau – Lebanon city, Tennessee](https://www.census.gov/quickfacts/fact/table/lebanoncitytennessee/PST045224)
-- [Redfin Data Center](https://www.redfin.com/news/data-center/) — city medians cited above are the Redfin figures published on this site as of October 5, 2026
+- [Redfin Data Center](https://www.redfin.com/news/data-center/) — city medians cited above are the Redfin figures published on this site as of November 19, 2026
 - [Wilson County Schools](https://www.wcschools.com/)
 - [SchoolDigger – Tennessee High School Rankings](https://www.schooldigger.com/go/TN/schoolrank.aspx)
 - [Tennessee Report Card](https://www.tn.gov/education/report-card.html)

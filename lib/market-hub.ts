@@ -23,7 +23,7 @@ export function marketHubFaqs(): { q: string; a: string }[] {
   return [
     {
       q: 'How often are these Middle Tennessee market reports updated?',
-      a: `The headline numbers — median sale price, median days on market, price per square foot, and year-over-year change — are ${marketStatsSource} city medians, last reviewed ${asOf}. They cover a rolling three-month window, not a live MLS feed, and they are refreshed when a newer ${marketStatsSource} city file is published.`,
+      a: `The headline numbers — median sale price, median days on market, price per square foot, and year-over-year change — are ${marketStatsSource} city medians, last reviewed ${asOf}. They cover a rolling three-month window ending October 31, 2026, not a live MLS feed, and they are refreshed when a newer ${marketStatsSource} city file is published.`,
     },
     {
       q: 'Where does the market data come from?',

@@ -50,8 +50,8 @@ export const franklinFamilySources: CitedSource[] = [
   {
     name: 'Redfin Data Center',
     supports:
-      'Franklin city median sale price, median days on market, median price per square foot, and sale-price year-over-year change. Rolling three months ending August 31, 2026. Public city file last updated September 3, 2026.',
-    asOf: formatStatsDate('2026-10-05'),
+      'Franklin city median sale price, median days on market, median price per square foot, and sale-price year-over-year change. Rolling three months ending October 31, 2026. Public city file last updated November 3, 2026.',
+    asOf: formatStatsDate('2026-11-19'),
     url: 'https://www.redfin.com/news/data-center/downloads/',
   },
   {

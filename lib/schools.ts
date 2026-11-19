@@ -92,7 +92,7 @@ export const schools: Record<string, School> = {
         // accessible than Westhaven/Independence" framing already published
         // in this same school's FAQs below — no new market claims.
         q: 'What are homes near Page High School in Franklin, TN worth?',
-        a: "Homes zoned to Page High School sit within the broader Franklin, TN market, where the 2026 median sale price is $862,929. Page-zoned subdivisions — McKay's Mill, Brixworth, Berry Farms, and Cottonwood — typically enter at a slightly more accessible price point than the Westhaven/Independence corridor on Franklin's west side, while still carrying the resale premium that comes with Williamson County Schools. Joshua Fink, a Compass Affiliate Broker, can pull current comps for any specific Page-zoned subdivision or street. Call or text 615-551-2727.",
+        a: "Homes zoned to Page High School sit within the broader Franklin, TN market, where the 2026 median sale price is $849,409. Page-zoned subdivisions — McKay's Mill, Brixworth, Berry Farms, and Cottonwood — typically enter at a slightly more accessible price point than the Westhaven/Independence corridor on Franklin's west side, while still carrying the resale premium that comes with Williamson County Schools. Joshua Fink, a Compass Affiliate Broker, can pull current comps for any specific Page-zoned subdivision or street. Call or text 615-551-2727.",
       },
       {
         q: 'What Franklin neighborhoods feed Page High School?',
@@ -651,7 +651,7 @@ export const schools: Record<string, School> = {
     suburbSlug: 'smyrna-tn',
     ratingNote: 'Niche grades Smyrna High School a B (3.7/5 from 417 reviews) — #9 among Rutherford County public high schools and #63 statewide.',
     blurb:
-      "Smyrna High School serves central and east Smyrna, the largest town in Tennessee and home to the Nissan Smyrna Vehicle Assembly Plant — the largest single-site auto plant in North America and the town's largest employer at roughly 8,000 workers. Niche grades the school a B (3.7 out of 5 from 417 reviews), ranking it #9 among Rutherford County's public high schools and #63 statewide, across 2,254 students at a 17:1 student-teacher ratio. For buyers targeting Smyrna's $413,476 citywide median, the Smyrna High zone offers an employment-anchored market with a solidly rated public school and easy I-24 access to both Nashville and Murfreesboro. Newer subdivisions on the east side are often zoned to Stewarts Creek High instead.",
+      "Smyrna High School serves central and east Smyrna, the largest town in Tennessee and home to the Nissan Smyrna Vehicle Assembly Plant — the largest single-site auto plant in North America and the town's largest employer at roughly 8,000 workers. Niche grades the school a B (3.7 out of 5 from 417 reviews), ranking it #9 among Rutherford County's public high schools and #63 statewide, across 2,254 students at a 17:1 student-teacher ratio. For buyers targeting Smyrna's $400,194 citywide median, the Smyrna High zone offers an employment-anchored market with a solidly rated public school and easy I-24 access to both Nashville and Murfreesboro. Newer subdivisions on the east side are often zoned to Stewarts Creek High instead.",
     neighborhoods: ['Central Smyrna', 'Downtown Smyrna', 'Sam Ridley Parkway corridor', 'East Smyrna'],
     faqs: [
       {
@@ -664,7 +664,7 @@ export const schools: Record<string, School> = {
       },
       {
         q: 'How much do homes near Smyrna High School cost?',
-        a: "Smyrna's citywide 2026 median is $413,476, with homes averaging about $217.85 per square foot and roughly 61 days on market. That citywide figure is not a Smyrna High attendance-zone median. Joshua can pull exact, current comps for any specific street in the Smyrna High zone.",
+        a: "Smyrna's citywide 2026 median is $400,194, with homes averaging about $210.94 per square foot and roughly 82 days on market. That citywide figure is not a Smyrna High attendance-zone median. Joshua can pull exact, current comps for any specific street in the Smyrna High zone.",
       },
       {
         q: 'Why do buyers consider Smyrna for schools and value?',
@@ -681,7 +681,7 @@ export const schools: Record<string, School> = {
     suburbSlug: 'columbia-tn',
     ratingNote: 'Niche grades Columbia Central a C+ (4/10 on GreatSchools) — the draw for most buyers here is Columbia\'s affordability and growth, not the school ranking.',
     blurb:
-      "Columbia Central High School is the comprehensive public high school serving the city of Columbia, seat of Maury County — Tennessee's #2 fastest-growing county by percentage from 2024 to 2025. Niche grades the school a C+ and GreatSchools rates it 4/10, putting it in the bottom half of Tennessee public high schools by US News' ranking; it isn't a Williamson County-caliber school zone, and buyers shouldn't be told otherwise. What Columbia does offer is real: a $368,006 median home price — the most attainable in Joshua's Middle Tennessee coverage area — backed by genuine employment growth from Maury Regional Health (3,000+ jobs) and continued spillover from GM's Ultium Cells plant in neighboring Spring Hill. For buyers prioritizing space and price over school ranking, or willing to trade school quality for affordability while Maury County's rapid growth plays out, Columbia is worth a serious look.",
+      "Columbia Central High School is the comprehensive public high school serving the city of Columbia, seat of Maury County — Tennessee's #2 fastest-growing county by percentage from 2024 to 2025. Niche grades the school a C+ and GreatSchools rates it 4/10, putting it in the bottom half of Tennessee public high schools by US News' ranking; it isn't a Williamson County-caliber school zone, and buyers shouldn't be told otherwise. What Columbia does offer is real: a $354,753 median home price — the most attainable in Joshua's Middle Tennessee coverage area — backed by genuine employment growth from Maury Regional Health (3,000+ jobs) and continued spillover from GM's Ultium Cells plant in neighboring Spring Hill. For buyers prioritizing space and price over school ranking, or willing to trade school quality for affordability while Maury County's rapid growth plays out, Columbia is worth a serious look.",
     neighborhoods: ['Downtown Columbia', 'Sunnyside', 'North Columbia', 'The Crossings'],
     faqs: [
       {
@@ -694,7 +694,7 @@ export const schools: Record<string, School> = {
       },
       {
         q: 'How much do homes near Columbia Central High School cost?',
-        a: 'Columbia Central-zoned homes are part of the broader Columbia market — see the current Columbia market report for up-to-date medians ($368,006 citywide) and price-per-square-foot. That citywide figure is not a Columbia Central attendance-zone median. Joshua can pull exact, current comps for any specific street in Downtown Columbia, Sunnyside, or North Columbia.',
+        a: 'Columbia Central-zoned homes are part of the broader Columbia market — see the current Columbia market report for up-to-date medians ($354,753 citywide) and price-per-square-foot. That citywide figure is not a Columbia Central attendance-zone median. Joshua can pull exact, current comps for any specific street in Downtown Columbia, Sunnyside, or North Columbia.',
       },
       {
         q: 'Should I buy in Columbia if school rating is a top priority?',

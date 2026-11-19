@@ -11,7 +11,7 @@ const neighborhoodPage = readFileSync('app/neighborhoods/[slug]/page.tsx', 'utf8
 test('Green Hills living guide is dated today and indexed', () => {
   assert.ok(post)
   assert.equal(post.date, 'October 22, 2026')
-  assert.equal(post.dateModified, 'October 22, 2026')
+  assert.equal(post.dateModified, 'November 19, 2026')
   assert.equal(blogDateToIso(post.date), '2026-10-22')
   assert.ok(blogDateToIso(post.date)! <= chicagoIsoDate(new Date()))
   assert.equal(post.category, 'Relocation')
@@ -19,7 +19,7 @@ test('Green Hills living guide is dated today and indexed', () => {
     (entry) => entry.path === '/blog/living-in-green-hills-nashville-tn-guide',
   )
   assert.ok(listed)
-  assert.equal(listed.lastModified?.toISOString(), '2026-10-22T12:00:00.000Z')
+  assert.equal(listed.lastModified?.toISOString(), '2026-11-19T12:00:00.000Z')
 })
 
 test('Green Hills living guide stays Compass-only and refuses a neighborhood price', () => {
@@ -34,7 +34,7 @@ test('Green Hills living guide stays Compass-only and refuses a neighborhood pri
   assert.match(blob, /2020/)
   assert.match(blob, /National Blue Ribbon/)
   assert.match(blob, /28 students/)
-  assert.match(blob, /\$475,538/)
+  assert.match(blob, /\$457,132/)
   assert.match(blob, /\$510,000/)
   assert.match(blob, /57 days/)
   assert.match(blob, /5\.7/)
