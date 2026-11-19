@@ -74,34 +74,34 @@ test('every cash-offer city quotes the same Redfin median as /buy/[suburb]', () 
   }
 })
 
-test('Franklin cash-offer copy stays pinned to the live Redfin $862,929', () => {
+test('Franklin cash-offer copy stays pinned to the live Redfin $849,409', () => {
   const city = getCashOfferCity('franklin-tn')
   assert.ok(city)
 
   const franklin = suburbs['franklin-tn']
   const citation = citywideStatsCitation(franklin)
 
-  assert.equal(franklin.medianPrice, '$862,929')
-  assert.equal(franklin.avgDaysOnMarket, 49)
-  assert.equal(franklin.pricePerSqft, 330.85)
-  assert.equal(franklin.yoyChange, '+12.43%')
-  assert.equal(citation, 'Source: Redfin, as of October 5, 2026')
+  assert.equal(franklin.medianPrice, '$849,409')
+  assert.equal(franklin.avgDaysOnMarket, 61)
+  assert.equal(franklin.pricePerSqft, 331.06)
+  assert.equal(franklin.yoyChange, '+5.52%')
+  assert.equal(citation, 'Source: Redfin, as of November 19, 2026')
 
-  assert.match(city.localAngle, /\$862,929/)
+  assert.match(city.localAngle, /\$849,409/)
   assert.match(city.localAngle, /Redfin/)
-  assert.match(city.localAngle, /October 5, 2026/)
+  assert.match(city.localAngle, /November 19, 2026/)
   assert.doesNotMatch(city.localAngle, /\$650,000/)
   assert.doesNotMatch(city.localAngle, /\$870,000/)
 
   const repairFaq = city.faqs.find((f) => /repairs/i.test(f.q))
   assert.ok(repairFaq)
-  assert.match(repairFaq.a, /\$862,929-median/)
+  assert.match(repairFaq.a, /\$849,409-median/)
   assert.match(repairFaq.a, /Redfin/)
   assert.doesNotMatch(repairFaq.a, /\$650K/)
 })
 
 test('cash-offer freshness stamp is current after the Nashville fair-offer FAQ', () => {
-  assert.equal(cashOfferContentLastUpdated, '2026-10-05')
+  assert.equal(cashOfferContentLastUpdated, '2026-11-19')
 })
 
 test('Nashville fair-cash-offer FAQ reuses only figures already on the site', () => {
@@ -115,7 +115,7 @@ test('Nashville fair-cash-offer FAQ reuses only figures already on the site', ()
 
   const copy = faqs.map((f) => `${f.q} ${f.a}`).join('\n')
   // Median is quoted in compact form with its Redfin as-of citation.
-  assert.match(copy, /\$475,538/)
+  assert.match(copy, /\$457,132/)
   assert.match(copy, /Redfin/)
   assert.match(copy, new RegExp(asOf))
   // The shared 70–85% of after-repair value framing, no new percentages.
@@ -124,7 +124,7 @@ test('Nashville fair-cash-offer FAQ reuses only figures already on the site', ()
   assert.deepEqual(Array.from(new Set(percents)), ['70–85%'])
   // Only the Redfin median — no other dollar figures.
   const dollars = copy.match(/\$[0-9][0-9,.]*[KM]?/g) ?? []
-  assert.deepEqual(Array.from(new Set(dollars)), ['$475,538'])
+  assert.deepEqual(Array.from(new Set(dollars)), ['$457,132'])
 
   // Points at the current GNAR market update and rolls when a new snapshot is checked in.
   const latest = latestSnapshot()
@@ -190,7 +190,7 @@ test('Nashville cash-offer SEO leads with we buy houses and keeps sell-fast quer
   assert.equal(city.situationsHeading, 'We buy houses in Nashville — any situation')
 
   assert.match(city.intro, /sell your home fast in Nashville/)
-  assert.match(city.localAngle, /\$475,538/)
+  assert.match(city.localAngle, /\$457,132/)
   assert.match(city.localAngle, /Redfin/)
   assert.doesNotMatch(city.localAngle, /\$425,000/)
 
@@ -273,11 +273,11 @@ test('Nashville market note reuses published Redfin, Census, and neighborhood ba
 
   assert.match(note, new RegExp(nashville.medianPrice.replace(/[$,]/g, (ch) => `\\${ch}`)))
   assert.match(note, new RegExp(`${nashville.avgDaysOnMarket} days`))
-  assert.match(note, /\$272\.16/)
-  assert.equal(nashville.pricePerSqft, 272.16)
-  assert.match(note, /down 0\.52%/)
-  assert.equal(nashville.yoyChange, '-0.52%')
-  assert.match(note, /Redfin, as of October 5, 2026/)
+  assert.match(note, /\$262\.21/)
+  assert.equal(nashville.pricePerSqft, 262.21)
+  assert.match(note, /down 3\.76%/)
+  assert.equal(nashville.yoyChange, '-3.76%')
+  assert.match(note, /Redfin, as of November 19, 2026/)
   assert.match(note, /715,884/)
   assert.match(note, /745,904/)
   assert.match(note, /4\.2%/)
@@ -365,10 +365,10 @@ test('Columbia cash-offer SEO targets sell-fast and sell-for-cash queries withou
   assert.match(city.intro, /as-is/i)
   assert.match(city.intro, /form on this page/)
 
-  assert.match(city.localAngle, /\$368,006/)
+  assert.match(city.localAngle, /\$354,753/)
   assert.match(city.localAngle, /Redfin/)
-  assert.match(city.localAngle, /October 5, 2026/)
-  assert.match(city.localAngle, /78 days/)
+  assert.match(city.localAngle, /November 19, 2026/)
+  assert.match(city.localAngle, /75 days/)
   assert.doesNotMatch(
     [city.intro, city.localAngle, city.compareNote ?? '', ...city.faqs.map((f) => `${f.q} ${f.a}`)].join('\n'),
     /\$340,000/,
@@ -379,8 +379,8 @@ test('Columbia cash-offer SEO targets sell-fast and sell-for-cash queries withou
   assert.match(city.differentiator, /Compass/)
 
   assert.ok(city.compareNote)
-  assert.match(city.compareNote, /78 days/)
-  assert.match(city.compareNote, /\$368,006/)
+  assert.match(city.compareNote, /75 days/)
+  assert.match(city.compareNote, /\$354,753/)
   assert.match(city.compareNote, /Redfin/)
 
   const situationIds = (city.situationDetails ?? []).map((s) => s.id)
@@ -408,7 +408,7 @@ test('Columbia cash-offer SEO targets sell-fast and sell-for-cash queries withou
   const fastFaq = city.faqs.find((f) => /how do I sell my house fast in Columbia/i.test(f.q))
   assert.ok(fastFaq)
   assert.match(fastFaq.a, /sell your house for cash in Columbia, TN/i)
-  assert.match(fastFaq.a, /78/)
+  assert.match(fastFaq.a, /75/)
   assert.match(fastFaq.a, /Redfin/)
   assert.match(fastFaq.a, /TREC #351484/)
   assert.match(fastFaq.a, /licensed since 2008/)
@@ -536,7 +536,7 @@ function closingStreet(address: string): string {
 test('Columbia Maury County section reuses published facts, closings, and the one local review', () => {
   const city = getCashOfferCity('columbia-tn')
   assert.ok(city?.countySection)
-  assert.equal(city.contentUpdated, '2026-11-04')
+  assert.equal(city.contentUpdated, '2026-11-19')
   assert.equal(city.countySection.eyebrow, 'Maury County')
   assert.equal(city.seo?.title, 'Sell House Fast Columbia TN | We Buy Houses | Compass')
   assert.equal(city.headline?.lead, 'Sell Your House Fast')
@@ -580,17 +580,17 @@ test('Columbia Maury County section reuses published facts, closings, and the on
   const springHill = suburbs['spring-hill-tn']
   assert.match(copy, new RegExp(columbia.medianPrice.replace(/[$,]/g, (ch) => `\\${ch}`)))
   assert.match(copy, new RegExp(springHill.medianPrice.replace(/[$,]/g, (ch) => `\\${ch}`)))
-  assert.match(copy, /\$195\.33 per square foot/)
-  assert.equal(columbia.pricePerSqft, 195.33)
-  assert.match(copy, /\$236\.44 per square foot/)
-  assert.equal(springHill.pricePerSqft, 236.44)
+  assert.match(copy, /\$199\.73 per square foot/)
+  assert.equal(columbia.pricePerSqft, 199.73)
+  assert.match(copy, /\$233\.51 per square foot/)
+  assert.equal(springHill.pricePerSqft, 233.51)
   assert.match(copy, new RegExp(`${columbia.avgDaysOnMarket} days`))
   assert.match(copy, new RegExp(`${springHill.avgDaysOnMarket} days`))
-  assert.match(copy, /down 1\.07%/)
-  assert.equal(columbia.yoyChange, '-1.07%')
-  assert.match(copy, /down 4\.14%/)
-  assert.equal(springHill.yoyChange, '-4.14%')
-  assert.match(copy, /Redfin, as of October 5, 2026/)
+  assert.match(copy, /down 1\.43%/)
+  assert.equal(columbia.yoyChange, '-1.43%')
+  assert.match(copy, /down 9\.67%/)
+  assert.equal(springHill.yoyChange, '-9.67%')
+  assert.match(copy, /Redfin, as of November 19, 2026/)
   assert.match(copy, new RegExp(`ZIP ${columbia.schemaZip}`))
   assert.match(copy, new RegExp(`ZIP ${springHill.schemaZip}`))
 

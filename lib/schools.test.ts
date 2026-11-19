@@ -139,13 +139,13 @@ test('citywide citation uses suburbs.ts source and as-of date', () => {
   const citation = citywideStatsCitation(ravenwood.suburb)
   assert.match(citation, new RegExp(marketStatsSource))
   assert.match(citation, /as of/i)
-  assert.match(citation, /October 5, 2026/)
-  assert.equal(marketStatsLastUpdated, '2026-10-05')
+  assert.match(citation, /November 19, 2026/)
+  assert.equal(marketStatsLastUpdated, '2026-11-19')
 })
 
 test('Nolensville citywide citation matches the same Redfin helper as school pages', () => {
   const suburb = getSuburb('nolensville-tn')
   assert.ok(suburb)
   const citation = citywideStatsCitation(suburb)
-  assert.match(citation, /Source: Redfin, as of October 5, 2026/)
+  assert.match(citation, /Source: Redfin, as of November 19, 2026/)
 })

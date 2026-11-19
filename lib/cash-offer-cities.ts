@@ -193,7 +193,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Not every Franklin home is ready for a Williamson County showing. If yours needs work, is tied up in an estate, or you simply can't wait out a 21-day listing cycle, a cash sale skips the prep, the repairs, and the showings entirely.",
     localAngle:
-      "Franklin's median sits around $862,929 (Redfin, as of October 5, 2026), which means even an as-is or dated home carries real equity — and a fair cash offer lets you capture it without sinking $20K into renovations to compete with the move-in-ready inventory in Cool Springs and Westhaven. Joshua prices off real Williamson County comps, not a national algorithm, so the number reflects what your home actually is.",
+      "Franklin's median sits around $849,409 (Redfin, as of November 19, 2026), which means even an as-is or dated home carries real equity — and a fair cash offer lets you capture it without sinking $20K into renovations to compete with the move-in-ready inventory in Cool Springs and Westhaven. Joshua prices off real Williamson County comps, not a national algorithm, so the number reflects what your home actually is.",
     asideLink: {
       before: 'If the house is in Maury County rather than Williamson County, you can ',
       href: '/cash-offer/columbia-tn',
@@ -205,7 +205,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
       accent: 'in Franklin, TN.',
     },
     localHeading: 'We Buy Houses in Franklin, TN',
-    contentUpdated: '2026-11-18',
+    contentUpdated: '2026-11-19',
     seo: {
       title: 'We Buy Houses Franklin TN | Sell My House Fast | Compass',
       description:
@@ -229,7 +229,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
       heading: 'Historic downtown and older Franklin houses',
       paragraphs: [
         [
-          'Franklin is in Williamson County. The April 1, 2020 Census counted 83,454 residents. The U.S. Census Bureau estimates 90,226 as of July 1, 2025, which is 8.0% above the April 1, 2020 estimates base (U.S. Census Bureau QuickFacts; Population Estimates, Vintage 2025). The citywide median sale price is $862,929, the median days on market is 49, and the median price per square foot is $330.85, up 12.43% year over year (Redfin, as of October 5, 2026). Those figures are citywide. A cash offer follows the street and the condition.',
+          'Franklin is in Williamson County. The April 1, 2020 Census counted 83,454 residents. The U.S. Census Bureau estimates 90,226 as of July 1, 2025, which is 8.0% above the April 1, 2020 estimates base (U.S. Census Bureau QuickFacts; Population Estimates, Vintage 2025). The citywide median sale price is $849,409, the median days on market is 61, and the median price per square foot is $331.06, up 5.52% year over year (Redfin, as of November 19, 2026). Those figures are citywide. A cash offer follows the street and the condition.',
         ],
         [
           'Guides on this site cover ',
@@ -265,7 +265,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     faqs: [
       {
         q: 'Can I get a cash offer on a Franklin home that needs major repairs?',
-        a: "Yes. Franklin buyers expect pristine, updated homes — so an older or distressed property can be hard to sell traditionally without significant investment. A cash offer is built for exactly that situation: Joshua buys as-is, you skip the renovation spend, and you still capture the equity a $862,929-median market provides (Redfin, as of October 5, 2026).",
+        a: "Yes. Franklin buyers expect pristine, updated homes — so an older or distressed property can be hard to sell traditionally without significant investment. A cash offer is built for exactly that situation: Joshua buys as-is, you skip the renovation spend, and you still capture the equity a $849,409-median market provides (Redfin, as of November 19, 2026).",
       },
       {
         q: 'How fast can I sell my house for cash in Franklin, TN?',
@@ -285,13 +285,13 @@ const cityContent: Record<string, CashOfferCityContent> = {
     slug: 'brentwood-tn',
     areas: 'Governors Club, Annandale, Otter Creek, Brentwood Hills, and the Murray Lane corridor',
     intro:
-      "Brentwood's luxury buyers expect flawless presentation. If your home is dated, tenant-occupied, caught in an estate, or you just need to move without staging a $1,424,058 listing, a cash sale removes the prep, the showings, and the months of carrying costs.",
+      "Brentwood's luxury buyers expect flawless presentation. If your home is dated, tenant-occupied, caught in an estate, or you just need to move without staging a $1,281,609 listing, a cash sale removes the prep, the showings, and the months of carrying costs.",
     localAngle:
-      "At a $1,424,058 median (Redfin, as of October 5, 2026), Brentwood homes carry significant equity even in as-is condition — but selling traditionally at this tier means staging, professional photography, and buyers who walk over deferred maintenance. A cash offer lets you convert that equity now, on your timeline, without spending into a high-expectation market.",
+      "At a $1,281,609 median (Redfin, as of November 19, 2026), Brentwood homes carry significant equity even in as-is condition — but selling traditionally at this tier means staging, professional photography, and buyers who walk over deferred maintenance. A cash offer lets you convert that equity now, on your timeline, without spending into a high-expectation market.",
     faqs: [
       {
         q: 'Do you buy higher-value Brentwood homes for cash?',
-        a: "Yes. Brentwood's price point ($1,424,058 median, with Governors Club and Murray Lane estates well above) is squarely in range (Redfin, as of October 5, 2026). Whether it's a luxury home that needs updating, an inherited estate, or a property you need to move quickly without a months-long luxury listing campaign, Joshua makes fair, no-obligation cash offers priced off real Brentwood comps.",
+        a: "Yes. Brentwood's price point ($1,281,609 median, with Governors Club and Murray Lane estates well above) is squarely in range (Redfin, as of November 19, 2026). Whether it's a luxury home that needs updating, an inherited estate, or a property you need to move quickly without a months-long luxury listing campaign, Joshua makes fair, no-obligation cash offers priced off real Brentwood comps.",
       },
       {
         q: 'I inherited a Brentwood home in probate — can I still sell it for cash?',
@@ -307,13 +307,13 @@ const cityContent: Record<string, CashOfferCityContent> = {
       },
     ],
     localHeading: 'Cash Home Buyers in Brentwood',
-    contentUpdated: '2026-11-04',
+    contentUpdated: '2026-11-19',
     countySection: {
       eyebrow: 'Williamson County',
       heading: 'Older Brentwood estates and a traditional listing',
       paragraphs: [
         [
-          'Brentwood is in Williamson County. The citywide median sale price is $1,424,058, the median days on market is 63, and the median price per square foot is $356.22, up 5.1% year over year (Redfin, as of October 5, 2026). Population is essentially flat: the April 1, 2020 Census counted 45,373 residents, and the U.S. Census Bureau estimates 45,313 as of July 1, 2025, a change of -0.1% from the April 1, 2020 estimates base (U.S. Census Bureau QuickFacts; Population Estimates, Vintage 2025).',
+          'Brentwood is in Williamson County. The citywide median sale price is $1,281,609, the median days on market is 62, and the median price per square foot is $348.57, down 4.09% year over year (Redfin, as of November 19, 2026). Population is essentially flat: the April 1, 2020 Census counted 45,373 residents, and the U.S. Census Bureau estimates 45,313 as of July 1, 2025, a change of -0.1% from the April 1, 2020 estimates base (U.S. Census Bureau QuickFacts; Population Estimates, Vintage 2025).',
         ],
         [
           'Guides on this site cover ',
@@ -343,7 +343,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Spring Hill straddles Williamson and Maury counties and moves fast — but if your home needs work, you're relocating for a GM or plant job, or you're behind on payments, a cash sale lets you skip the repairs and showings and close on your schedule.",
     localAngle:
-      "With a $508,284 median (Redfin, as of October 5, 2026), Spring Hill is a value market where many sellers are relocating for work or upsizing quickly. A cash offer is ideal when timing matters more than squeezing the last dollar — Joshua buys as-is across both the Williamson and Maury sides and prices off true local comps.",
+      "With a $501,321 median (Redfin, as of November 19, 2026), Spring Hill is a value market where many sellers are relocating for work or upsizing quickly. A cash offer is ideal when timing matters more than squeezing the last dollar — Joshua buys as-is across both the Williamson and Maury sides and prices off true local comps.",
     asideLink: {
       before: 'South of the county line, you can ',
       href: '/cash-offer/columbia-tn',
@@ -355,7 +355,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
       accent: 'in Spring Hill. We Buy Houses.',
     },
     localHeading: 'We Buy Houses in Spring Hill',
-    contentUpdated: '2026-11-04',
+    contentUpdated: '2026-11-19',
     listingSplit: {
       href: '/sell/spring-hill-tn',
       label: 'full-value Spring Hill listing',
@@ -366,7 +366,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
       heading: 'Both sides of the Spring Hill line',
       paragraphs: [
         [
-          'Spring Hill straddles Williamson County and Maury County. The April 1, 2020 Census counted 50,005 residents. The U.S. Census Bureau estimates 61,336 as of July 1, 2025, which is 21.0% above the April 1, 2020 estimates base (U.S. Census Bureau QuickFacts; Population Estimates, Vintage 2025). The citywide median sale price is $508,284, with 62 days on market and $236.44 per square foot, down 4.14% year over year (Redfin, as of October 5, 2026). Those are citywide figures, not a price for one street. The county line changes the comps and the school zone. Joshua buys on both sides and prices the county the house actually sits in.',
+          'Spring Hill straddles Williamson County and Maury County. The April 1, 2020 Census counted 50,005 residents. The U.S. Census Bureau estimates 61,336 as of July 1, 2025, which is 21.0% above the April 1, 2020 estimates base (U.S. Census Bureau QuickFacts; Population Estimates, Vintage 2025). The citywide median sale price is $501,321, with 67 days on market and $233.51 per square foot, down 9.67% year over year (Redfin, as of November 19, 2026). Those are citywide figures, not a price for one street. The county line changes the comps and the school zone. Joshua buys on both sides and prices the county the house actually sits in.',
         ],
         [
           'Job relocation, including sellers tied to the GM Spring Hill plant, is a common reason for a cash sale here. GM and Ultium Cells are still growing in Spring Hill, the same employment base named on the Columbia cash page. Neighborhood guides include ',
@@ -416,15 +416,15 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Nolensville's newer subdivisions set a high bar for condition. If your home is older, on acreage that needs clearing, or tied to an estate or divorce, a cash offer lets you sell as-is without competing against the move-in-ready inventory in Bent Creek and Scales Farmstead.",
     localAngle:
-      "At a $929,385 median (Redfin, as of October 5, 2026) in fast-growing Williamson County, Nolensville homes hold strong equity — but much of the market is new construction, so an older or distressed property can struggle traditionally. A cash sale converts your equity now, with no prep and no showings.",
+      "At a $969,326 median (Redfin, as of November 19, 2026) in fast-growing Williamson County, Nolensville homes hold strong equity — but much of the market is new construction, so an older or distressed property can struggle traditionally. A cash sale converts your equity now, with no prep and no showings.",
     localHeading: 'Sell My House Fast in Nolensville',
-    contentUpdated: '2026-11-04',
+    contentUpdated: '2026-11-19',
     countySection: {
       eyebrow: 'Williamson County',
       heading: 'Historic downtown Nolensville and the new subdivisions',
       paragraphs: [
         [
-          'Nolensville is in Williamson County. Founded in 1797, it is still anchored by a historic downtown of 1800s buildings. The population climbed from 13,829 at the 2020 Census to an estimated 16,200+ in 2026 — roughly 17% growth in five years (U.S. Census Bureau). The citywide median sale price is $929,385, with 63 days on market and $300.43 per square foot, down 7.06% year over year (Redfin, as of October 5, 2026). Those are citywide figures.',
+          'Nolensville is in Williamson County. Founded in 1797, it is still anchored by a historic downtown of 1800s buildings. The population climbed from 13,829 at the 2020 Census to an estimated 16,200+ in 2026 — roughly 17% growth in five years (U.S. Census Bureau). The citywide median sale price is $969,326, with 64 days on market and $296.7 per square foot, down 8.55% year over year (Redfin, as of November 19, 2026). Those are citywide figures.',
         ],
         [
           'Guides on this site cover ',
@@ -468,7 +468,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Thompson's Station mixes new subdivisions with rural acreage. Whether your home needs work, sits on land that's become hard to maintain, or you're settling an estate, a cash offer lets you sell as-is and close on your schedule.",
     localAngle:
-      "With a $829,451 median (Redfin, as of October 5, 2026) and a lot of land in the mix, Thompson's Station sellers often value speed and simplicity — especially on acreage or older homes that don't fit the new-build demand. Joshua buys as-is and prices off real Williamson County comps.",
+      "With a $852,937 median (Redfin, as of November 19, 2026) and a lot of land in the mix, Thompson's Station sellers often value speed and simplicity — especially on acreage or older homes that don't fit the new-build demand. Joshua buys as-is and prices off real Williamson County comps.",
     asideLink: {
       before: 'Farther south in Maury County, start with a ',
       href: '/cash-offer/columbia-tn',
@@ -486,7 +486,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
       },
       {
         q: 'Is a cash offer worth it in a growing market like Thompson’s Station?',
-        a: "It depends on your situation. If the home is turnkey and you can wait, listing traditionally in a $829,451 median market may net more (Redfin, as of October 5, 2026). If it's dated, inherited, or you need to move now, the cash route often nets more after repairs, carrying costs, and time — and Joshua will walk you through both honestly.",
+        a: "It depends on your situation. If the home is turnkey and you can wait, listing traditionally in a $852,937 median market may net more (Redfin, as of November 19, 2026). If it's dated, inherited, or you need to move now, the cash route often nets more after repairs, carrying costs, and time — and Joshua will walk you through both honestly.",
       },
     ],
   },
@@ -496,15 +496,15 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       'Need to sell your home fast in Nashville? We buy houses in Nashville in any condition — inherited homes, tired rentals, pre-foreclosure, vacant houses, and properties that need more work than a retail buyer will take on. A cash offer lets you sell any of them as-is, without waiting on a traditional listing.',
     localAngle:
-      "Across Davidson County, Nashville's $475,538 median (Redfin, as of October 5, 2026) spans everything from updated East Nashville bungalows to dated homes in Madison, Antioch, and Donelson that are hard to sell traditionally. Cash is the cleanest exit for landlords done with tenants, heirs settling an estate, or owners facing foreclosure — Joshua buys in any condition, anywhere in the metro.",
+      "Across Davidson County, Nashville's $457,132 median (Redfin, as of November 19, 2026) spans everything from updated East Nashville bungalows to dated homes in Madison, Antioch, and Donelson that are hard to sell traditionally. Cash is the cleanest exit for landlords done with tenants, heirs settling an estate, or owners facing foreclosure — Joshua buys in any condition, anywhere in the metro.",
     headline: {
       lead: 'We Buy Houses',
       accent: 'in Nashville.',
     },
     situationsHeading: 'We buy houses in Nashville — any situation',
-    contentUpdated: '2026-11-18',
+    contentUpdated: '2026-11-19',
     marketNote:
-      "Davidson County is not one housing market. The citywide median sale price is $475,538, with 64 days on market and $272.16 per square foot, down 0.52% year over year (Redfin, as of October 5, 2026). Davidson County's April 1, 2020 Census count was 715,884. The U.S. Census Bureau estimates 745,904 residents as of July 1, 2025, a 4.2% increase from the April 1, 2020 estimates base (U.S. Census Bureau QuickFacts; Population Estimates, Vintage 2025). The neighborhood guides on this site publish these price bands: East Nashville $450K – $1.2M+, 12 South $700K – $1.8M+, Germantown $500K – $1.5M+, Sylvan Park $550K – $1.3M+, The Gulch $400K – $1.5M+ (condos), and Green Hills: No published median. A cash offer follows the block and the condition, not the citywide midpoint. Joshua also buys in Madison, Antioch, Donelson, Bordeaux, and Hermitage.",
+      "Davidson County is not one housing market. The citywide median sale price is $457,132, with 66 days on market and $262.21 per square foot, down 3.76% year over year (Redfin, as of November 19, 2026). Davidson County's April 1, 2020 Census count was 715,884. The U.S. Census Bureau estimates 745,904 residents as of July 1, 2025, a 4.2% increase from the April 1, 2020 estimates base (U.S. Census Bureau QuickFacts; Population Estimates, Vintage 2025). The neighborhood guides on this site publish these price bands: East Nashville $450K – $1.2M+, 12 South $700K – $1.8M+, Germantown $500K – $1.5M+, Sylvan Park $550K – $1.3M+, The Gulch $400K – $1.5M+ (condos), and Green Hills: No published median. A cash offer follows the block and the condition, not the citywide midpoint. Joshua also buys in Madison, Antioch, Donelson, Bordeaux, and Hermitage.",
     seo: {
       title: 'We Buy Houses Nashville | 24-Hour Cash Offer | Compass',
       description:
@@ -657,12 +657,12 @@ const cityContent: Record<string, CashOfferCityContent> = {
   },
   'murfreesboro-tn': {
     slug: 'murfreesboro-tn',
-    contentUpdated: '2026-11-12',
+    contentUpdated: '2026-11-19',
     areas: 'Oaklands, Blackman, Northfield, Ellendale, and downtown Murfreesboro',
     intro:
       "Murfreesboro is one of the fastest-growing cities in the state, but plenty of homes here need work, are caught in an estate, or belong to owners who need to move before MTSU's rental rush. A cash offer lets you sell as-is and close fast.",
     localAngle:
-      "With a $429,716 median (Redfin, as of October 5, 2026) in Rutherford County, Murfreesboro is an affordability-driven market where speed often beats squeezing the last dollar. Joshua buys as-is — including tired student rentals near MTSU, inherited homes, and properties needing major repairs — and prices off real local comps.",
+      "With a $426,703 median (Redfin, as of November 19, 2026) in Rutherford County, Murfreesboro is an affordability-driven market where speed often beats squeezing the last dollar. Joshua buys as-is — including tired student rentals near MTSU, inherited homes, and properties needing major repairs — and prices off real local comps.",
     faqs: [
       {
         q: 'Can you buy my MTSU-area rental property for cash?',
@@ -684,9 +684,9 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Gallatin blends lakeside living with affordable Sumner County inventory. If your home needs work, is part of an estate, or you need to relocate quickly, a cash offer lets you sell as-is without the wait of a traditional listing.",
     localAngle:
-      "At a $447,154 median (Redfin, as of October 5, 2026), Gallatin is one of the more affordable Sumner County markets — which means even a dated or distressed home holds usable equity. A cash sale is the simplest path for heirs, downsizers, and owners who'd rather not invest in repairs before selling.",
+      "At a $423,216 median (Redfin, as of November 19, 2026), Gallatin is one of the more affordable Sumner County markets — which means even a dated or distressed home holds usable equity. A cash sale is the simplest path for heirs, downsizers, and owners who'd rather not invest in repairs before selling.",
     localHeading: 'Cash Home Buyers in Gallatin',
-    contentUpdated: '2026-11-04',
+    contentUpdated: '2026-11-19',
     seo: {
       title: 'Sell My House Fast Gallatin TN | Cash Home Buyers',
       description:
@@ -710,7 +710,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
       heading: 'Station Camp, Fairvue, and the Old Hickory Lake side',
       paragraphs: [
         [
-          'Gallatin is in Sumner County, on Old Hickory Lake. The citywide median sale price is $447,154, with 70 days on market and $221.87 per square foot, up 5.22% year over year (Redfin, as of October 5, 2026). Population grew from about 44,400 at the 2020 Census to an estimated 53,000+ in 2026 — roughly 19% in five years (U.S. Census Bureau). Volunteer State Community College’s main campus is in Gallatin. The city completed a $31 million connector road from SR-109 to Dobbins Pike in 2022.',
+          'Gallatin is in Sumner County, on Old Hickory Lake. The citywide median sale price is $423,216, with 67 days on market and $220.22 per square foot, up 4.44% year over year (Redfin, as of November 19, 2026). Population grew from about 44,400 at the 2020 Census to an estimated 53,000+ in 2026 — roughly 19% in five years (U.S. Census Bureau). Volunteer State Community College’s main campus is in Gallatin. The city completed a $31 million connector road from SR-109 to Dobbins Pike in 2022.',
         ],
         [
           'Neighborhood guides on this site cover ',
@@ -738,11 +738,11 @@ const cityContent: Record<string, CashOfferCityContent> = {
       },
       {
         q: 'Is a cash offer competitive in an affordable market like Gallatin?',
-        a: "It can be very competitive for the right situation. In a $447,154 market (Redfin, as of October 5, 2026), the repair-and-carry costs of getting a dated home listing-ready often eat much of the retail premium. For as-is, inherited, or time-sensitive sales, the cash net is frequently close to — or better than — a traditional sale, and Joshua will show you both.",
+        a: "It can be very competitive for the right situation. In a $423,216 market (Redfin, as of November 19, 2026), the repair-and-carry costs of getting a dated home listing-ready often eat much of the retail premium. For as-is, inherited, or time-sensitive sales, the cash net is frequently close to — or better than — a traditional sale, and Joshua will show you both.",
       },
       {
         q: 'How do I sell my house fast in Gallatin, TN?',
-        a: 'Request a cash offer on this page. You will have a no-obligation number within 24 hours and can close in as little as 7 days, as-is, with no showings and no commissions. Gallatin homes are averaging 70 days on market at a $447,154 median (Redfin, as of October 5, 2026). If the house is move-in-ready and you can wait, listing traditionally may net more, and Joshua will show you both numbers. He is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate, licensed since 2008.',
+        a: 'Request a cash offer on this page. You will have a no-obligation number within 24 hours and can close in as little as 7 days, as-is, with no showings and no commissions. Gallatin homes are averaging 67 days on market at a $423,216 median (Redfin, as of November 19, 2026). If the house is move-in-ready and you can wait, listing traditionally may net more, and Joshua will show you both numbers. He is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate, licensed since 2008.',
       },
       {
         q: 'Do cash house buyers in Gallatin buy lake homes and Station Camp houses?',
@@ -756,7 +756,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Hendersonville's Old Hickory Lake setting draws steady demand, but lakeside and older homes often need work that retail buyers won't take on. A cash offer lets you sell as-is — no repairs, no showings, no waiting.",
     localAngle:
-      "With a $534,646 median (Redfin, as of October 5, 2026) in Sumner County, Hendersonville sellers facing an estate, a divorce, or a relocation often value certainty over a drawn-out listing. Joshua buys as-is across the lake corridor and prices off real Hendersonville comps.",
+      "With a $513,143 median (Redfin, as of November 19, 2026) in Sumner County, Hendersonville sellers facing an estate, a divorce, or a relocation often value certainty over a drawn-out listing. Joshua buys as-is across the lake corridor and prices off real Hendersonville comps.",
     faqs: [
       {
         q: 'Do you buy older lakefront homes in Hendersonville that need work?',
@@ -784,7 +784,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     situationsHeading: 'When you need to sell your house fast in Columbia',
     faqHeading: 'Sell your house for cash in Columbia, TN',
     sellerFaqHeading: 'Columbia seller FAQ',
-    contentUpdated: '2026-11-04',
+    contentUpdated: '2026-11-19',
     countySection: {
       eyebrow: 'Maury County',
       heading: 'The courthouse, the streets, and the county edges',
@@ -808,7 +808,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
           '.',
         ],
         [
-          "Spring Hill is the north edge, and it straddles Williamson County and Maury County. The Spring Hill citywide median is $508,284, with 62 days on market and $236.44 per square foot, down 4.14% year over year (Redfin, as of October 5, 2026). Columbia's citywide median is $368,006, with 78 days on market and $195.33 per square foot, down 1.07% year over year (Redfin, as of October 5, 2026). Those are citywide figures, not a price for one street. Neighborhood guides filed under Maury County on the Spring Hill side are ",
+          "Spring Hill is the north edge, and it straddles Williamson County and Maury County. The Spring Hill citywide median is $501,321, with 67 days on market and $233.51 per square foot, down 9.67% year over year (Redfin, as of November 19, 2026). Columbia's citywide median is $354,753, with 75 days on market and $199.73 per square foot, down 1.43% year over year (Redfin, as of November 19, 2026). Those are citywide figures, not a price for one street. Neighborhood guides filed under Maury County on the Spring Hill side are ",
           { href: '/neighborhoods/harvest-point-spring-hill-tn', label: 'Harvest Point' },
           ' off Cleburne Road, ',
           { href: '/neighborhoods/port-royal-estates-spring-hill-tn', label: 'Port Royal Estates' },
@@ -832,7 +832,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       'Need to sell your house fast in Columbia, TN? A cash offer is for the seller who needs a date more than a perfect retail price. That includes a divorce, an inherited house, a relocation, a home you want to sell as-is, or any timeline that cannot wait on showings. Use the form on this page — the same cash-offer request Joshua reviews himself — and you will have a fair, no-obligation number within 24 hours.',
     localAngle:
-      "Columbia's median sits around $368,006 (Redfin, as of October 5, 2026), and homes are averaging about 78 days on market. That wait is why cash is a real option here: historic houses near the Square often need systems work a retail buyer will not take on, and repair bills eat more of a listing in an attainable Maury County price band than they do in Williamson County. Maury County was Tennessee's #2 fastest-growing county by percentage from 2024 to 2025 (Maury Alliance), so the equity is real — Joshua prices it off current Maury County comps, buys as-is, and will also show you a traditional listing net if the house is ready and you can wait.",
+      "Columbia's median sits around $354,753 (Redfin, as of November 19, 2026), and homes are averaging about 75 days on market. That wait is why cash is a real option here: historic houses near the Square often need systems work a retail buyer will not take on, and repair bills eat more of a listing in an attainable Maury County price band than they do in Williamson County. Maury County was Tennessee's #2 fastest-growing county by percentage from 2024 to 2025 (Maury Alliance), so the equity is real — Joshua prices it off current Maury County comps, buys as-is, and will also show you a traditional listing net if the house is ready and you can wait.",
     seo: {
       title: 'Sell House Fast Columbia TN | We Buy Houses | Compass',
       description:
@@ -859,7 +859,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     differentiator:
       'Search results for a Columbia cash offer are full of out-of-town "we buy houses" sites. Joshua is a licensed Tennessee Affiliate Broker (TREC #351484) with Compass Real Estate — 218+ five-star reviews, and he has been licensed since 2008 in Middle Tennessee. He can buy your Columbia home for cash or list it, and he shows you both numbers in writing before you choose.',
     compareNote:
-      'Columbia homes are averaging about 78 days on market, with a citywide median around $368,006 (Redfin, as of October 5, 2026). Listing can still net more on a move-in-ready house if you can wait. If you need to sell your house fast in Columbia — as-is, or on a date you can plan around — cash is the certain close. Same licensed broker either way.',
+      'Columbia homes are averaging about 75 days on market, with a citywide median around $354,753 (Redfin, as of November 19, 2026). Listing can still net more on a move-in-ready house if you can wait. If you need to sell your house fast in Columbia — as-is, or on a date you can plan around — cash is the certain close. Same licensed broker either way.',
     situationDetails: [
       {
         id: 'inherited',
@@ -886,7 +886,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
       {
         id: 'speed',
         heading: 'You need a closing date, not another month of showings',
-        body: 'Columbia homes are averaging about 78 days on market (Redfin, as of October 5, 2026). A cash sale skips the lender, the appraisal, and the showing calendar. You get a no-obligation offer within 24 hours and can close in as little as 7 days — or later, if you still need time to move. Start with the form on this page.',
+        body: 'Columbia homes are averaging about 75 days on market (Redfin, as of November 19, 2026). A cash sale skips the lender, the appraisal, and the showing calendar. You get a no-obligation offer within 24 hours and can close in as little as 7 days — or later, if you still need time to move. Start with the form on this page.',
         href: '#cash-offer-form',
         linkLabel: 'Get your Columbia cash offer',
       },
@@ -902,7 +902,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     faqs: [
       {
         q: 'How do I sell my house fast in Columbia?',
-        a: 'Request a cash offer on this page if you need a date more than a listing. You will have a no-obligation number within 24 hours and can close in as little as 7 days, as-is, with no showings and no commissions. That is the practical way to sell your house fast in Columbia, and to sell your house for cash in Columbia, TN, when repairs or a 78-day listing wait will not work (Redfin, as of October 5, 2026). Joshua is a licensed Compass broker (TREC #351484), licensed since 2008. Call or text 615-551-2727.',
+        a: 'Request a cash offer on this page if you need a date more than a listing. You will have a no-obligation number within 24 hours and can close in as little as 7 days, as-is, with no showings and no commissions. That is the practical way to sell your house fast in Columbia, and to sell your house for cash in Columbia, TN, when repairs or a 75-day listing wait will not work (Redfin, as of November 19, 2026). Joshua is a licensed Compass broker (TREC #351484), licensed since 2008. Call or text 615-551-2727.',
       },
       {
         q: 'How fast can I sell my house for cash in Columbia, TN?',
@@ -934,7 +934,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
       },
       {
         q: 'How does a cash offer compare with listing my Columbia home?',
-        a: "A cash offer typically runs 70–85% of after-repair value. You trade some retail price for speed and certainty. In Columbia's $368,006 market (Redfin, as of October 5, 2026), homes average about 78 days on market, and repair costs on an older house often consume the gap between cash and a list price. For a move-in-ready home you can wait on, listing usually nets more. Joshua will lay out both numbers before you choose.",
+        a: "A cash offer typically runs 70–85% of after-repair value. You trade some retail price for speed and certainty. In Columbia's $354,753 market (Redfin, as of November 19, 2026), homes average about 75 days on market, and repair costs on an older house often consume the gap between cash and a list price. For a move-in-ready home you can wait on, listing usually nets more. Joshua will lay out both numbers before you choose.",
       },
       {
         q: 'What if my Columbia house is already listed with an agent?',
@@ -974,7 +974,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Mount Juliet is one of Wilson County's hottest markets, but newer subdivisions set a high bar for condition. If your home is older, an inherited property, or you need to relocate fast, a cash offer lets you sell as-is without competing against new construction.",
     localAngle:
-      "With a $564,626 median (Redfin, as of October 5, 2026), Mount Juliet homes hold strong equity — but the market favors move-in-ready inventory in Providence and Willoughby Station. A cash sale converts your equity now, with no repairs and no showings, on whatever timeline you need.",
+      "With a $584,593 median (Redfin, as of November 19, 2026), Mount Juliet homes hold strong equity — but the market favors move-in-ready inventory in Providence and Willoughby Station. A cash sale converts your equity now, with no repairs and no showings, on whatever timeline you need.",
     faqs: [
       {
         q: 'Can I sell an older Mount Juliet home for cash against the newer subdivisions?',
@@ -996,7 +996,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Lebanon offers affordable Wilson County living with room to grow. If your home needs work, sits on acreage that's hard to maintain, or you're settling an estate, a cash offer lets you sell as-is and close on your schedule.",
     localAngle:
-      "At a $424,719 median (Redfin, as of October 5, 2026), Lebanon mixes subdivisions with rural acreage, and many sellers value a simple, certain exit over a drawn-out listing. Joshua buys as-is — including homes on land and properties needing major repairs — and prices off real Wilson County comps.",
+      "At a $419,708 median (Redfin, as of November 19, 2026), Lebanon mixes subdivisions with rural acreage, and many sellers value a simple, certain exit over a drawn-out listing. Joshua buys as-is — including homes on land and properties needing major repairs — and prices off real Wilson County comps.",
     faqs: [
       {
         q: 'Do you buy homes on acreage or farmland near Lebanon?',
@@ -1018,15 +1018,15 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "Smyrna's affordability and Nissan-anchored job base keep it moving, but plenty of homes here need work or belong to owners relocating fast. A cash offer lets you sell as-is — no repairs, no showings, no waiting on a buyer's loan.",
     localAngle:
-      "With a $413,476 median (Redfin, as of October 5, 2026) in Rutherford County, Smyrna is a value market where relocation and speed often drive sales. Joshua buys as-is — including homes near the Nissan plant tied to job moves, inherited properties, and homes needing major repairs — and prices off real local comps.",
+      "With a $400,194 median (Redfin, as of November 19, 2026) in Rutherford County, Smyrna is a value market where relocation and speed often drive sales. Joshua buys as-is — including homes near the Nissan plant tied to job moves, inherited properties, and homes needing major repairs — and prices off real local comps.",
     localHeading: 'Cash Home Buyers in Smyrna',
-    contentUpdated: '2026-11-04',
+    contentUpdated: '2026-11-19',
     countySection: {
       eyebrow: 'Rutherford County',
       heading: 'The Nissan plant and Smyrna’s cash sales',
       paragraphs: [
         [
-          'Smyrna is in Rutherford County. It is anchored by the Nissan Smyrna Vehicle Assembly Plant, the largest single-site auto plant in North America — producing roughly 640,000 vehicles a year and employing about 8,000 workers as the town’s largest employer. Smyrna climbed from 53,070 residents at the 2020 Census to an estimated 57,000+ in 2026, and the city page calls it the largest town in Tennessee. The citywide median sale price is $413,476, with 61 days on market and $217.85 per square foot, down 3.01% year over year (Redfin, as of October 5, 2026).',
+          'Smyrna is in Rutherford County. It is anchored by the Nissan Smyrna Vehicle Assembly Plant, the largest single-site auto plant in North America — producing roughly 640,000 vehicles a year and employing about 8,000 workers as the town’s largest employer. Smyrna climbed from 53,070 residents at the 2020 Census to an estimated 57,000+ in 2026, and the city page calls it the largest town in Tennessee. The citywide median sale price is $400,194, with 82 days on market and $210.94 per square foot, down 4.69% year over year (Redfin, as of November 19, 2026).',
         ],
         [
           'Guides on this site cover ',
@@ -1066,7 +1066,7 @@ const cityContent: Record<string, CashOfferCityContent> = {
     intro:
       "La Vergne is one of the most affordable doorways into Rutherford County, popular with commuters and investors. If your home needs work, is a tired rental, or you need to move quickly, a cash offer lets you sell as-is and close fast.",
     localAngle:
-      "At a $378,549 median (Redfin, as of October 5, 2026), La Vergne sees a lot of rental and commuter inventory where speed beats squeezing the last dollar. Joshua buys as-is, including tenant-occupied homes and properties needing major repairs, priced off real Rutherford County comps.",
+      "At a $372,241 median (Redfin, as of November 19, 2026), La Vergne sees a lot of rental and commuter inventory where speed beats squeezing the last dollar. Joshua buys as-is, including tenant-occupied homes and properties needing major repairs, priced off real Rutherford County comps.",
     faqs: [
       {
         q: 'Can you buy my La Vergne rental property with tenants in place?',
@@ -1121,7 +1121,7 @@ export function getAllCashOfferCitySlugs(): string[] {
 // FAQs) was last reviewed. Mirrors `marketStatsLastUpdated` in lib/suburbs.ts —
 // update when refreshing this file's content. Feeds the WebPage `dateModified`
 // on /cash-offer/[city], a freshness signal these pages previously lacked.
-export const cashOfferContentLastUpdated = '2026-10-05'
+export const cashOfferContentLastUpdated = '2026-11-19'
 
 /** Hub page /cash-offer proof block and FAQ were refreshed on this day. */
 export const cashOfferHubLastUpdated = '2026-11-04'

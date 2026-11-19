@@ -28,10 +28,10 @@ test('Franklin family guide is in the sitemap and is the GEO target', () => {
 
 test('citywide figures match suburbs.ts and name the source and date', () => {
   assert.match(franklinPriceSentence(), new RegExp(franklin.medianPrice.replace(/[$,]/g, (ch) => `\\${ch}`)))
-  assert.match(guide, /median days on market is 49/)
-  assert.match(guide, /\$330\.85/)
-  assert.match(guide, /up 12\.43%/)
-  assert.match(guide, /Source: Redfin, as of October 5, 2026/)
+  assert.match(guide, /median days on market is 61/)
+  assert.match(guide, /\$331\.06/)
+  assert.match(guide, /up 5\.52%/)
+  assert.match(guide, /Source: Redfin, as of November 19, 2026/)
   assert.match(guide, /83,454/)
   assert.match(guide, /90,226/)
   assert.match(guide, /8\.0%/)

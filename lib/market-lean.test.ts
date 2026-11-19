@@ -60,8 +60,8 @@ test('Brentwood context sentence follows the same label as the summary', () => {
   const lean = marketLean(brentwood)
   const sentence = marketConditionSentence(brentwood)
 
-  assert.equal(brentwood.avgDaysOnMarket, 63)
-  assert.equal(brentwood.yoyChange, '+5.1%')
+  assert.equal(brentwood.avgDaysOnMarket, 62)
+  assert.equal(brentwood.yoyChange, '-4.09%')
   assert.equal(lean.lean, 'Balanced / Buyer-Friendly')
   assert.equal(sentence, 'Brentwood is currently a balanced to buyer-friendly market.')
   assert.doesNotMatch(sentence, /\//)
