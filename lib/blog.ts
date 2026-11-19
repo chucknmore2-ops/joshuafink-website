@@ -223,6 +223,117 @@ const marketUpdatePosts: BlogPost[] = marketSnapshots.map(buildMarketUpdatePost)
 export const blogPosts: BlogPost[] = [
   ...marketUpdatePosts,
   {
+    slug: "selling-a-house-over-the-holidays-middle-tennessee",
+    title: "Selling a House Over the Holidays in Middle Tennessee: Fewer Lookers, Better Buyers",
+    date: "November 19, 2026",
+    dateModified: "November 19, 2026",
+    excerpt:
+      "Selling a house during the holidays in Middle Tennessee means fewer tours and buyers who usually have a deadline. How to choose between listing from Thanksgiving to New Year and waiting for spring, using only the October market figures already published on this site.",
+    category: "For Sellers",
+    disclosure:
+      "Joshua Fink is a licensed Tennessee Affiliate Broker with Compass Real Estate (TREC #351484). If you request a cash offer, he may act as a principal buyer or partner with a vetted local investor; that role is disclosed in writing at offer time as required under TREC Rule 1260-02-.12 and TCA § 62-13-403. Cash offers are typically 70-85% of after-repair market value, the tradeoff for speed and certainty. This article is general information about when to list, not legal, tax, or financial advice.",
+    faq: [
+      {
+        q: "Is it a bad time to sell a house over the holidays in Middle Tennessee?",
+        a: "It is a thinner market than spring, and houses still sell. Fewer people tour between Thanksgiving and New Year, and the buyers who do usually have a deadline. The house still has to be priced to current comps and easy to show. The October 2026 Greater Nashville REALTORS® report, published on this site November 5, 2026, put the nine-county market at 6.83 months of inventory and 61 days on market. Those are the regional backdrop for the season.",
+      },
+      {
+        q: "Should I wait until spring to sell my house in Tennessee?",
+        a: "Wait if the house needs work you can finish over the winter. List now if the house is ready and the reason for moving is real. Waiting adds months of mortgage, taxes, insurance, and utilities, and it puts you into the season with more competing listings. A higher spring price is a guess. Price the decision with carrying costs you can write down, and keep any hoped-for spring bump labeled as a guess.",
+      },
+      {
+        q: "Do homes sell between Thanksgiving and New Year in Nashville?",
+        a: "Yes. Fewer sell than in spring, and the buyers still looking tend to have a date attached: a relocation, a lease, or a closing they are trying to finish. A listing withdrawn until January is invisible to the buyer who is in town to look. If the house cannot be shown, pause those dates on purpose.",
+      },
+      {
+        q: "What is the best month to list a house in Tennessee?",
+        a: "This site has no holiday-by-holiday count that names a single best month. Spring brings more buyers and more competing listings. Thanksgiving through New Year brings fewer of both. Decide from whether the house is ready and whether your timeline is real. Franklin's citywide median was 49 days on market and Brentwood's was 63 (Redfin, as of October 5, 2026). Those are city figures from a rolling window, not a ranking of months.",
+      },
+      {
+        q: "How do I show my house over Thanksgiving and Christmas?",
+        a: "Leave a written plan before you travel: who has access, which lights stay on, a normal thermostat, and someone who can reset the house. Keep decorations light enough that the floor plan still reads. Stay on the market if the house can be shown. If guests or a repair make showings impossible, pause those dates on purpose.",
+      },
+    ],
+    content: `
+**Quick answer:** Selling a house during the holidays in Middle Tennessee means a thinner stretch from Thanksgiving through New Year. Fewer people tour, and the buyers who still book a showing usually have a deadline: a job start, a lease ending, or a closing they want this calendar year. List if the house is ready and you will price it to today's comps. Wait for spring if the house needs work you can finish over the winter. A higher spring price is a guess, separate from either reason.
+
+## Is Selling a House During the Holidays a Bad Idea?
+
+Travel, school break, and houseguests take the Saturday that would have been a tour in May. There are fewer lookers. The buyers who still ask to walk a house the week of Christmas usually have a reason: a January job start, a lease that ends, or a plan to have keys before the new year. That smaller group is the case for listing now.
+
+The house still has to earn the visit. An overpriced, dark, or hard-to-enter listing sits in December the same way it sits any other month.
+
+## What Does the Market Look Like Going Into the Holidays?
+
+These sources do not publish a holiday showing count, so every figure below is one already on this site, with its date. They are the backdrop for this season. A street price still comes from the sales around that house.
+
+The newest regional read is the [October 2026 Middle Tennessee market update](/blog/middle-tennessee-market-update-october-2026), from the [Greater Nashville REALTORS® October release](https://www.greaternashvillerealtors.org/news/housing-market-sees-more-inventory-fewer-sales-in-october), published here on November 5, 2026. Across nine counties — Davidson, Cheatham, Dickson, Maury, Robertson, Rutherford, Sumner, Williamson, and Wilson — the residential median was $499,990, down 2.9% from $515,000 in October 2025. The release reported 2,540 closed sales, 15,379 active listings, 61 days on market, and 6.83 months of inventory. Six months of supply is the line this site uses to separate a seller's market from a balanced one, so the metro sat past that line in October.
+
+City medians come from a different report, and they are older. Redfin, as of October 5, 2026, the date this site last published them, from a rolling three-month window ending August 31, 2026:
+
+- **Franklin:** $862,929 median sale price, 49 days on market, $330.85 per square foot, up 12.43% year over year.
+- **Brentwood:** $1,424,058 median sale price, 63 days on market, $356.22 per square foot, up 5.1% year over year.
+
+Both are citywide. A Franklin townhome and a Brentwood estate do not share a price, and neither trades at the nine-county median of $499,990. Start with the seller pages for [Brentwood](/sell/brentwood-tn) and [Franklin](/sell/franklin-tn), then price the recent sales on your street.
+
+## Should You Wait Until Spring to List?
+
+Wait when the winter changes the house. A roof, paint, or a kitchen that will photograph as a project is a real use of the months. A finished house in March is a different product from the same house with the work still open in December.
+
+List now when the house is ready and the move is real. Each extra month means another mortgage, tax, insurance, and utility bill, and spring is when more owners list at the same time. The [cost-to-sell net sheet](/blog/cost-to-sell-home-tennessee-2026-net-sheet) is how to put both outcomes on one page: the net now, and the net after those bills.
+
+Keep a hoped-for higher spring price off that page, or mark it as a guess. The [fall pricing guide](/blog/selling-a-house-in-middle-tennessee-this-fall-2026) is the piece on how to price what is actually selling. Last spring's sale on the street described the market the day it went under contract. If spring only wins because the sale price on the spreadsheet went up, you are betting on a season you cannot control.
+
+## What Does Fewer Lookers, Better Buyers Actually Mean?
+
+A quiet Tuesday from Thanksgiving to New Year is normal. Saved searches still fire, and an agent whose buyer has to move will still book the house. The traffic that drops off is the casual crowd: neighbors, people months away from buying, and relatives who look because they are in town. That crowd fills a lot of spring weekends.
+
+Read what you do get. No showings, including from buyers searching your price, is almost always the price. Showings without offers usually mean condition, photos, or a number that loses to the other house they saw. The [fall pricing guide](/blog/selling-a-house-in-middle-tennessee-this-fall-2026) splits those two cases.
+
+Many of the buyers still out have a date. The [year-end closing guide](/blog/buying-a-house-before-the-end-of-the-year-middle-tennessee) treats mid-November as the comfortable time for a financed buyer to be under contract, because the last week of December crowds attorneys, lenders, and title companies. After Thanksgiving, some of that group is already out of days. Whoever is left is paying cash, using a lender who can move, or aiming at January. Ask which.
+
+## How Do You Show a House Between Thanksgiving and New Year?
+
+A buyer who cannot get in goes to the next house. Before you travel, write down who has the lockbox code, which door to use, and where the lights are. Put the lamps that matter on a timer so the rooms read after dark, and leave the heat at a normal living temperature. A house in the fifties feels empty, and buyers read that as a problem. Name someone who can straighten up after a showing, and leave an alarm code that works.
+
+A tree and a wreath are enough. Extra tables and garland over the windows hide the floor plan the buyer is trying to picture in March. October photos can stay if they are bright. If they are dim, reshoot the main rooms with the lights on before you leave, because a lot of December tours happen after work.
+
+Stay active when the house can be shown. Taking it off the market until January hides it from the buyer who comes to town between Christmas and New Year to look. If guests, a trip with nobody to reset the house, or an open repair make showings impossible, pause those dates on purpose and tell your agent before you go.
+
+## How Should You Price a Holiday Listing?
+
+Price from the newest comparable sales, adjusted for condition and lot, and from the homes a buyer can tour the same week. October's 61 days on market and 6.83 months of inventory are the nine-county backdrop. Franklin's 49 days and Brentwood's 63 days are Redfin city medians as of October 5, 2026. None of them is a target for your address. The [fall pricing guide](/blog/selling-a-house-in-middle-tennessee-this-fall-2026) covers the comps, the active competition, and the expired listings the market already rejected.
+
+The risk in this season is burning the first two weeks at the wrong number and calling the silence a holiday. A new listing still gets a burst from saved searches. Miss the price, and that burst reaches a smaller set of serious buyers, who then move on. Those extra days on market follow the listing into January, and buyers coming back use them as a reason to negotiate.
+
+A concession is a different tool. A closing-cost credit or a rate buydown can fix a monthly payment. It cannot put the house into a search the buyer never ran. The [seller concessions post](/blog/seller-concessions-rate-buydown-middle-tennessee-2026) compares that ask with a price cut.
+
+## When Is a Cash Offer the Cleaner Exit?
+
+Choose cash when the limit is the date or the condition of the house. If you cannot keep it show-ready, will not do the work, or cannot move the closing date, the retail price is a number you might get later. A local cash sale trades price for a date you can schedule, with no tours. On this site that offer is typically 70-85% of after-repair market value — the standing tradeoff for speed, explained in [cash offer vs. iBuyer vs. listing](/blog/cash-offer-vs-ibuyer-vs-listing-middle-tennessee). Write the listing net down first, so the discount has something to sit next to.
+
+For these two cities, start with a [Franklin cash offer](/cash-offer/franklin-tn) or a [Brentwood cash offer](/cash-offer/brentwood-tn).
+
+## What Should You Do This Week?
+
+- **Name the reason.** A firm move date supports listing now. Work the house still needs is a reason to wait. Fewer showings is an access plan: set the rules and keep the listing up.
+- **Price the block.** Let the October report and the October 5 city medians set the backdrop, then use the sales on your street.
+- **Set the showing rules before you go live,** including the days you will be gone.
+- **If the date cannot slip, compare both nets** — retail and cash — with the cost of waiting on the same page.
+
+## The Bottom Line
+
+Selling a house during the holidays in Middle Tennessee fits a seller who wants the buyers still looking from Thanksgiving to New Year, and who will price and show the house for that season. Spring brings more buyers and more competing listings. Waiting pays when the winter changes the house. Listing now pays when the house is ready and the move is real.
+
+Joshua Fink is an Affiliate Broker with Compass Real Estate, licensed since 2008, and sells 40+ homes a year in Middle Tennessee. Office: Compass, 8119 Isabella Lane Suite 105, Brentwood, TN 37027. TREC #351484. For a straight read on listing now versus waiting, call or text [615-551-2727](tel:6155512727) or email [joshua@joshuafink.com](mailto:joshua@joshuafink.com).
+
+## Sources
+
+- [Greater Nashville REALTORS®, October 2026](https://www.greaternashvillerealtors.org/news/housing-market-sees-more-inventory-fewer-sales-in-october), published on this site November 5, 2026. Same figures as the [October 2026 market update](/blog/middle-tennessee-market-update-october-2026): median $499,990, down 2.9% from $515,000 a year earlier; 2,540 closed sales; 15,379 active listings; 61 days on market; 6.83 months of inventory.
+- [Redfin Data Center](https://www.redfin.com/news/data-center/downloads/), city medians as published here as of October 5, 2026, from a rolling three-month window ending August 31, 2026. Franklin and Brentwood figures are the ones quoted above.
+    `.trim(),
+  },
+  {
     slug: "best-franklin-neighborhoods-for-families-2026",
     title: "Best Franklin Neighborhoods for Families (2026)",
     date: "November 2, 2026",
