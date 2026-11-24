@@ -21,6 +21,12 @@ type Props = {
   soldLabel?: string
   /** Extra line after the list. Spring Hill uses it for the Columbia record. */
   note?: ReactNode
+  /** Defaults to "Homes I've sold in {county}". */
+  heading?: string
+  /** Cash-offer pages show the sold price. The Franklin buyer page does not. */
+  showPrices?: boolean
+  /** In-page form on cash-offer pages. The buyer page links to the city cash-offer page. */
+  cashOfferHref?: string
 }
 
 /**
@@ -38,7 +44,14 @@ export default function CountySellerListings({
   soldHref,
   soldLabel,
   note,
+  heading,
+  showPrices = true,
+  cashOfferHref = '#cash-offer-form',
 }: Props) {
+  const columns = showPrices
+    ? 'sm:grid-cols-[minmax(0,1.6fr)_9rem_7.5rem_9.5rem]'
+    : 'sm:grid-cols-[minmax(0,1.6fr)_9rem_9.5rem]'
+
   return (
     <section aria-labelledby={headingId} className="bg-white border-b border-neutral-200">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -46,12 +59,12 @@ export default function CountySellerListings({
           Traditional listings · {county}
         </p>
         <h2 id={headingId} className="text-2xl sm:text-3xl font-black text-black tracking-tight">
-          Homes I&apos;ve sold in {county}
+          {heading ?? <>Homes I&apos;ve sold in {county}</>}
         </h2>
         <p className="text-neutral-700 text-base leading-relaxed mt-4">{summary}</p>
         <p className="text-neutral-700 text-base leading-relaxed mt-3">
           These were traditional listings I sold, not cash purchases. Whether you want a{' '}
-          <a href="#cash-offer-form" className="font-semibold text-black underline underline-offset-4">
+          <a href={cashOfferHref} className="font-semibold text-black underline underline-offset-4">
             cash offer
           </a>{' '}
           or a{' '}
@@ -77,17 +90,17 @@ export default function CountySellerListings({
         <h3 className="text-xs font-semibold tracking-widest text-neutral-400 uppercase mt-8 mb-3">
           {`Most recent ${rows.length} of ${total}`}
         </h3>
-        <div className="hidden sm:grid sm:grid-cols-[minmax(0,1.6fr)_9rem_7.5rem_9.5rem] sm:gap-4 text-xs font-semibold tracking-widest text-neutral-400 uppercase">
+        <div className={`hidden sm:grid ${columns} sm:gap-4 text-xs font-semibold tracking-widest text-neutral-400 uppercase`}>
           <span>Street</span>
           <span>Sold</span>
-          <span>Price</span>
+          {showPrices ? <span>Price</span> : null}
           <span>Days on market</span>
         </div>
         <ul className="divide-y divide-neutral-200 border-y border-neutral-200">
           {rows.map((row) => (
             <li
               key={`${row.street}-${row.city}-${row.closeDate}`}
-              className="py-4 sm:grid sm:grid-cols-[minmax(0,1.6fr)_9rem_7.5rem_9.5rem] sm:items-baseline sm:gap-4"
+              className={`py-4 sm:grid ${columns} sm:items-baseline sm:gap-4`}
             >
               <p className="text-sm font-black text-black">
                 {row.street}, {row.city}
@@ -95,7 +108,9 @@ export default function CountySellerListings({
               <p className="text-sm text-neutral-600 mt-1 sm:mt-0">
                 <time dateTime={row.closeDate.slice(0, 7)}>{formatCloseMonthYear(row.closeDate)}</time>
               </p>
-              <p className="text-sm text-neutral-600 mt-1 sm:mt-0">{formatSoldPrice(row.soldPrice)}</p>
+              {showPrices ? (
+                <p className="text-sm text-neutral-600 mt-1 sm:mt-0">{formatSoldPrice(row.soldPrice)}</p>
+              ) : null}
               <p className="text-sm text-neutral-600 mt-1 sm:mt-0">{daysOnMarketLabel(row.daysOnMarket)}</p>
             </li>
           ))}

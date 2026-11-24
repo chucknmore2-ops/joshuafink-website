@@ -16,6 +16,11 @@ import SuburbLeadForm from '@/components/SuburbLeadForm'
 import TrackedTelLink from '@/components/TrackedTelLink'
 import GnarRegionalSnapshot from '@/components/GnarRegionalSnapshot'
 import FranklinWhoToHire from '@/components/FranklinWhoToHire'
+import FranklinBuyerSales from '@/components/FranklinBuyerSales'
+import {
+  franklinSellerListingsItemList,
+  recentFranklinSellerListings,
+} from '@/lib/franklin-seller-listings'
 import ByTheNumbers from '@/components/ByTheNumbers'
 import { showsGnarRegionalSnapshot } from '@/lib/market-snapshot'
 import { byTheNumbersDataset, byTheNumbersForBuySlug } from '@/lib/by-the-numbers'
@@ -210,6 +215,8 @@ export default async function BuySuburbPage({ params }: Props) {
     'la-vergne-tn': ['smyrna-tn', 'murfreesboro-tn', 'nashville-tn', 'mount-juliet-tn', 'nolensville-tn'],
   }
   const soldInCity = closingGroupsForSuburb(slug)
+  // Seller-side Franklin closings only. Other buyer pages do not mount this list.
+  const franklinSales = slug === 'franklin-tn' ? recentFranklinSellerListings() : null
   const nearbyCities: Suburb[] = (nearbyByCity[slug] ?? [])
     .map((s) => getSuburb(s))
     .filter((s): s is Suburb => Boolean(s))
@@ -267,6 +274,14 @@ export default async function BuySuburbPage({ params }: Props) {
           }),
         }}
       />
+      {franklinSales ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(franklinSellerListingsItemList(franklinSales, { includePrice: false })),
+          }}
+        />
+      ) : null}
 
       <div className="bg-white">
 
@@ -636,6 +651,8 @@ export default async function BuySuburbPage({ params }: Props) {
             </div>
           </div>
         </div>
+
+        {slug === 'franklin-tn' ? <FranklinBuyerSales /> : null}
 
         {/* Homes Joshua has for sale in this suburb (hidden when none match) */}
         {suburbListings.length > 0 && (
