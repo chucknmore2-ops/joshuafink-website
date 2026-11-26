@@ -72,6 +72,9 @@ export function brentwoodRealEstateAgentAreaServed() {
 }
 
 /** Visible rows only. No review or rating fields. */
-export function brentwoodSellerListingsItemList(rows: readonly BrentwoodSellerListing[]) {
-  return brentwood.itemList(rows)
+export function brentwoodSellerListingsItemList(
+  rows: readonly BrentwoodSellerListing[],
+  options?: { includePrice?: boolean },
+) {
+  return brentwood.itemList(rows, options)
 }
