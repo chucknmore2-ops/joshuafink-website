@@ -189,8 +189,17 @@ export function defineCountySellerListings<City extends string>(options: DefineO
     ]
   }
 
-  /** Visible rows only. No review or rating fields. */
-  function itemList(rows: readonly CountySellerListing<City>[]) {
+  /**
+   * Visible rows only. No review or rating fields.
+   * includePrice defaults to true so cash-offer pages keep the sold price
+   * in the Offer. The Franklin buyer page passes false: that ItemList names
+   * the street and the city only.
+   */
+  function itemList(
+    rows: readonly CountySellerListing<City>[],
+    options?: { includePrice?: boolean },
+  ) {
+    const includePrice = options?.includePrice !== false
     return {
       '@context': 'https://schema.org',
       '@type': 'ItemList',
@@ -202,8 +211,7 @@ export function defineCountySellerListings<City extends string>(options: DefineO
         item: {
           '@type': 'Offer',
           name: `${row.street}, ${row.city}, TN`,
-          price: row.soldPrice,
-          priceCurrency: 'USD',
+          ...(includePrice ? { price: row.soldPrice, priceCurrency: 'USD' as const } : {}),
           availability: 'https://schema.org/SoldOut',
           description: `Traditional listing. Closed ${formatCloseMonthYear(row.closeDate)}. ${row.daysOnMarket} ${row.daysOnMarket === 1 ? 'day' : 'days'} on market.`,
           itemOffered: {

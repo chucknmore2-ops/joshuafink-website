@@ -67,8 +67,11 @@ export function franklinRealEstateAgentAreaServed() {
 }
 
 /** Visible rows only. No review or rating fields. */
-export function franklinSellerListingsItemList(rows: readonly FranklinSellerListing[]) {
-  return franklin.itemList(rows)
+export function franklinSellerListingsItemList(
+  rows: readonly FranklinSellerListing[],
+  options?: { includePrice?: boolean },
+) {
+  return franklin.itemList(rows, options)
 }
 
 /**
