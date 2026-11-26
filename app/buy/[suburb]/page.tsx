@@ -21,6 +21,11 @@ import { showsGnarRegionalSnapshot } from '@/lib/market-snapshot'
 import { byTheNumbersDataset, byTheNumbersForBuySlug } from '@/lib/by-the-numbers'
 import { cashOfferPath } from '@/lib/cash-offer-cities'
 import { closingGroupsForSuburb } from '@/lib/closings'
+import BrentwoodBuyerSales from '@/components/BrentwoodBuyerSales'
+import {
+  brentwoodSellerListingsItemList,
+  recentBrentwoodSellerListings,
+} from '@/lib/brentwood-seller-listings'
 
 type Props = {
   params: Promise<{ suburb: string }>
@@ -213,6 +218,8 @@ export default async function BuySuburbPage({ params }: Props) {
   const nearbyCities: Suburb[] = (nearbyByCity[slug] ?? [])
     .map((s) => getSuburb(s))
     .filter((s): s is Suburb => Boolean(s))
+  // Seller-side Brentwood closings only. Other buyer pages do not mount this list.
+  const brentwoodSales = slug === 'brentwood-tn' ? recentBrentwoodSellerListings() : null
 
   const faqSchema = {
     '@context': 'https://schema.org',
@@ -241,6 +248,14 @@ export default async function BuySuburbPage({ params }: Props) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(byTheNumbersDataset(byTheNumbers)) }}
+        />
+      ) : null}
+      {brentwoodSales ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(brentwoodSellerListingsItemList(brentwoodSales, { includePrice: false })),
+          }}
         />
       ) : null}
       <script
@@ -636,6 +651,8 @@ export default async function BuySuburbPage({ params }: Props) {
             </div>
           </div>
         </div>
+
+        {slug === 'brentwood-tn' ? <BrentwoodBuyerSales /> : null}
 
         {/* Homes Joshua has for sale in this suburb (hidden when none match) */}
         {suburbListings.length > 0 && (

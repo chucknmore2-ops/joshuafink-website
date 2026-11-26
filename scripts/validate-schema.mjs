@@ -34,6 +34,7 @@ const URLS = [
   '/sell/franklin-tn',
   '/buy',
   '/buy/franklin-tn',
+  '/buy/brentwood-tn',
   '/market/franklin-tn',
   '/neighborhoods',
 ]
