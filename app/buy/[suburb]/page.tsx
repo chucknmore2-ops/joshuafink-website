@@ -652,9 +652,8 @@ export default async function BuySuburbPage({ params }: Props) {
           </div>
         </div>
 
-        {slug === 'brentwood-tn' ? <BrentwoodBuyerSales /> : null}
-
         {/* Homes Joshua has for sale in this suburb (hidden when none match) */}
+        {slug === 'brentwood-tn' ? <BrentwoodBuyerSales /> : null}
         {suburbListings.length > 0 && (
           <div className="bg-white border-t border-[#E8E8E8] py-16 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">

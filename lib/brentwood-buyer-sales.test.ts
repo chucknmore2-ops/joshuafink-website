@@ -108,7 +108,7 @@ test('the Brentwood buyer page mounts the sales section after the local intro', 
 
   const localAt = page.indexOf('What Buyers Need to Know')
   const proofAt = page.indexOf("slug === 'brentwood-tn' ? <BrentwoodBuyerSales /> : null")
-  const homesAt = page.indexOf('Homes Joshua has for sale')
+  const homesAt = page.indexOf('Homes for Sale in {suburb.name}')
   const faqAt = page.indexOf('Buying a Home in {suburb.name} — FAQ')
   assert.ok(localAt > 0 && proofAt > localAt && homesAt > proofAt && faqAt > homesAt)
 
